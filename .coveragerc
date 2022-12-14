@@ -1,0 +1,12 @@
+[run]
+branch = True
+data_file = .coverage
+source=edx-enterprise-subsidy
+omit =
+    edx_enterprise_subsidy/settings*
+    edx_enterprise_subsidy/conf*
+    *wsgi.py
+    *migrations*
+    *admin.py
+    *static*
+    *templates*
