@@ -26,7 +26,8 @@ services:
       - .:/edx/app/edx-enterprise-subsidy
       - ../src:/edx/src:cached
 
-    command: bash -c 'while true; do python /edx/app/edx-enterprise-subsidy/manage.py runserver 0.0.0.0:18280; sleep 2; done'
+    # TODO: remove manual install of edx-ledger once it is published in pypi
+    command: bash -c 'pip install /edx/src/edx-ledger && while true; do python /edx/app/edx-enterprise-subsidy/manage.py runserver 0.0.0.0:18280; sleep 2; done'
     environment:
       DJANGO_SETTINGS_MODULE: edx_enterprise_subsidy.settings.devstack
     ports:

@@ -39,7 +39,10 @@ requirements: clean_pycrypto dev_requirements ## sync to default requirements
 
 ci_requirements: validation_requirements ## sync to requirements needed for CI checks
 
-dev_requirements: ## sync to requirements for local development
+pip_requirements:  ## install pip-sync
+	pip install -r requirements/pip-tools.txt
+
+dev_requirements: pip_requirements ## sync to requirements for local development
 	pip-sync -q requirements/dev.txt requirements/private.*
 
 validation_requirements: ## sync to requirements for testing & code quality checking
