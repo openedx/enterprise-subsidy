@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-asgiref==3.5.2
+asgiref==3.6.0
     # via
     #   -r requirements/test.txt
     #   django
@@ -13,7 +13,7 @@ astroid==2.12.13
     #   -r requirements/test.txt
     #   pylint
     #   pylint-celery
-attrs==22.1.0
+attrs==22.2.0
     # via
     #   -r requirements/test.txt
     #   openedx-events
@@ -59,14 +59,15 @@ coreschema==0.0.4
     # via
     #   -r requirements/test.txt
     #   coreapi
-coverage[toml]==6.5.0
+coverage[toml]==7.0.3
     # via
     #   -r requirements/test.txt
     #   pytest-cov
-cryptography==38.0.4
+cryptography==39.0.0
     # via
     #   -r requirements/test.txt
     #   pyjwt
+    #   secretstorage
     #   social-auth-core
 defusedxml==0.7.1
     # via
@@ -147,7 +148,7 @@ edx-django-utils==5.2.0
     #   -r requirements/test.txt
     #   edx-drf-extensions
     #   edx-rest-api-client
-edx-drf-extensions==8.3.1
+edx-drf-extensions==8.4.0
     # via
     #   -r requirements/test.txt
     #   edx-rbac
@@ -164,7 +165,7 @@ edx-rbac==1.7.0
     # via -r requirements/test.txt
 edx-rest-api-client==5.5.0
     # via -r requirements/test.txt
-exceptiongroup==1.0.4
+exceptiongroup==1.1.0
     # via
     #   -r requirements/test.txt
     #   pytest
@@ -172,7 +173,7 @@ fastavro==1.7.0
     # via
     #   -r requirements/test.txt
     #   openedx-events
-filelock==3.8.2
+filelock==3.9.0
     # via
     #   -r requirements/test.txt
     #   tox
@@ -185,15 +186,17 @@ idna==3.4
     # via
     #   -r requirements/test.txt
     #   requests
-importlib-metadata==5.1.0
+importlib-metadata==6.0.0
     # via
     #   keyring
     #   twine
+importlib-resources==5.10.2
+    # via keyring
 iniconfig==1.1.1
     # via
     #   -r requirements/test.txt
     #   pytest
-isort==5.11.2
+isort==5.11.4
     # via
     #   -r requirements/quality.in
     #   -r requirements/test.txt
@@ -204,6 +207,10 @@ itypes==1.2.0
     #   coreapi
 jaraco-classes==3.2.3
     # via keyring
+jeepney==0.8.0
+    # via
+    #   keyring
+    #   secretstorage
 jinja2==3.1.2
     # via
     #   -r requirements/test.txt
@@ -211,7 +218,7 @@ jinja2==3.1.2
     #   coreschema
 jsonfield2==4.0.0.post0
     # via -r requirements/test.txt
-keyring==23.11.0
+keyring==23.13.1
     # via twine
 lazy-object-proxy==1.8.0
     # via
@@ -225,7 +232,7 @@ mccabe==0.7.0
     # via
     #   -r requirements/test.txt
     #   pylint
-mock==4.0.3
+mock==5.0.0
     # via -r requirements/test.txt
 more-itertools==9.0.0
     # via jaraco-classes
@@ -244,7 +251,7 @@ openapi-codec==1.3.2
     # via
     #   -r requirements/test.txt
     #   django-rest-swagger
-openedx-events==4.0.0
+openedx-events==4.1.0
     # via -r requirements/test.txt
 packaging==22.0
     # via
@@ -255,9 +262,9 @@ pbr==5.11.0
     # via
     #   -r requirements/test.txt
     #   stevedore
-pkginfo==1.9.2
+pkginfo==1.9.3
     # via twine
-platformdirs==2.6.0
+platformdirs==2.6.2
     # via
     #   -r requirements/test.txt
     #   pylint
@@ -289,9 +296,9 @@ pycryptodomex==3.16.0
     # via
     #   -r requirements/test.txt
     #   pyjwkest
-pydocstyle==6.1.1
+pydocstyle==6.2.2
     # via -r requirements/quality.in
-pygments==2.13.0
+pygments==2.14.0
     # via
     #   readme-renderer
     #   rich
@@ -307,7 +314,7 @@ pyjwt[crypto]==2.6.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==2.15.8
+pylint==2.15.9
     # via
     #   -r requirements/test.txt
     #   edx-lint
@@ -356,7 +363,7 @@ python3-openid==3.2.0
     # via
     #   -r requirements/test.txt
     #   social-auth-core
-pytz==2022.6
+pytz==2022.7
     # via
     #   -r requirements/test.txt
     #   django
@@ -388,15 +395,17 @@ requests-toolbelt==0.10.1
     # via twine
 rfc3986==2.0.0
     # via twine
-rich==12.6.0
+rich==13.0.0
     # via twine
 rules==3.3
     # via -r requirements/test.txt
+secretstorage==3.3.3
+    # via keyring
 semantic-version==2.10.0
     # via
     #   -r requirements/test.txt
     #   edx-drf-extensions
-simplejson==3.18.0
+simplejson==3.18.1
     # via
     #   -r requirements/test.txt
     #   django-rest-swagger
@@ -453,7 +462,7 @@ tomlkit==0.11.6
     # via
     #   -r requirements/test.txt
     #   pylint
-tox==3.27.1
+tox==3.28.0
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/test.txt
@@ -485,4 +494,6 @@ wrapt==1.14.1
     #   -r requirements/test.txt
     #   astroid
 zipp==3.11.0
-    # via importlib-metadata
+    # via
+    #   importlib-metadata
+    #   importlib-resources
