@@ -57,9 +57,6 @@ Every time you develop something in this repo
   # enter the app container shell
   make app-shell
 
-  # temp: install local edx-ledger, assuming it's in your mounted /edx/src/ directory
-  pip install /edx/src/edx-ledger  # note, the `-e` somehow isn't working write now, at least on the author's machine.
-  
   # Install/update the dev requirements
   make requirements
 

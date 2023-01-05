@@ -22,4 +22,4 @@ Unreleased
 Added
 =====
 
-* First release on PyPI.
+* Initial release.

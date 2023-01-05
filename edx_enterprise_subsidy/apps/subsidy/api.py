@@ -3,7 +3,7 @@ The python API.
 """
 from .subsidy import models
 
-from edx_ledger.utils import (
+from openedx_ledger.utils import (
     create_idempotency_key_for_subsidy,
     create_idempotency_key_for_transaction,
 )

@@ -15,6 +15,11 @@ astroid==2.12.13
     #   -r requirements/test.txt
     #   pylint
     #   pylint-celery
+async-timeout==4.0.2
+    # via
+    #   -r requirements/quality.txt
+    #   -r requirements/test.txt
+    #   redis
 attrs==22.2.0
     # via
     #   -r requirements/quality.txt
@@ -109,6 +114,7 @@ django==3.2.16
     #   django-cors-headers
     #   django-crum
     #   django-extensions
+    #   django-filter
     #   django-model-utils
     #   djangorestframework
     #   drf-jwt
@@ -119,6 +125,7 @@ django==3.2.16
     #   edx-rbac
     #   jsonfield2
     #   openedx-events
+    #   openedx-ledger
 django-cors-headers==3.13.0
     # via
     #   -r requirements/quality.txt
@@ -137,6 +144,12 @@ django-extensions==3.2.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
+    #   openedx-ledger
+django-filter==22.1
+    # via
+    #   -r requirements/quality.txt
+    #   -r requirements/test.txt
+    #   openedx-ledger
 django-model-utils==4.3.1
     # via
     #   -r requirements/quality.txt
@@ -150,6 +163,7 @@ django-simple-history==3.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
+    #   openedx-ledger
 django-waffle==3.0.0
     # via
     #   -r requirements/quality.txt
@@ -160,6 +174,7 @@ djangoql==0.17.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
+    #   openedx-ledger
 djangorestframework==3.14.0
     # via
     #   -r requirements/quality.txt
@@ -184,12 +199,14 @@ edx-django-release-util==1.2.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
+    #   openedx-ledger
 edx-django-utils==5.2.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   edx-drf-extensions
     #   edx-rest-api-client
+    #   openedx-ledger
 edx-drf-extensions==8.4.0
     # via
     #   -r requirements/quality.txt
@@ -209,6 +226,7 @@ edx-rbac==1.7.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
+    #   openedx-ledger
 edx-rest-api-client==5.5.0
     # via
     #   -r requirements/quality.txt
@@ -282,11 +300,12 @@ jsonfield2==4.0.0.post0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
+    #   openedx-ledger
 keyring==23.13.1
     # via
     #   -r requirements/quality.txt
     #   twine
-lazy-object-proxy==1.8.0
+lazy-object-proxy==1.9.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -313,6 +332,7 @@ mysqlclient==2.1.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
+    #   openedx-ledger
 newrelic==8.5.0
     # via
     #   -r requirements/quality.txt
@@ -333,6 +353,11 @@ openedx-events==4.1.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
+    #   openedx-ledger
+openedx-ledger==0.1.1
+    # via
+    #   -r requirements/quality.txt
+    #   -r requirements/test.txt
 packaging==22.0
     # via
     #   -r requirements/quality.txt
@@ -344,7 +369,7 @@ pbr==5.11.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   stevedore
-pkginfo==1.9.3
+pkginfo==1.9.4
     # via
     #   -r requirements/quality.txt
     #   twine
@@ -477,6 +502,7 @@ pytz==2022.7
     #   -r requirements/test.txt
     #   django
     #   djangorestframework
+    #   openedx-ledger
 pyyaml==6.0
     # via
     #   -r requirements/quality.txt
@@ -487,6 +513,11 @@ readme-renderer==37.3
     # via
     #   -r requirements/quality.txt
     #   twine
+redis==4.4.0
+    # via
+    #   -r requirements/quality.txt
+    #   -r requirements/test.txt
+    #   openedx-ledger
 requests==2.28.1
     # via
     #   -r requirements/quality.txt
@@ -521,6 +552,7 @@ rules==3.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
+    #   openedx-ledger
 secretstorage==3.3.3
     # via
     #   -r requirements/quality.txt

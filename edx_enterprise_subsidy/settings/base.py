@@ -30,7 +30,7 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'edx_ledger',
+    'openedx_ledger',
     'release_util',
 )
 

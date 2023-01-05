@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('edx_ledger', '0001_initial'),
+        ('openedx_ledger', '0001_initial'),
     ]
 
     operations = [
@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
                 ('active_datetime', models.DateTimeField(default=None, null=True)),
                 ('expiration_datetime', models.DateTimeField(default=None, null=True)),
                 ('subscription_plan_uuid', models.UUIDField(db_index=True)),
-                ('ledger', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='edx_ledger.ledger')),
+                ('ledger', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='openedx_ledger.ledger')),
             ],
         ),
         migrations.AddField(
@@ -96,7 +96,7 @@ class Migration(migrations.Migration):
                 ('customer_uuid', models.CharField(max_length=255)),
                 ('active_datetime', models.DateTimeField(default=None, null=True)),
                 ('expiration_datetime', models.DateTimeField(default=None, null=True)),
-                ('ledger', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='edx_ledger.ledger')),
+                ('ledger', models.ForeignKey(null=True, on_delete=django.db.models.deletion.SET_NULL, to='openedx_ledger.ledger')),
             ],
             options={
                 'abstract': False,

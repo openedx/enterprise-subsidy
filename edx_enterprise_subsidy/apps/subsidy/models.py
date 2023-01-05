@@ -9,9 +9,9 @@ from pytz import UTC
 from django.db import models, transaction
 from model_utils.models import TimeStampedModel
 
-from edx_ledger import api as ledger_api
-from edx_ledger.utils import create_idempotency_key_for_transaction
-from edx_ledger.models import Ledger, UnitChoices
+from openedx_ledger import api as ledger_api
+from openedx_ledger.utils import create_idempotency_key_for_transaction
+from openedx_ledger.models import Ledger, UnitChoices
 
 
 MOCK_GROUP_CLIENT = mock.MagicMock()
