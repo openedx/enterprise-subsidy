@@ -90,3 +90,6 @@ docs/_build/
 
 #transifex exe
 tx
+
+# pyenv
+.python-version
