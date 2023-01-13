@@ -1,4 +1,4 @@
-name="edx-enterprise-subsidy"
+name="enterprise-subsidy"
 port="18280"
 
 docker-compose up -d --build
@@ -8,7 +8,7 @@ docker-compose up -d --build
 
 # Wait for MySQL
 echo "Waiting for MySQL"
-until docker exec -i edx_enterprise_subsidy.db mysql -u root -se "SELECT EXISTS(SELECT 1 FROM mysql.user WHERE user = 'root')" &> /dev/null
+until docker exec -i enterprise_subsidy.db mysql -u root -se "SELECT EXISTS(SELECT 1 FROM mysql.user WHERE user = 'root')" &> /dev/null
 do
   printf "."
   sleep 1
@@ -16,15 +16,15 @@ done
 sleep 5
 
 # Create the database
-docker exec -i edx_enterprise_subsidy.db mysql -u root -se "CREATE DATABASE edx_enterprise_subsidy;"
+docker exec -i enterprise_subsidy.db mysql -u root -se "CREATE DATABASE enterprise_subsidy;"
 
 # Run migrations
 echo -e "${GREEN}Running migrations for ${name}...${NC}"
-docker exec -t edx_enterprise_subsidy.app bash -c "cd /edx/app/${name}/ && make migrate"
+docker exec -t enterprise_subsidy.app bash -c "cd /edx/app/${name}/ && make migrate"
 
 # Create superuser
 echo -e "${GREEN}Creating super-user for ${name}...${NC}"
-docker exec -t edx_enterprise_subsidy.app bash -c "echo 'from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser(\"edx\", \"edx@example.com\", \"edx\") if not User.objects.filter(username=\"edx\").exists() else None' | python /edx/app/${name}/manage.py shell"
+docker exec -t enterprise_subsidy.app bash -c "echo 'from django.contrib.auth import get_user_model; User = get_user_model(); User.objects.create_superuser(\"edx\", \"edx@example.com\", \"edx\") if not User.objects.filter(username=\"edx\").exists() else None' | python /edx/app/${name}/manage.py shell"
 
 # Provision IDA User in LMS
 echo -e "${GREEN}Provisioning ${name}_worker in LMS...${NC}"

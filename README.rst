@@ -1,4 +1,4 @@
-edx_enterprise_subsidy
+enterprise_subsidy
 #############################
 
 .. note::
@@ -33,12 +33,12 @@ One Time Setup
 .. code-block::
 
   # Clone the repository
-  git clone git@github.com:openedx/edx-enterprise-subsidy.git
-  cd edx-enterprise-subsidy
+  git clone git@github.com:openedx/enterprise-subsidy.git
+  cd enterprise-subsidy
   make upgrade
   make docker_build
   docker-compose up
-  ./provision-edx-enterprise-subsidy.sh
+  ./provision-enterprise-subsidy.sh
 
 Go visit http://localhost:18280/admin/ and login with the standard edx/edx credentials to confirm
 that provisioning was successful.
@@ -93,7 +93,7 @@ commands? Is there a larger how-to that should be linked here?
 
 PLACEHOLDER: For details on how to deploy this component, see the `deployment how-to`_
 
-.. _deployment how-to: https://docs.openedx.org/projects/edx-enterprise-subsidy/how-tos/how-to-deploy-this-component.html
+.. _deployment how-to: https://docs.openedx.org/projects/enterprise-subsidy/how-tos/how-to-deploy-this-component.html
 
 Getting Help
 ************
@@ -103,7 +103,7 @@ Documentation
 
 PLACEHOLDER: Start by going through `the documentation`_.  If you need more help see below.
 
-.. _the documentation: https://docs.openedx.org/projects/edx-enterprise-subsidy
+.. _the documentation: https://docs.openedx.org/projects/enterprise-subsidy
 
 (TODO: `Set up documentation <https://openedx.atlassian.net/wiki/spaces/DOC/pages/21627535/Publish+Documentation+on+Read+the+Docs>`_)
 
@@ -121,7 +121,7 @@ For anything non-trivial, the best path is to open an issue in this
 repository with as many details about the issue you are facing as you
 can provide.
 
-https://github.com/openedx/edx-enterprise-subsidy/issues
+https://github.com/openedx/enterprise-subsidy/issues
 
 For more information about these options, see the `Getting Help`_ page.
 
@@ -164,35 +164,35 @@ The assigned maintainers for this component and other project details may be
 found in `Backstage`_. Backstage pulls this data from the ``catalog-info.yaml``
 file in this repo.
 
-.. _Backstage: https://open-edx-backstage.herokuapp.com/catalog/default/component/edx-enterprise-subsidy
+.. _Backstage: https://open-edx-backstage.herokuapp.com/catalog/default/component/enterprise-subsidy
 
 Reporting Security Issues
 *************************
 
 Please do not report security issues in public. Please email security@tcril.org.
 
-.. |pypi-badge| image:: https://img.shields.io/pypi/v/edx-enterprise-subsidy.svg
-    :target: https://pypi.python.org/pypi/edx-enterprise-subsidy/
+.. |pypi-badge| image:: https://img.shields.io/pypi/v/enterprise-subsidy.svg
+    :target: https://pypi.python.org/pypi/enterprise-subsidy/
     :alt: PyPI
 
-.. |ci-badge| image:: https://github.com/openedx/edx-enterprise-subsidy/workflows/Python%20CI/badge.svg?branch=main
-    :target: https://github.com/openedx/edx-enterprise-subsidy/actions
+.. |ci-badge| image:: https://github.com/openedx/enterprise-subsidy/workflows/Python%20CI/badge.svg?branch=main
+    :target: https://github.com/openedx/enterprise-subsidy/actions
     :alt: CI
 
-.. |codecov-badge| image:: https://codecov.io/github/openedx/edx-enterprise-subsidy/coverage.svg?branch=main
-    :target: https://codecov.io/github/openedx/edx-enterprise-subsidy?branch=main
+.. |codecov-badge| image:: https://codecov.io/github/openedx/enterprise-subsidy/coverage.svg?branch=main
+    :target: https://codecov.io/github/openedx/enterprise-subsidy?branch=main
     :alt: Codecov
 
-.. |doc-badge| image:: https://readthedocs.org/projects/edx-enterprise-subsidy/badge/?version=latest
-    :target: https://edx-enterprise-subsidy.readthedocs.io/en/latest/
+.. |doc-badge| image:: https://readthedocs.org/projects/enterprise-subsidy/badge/?version=latest
+    :target: https://enterprise-subsidy.readthedocs.io/en/latest/
     :alt: Documentation
 
-.. |pyversions-badge| image:: https://img.shields.io/pypi/pyversions/edx-enterprise-subsidy.svg
-    :target: https://pypi.python.org/pypi/edx-enterprise-subsidy/
+.. |pyversions-badge| image:: https://img.shields.io/pypi/pyversions/enterprise-subsidy.svg
+    :target: https://pypi.python.org/pypi/enterprise-subsidy/
     :alt: Supported Python versions
 
-.. |license-badge| image:: https://img.shields.io/github/license/openedx/edx-enterprise-subsidy.svg
-    :target: https://github.com/openedx/edx-enterprise-subsidy/blob/main/LICENSE.txt
+.. |license-badge| image:: https://img.shields.io/github/license/openedx/enterprise-subsidy.svg
+    :target: https://github.com/openedx/enterprise-subsidy/blob/main/LICENSE.txt
     :alt: License
 
 .. TODO: Choose one of the statuses below and remove the other status-badge lines.

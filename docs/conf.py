@@ -1,6 +1,6 @@
 # pylint: disable=invalid-name
 """
-edx_enterprise_subsidy documentation build configuration file.
+enterprise_subsidy documentation build configuration file.
 
 This file is execfile()d with the current directory set to its
 containing dir.
@@ -38,7 +38,7 @@ def get_version(*file_paths):
 REPO_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 sys.path.append(REPO_ROOT)
 
-VERSION = get_version('../edx_enterprise_subsidy', '__init__.py')
+VERSION = get_version('../enterprise_subsidy', '__init__.py')
 
 
 # If extensions (or modules to document with autodoc) are in another directory,
@@ -89,10 +89,10 @@ source_suffix = '.rst'
 top_level_doc = 'index'
 
 # General information about the project.
-project = 'edx_enterprise_subsidy'
+project = 'enterprise_subsidy'
 copyright = edx_theme.COPYRIGHT  # pylint: disable=redefined-builtin
 author = edx_theme.AUTHOR
-project_title = 'edx_enterprise_subsidy'
+project_title = 'enterprise_subsidy'
 documentation_title = f"{project_title}"
 
 
@@ -100,7 +100,7 @@ documentation_title = f"{project_title}"
 html_context = {
     "display_github": True,  # Integrate GitHub
     "github_user": "edx",  # Username
-    "github_repo": 'edx_enterprise_subsidy',  # Repo name
+    "github_repo": 'enterprise_subsidy',  # Repo name
     "github_version": "main",  # Version
     "conf_py_path": "/docs/",  # Path in the checkout to the docs root
 }
@@ -133,7 +133,14 @@ language = 'en'
 # List of patterns, relative to source directory, that match files and
 # directories to ignore when looking for source files.
 # This patterns also effect to html_static_path and html_extra_path
-exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
+exclude_patterns = [
+    '_build',
+    'Thumbs.db',
+    '.DS_Store',
+    # This file is intended as a guide for developers browsing the source tree,
+    # not to be rendered into the output docs.
+    'decisions/README.rst',
+]
 
 # The reST default role (used for this markup: `text`) to use for all
 # documents.
@@ -186,7 +193,7 @@ html_theme_path = [edx_theme.get_html_theme_path()]
 # The name for this set of Sphinx documents.
 # "<project> v<release> documentation" by default.
 #
-# html_title = 'edx_enterprise_subsidy v0.1.0'
+# html_title = 'enterprise_subsidy v0.1.0'
 
 # A shorter title for the navigation bar.  Default is the same as html_title.
 #
@@ -498,8 +505,8 @@ def on_init(app):  # pylint: disable=unused-argument
         # If we are, assemble the path manually
         bin_path = os.path.abspath(os.path.join(sys.prefix, 'bin'))
         apidoc_path = os.path.join(bin_path, apidoc_path)
-    check_call([apidoc_path, '-o', docs_path, os.path.join(root_path, 'edx_enterprise_subsidy'),
-                os.path.join(root_path, 'edx_enterprise_subsidy/migrations')])
+    check_call([apidoc_path, '-o', docs_path, os.path.join(root_path, 'enterprise_subsidy'),
+                os.path.join(root_path, 'enterprise_subsidy/migrations')])
 
 
 def setup(app):

@@ -2,7 +2,7 @@ Change Log
 ##########
 
 ..
-   All enhancements and patches to edx_enterprise_subsidy will be documented
+   All enhancements and patches to enterprise_subsidy will be documented
    in this file.  It adheres to the structure of https://keepachangelog.com/ ,
    but in reStructuredText instead of Markdown (for ease of incorporation into
    Sphinx documentation and the PyPI description).

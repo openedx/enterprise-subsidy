@@ -49,9 +49,9 @@ pii_report
 !django.mo
 !djangojs.po
 !djangojs.mo
-edx_enterprise_subsidy/conf/locale/fake*/LC_MESSAGES/*.po
-edx_enterprise_subsidy/conf/locale/fake*/LC_MESSAGES/*.mo
-edx_enterprise_subsidy/conf/locale/messages.mo
+enterprise_subsidy/conf/locale/fake*/LC_MESSAGES/*.po
+enterprise_subsidy/conf/locale/fake*/LC_MESSAGES/*.mo
+enterprise_subsidy/conf/locale/messages.mo
 
 
 # Mr Developer
@@ -90,3 +90,6 @@ docs/_build/
 
 #transifex exe
 tx
+
+# pyenv
+.python-version

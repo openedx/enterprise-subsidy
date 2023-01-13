@@ -11,7 +11,7 @@ from django.db import models
 from django.db.models.functions import Coalesce
 from django.db.transaction import atomic
 from django.dispatch import receiver
-from django.utils.translation import ugettext_lazy as _
+from django.utils.translation import gettext_lazy as _
 from jsonfield.encoder import JSONEncoder
 from jsonfield.fields import JSONField
 from model_utils.models import SoftDeletableModel, TimeStampedModel

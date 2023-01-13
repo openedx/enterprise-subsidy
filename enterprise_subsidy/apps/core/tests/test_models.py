@@ -4,7 +4,7 @@ from django.test import TestCase
 from django_dynamic_fixture import G
 from social_django.models import UserSocialAuth
 
-from edx_enterprise_subsidy.apps.core.models import User
+from enterprise_subsidy.apps.core.models import User
 
 
 class UserTests(TestCase):
