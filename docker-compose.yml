@@ -2,33 +2,33 @@ version: "2.1"
 services:
   db:
     image: mysql:5.6
-    container_name: edx_enterprise_subsidy.db
+    container_name: enterprise_subsidy.db
     environment:
       MYSQL_ROOT_PASSWORD: ""
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
     networks:
       - devstack_default
     volumes:
-      - edx_enterprise_subsidy_mysql:/var/lib/mysql
+      - enterprise_subsidy_mysql:/var/lib/mysql
 
   memcache:
     image: memcached:1.4.24
-    container_name: edx_enterprise_subsidy.memcache
+    container_name: enterprise_subsidy.memcache
 
   app:
-    # Uncomment this line to use the official edx_enterprise_subsidy base image
-    # image: openedx/edx_enterprise_subsidy
+    # Uncomment this line to use the official enterprise_subsidy base image
+    # image: openedx/enterprise_subsidy
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: edx_enterprise_subsidy.app
+    container_name: enterprise_subsidy.app
     volumes:
-      - .:/edx/app/edx-enterprise-subsidy
+      - .:/edx/app/enterprise-subsidy
       - ../src:/edx/src:cached
 
-    command: bash -c 'while true; do python /edx/app/edx-enterprise-subsidy/manage.py runserver 0.0.0.0:18280; sleep 2; done'
+    command: bash -c 'while true; do python /edx/app/enterprise-subsidy/manage.py runserver 0.0.0.0:18280; sleep 2; done'
     environment:
-      DJANGO_SETTINGS_MODULE: edx_enterprise_subsidy.settings.devstack
+      DJANGO_SETTINGS_MODULE: enterprise_subsidy.settings.devstack
     ports:
       - "18280:18280" # TODO: change this to your port
     networks:
@@ -41,4 +41,4 @@ networks:
     external: true
 
 volumes:
-  edx_enterprise_subsidy_mysql:
+  enterprise_subsidy_mysql:

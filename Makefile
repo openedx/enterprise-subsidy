@@ -69,22 +69,22 @@ coverage: clean
 	$(BROWSER) htmlcov/index.html
 
 isort_check: ## check that isort has been run
-	isort --check-only edx_enterprise_subsidy/
+	isort --check-only enterprise_subsidy/
 
 isort: ## run isort to sort imports in all Python files
-	isort --recursive --atomic edx_enterprise_subsidy/
+	isort --recursive --atomic enterprise_subsidy/
 
 style: ## run Python style checker
-	pylint --rcfile=pylintrc edx_enterprise_subsidy *.py
+	pylint --rcfile=pylintrc enterprise_subsidy *.py
 
 lint: ## run Python code linting
-	pylint --rcfile=pylintrc edx_enterprise_subsidy *.py
+	pylint --rcfile=pylintrc enterprise_subsidy *.py
 
 quality:
 	tox -e quality 
 
 pii_check: ## check for PII annotations on all Django models
-	DJANGO_SETTINGS_MODULE=edx_enterprise_subsidy.settings.test \
+	DJANGO_SETTINGS_MODULE=enterprise_subsidy.settings.test \
 	code_annotations django_find_annotations --config_file .pii_annotations.yml --lint --report --coverage
 
 check_keywords: ## Scan the Django models in all installed apps in this project for restricted field names
@@ -127,7 +127,7 @@ extract_translations: ## extract strings to be translated, outputting .mo files
 	python manage.py makemessages -l en -v1 -d djangojs
 
 dummy_translations: ## generate dummy translation (.po) files
-	cd edx_enterprise_subsidy && i18n_tool dummy
+	cd enterprise_subsidy && i18n_tool dummy
 
 compile_translations: # compile translation files, outputting .po files for each supported language
 	python manage.py compilemessages
@@ -144,18 +144,18 @@ start-devstack: ## run a local development copy of the server
 	docker-compose --x-networking up
 
 open-devstack: ## open a shell on the server started by start-devstack
-	docker exec -it edx-enterprise-subsidy /edx/app/edx-enterprise-subsidy/devstack.sh open
+	docker exec -it enterprise-subsidy /edx/app/enterprise-subsidy/devstack.sh open
 
-pkg-devstack: ## build the edx-enterprise-subsidy image from the latest configuration and code
-	docker build -t edx-enterprise-subsidy:latest -f docker/build/edx-enterprise-subsidy/Dockerfile git://github.com/openedx/configuration
+pkg-devstack: ## build the enterprise-subsidy image from the latest configuration and code
+	docker build -t enterprise-subsidy:latest -f docker/build/enterprise-subsidy/Dockerfile git://github.com/openedx/configuration
 
 detect_changed_source_translations: ## check if translation files are up-to-date
-	cd edx_enterprise_subsidy && i18n_tool changed
+	cd enterprise_subsidy && i18n_tool changed
 
 validate_translations: fake_translations detect_changed_source_translations ## install fake translations and check if translation files are up-to-date
 
 docker_build:
-	docker build . -f Dockerfile -t openedx/edx-enterprise-subsidy
+	docker build . -f Dockerfile -t openedx/enterprise-subsidy
 
 # devstack-themed shortcuts
 dev.up: # Starts all containers
@@ -171,10 +171,10 @@ dev.stop: # Stops containers so they can be restarted
 	docker-compose stop
 
 app-shell: # Run the app shell as root
-	docker exec -u 0 -it edx_enterprise_subsidy.app bash
+	docker exec -u 0 -it enterprise_subsidy.app bash
 
 db-shell: # Run the app shell as root, enter the app's database
-	docker exec -u 0 -it edx_enterprise_subsidy.db mysql -u root edx_enterprise_subsidy
+	docker exec -u 0 -it enterprise_subsidy.db mysql -u root enterprise_subsidy
 
 %-logs: # View the logs of the specified service container
 	docker-compose logs -f --tail=500 $*
@@ -186,20 +186,20 @@ app-restart-devserver:  # restart just the app Django dev server
 	docker-compose exec app bash -c 'kill $$(ps aux | egrep "manage.py ?\w* runserver" | egrep -v "while|grep" | awk "{print \$$2}")'
 
 %-attach:
-	docker attach edx_enterprise_subsidy.$*
+	docker attach enterprise_subsidy.$*
 
 github_docker_build:
-	docker build . -f Dockerfile --target app -t openedx/edx-enterprise-subsidy
+	docker build . -f Dockerfile --target app -t openedx/enterprise-subsidy
 
 github_docker_tag: github_docker_build
-	docker tag openedx/edx-enterprise-subsidy openedx/edx-enterprise-subsidy:${GITHUB_SHA}
+	docker tag openedx/enterprise-subsidy openedx/enterprise-subsidy:${GITHUB_SHA}
 
 github_docker_auth:
 	echo "$$DOCKERHUB_PASSWORD" | docker login -u "$$DOCKERHUB_USERNAME" --password-stdin
 
 github_docker_push: github_docker_tag github_docker_auth ## push to docker hub
-	docker push 'openedx/edx-enterprise-subsidy:latest'
-	docker push "openedx/edx-enterprise-subsidy:${GITHUB_SHA}"
+	docker push 'openedx/enterprise-subsidy:latest'
+	docker push "openedx/enterprise-subsidy:${GITHUB_SHA}"
 
 selfcheck: ## check that the Makefile is well-formed
 	@echo "The Makefile is well-formed."

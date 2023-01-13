@@ -2,8 +2,8 @@ from os import environ
 
 import yaml
 
-from edx_enterprise_subsidy.settings.base import *
-from edx_enterprise_subsidy.settings.utils import get_env_setting
+from enterprise_subsidy.settings.base import *
+from enterprise_subsidy.settings.utils import get_env_setting
 
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
@@ -16,7 +16,7 @@ LOGGING = get_logger_config()
 # the values read from disk should UPDATE the pre-configured dicts.
 DICT_UPDATE_KEYS = ('JWT_AUTH',)
 
-# This may be overridden by the YAML in edx_enterprise_subsidy_CFG,
+# This may be overridden by the YAML in enterprise_subsidy_CFG,
 # but it should be here as a default.
 MEDIA_STORAGE_BACKEND = {}
 FILE_STORAGE_BACKEND = {}

@@ -4,7 +4,7 @@ from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import ugettext_lazy as _
 
-from edx_enterprise_subsidy.apps.core.models import User
+from enterprise_subsidy.apps.core.models import User
 
 
 class CustomUserAdmin(UserAdmin):

@@ -1,4 +1,4 @@
-from edx_enterprise_subsidy.settings.base import *
+from enterprise_subsidy.settings.base import *
 
 DEBUG = True
 

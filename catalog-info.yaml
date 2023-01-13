@@ -4,7 +4,7 @@
 apiVersion: backstage.io/v1alpha1
 kind: ""
 metadata:
-  name: 'edx-enterprise-subsidy'
+  name: 'enterprise-subsidy'
   description: "Captures and balances enterprise-subsidized transactions."
   annotations:
     # (Optional) Annotation keys and values can be whatever you want.

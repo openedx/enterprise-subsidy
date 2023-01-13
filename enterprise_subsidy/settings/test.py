@@ -1,6 +1,6 @@
 import os
 
-from edx_enterprise_subsidy.settings.base import *
+from enterprise_subsidy.settings.base import *
 
 # IN-MEMORY TEST DATABASE
 DATABASES = {

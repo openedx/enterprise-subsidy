@@ -1,5 +1,5 @@
 """
-edx_enterprise_subsidy URL Configuration.
+enterprise_subsidy URL Configuration.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
@@ -23,15 +23,15 @@ from django.contrib import admin
 from django.urls import include, re_path
 from rest_framework_swagger.views import get_swagger_view
 
-from edx_enterprise_subsidy.apps.api import urls as api_urls
-from edx_enterprise_subsidy.apps.core import views as core_views
+from enterprise_subsidy.apps.api import urls as api_urls
+from enterprise_subsidy.apps.core import views as core_views
 
 admin.autodiscover()
 
 urlpatterns = oauth2_urlpatterns + [
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^api/', include(api_urls)),
-    re_path(r'^api-docs/', get_swagger_view(title='edx-enterprise-subsidy API')),
+    re_path(r'^api-docs/', get_swagger_view(title='enterprise-subsidy API')),
     re_path(r'^auto_auth/$', core_views.AutoAuth.as_view(), name='auto_auth'),
     re_path(r'', include('csrf.urls')),  # Include csrf urls from edx-drf-extensions
     re_path(r'^health/$', core_views.health, name='health'),

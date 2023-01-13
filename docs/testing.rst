@@ -3,7 +3,7 @@
 Testing
 #######
 
-edx_enterprise_subsidy has an assortment of test cases and code quality
+enterprise_subsidy has an assortment of test cases and code quality
 checks to catch potential problems during development.  To run them all in the
 version of Python you chose for your virtualenv:
 

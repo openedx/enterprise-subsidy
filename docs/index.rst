@@ -1,9 +1,9 @@
-.. edx_enterprise_subsidy documentation top level file, created by
+.. enterprise_subsidy documentation top level file, created by
    sphinx-quickstart on Wed Dec 14 13:35:05 2022.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-edx_enterprise_subsidy
+enterprise_subsidy
 ======================
 
 Captures and balances enterprise-subsidized transactions.

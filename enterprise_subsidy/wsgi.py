@@ -1,5 +1,5 @@
 """
-WSGI config for edx-enterprise-subsidy.
+WSGI config for enterprise-subsidy.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 

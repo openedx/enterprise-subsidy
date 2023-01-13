@@ -1,12 +1,12 @@
-from edx_enterprise_subsidy.settings.local import *
+from enterprise_subsidy.settings.local import *
 
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.environ.get('DB_NAME', 'edx_enterprise_subsidy'),
+        'NAME': os.environ.get('DB_NAME', 'enterprise_subsidy'),
         'USER': os.environ.get('DB_USER', 'root'),
         'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-        'HOST': os.environ.get('DB_HOST', 'edx_enterprise_subsidy.db'),
+        'HOST': os.environ.get('DB_HOST', 'enterprise_subsidy.db'),
         'PORT': os.environ.get('DB_PORT', 3306),
         'ATOMIC_REQUESTS': False,
         'CONN_MAX_AGE': 60,
@@ -17,8 +17,8 @@ DATABASES = {
 OAUTH2_PROVIDER_URL = 'http://edx.devstack.lms:18000/oauth2'
 
 # OAuth2 variables specific to social-auth/SSO login use case.
-SOCIAL_AUTH_EDX_OAUTH2_KEY = os.environ.get('SOCIAL_AUTH_EDX_OAUTH2_KEY', 'edx_enterprise_subsidy-sso-key')
-SOCIAL_AUTH_EDX_OAUTH2_SECRET = os.environ.get('SOCIAL_AUTH_EDX_OAUTH2_SECRET', 'edx_enterprise_subsidy-sso-secret')
+SOCIAL_AUTH_EDX_OAUTH2_KEY = os.environ.get('SOCIAL_AUTH_EDX_OAUTH2_KEY', 'enterprise_subsidy-sso-key')
+SOCIAL_AUTH_EDX_OAUTH2_SECRET = os.environ.get('SOCIAL_AUTH_EDX_OAUTH2_SECRET', 'enterprise_subsidy-sso-secret')
 SOCIAL_AUTH_EDX_OAUTH2_ISSUER = os.environ.get('SOCIAL_AUTH_EDX_OAUTH2_ISSUER', 'http://localhost:18000')
 SOCIAL_AUTH_EDX_OAUTH2_URL_ROOT = os.environ.get('SOCIAL_AUTH_EDX_OAUTH2_URL_ROOT', 'http://edx.devstack.lms:18000')
 SOCIAL_AUTH_EDX_OAUTH2_LOGOUT_URL = os.environ.get('SOCIAL_AUTH_EDX_OAUTH2_LOGOUT_URL', 'http://localhost:18000/logout')
@@ -27,8 +27,8 @@ SOCIAL_AUTH_EDX_OAUTH2_PUBLIC_URL_ROOT = os.environ.get(
 )
 
 # OAuth2 variables specific to backend service API calls.
-BACKEND_SERVICE_EDX_OAUTH2_KEY = os.environ.get('BACKEND_SERVICE_EDX_OAUTH2_KEY', 'edx_enterprise_subsidy-backend-service-key')
-BACKEND_SERVICE_EDX_OAUTH2_SECRET = os.environ.get('BACKEND_SERVICE_EDX_OAUTH2_SECRET', 'edx_enterprise_subsidy-backend-service-secret')
+BACKEND_SERVICE_EDX_OAUTH2_KEY = os.environ.get('BACKEND_SERVICE_EDX_OAUTH2_KEY', 'enterprise_subsidy-backend-service-key')
+BACKEND_SERVICE_EDX_OAUTH2_SECRET = os.environ.get('BACKEND_SERVICE_EDX_OAUTH2_SECRET', 'enterprise_subsidy-backend-service-secret')
 
 JWT_AUTH.update({
     'JWT_SECRET_KEY': 'lms-secret',

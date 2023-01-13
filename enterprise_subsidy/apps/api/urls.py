@@ -6,7 +6,7 @@ contain namespaces for the active versions of the API.
 """
 from django.urls import include, re_path
 
-from edx_enterprise_subsidy.apps.api.v1 import urls as v1_urls
+from enterprise_subsidy.apps.api.v1 import urls as v1_urls
 
 app_name = 'api'
 urlpatterns = [

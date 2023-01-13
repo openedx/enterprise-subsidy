@@ -16,7 +16,7 @@ def get_env_setting(setting):
 
 def get_logger_config(logging_env="no_env",
                       debug=False,
-                      service_variant='edx-enterprise-subsidy'):
+                      service_variant='enterprise-subsidy'):
     """
     Return the appropriate logging config dictionary. You should assign the
     result of this to the LOGGING var in your settings.

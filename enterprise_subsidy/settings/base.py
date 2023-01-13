@@ -3,7 +3,7 @@ from os.path import abspath, dirname, join
 
 from corsheaders.defaults import default_headers as corsheaders_default_headers
 
-from edx_enterprise_subsidy.settings.utils import get_logger_config
+from enterprise_subsidy.settings.utils import get_logger_config
 
 # PATH vars
 PROJECT_ROOT = join(abspath(dirname(__file__)), "..")
@@ -44,9 +44,9 @@ THIRD_PARTY_APPS = (
 )
 
 PROJECT_APPS = (
-    'edx_enterprise_subsidy.apps.core',
-    'edx_enterprise_subsidy.apps.api',
-    'edx_enterprise_subsidy.apps.subsidy',
+    'enterprise_subsidy.apps.core',
+    'enterprise_subsidy.apps.api',
+    'enterprise_subsidy.apps.subsidy',
 )
 
 INSTALLED_APPS += THIRD_PARTY_APPS
@@ -88,10 +88,10 @@ CORS_ALLOW_HEADERS = corsheaders_default_headers + (
 )
 CORS_ORIGIN_WHITELIST = []
 
-ROOT_URLCONF = 'edx_enterprise_subsidy.urls'
+ROOT_URLCONF = 'enterprise_subsidy.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
-WSGI_APPLICATION = 'edx_enterprise_subsidy.wsgi.application'
+WSGI_APPLICATION = 'enterprise_subsidy.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
@@ -168,7 +168,7 @@ TEMPLATES = [
                 'django.template.context_processors.static',
                 'django.template.context_processors.tz',
                 'django.contrib.messages.context_processors.messages',
-                'edx_enterprise_subsidy.apps.core.context_processors.core',
+                'enterprise_subsidy.apps.core.context_processors.core',
             ),
             'debug': True,  # Django will only display debug pages if the global DEBUG setting is set to True.
         }
@@ -181,9 +181,9 @@ TEMPLATES = [
 # The purpose of customizing the cookie names is to avoid conflicts when
 # multiple Django services are running behind the same hostname.
 # Detailed information at: https://docs.djangoproject.com/en/dev/ref/settings/
-SESSION_COOKIE_NAME = 'edx_enterprise_subsidy_sessionid'
-CSRF_COOKIE_NAME = 'edx_enterprise_subsidy_csrftoken'
-LANGUAGE_COOKIE_NAME = 'edx_enterprise_subsidy_language'
+SESSION_COOKIE_NAME = 'enterprise_subsidy_sessionid'
+CSRF_COOKIE_NAME = 'enterprise_subsidy_csrftoken'
+LANGUAGE_COOKIE_NAME = 'enterprise_subsidy_language'
 # END COOKIE CONFIGURATION
 
 CSRF_COOKIE_SECURE = False
