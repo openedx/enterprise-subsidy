@@ -30,13 +30,13 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'openedx_ledger',
-    'release_util',
 )
 
 THIRD_PARTY_APPS = (
     'corsheaders',
     'csrf.apps.CsrfAppConfig',  # Enables frontend apps to retrieve CSRF tokens
+    'openedx_ledger',
+    'release_util',
     'rest_framework',
     'rest_framework_swagger',
     'social_django',
