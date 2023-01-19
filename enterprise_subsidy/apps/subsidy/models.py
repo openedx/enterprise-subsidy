@@ -1,5 +1,7 @@
+"""
+Model definitions for the subsidy app.
+"""
 from datetime import datetime
-import math
 from functools import lru_cache
 from unittest import mock
 from uuid import uuid4
@@ -27,8 +29,19 @@ def now():
     return UTC.localize(datetime.utcnow())
 
 
-class TimeStampedModelWithUuid(TimeStampedModel):
+class Subsidy(TimeStampedModel):
+    """
+    Some defintions:
+    ``ledger``: A running “list” of transactions that record the movement of value in and out of a subsidy.
+    ``stored value``: Value, in the form of a subscription license (denominated in “seats”)
+        or learner credit (denominated in either USD or "seats"), stored in a ledger,
+        which may be applied toward the cost of some content.
+    ``redemption``: The act of redeeming stored value for content.
+    """
     class Meta:
+        """
+        Metaclass for Subsidy.
+        """
         abstract = True
 
     uuid = models.UUIDField(
@@ -37,22 +50,13 @@ class TimeStampedModelWithUuid(TimeStampedModel):
         editable=False,
         unique=True,
     )
-
-
-class Subsidy(TimeStampedModelWithUuid):
-    """
-    Some defintions:
-    ``ledger``: A running “list” of transactions that record the movement of value in and out of a subsidy.
-    ``stored value``: Value, in the form of a subscription license (denominated in “seats”)
-        or learner credit (denominated in either USD or "seats"), stored in a ledger,
-        which may be applied toward the cost of some content.
-    ``redemption``: The act of redeeming stored value for content.
-
-    
-    """
-    class Meta:
-        abstract = True
-
+    # `title` is required for downstream revenue recognition.  The intention is to serve as a replacement to "offer
+    # name" in the old system.
+    title = models.CharField(
+        max_length=255,
+        blank=False,
+        null=False,
+    )
     starting_balance = models.BigIntegerField(
         null=False, blank=False,
     )
@@ -70,9 +74,12 @@ class Subsidy(TimeStampedModelWithUuid):
         blank=True,
         null=True,
     )
-    customer_uuid = models.CharField(  # would really be a UUID
-        max_length=255,
+    customer_uuid = models.UUIDField(
+        blank=False,
+        null=False,
+        db_index=True,
     )
+
     active_datetime = models.DateTimeField(null=True, default=None)
     expiration_datetime = models.DateTimeField(null=True, default=None)
 
@@ -95,19 +102,22 @@ class Subsidy(TimeStampedModelWithUuid):
             metadata=metadata,
         )
 
-    def commit_transaction(self, transaction, reference_id):
-        transaction.reference_id = reference_id
-        transaction.save()
+    def commit_transaction(self, ledger_transaction, reference_id):
+        ledger_transaction.reference_id = reference_id
+        ledger_transaction.save()
 
-    def rollback_transaction(self, transaction):
+    def rollback_transaction(self, ledger_transaction):
         # delete it, or set some state?
         pass
 
     def redeem(self, learner_id, content_key, **kwargs):
+        """
+        Redeem this subsidy and enroll the learner.
+        """
         if redemption := self.has_redeemed(learner_id, content_key, **kwargs):
             return redemption
 
-        if not self.is_redeemable(learner_id, content_key, now()):
+        if not self.is_redeemable(content_key, now()):
             return None
 
         return self._create_redemption(learner_id, content_key, **kwargs)
@@ -124,7 +134,7 @@ class Subsidy(TimeStampedModelWithUuid):
     def _create_request(self, learner_id, content_key, **kwargs):
         raise NotImplementedError
 
-    def is_redeemable(self, learner_id, content_key, redemption_datetime=None):
+    def is_redeemable(self, content_key, redemption_datetime=None):
         """
         Is there enough stored value in this subsidy's ledger to redeem for the cost
         (denominated in the unit of this subsidy) of the given content?
@@ -156,6 +166,8 @@ class Subsidy(TimeStampedModelWithUuid):
 class LearnerCreditSubsidy(Subsidy):
     """
     A subsidy model for Learner Credit/bucket of money.
+
+    .. no_pii:
     """
     @property
     def enrollment_client(self):
@@ -165,7 +177,7 @@ class LearnerCreditSubsidy(Subsidy):
     def price_for_content(self, content_key):
         return self.catalog_client.get_content_metadata(content_key).get('price') * CENTS_PER_DOLLAR
 
-    def is_redeemable(self, learner_id, content_key, redemption_datetime=None):
+    def is_redeemable(self, content_key, redemption_datetime=None):
         return self.current_balance() >= self.price_for_content(content_key)
 
     def has_redeemed(self, learner_id, content_key, **kwargs):
@@ -189,22 +201,22 @@ class LearnerCreditSubsidy(Subsidy):
             learner_id=learner_id,
             content_key=content_key,
         )
-        transaction = self.create_transaction(
+        ledger_transaction = self.create_transaction(
             idempotency_key,
             quantity * -1,
             transaction_metadata,
         )
 
         try:
-            reference_id = self.enrollment_client.enroll(learner_id, content_key, transaction)
-            self.commit_transaction(transaction, reference_id)
+            reference_id = self.enrollment_client.enroll(learner_id, content_key, ledger_transaction)
+            self.commit_transaction(ledger_transaction, reference_id)
         except Exception as exc:
-            self.rollback_transaction(transaction)
+            self.rollback_transaction(ledger_transaction)
             raise exc
 
-        return transaction
+        return ledger_transaction
 
-    def _create_request(self, learner_id, content_key):
+    def _create_request(self, learner_id, content_key, **kwargs):
         """
         TODO: need a hook from enterprise-access that tells the subsidy
         when a request has been approved, so that we can _create_redemption()
@@ -222,9 +234,20 @@ class LearnerCreditSubsidy(Subsidy):
 
 
 class SubscriptionSubsidy(Subsidy):
+    """
+    A subsidy backed by a subscription.
+
+    Currently subscriptions licenses are tracked in a separate IDA (license-manager) rather than internal models,
+    and as such does not make use of a ledger.
+
+    .. no_pii:
+    """
     subscription_plan_uuid = models.UUIDField(null=False, blank=False, db_index=True)
 
     class Meta:
+        """
+        Metaclass for SubscriptionSubsidy.
+        """
         # The choice of what a subsidy is unique on dictates behavior
         # that we can implement around the lifecycle of the subsidy.
         # For instance, making this type of subsidy unique on the (customer, plan id, unit)
@@ -233,6 +256,9 @@ class SubscriptionSubsidy(Subsidy):
 
     @property
     def subscription_client(self):
+        """
+        Return an API client for the subscription service.
+        """
         MOCK_SUBSCRIPTION_CLIENT.create_license.return_value = uuid4()
         MOCK_SUBSCRIPTION_CLIENT.get_license.return_value = {
             'uuid': uuid4(),
@@ -240,8 +266,9 @@ class SubscriptionSubsidy(Subsidy):
         }
         return MOCK_SUBSCRIPTION_CLIENT
 
-    def _is_license_available(self, learner_id):
+    def _is_license_available(self):
         """
+        Check that there are available licenses in the current subscription plan.
         """
         plan_metadata = self.subscription_client.get_plan_metadata(
             self.subscription_plan_uuid,
@@ -270,10 +297,10 @@ class SubscriptionSubsidy(Subsidy):
     def has_redeemed(self, learner_id, content_key, **kwargs):
         return self._get_license_for_learner(learner_id)
 
-    def is_redeemable(self, learner_id, content_key, redemption_datetime=None):
-        return self._is_license_available(learner_id)
+    def is_redeemable(self, content_key, redemption_datetime=None):
+        return self._is_license_available()
 
-    def _create_redemption(self, learner_id, content_key, **kwargs):        # pylint: disable=unused-argument
+    def _create_redemption(self, learner_id, content_key, **kwargs):
         """
         For subscription subsidies, a redemption is either the fact that the
         learner is already assigned a license for the plan, or the result
@@ -281,7 +308,7 @@ class SubscriptionSubsidy(Subsidy):
         """
         return self._assign_license(learner_id)
 
-    def _create_request(self, learner_id, content_key):
+    def _create_request(self, learner_id, content_key, **kwargs):
         return self.subsidy_requests_client.request_license(learner_id)
 
     def has_requested(self, learner_id, content_key):
@@ -296,64 +323,99 @@ class AccessMethods:
     REQUEST = 'request'
 
 
-class SubsidyAccessPolicy(TimeStampedModelWithUuid):
+class SubsidyAccessPolicy(TimeStampedModel):
     """
-    (group, subsidy, catalog, access method, and optional total value)
+    Tie together information used to control access to a subsidy.
+
+    This abstract model joins group, catalog, and access method.  Subclasses must define a `subsidy` field, and may
+    include additional relationships as needed.
     """
     class Meta:
+        """
+        Metaclass for SubsidyAccessPolicy.
+        """
         abstract = True
 
+    uuid = models.UUIDField(
+        primary_key=True,
+        default=uuid4,
+        editable=False,
+        unique=True,
+    )
     group_uuid = models.UUIDField(null=True, blank=True, db_index=True)
     catalog_uuid = models.UUIDField(null=True, blank=True, db_index=True)
     access_method = AccessMethods.DIRECT
 
     @property
     def group_client(self):
+        """
+        Return an API client for the groups service.
+        """
         return MOCK_GROUP_CLIENT
 
     @classmethod
     def get_policies_for_groups(cls, group_uuids):
+        """
+        Fetch all the policies that are related to the given groups.
+        """
         return cls.objects.filter(group_uuid__in=group_uuids)
 
     @property
     def catalog_client(self):
+        """
+        Return an API client for the enterprise-catalog service.
+        """
         return MOCK_CATALOG_CLIENT
 
     def is_entitled(self, learner_id, content_key):
+        """
+        Check that a given learner is entitled to enroll in the given content.
+        """
         if not self.catalog_client.catalog_contains_content(self.catalog_uuid, content_key):
             return False
-
         if not self.group_client.group_contains_learner(self.group_uuid, learner_id):
             return False
+        if not self.subsidy.is_redeemable(content_key):  # pylint: disable=no-member
+            return False
+        return True
 
-        elif self.subsidy.is_redeemable(learner_id, content_key):
-            return True
+    def redeem_entitlement(self, learner_id, content_key):
+        """
+        Redeem an entitlement for the given learner and content.
 
-        return False
-
-    def use_entitlement(self, learner_id, content_key):
+        Returns:
+            A ledger transaction, or None if the entitlement was not redeemed.
+        """
         if self.is_entitled(learner_id, content_key):
             if self.access_method == AccessMethods.DIRECT:
                 return self.subsidy.redeem(learner_id, content_key)
             if self.access_method == AccessMethods.REQUEST:
-                self.subsidy.request_redemption(learner_id, content_key)
-        return False
+                return self.subsidy.request_redemption(learner_id, content_key)
+        return None
 
-    def has_used_entitlement(self, learner_id, content_key):
+    def has_redeemed_entitlement(self, learner_id, content_key):
         if self.access_method == AccessMethods.DIRECT:
-            return self.subsidy.has_redeemed(learner_id, content_key)
-        if self.access_method == AccessMethods.REQUEST:
+            return self.subsidy.has_redeemed(learner_id, content_key)  # pylint: disable=no-member
+        elif self.access_method == AccessMethods.REQUEST:
             return self.subsidy.has_requested(learner_id, content_key)
+        else:
+            raise ValueError(f"unknown access method {self.access_method}")
 
 
 class SubscriptionAccessPolicy(SubsidyAccessPolicy):
     """
+    A subsidy access policy for subscriptions (all you can eat).
+
+    .. no_pii:
     """
     subsidy = models.ForeignKey(SubscriptionSubsidy, null=True, on_delete=models.SET_NULL)
 
 
 class LearnerCreditAccessPolicy(SubsidyAccessPolicy):
     """
+    A subsidy access policy for learner credit.
+
+    .. no_pii:
     """
     subsidy = models.ForeignKey(LearnerCreditSubsidy, null=True, on_delete=models.SET_NULL)
 
@@ -362,6 +424,8 @@ class PerLearnerEnrollmentCapLearnerCreditAccessPolicy(LearnerCreditAccessPolicy
     """
     Example policy that limits the number of enrollments (really) transactions
     that a learner is entitled to in a subsidy.
+
+    .. no_pii:
     """
     per_learner_cap = models.IntegerField(
         blank=True,
@@ -378,5 +442,8 @@ class PerLearnerEnrollmentCapLearnerCreditAccessPolicy(LearnerCreditAccessPolicy
 
 class LicenseRequestAccessPolicy(SubscriptionAccessPolicy):
     """
+    A subsidy access policy for license request.
+
+    .. no_pii:
     """
     access_method = AccessMethods.REQUEST

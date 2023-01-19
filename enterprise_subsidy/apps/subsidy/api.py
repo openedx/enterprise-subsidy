@@ -1,12 +1,16 @@
 """
 The python API.
 """
-from .subsidy import models
 
 from openedx_ledger.utils import (
     create_idempotency_key_for_subsidy,
     create_idempotency_key_for_transaction,
 )
+from openedx_ledger.api import (
+    create_ledger,
+)
+
+from enterprise_subsidy.apps.subsidy import models
 
 
 def create_learner_credit_subsidy(customer_uuid, unit, **kwargs):
@@ -24,16 +28,14 @@ def create_learner_credit_subsidy(customer_uuid, unit, **kwargs):
     if kwargs.get('ledger'):
         return subsidy
 
-    from enterprise_access.apps.ledger.api import (
-        create_ledger,
-    )
     ledger = create_ledger(
         unit=unit,
         idempotency_key=create_idempotency_key_for_subsidy(subsidy),
     )
 
     subsidy.ledger = ledger
-    if kwargs.get('starting_balance'):
+    # The following condition is crafted to respect 0 as an explicit starting balance.
+    if 'starting_balance' in kwargs and kwargs['starting_balance'] is not None:
         idpk = create_idempotency_key_for_transaction(subsidy, kwargs['starting_balance'])
         _ = subsidy.create_transaction(idpk, kwargs['starting_balance'], {})
 
@@ -48,7 +50,12 @@ def create_subscription_subsidy(
         do_sync=False,
         **kwargs,
 ):
-    subsidy, was_created = models.SubscriptionSubsidy.objects.get_or_create(
+    """
+    Create and provision a SubscriptionSubsidy.
+
+    An underlying ledger is created if not provided.
+    """
+    subsidy, _ = models.SubscriptionSubsidy.objects.get_or_create(
         customer_uuid=customer_uuid,
         subscription_plan_uuid=subscription_plan_uuid,
         unit=unit,
@@ -58,16 +65,14 @@ def create_subscription_subsidy(
     if kwargs.get('ledger'):
         return subsidy
 
-    from enterprise_access.apps.ledger.api import (
-        create_ledger,
-    )
     ledger = create_ledger(
         unit=unit,
         idempotency_key=create_idempotency_key_for_subsidy(subsidy),
     )
 
     subsidy.ledger = ledger
-    if kwargs.get('starting_balance'):
+    # The following condition is crafted to respect 0 as an explicit starting balance.
+    if 'starting_balance' in kwargs and kwargs['starting_balance'] is not None:
         idpk = create_idempotency_key_for_transaction(subsidy, kwargs['starting_balance'])
         _ = subsidy.create_transaction(idpk, kwargs['starting_balance'], {})
 
