@@ -16,7 +16,7 @@ jobs:
       matrix:
         os: [ubuntu-20.04]
         python-version: ['3.8']
-        toxenv: ["py38", "quality", "docs", "pii_check"]
+        toxenv: ["py38", "quality", "pii_check"]
 
     steps:
       - uses: actions/checkout@v3
