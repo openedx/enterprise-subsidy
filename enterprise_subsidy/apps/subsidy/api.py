@@ -1,118 +1,84 @@
 """
 The python API.
 """
+from .subsidy import models
 
-from openedx_ledger.api import create_ledger
-from openedx_ledger.utils import create_idempotency_key_for_subsidy, create_idempotency_key_for_transaction
+from openedx_ledger.utils import (
+    create_idempotency_key_for_subsidy,
+    create_idempotency_key_for_transaction,
+)
 
-from enterprise_subsidy.apps.subsidy.models import LearnerCreditSubsidy, SubscriptionSubsidy
 
-
-def get_or_create_learner_credit_subsidy(
-    opportunity_id, default_title, default_customer_uuid, default_unit, default_starting_balance,
-):
+def create_learner_credit_subsidy(customer_uuid, unit, **kwargs):
     """
-    Get or create a new learner credit subsidy and ledger with the given defaults.
-
-    Notes:
-        * If an existing subsidy is found with the given `opportunity_id`, all `default_*` arguments are ignored.
-
-    Args:
-        opportunity_id (str): ID of the originating salesforce opportunity.
-        default_title (str): Human-readable title of the new subsidy.
-        default_customer_uuid (uuid.UUID): UUID of the enterprise customer.
-        default_unit (str): value unit identifier (see openedx_ledger.models.UnitChoices).
-        default_starting_balance (int): The default starting balance if creating a new subsidy and ledger.
-
-    Returns:
-        tuple(enterprise_subsidy.apps.subsidy.models.LearnerCreditSubsidy, bool):
-            The subsidy record, and an bool that is true if a new subsidy+ledger was created.
-
-    Raises:
-        MultipleObjectsReturned if two or more subsidy records with the given opportunity_id already exists.
+    Create a subsidy record.
+    Create a ledger with starting balance.
+    Return the subsidy record.
     """
-    subsidy_defaults = {
-        'title': default_title,
-        'starting_balance': default_starting_balance,
-        'customer_uuid': default_customer_uuid,
-        'unit': default_unit,
-    }
-    subsidy, created = LearnerCreditSubsidy.objects.get_or_create(
-        opportunity_id=opportunity_id,
-        defaults=subsidy_defaults,
+    subsidy, _ = models.LearnerCreditSubsidy.objects.get_or_create(
+        customer_uuid=customer_uuid,
+        unit=unit,
+        defaults=kwargs,
     )
 
-    if not subsidy.ledger:
-        ledger = create_ledger(unit=default_unit, idempotency_key=create_idempotency_key_for_subsidy(subsidy))
-        subsidy.ledger = ledger
-        # Seed the new ledger with its first transaction that reflects the requested starting balance:
-        idpk = create_idempotency_key_for_transaction(subsidy, default_starting_balance)
-        _ = subsidy.create_transaction(idpk, default_starting_balance, {})
+    if kwargs.get('ledger'):
+        return subsidy
 
-    subsidy.save()
-    return (subsidy, created)
-
-
-def get_or_create_subscription_subsidy(
-    opportunity_id,
-    default_title,
-    default_customer_uuid,
-    default_unit,
-    default_starting_balance,
-    default_subscription_plan_uuid,
-    do_sync=False,
-):
-    """
-    Get or create a new subscription subsidy and ledger with the given defaults.
-
-    Notes:
-        * If an existing subsidy is found with the given `opportunity_id`, all `default_*` arguments are ignored.
-
-    Args:
-        opportunity_id (str): ID of the originating salesforce opportunity.
-        default_title (str): Human-readable title of the new subsidy.
-        default_customer_uuid (uuid.UUID): UUID of the enterprise customer.
-        default_unit (str): value unit identifier (see openedx_ledger.models.UnitChoices).
-        default_starting_balance (int): The default starting balance if creating a new subsidy and ledger.
-        default_subscription_plan_uuid (int): The default starting balance if creating a new subsidy and ledger.
-        do_sync (bool, Optional): Whether to perform sync_subscription(). TODO: describe what it does.
-
-    Returns:
-        tuple(enterprise_subsidy.apps.subsidy.models.SubscriptionSubsidy, bool):
-            The subsidy record, and an bool that is true if a new subsidy+ledger was created.
-
-    Raises:
-        MultipleObjectsReturned if two or more subsidy records with the given opportunity_id already exists.
-    """
-    subsidy_defaults = {
-        'title': default_title,
-        'customer_uuid': default_customer_uuid,
-        'unit': default_unit,
-        'starting_balance': default_starting_balance,
-        'subscription_plan_uuid': default_subscription_plan_uuid,
-    }
-    subsidy, created = SubscriptionSubsidy.objects.get_or_create(
-        opportunity_id=opportunity_id,
-        defaults=subsidy_defaults,
+    from enterprise_access.apps.ledger.api import (
+        create_ledger,
+    )
+    ledger = create_ledger(
+        unit=unit,
+        idempotency_key=create_idempotency_key_for_subsidy(subsidy),
     )
 
-    if not subsidy.ledger:
-        ledger = create_ledger(unit=default_unit, idempotency_key=create_idempotency_key_for_subsidy(subsidy))
-        subsidy.ledger = ledger
-        # Seed the new ledger with its first transaction that reflects the requested starting balance:
-        idpk = create_idempotency_key_for_transaction(subsidy, default_starting_balance)
-        _ = subsidy.create_transaction(idpk, default_starting_balance, {})
-        if do_sync and subsidy.subscription_plan_uuid:
-            sync_subscription(subsidy)
+    subsidy.ledger = ledger
+    if kwargs.get('starting_balance'):
+        idpk = create_idempotency_key_for_transaction(subsidy, kwargs['starting_balance'])
+        _ = subsidy.create_transaction(idpk, kwargs['starting_balance'], {})
 
     subsidy.save()
-    return (subsidy, created)
+    return subsidy
+
+
+def create_subscription_subsidy(
+        customer_uuid,
+        subscription_plan_uuid,
+        unit,
+        do_sync=False,
+        **kwargs,
+):
+    subsidy, was_created = models.SubscriptionSubsidy.objects.get_or_create(
+        customer_uuid=customer_uuid,
+        subscription_plan_uuid=subscription_plan_uuid,
+        unit=unit,
+        defaults=kwargs,
+    )
+
+    if kwargs.get('ledger'):
+        return subsidy
+
+    from enterprise_access.apps.ledger.api import (
+        create_ledger,
+    )
+    ledger = create_ledger(
+        unit=unit,
+        idempotency_key=create_idempotency_key_for_subsidy(subsidy),
+    )
+
+    subsidy.ledger = ledger
+    if kwargs.get('starting_balance'):
+        idpk = create_idempotency_key_for_transaction(subsidy, kwargs['starting_balance'])
+        _ = subsidy.create_transaction(idpk, kwargs['starting_balance'], {})
+
+        if do_sync and subscription_plan_uuid:
+            sync_subscription(subsidy, subscription_plan_uuid)
+
+    subsidy.save()
+    return subsidy
 
 
 def sync_subscription(subsidy, **metadata):
-    """
-    TODO: finish the design of this function.
-    """
     current_balance = subsidy.current_balance()
 
     if current_balance > 0:
@@ -124,4 +90,4 @@ def sync_subscription(subsidy, **metadata):
     # ...but there's a lot more to sync'ing
 
     if subsidy.current_balance() != 0:
-        raise Exception('ledger still not zerod')  # pylint: disable=broad-exception-raised
+        raise Exception('ledger still not zerod')

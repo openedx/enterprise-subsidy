@@ -30,6 +30,8 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'openedx_ledger',
+    'release_util',
 )
 
 THIRD_PARTY_APPS = (
@@ -37,8 +39,6 @@ THIRD_PARTY_APPS = (
     'csrf.apps.CsrfAppConfig',  # Enables frontend apps to retrieve CSRF tokens
     # "App Permissions" compatiblity: this provides the manage_user and manage_group management commands.
     'edx_django_utils.user',
-    'openedx_ledger',
-    'release_util',
     'rest_framework',
     'rest_framework_swagger',
     'social_django',

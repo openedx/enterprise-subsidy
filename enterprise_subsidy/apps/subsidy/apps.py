@@ -1,6 +1,3 @@
-"""
-Initialization app for enterprise_subsidy.apps.subsidy.
-"""
 from django.apps import AppConfig
 
 
