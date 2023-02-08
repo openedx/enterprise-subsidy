@@ -53,12 +53,11 @@ class Subsidy(TimeStampedModel):
     )
     # `title` can be useful for downstream revenue recognition, and for a more convenient identifier.  It is intended to
     # be provided by ECS during the process of creating the Subsidy object.
-    # TODO: uncomment in a future commit.
-    #title = models.CharField(
-    #    max_length=255,
-    #    blank=True,
-    #    null=True,
-    #)
+    title = models.CharField(
+        max_length=255,
+        blank=True,
+        null=True,
+    )
     starting_balance = models.BigIntegerField(
         null=False, blank=False,
     )
@@ -76,9 +75,10 @@ class Subsidy(TimeStampedModel):
         blank=True,
         null=True,
     )
-    # TODO: replace with a non-nullable, indexed UUID field.
-    customer_uuid = models.CharField(
-        max_length=255,
+    customer_uuid = models.UUIDField(
+        blank=False,
+        null=False,
+        db_index=True,
     )
 
     active_datetime = models.DateTimeField(null=True, default=None)
