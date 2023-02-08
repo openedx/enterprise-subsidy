@@ -410,27 +410,3 @@ class LearnerCreditAccessPolicy(SubsidyAccessPolicy):
     """
     """
     pass
-
-
-class PerLearnerEnrollmentCapLearnerCreditAccessPolicy(LearnerCreditAccessPolicy):
-    """
-    Example policy that limits the number of enrollments (really) transactions
-    that a learner is entitled to in a subsidy.
-    """
-    per_learner_cap = models.IntegerField(
-        blank=True,
-        default=0,
-    )
-
-    def is_entitled(self, learner_id, content_key):
-        with transaction.atomic():
-            if self.subsidy.transactions_for_learner(learner_id).count() < self.per_learner_cap:
-                return super().is_entitled(learner_id, content_key)
-            else:
-                return False
-
-
-class LicenseRequestAccessPolicy(SubscriptionAccessPolicy):
-    """
-    """
-    access_method = AccessMethods.REQUEST
