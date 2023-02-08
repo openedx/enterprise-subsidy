@@ -10,3 +10,9 @@ omit =
     *admin.py
     *static*
     *templates*
+
+[html]
+directory = build/coverage/html
+
+[xml]
+output = build/coverage/coverage.xml
