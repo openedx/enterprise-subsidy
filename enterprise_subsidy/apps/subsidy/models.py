@@ -403,13 +403,13 @@ class SubsidyAccessPolicy(TimeStampedModelWithUuid):
 class SubscriptionAccessPolicy(SubsidyAccessPolicy):
     """
     """
-    subsidy = models.ForeignKey(SubscriptionSubsidy, null=True, on_delete=models.SET_NULL)
+    pass
 
 
 class LearnerCreditAccessPolicy(SubsidyAccessPolicy):
     """
     """
-    subsidy = models.ForeignKey(LearnerCreditSubsidy, null=True, on_delete=models.SET_NULL)
+    pass
 
 
 class PerLearnerEnrollmentCapLearnerCreditAccessPolicy(LearnerCreditAccessPolicy):
