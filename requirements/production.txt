@@ -36,13 +36,13 @@ click==8.1.3
 coreapi==2.3.3
     # via
     #   -r requirements/base.txt
-    #   django-rest-swagger
-    #   openapi-codec
+    #   drf-yasg
 coreschema==0.0.4
     # via
     #   -r requirements/base.txt
     #   coreapi
-cryptography==39.0.0
+    #   drf-yasg
+cryptography==39.0.1
     # via
     #   -r requirements/base.txt
     #   pyjwt
@@ -62,6 +62,7 @@ django==3.2.17
     #   django-model-utils
     #   djangorestframework
     #   drf-jwt
+    #   drf-yasg
     #   edx-auth-backends
     #   edx-django-release-util
     #   edx-django-utils
@@ -89,8 +90,6 @@ django-model-utils==4.3.1
     # via
     #   -r requirements/base.txt
     #   edx-rbac
-django-rest-swagger==2.2.0
-    # via -r requirements/base.txt
 django-simple-history==3.0.0
     # via
     #   -r requirements/base.txt
@@ -107,13 +106,15 @@ djangoql==0.17.1
 djangorestframework==3.14.0
     # via
     #   -r requirements/base.txt
-    #   django-rest-swagger
     #   drf-jwt
+    #   drf-yasg
     #   edx-drf-extensions
 drf-jwt==1.19.2
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
+drf-yasg==1.21.5
+    # via -r requirements/base.txt
 edx-auth-backends==4.1.0
     # via -r requirements/base.txt
 edx-django-release-util==1.2.0
@@ -159,6 +160,10 @@ idna==3.4
     # via
     #   -r requirements/base.txt
     #   requests
+inflection==0.5.1
+    # via
+    #   -r requirements/base.txt
+    #   drf-yasg
 itypes==1.2.0
     # via
     #   -r requirements/base.txt
@@ -189,16 +194,16 @@ oauthlib==3.2.2
     #   -r requirements/base.txt
     #   requests-oauthlib
     #   social-auth-core
-openapi-codec==1.3.2
-    # via
-    #   -r requirements/base.txt
-    #   django-rest-swagger
-openedx-events==4.2.0
+openedx-events==5.0.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
 openedx-ledger==0.1.1
     # via -r requirements/base.txt
+packaging==23.0
+    # via
+    #   -r requirements/base.txt
+    #   drf-yasg
 pbr==5.11.1
     # via
     #   -r requirements/base.txt
@@ -254,13 +259,14 @@ pytz==2022.7.1
     #   -r requirements/base.txt
     #   django
     #   djangorestframework
+    #   drf-yasg
     #   openedx-ledger
 pyyaml==6.0
     # via
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   edx-django-release-util
-redis==4.4.2
+redis==4.5.1
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -278,6 +284,14 @@ requests-oauthlib==1.3.1
     # via
     #   -r requirements/base.txt
     #   social-auth-core
+ruamel-yaml==0.17.21
+    # via
+    #   -r requirements/base.txt
+    #   drf-yasg
+ruamel-yaml-clib==0.2.7
+    # via
+    #   -r requirements/base.txt
+    #   ruamel-yaml
 rules==3.3
     # via
     #   -r requirements/base.txt
@@ -286,10 +300,6 @@ semantic-version==2.10.0
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
-simplejson==3.18.1
-    # via
-    #   -r requirements/base.txt
-    #   django-rest-swagger
 six==1.16.0
     # via
     #   -r requirements/base.txt
@@ -326,6 +336,7 @@ uritemplate==4.1.1
     # via
     #   -r requirements/base.txt
     #   coreapi
+    #   drf-yasg
 urllib3==1.26.14
     # via
     #   -r requirements/base.txt

@@ -35,12 +35,12 @@ INSTALLED_APPS = (
 THIRD_PARTY_APPS = (
     'corsheaders',
     'csrf.apps.CsrfAppConfig',  # Enables frontend apps to retrieve CSRF tokens
+    'drf_yasg',
     # "App Permissions" compatiblity: this provides the manage_user and manage_group management commands.
     'edx_django_utils.user',
     'openedx_ledger',
     'release_util',
     'rest_framework',
-    'rest_framework_swagger',
     'social_django',
     'waffle',
 )
@@ -111,6 +111,17 @@ DATABASES = {
 
 # New DB primary keys default to an IntegerField.
 DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+
+# Django Rest Framework
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'PAGE_SIZE': 10,
+    'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+}
 
 # Internationalization
 # https://docs.djangoproject.com/en/dev/topics/i18n/

@@ -65,17 +65,17 @@ code-annotations==1.3.0
 coreapi==2.3.3
     # via
     #   -r requirements/validation.txt
-    #   django-rest-swagger
-    #   openapi-codec
+    #   drf-yasg
 coreschema==0.0.4
     # via
     #   -r requirements/validation.txt
     #   coreapi
+    #   drf-yasg
 coverage[toml]==7.1.0
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
-cryptography==39.0.0
+cryptography==39.0.1
     # via
     #   -r requirements/validation.txt
     #   pyjwt
@@ -107,6 +107,7 @@ django==3.2.17
     #   django-model-utils
     #   djangorestframework
     #   drf-jwt
+    #   drf-yasg
     #   edx-auth-backends
     #   edx-django-release-util
     #   edx-django-utils
@@ -139,8 +140,6 @@ django-model-utils==4.3.1
     # via
     #   -r requirements/validation.txt
     #   edx-rbac
-django-rest-swagger==2.2.0
-    # via -r requirements/validation.txt
 django-simple-history==3.0.0
     # via
     #   -r requirements/validation.txt
@@ -157,8 +156,8 @@ djangoql==0.17.1
 djangorestframework==3.14.0
     # via
     #   -r requirements/validation.txt
-    #   django-rest-swagger
     #   drf-jwt
+    #   drf-yasg
     #   edx-drf-extensions
 docutils==0.19
     # via
@@ -168,6 +167,8 @@ drf-jwt==1.19.2
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
+drf-yasg==1.21.5
+    # via -r requirements/validation.txt
 edx-auth-backends==4.1.0
     # via -r requirements/validation.txt
 edx-django-release-util==1.2.0
@@ -229,6 +230,10 @@ importlib-resources==5.10.2
     # via
     #   -r requirements/validation.txt
     #   keyring
+inflection==0.5.1
+    # via
+    #   -r requirements/validation.txt
+    #   drf-yasg
 iniconfig==2.0.0
     # via
     #   -r requirements/validation.txt
@@ -303,11 +308,7 @@ oauthlib==3.2.2
     #   -r requirements/validation.txt
     #   requests-oauthlib
     #   social-auth-core
-openapi-codec==1.3.2
-    # via
-    #   -r requirements/validation.txt
-    #   django-rest-swagger
-openedx-events==4.2.0
+openedx-events==5.0.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -318,6 +319,7 @@ packaging==23.0
     #   -r requirements/pip-tools.txt
     #   -r requirements/validation.txt
     #   build
+    #   drf-yasg
     #   pytest
     #   tox
 path==16.6.0
@@ -332,7 +334,7 @@ pkginfo==1.9.6
     # via
     #   -r requirements/validation.txt
     #   twine
-platformdirs==2.6.2
+platformdirs==3.0.0
     # via
     #   -r requirements/validation.txt
     #   pylint
@@ -387,7 +389,7 @@ pyjwt[crypto]==2.6.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==2.16.0
+pylint==2.16.1
     # via
     #   -r requirements/validation.txt
     #   edx-lint
@@ -445,6 +447,7 @@ pytz==2022.7.1
     #   -r requirements/validation.txt
     #   django
     #   djangorestframework
+    #   drf-yasg
     #   openedx-ledger
 pyyaml==6.0
     # via
@@ -456,7 +459,7 @@ readme-renderer==37.3
     # via
     #   -r requirements/validation.txt
     #   twine
-redis==4.4.2
+redis==4.5.1
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -488,6 +491,14 @@ rich==13.3.1
     # via
     #   -r requirements/validation.txt
     #   twine
+ruamel-yaml==0.17.21
+    # via
+    #   -r requirements/validation.txt
+    #   drf-yasg
+ruamel-yaml-clib==0.2.7
+    # via
+    #   -r requirements/validation.txt
+    #   ruamel-yaml
 rules==3.3
     # via
     #   -r requirements/validation.txt
@@ -500,10 +511,6 @@ semantic-version==2.10.0
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
-simplejson==3.18.1
-    # via
-    #   -r requirements/validation.txt
-    #   django-rest-swagger
 six==1.16.0
     # via
     #   -r requirements/validation.txt
@@ -577,12 +584,13 @@ uritemplate==4.1.1
     # via
     #   -r requirements/validation.txt
     #   coreapi
+    #   drf-yasg
 urllib3==1.26.14
     # via
     #   -r requirements/validation.txt
     #   requests
     #   twine
-virtualenv==20.17.1
+virtualenv==20.19.0
     # via
     #   -r requirements/validation.txt
     #   tox
@@ -598,7 +606,7 @@ wrapt==1.14.1
     # via
     #   -r requirements/validation.txt
     #   astroid
-zipp==3.12.0
+zipp==3.13.0
     # via
     #   -r requirements/validation.txt
     #   importlib-metadata
