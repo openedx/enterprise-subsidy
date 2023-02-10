@@ -10,7 +10,7 @@ asgiref==3.6.0
     # via
     #   -r requirements/test.txt
     #   django
-astroid==2.14.1
+astroid==2.14.2
     # via
     #   -r requirements/test.txt
     #   pylint
@@ -90,7 +90,7 @@ distlib==0.3.6
     # via
     #   -r requirements/test.txt
     #   virtualenv
-django==3.2.17
+django==3.2.18
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/test.txt
@@ -181,7 +181,7 @@ edx-drf-extensions==8.4.1
     # via
     #   -r requirements/test.txt
     #   edx-rbac
-edx-lint==5.3.0
+edx-lint==5.3.2
     # via -r requirements/test.txt
 edx-opaque-keys[django]==2.3.0
     # via
@@ -284,7 +284,7 @@ mysqlclient==2.1.1
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-newrelic==8.5.0
+newrelic==8.6.0
     # via
     #   -r requirements/test.txt
     #   edx-django-utils
@@ -297,7 +297,7 @@ openedx-events==5.0.0
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-openedx-ledger==0.1.1
+openedx-ledger==0.1.2
     # via -r requirements/test.txt
 packaging==23.0
     # via
@@ -361,7 +361,7 @@ pyjwt[crypto]==2.6.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==2.16.1
+pylint==2.16.2
     # via
     #   -r requirements/test.txt
     #   edx-lint
@@ -524,7 +524,7 @@ sqlparse==0.4.3
     # via
     #   -r requirements/test.txt
     #   django
-stevedore==4.1.1
+stevedore==5.0.0
     # via
     #   -r requirements/test.txt
     #   code-annotations
@@ -555,7 +555,7 @@ tox==3.28.0
     #   -r requirements/test.txt
 twine==4.0.2
     # via -r requirements/doc.in
-typing-extensions==4.4.0
+typing-extensions==4.5.0
     # via
     #   -r requirements/test.txt
     #   astroid

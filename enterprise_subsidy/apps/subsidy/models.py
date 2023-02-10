@@ -18,6 +18,7 @@ from model_utils.models import TimeStampedModel
 from openedx_ledger import api as ledger_api
 from openedx_ledger.models import Ledger, UnitChoices
 from openedx_ledger.utils import create_idempotency_key_for_transaction
+from simple_history.models import HistoricalRecords
 
 MOCK_CATALOG_CLIENT = mock.MagicMock()
 MOCK_ENROLLMENT_CLIENT = mock.MagicMock()
@@ -107,6 +108,7 @@ class Subsidy(TimeStampedModel):
 
     active_datetime = models.DateTimeField(null=True, default=None)
     expiration_datetime = models.DateTimeField(null=True, default=None)
+    history = HistoricalRecords(inherit=True)
 
     @property
     def catalog_client(self):
@@ -230,6 +232,7 @@ class LearnerCreditSubsidy(Subsidy):
 
     .. no_pii:
     """
+
     @property
     def enrollment_client(self):
         """

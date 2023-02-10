@@ -52,7 +52,7 @@ defusedxml==0.7.1
     #   -r requirements/base.txt
     #   python3-openid
     #   social-auth-core
-django==3.2.17
+django==3.2.18
     # via
     #   -r requirements/base.txt
     #   django-cors-headers
@@ -185,7 +185,7 @@ mysqlclient==2.1.1
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   openedx-ledger
-newrelic==8.5.0
+newrelic==8.6.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -198,7 +198,7 @@ openedx-events==5.0.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-openedx-ledger==0.1.1
+openedx-ledger==0.1.2
     # via -r requirements/base.txt
 packaging==23.0
     # via
@@ -327,7 +327,7 @@ sqlparse==0.4.3
     # via
     #   -r requirements/base.txt
     #   django
-stevedore==4.1.1
+stevedore==5.0.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils

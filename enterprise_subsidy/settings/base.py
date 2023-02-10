@@ -41,6 +41,7 @@ THIRD_PARTY_APPS = (
     'openedx_ledger',
     'release_util',
     'rest_framework',
+    'simple_history',
     'social_django',
     'waffle',
 )
@@ -81,6 +82,9 @@ MIDDLEWARE = (
     'edx_rest_framework_extensions.middleware.RequestCustomAttributesMiddleware',
     # Ensures proper DRF permissions in support of JWTs
     'edx_rest_framework_extensions.auth.jwt.middleware.EnsureJWTAuthSettingsMiddleware',
+
+    # Track who made each change to a model using HistoryRequestMiddleware
+    'simple_history.middleware.HistoryRequestMiddleware',
 )
 
 # Enable CORS
