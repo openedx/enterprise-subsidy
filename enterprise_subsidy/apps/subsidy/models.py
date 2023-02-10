@@ -21,6 +21,13 @@ MOCK_SUBSIDY_REQUESTS_CLIENT = mock.MagicMock()
 CENTS_PER_DOLLAR = 100
 
 
+class SubsidyReferenceChoices:
+    OPPORTUNITY_PRODUCT_ID = 'opportunity_product_id'
+    CHOICES = (
+        (OPPORTUNITY_PRODUCT_ID, 'Opportunity Product ID'),
+    )
+
+
 def now():
     return datetime.now(timezone.utc)
 
@@ -70,12 +77,20 @@ class Subsidy(TimeStampedModel):
         default=UnitChoices.USD_CENTS,
         db_index=True,
     )
-    opportunity_id = models.CharField(
+    reference_id = models.CharField(
         max_length=255,
         blank=True,
         null=True,
     )
-    customer_uuid = models.UUIDField(
+    reference_type = models.CharField(
+        max_length=255,
+        blank=False,
+        null=False,
+        choices=SubsidyReferenceChoices.CHOICES,
+        default=SubsidyReferenceChoices.OPPORTUNITY_PRODUCT_ID,
+        db_index=True,
+    )
+    enterprise_customer_uuid = models.UUIDField(
         blank=False,
         null=False,
         db_index=True,

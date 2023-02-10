@@ -41,9 +41,9 @@ def ledger_fixture():
 @pytest.fixture
 def subscription_fixture():
     subsidy, _ = subsidy_api.get_or_create_subscription_subsidy(
-        opportunity_id="test-opp-id",
+        reference_id="test-opp-product-id",
         default_title="Test Subscription Subsidy",
-        default_customer_uuid=uuid4(),
+        default_enterprise_customer_uuid=uuid4(),
         default_unit=UnitChoices.SEATS,
         default_starting_balance=100,
         default_subscription_plan_uuid=uuid4(),
@@ -54,9 +54,9 @@ def subscription_fixture():
 @pytest.fixture
 def learner_credit_fixture():
     subsidy, _ = subsidy_api.get_or_create_learner_credit_subsidy(
-        opportunity_id="test-opp-id",
+        reference_id="test-opp-product-id",
         default_title="Test Learner Credit Subsidy",
-        default_customer_uuid=uuid4(),
+        default_enterprise_customer_uuid=uuid4(),
         default_unit=UnitChoices.USD_CENTS,
         default_starting_balance=1000000,
     )
