@@ -1,5 +1,12 @@
 """
 Model definitions for the subsidy app.
+
+Some defintions:
+* `ledger`: A running “list” of transactions that record the movement of value in and out of a subsidy.
+* `stored value`:
+      Value, in the form of a subscription license (denominated in “seats”) or learner credit (denominated in either
+      USD or "seats"), stored in a ledger, which may be applied toward the cost of some content.
+* `redemption`: The act of redeeming stored value for content.
 """
 from datetime import datetime, timezone
 from functools import lru_cache
@@ -12,13 +19,24 @@ from openedx_ledger import api as ledger_api
 from openedx_ledger.models import Ledger, UnitChoices
 from openedx_ledger.utils import create_idempotency_key_for_transaction
 
-MOCK_GROUP_CLIENT = mock.MagicMock()
 MOCK_CATALOG_CLIENT = mock.MagicMock()
 MOCK_ENROLLMENT_CLIENT = mock.MagicMock()
 MOCK_SUBSCRIPTION_CLIENT = mock.MagicMock()
-MOCK_SUBSIDY_REQUESTS_CLIENT = mock.MagicMock()
 
 CENTS_PER_DOLLAR = 100
+
+
+class SubsidyReferenceChoices:
+    """
+    Enumerate different choices for a subsidy originator ID.
+
+    The originator is the object that caused the subsidy to come into existence.  Currently, the only such object is the
+    "product" inside the Salesforce opportunity.
+    """
+    OPPORTUNITY_PRODUCT_ID = 'opportunity_product_id'
+    CHOICES = (
+        (OPPORTUNITY_PRODUCT_ID, 'Opportunity Product ID'),
+    )
 
 
 def now():
@@ -27,12 +45,10 @@ def now():
 
 class Subsidy(TimeStampedModel):
     """
-    Some defintions:
-    ``ledger``: A running “list” of transactions that record the movement of value in and out of a subsidy.
-    ``stored value``: Value, in the form of a subscription license (denominated in “seats”)
-        or learner credit (denominated in either USD or "seats"), stored in a ledger,
-        which may be applied toward the cost of some content.
-    ``redemption``: The act of redeeming stored value for content.
+    Abstract Subsidy model.
+
+    Each subclass serves as an intermediate object to tie an enterprise customer's purchase to a Ledger, and hold any
+    relevant metadata to the subsidy.
 
     TODO: need a hook from enterprise-access that tells the subsidy when a request has been approved, so that we can
           _create_redemption() on the subsidy.  Additionally, we'd want a hook for request denials to avoid duplicating
@@ -70,12 +86,20 @@ class Subsidy(TimeStampedModel):
         default=UnitChoices.USD_CENTS,
         db_index=True,
     )
-    opportunity_id = models.CharField(
+    reference_id = models.CharField(
         max_length=255,
         blank=True,
         null=True,
     )
-    customer_uuid = models.UUIDField(
+    reference_type = models.CharField(
+        max_length=255,
+        blank=False,
+        null=False,
+        choices=SubsidyReferenceChoices.CHOICES,
+        default=SubsidyReferenceChoices.OPPORTUNITY_PRODUCT_ID,
+        db_index=True,
+    )
+    enterprise_customer_uuid = models.UUIDField(
         blank=False,
         null=False,
         db_index=True,
@@ -126,6 +150,31 @@ class Subsidy(TimeStampedModel):
         return self._create_redemption(learner_id, content_key)
 
     def _create_redemption(self, learner_id, content_key, **kwargs):
+        """
+        Synchronously and idempotently enroll the learner in the content and record it in the Ledger.
+
+        Two side-effects:
+        * An enrollment or an entitlement is created in the target system (with metadata that links back to the ledger
+          transaction ID).  The learner is able to access the requested content.
+        * A Transaction is created in the Ledger associated with this subsidy, with state set to `committed` (and a
+          reference_id set to the enrollment_id).
+
+        After this function returns, either both of the two side-effects are fulfilled, *or neither*.
+
+        Possible failure cases:
+        * The enrollment fails to become created, returning a non-2xx error back to the subsidy service.  We should not
+          commit a ledger transaction, but it's not outside the realm of possibilities that the enrollment has been
+          *partially provisioned* in the target LMS. A partially provisioned enrollment is acceptable as long as the
+          content remains inaccessible, and it can still be re-provisioned idempotently.
+        * The enrollment succeeds, links a ledger transaction ID, returns a 2xx response to the subsidy app, but before
+          the app receives the response, either the network connection is interrupted, or the subsidy app crashes.  This
+          failure mode must be remedied asynchronously via corrective policies:
+          https://github.com/openedx/enterprise-subsidy/blob/main/docs/decisions/0003-fulfillment-and-corrective-policies.rst#decision
+
+        Bi-directional linking: Subclass implementations MUST also maintain bi-directional linking between the
+        transaction record and the enrollment record.  The Transaction model provides a `reference_id` field for this
+        purpose.
+        """
         raise NotImplementedError
 
     def is_redeemable(self, content_key, redemption_datetime=None):
@@ -183,6 +232,9 @@ class LearnerCreditSubsidy(Subsidy):
     """
     @property
     def enrollment_client(self):
+        """
+        TODO: implement enrollment client
+        """
         return MOCK_ENROLLMENT_CLIENT
 
     @lru_cache(maxsize=128)
@@ -209,8 +261,7 @@ class LearnerCreditSubsidy(Subsidy):
 
     def _create_redemption(self, learner_id, content_key, **kwargs):
         """
-        Actual enrollment happens downstream of this.
-        commit a transaction here.
+        Enroll the learner in the given content, debiting the learner credit balance.
         """
         transaction_metadata = {
             "content_key": content_key,

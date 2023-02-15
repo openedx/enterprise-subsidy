@@ -9,18 +9,18 @@ from enterprise_subsidy.apps.subsidy.models import LearnerCreditSubsidy, Subscri
 
 
 def get_or_create_learner_credit_subsidy(
-    opportunity_id, default_title, default_customer_uuid, default_unit, default_starting_balance,
+    reference_id, default_title, default_enterprise_customer_uuid, default_unit, default_starting_balance,
 ):
     """
     Get or create a new learner credit subsidy and ledger with the given defaults.
 
     Notes:
-        * If an existing subsidy is found with the given `opportunity_id`, all `default_*` arguments are ignored.
+        * If an existing subsidy is found with the given `reference_id`, all `default_*` arguments are ignored.
 
     Args:
-        opportunity_id (str): ID of the originating salesforce opportunity.
+        reference_id (str): ID of the originating salesforce opportunity product.
         default_title (str): Human-readable title of the new subsidy.
-        default_customer_uuid (uuid.UUID): UUID of the enterprise customer.
+        default_enterprise_customer_uuid (uuid.UUID): UUID of the enterprise customer.
         default_unit (str): value unit identifier (see openedx_ledger.models.UnitChoices).
         default_starting_balance (int): The default starting balance if creating a new subsidy and ledger.
 
@@ -29,16 +29,16 @@ def get_or_create_learner_credit_subsidy(
             The subsidy record, and an bool that is true if a new subsidy+ledger was created.
 
     Raises:
-        MultipleObjectsReturned if two or more subsidy records with the given opportunity_id already exists.
+        MultipleObjectsReturned if two or more subsidy records with the given reference_id already exists.
     """
     subsidy_defaults = {
         'title': default_title,
         'starting_balance': default_starting_balance,
-        'customer_uuid': default_customer_uuid,
+        'enterprise_customer_uuid': default_enterprise_customer_uuid,
         'unit': default_unit,
     }
     subsidy, created = LearnerCreditSubsidy.objects.get_or_create(
-        opportunity_id=opportunity_id,
+        reference_id=reference_id,
         defaults=subsidy_defaults,
     )
 
@@ -54,9 +54,9 @@ def get_or_create_learner_credit_subsidy(
 
 
 def get_or_create_subscription_subsidy(
-    opportunity_id,
+    reference_id,
     default_title,
-    default_customer_uuid,
+    default_enterprise_customer_uuid,
     default_unit,
     default_starting_balance,
     default_subscription_plan_uuid,
@@ -66,12 +66,12 @@ def get_or_create_subscription_subsidy(
     Get or create a new subscription subsidy and ledger with the given defaults.
 
     Notes:
-        * If an existing subsidy is found with the given `opportunity_id`, all `default_*` arguments are ignored.
+        * If an existing subsidy is found with the given `reference_id`, all `default_*` arguments are ignored.
 
     Args:
-        opportunity_id (str): ID of the originating salesforce opportunity.
+        reference_id (str): ID of the originating salesforce opportunity product.
         default_title (str): Human-readable title of the new subsidy.
-        default_customer_uuid (uuid.UUID): UUID of the enterprise customer.
+        default_enterprise_customer_uuid (uuid.UUID): UUID of the enterprise enterprise_customer.
         default_unit (str): value unit identifier (see openedx_ledger.models.UnitChoices).
         default_starting_balance (int): The default starting balance if creating a new subsidy and ledger.
         default_subscription_plan_uuid (int): The default starting balance if creating a new subsidy and ledger.
@@ -82,17 +82,17 @@ def get_or_create_subscription_subsidy(
             The subsidy record, and an bool that is true if a new subsidy+ledger was created.
 
     Raises:
-        MultipleObjectsReturned if two or more subsidy records with the given opportunity_id already exists.
+        MultipleObjectsReturned if two or more subsidy records with the given reference_id already exists.
     """
     subsidy_defaults = {
         'title': default_title,
-        'customer_uuid': default_customer_uuid,
+        'enterprise_customer_uuid': default_enterprise_customer_uuid,
         'unit': default_unit,
         'starting_balance': default_starting_balance,
         'subscription_plan_uuid': default_subscription_plan_uuid,
     }
     subsidy, created = SubscriptionSubsidy.objects.get_or_create(
-        opportunity_id=opportunity_id,
+        reference_id=reference_id,
         defaults=subsidy_defaults,
     )
 
