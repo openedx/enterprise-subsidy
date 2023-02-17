@@ -118,7 +118,7 @@ edx-rbac==1.7.0
     #   openedx-ledger
 edx-rest-api-client==5.5.0
     # via -r requirements/base.in
-fastavro==1.7.1
+fastavro==1.7.2
     # via openedx-events
 future==0.18.3
     # via pyjwkest
@@ -140,17 +140,17 @@ mysqlclient==2.1.1
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-newrelic==8.6.0
+newrelic==8.7.0
     # via edx-django-utils
 oauthlib==3.2.2
     # via
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==5.0.0
+openedx-events==5.1.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-openedx-ledger==0.1.2
+openedx-ledger==0.1.3
     # via -r requirements/base.in
 packaging==23.0
     # via drf-yasg

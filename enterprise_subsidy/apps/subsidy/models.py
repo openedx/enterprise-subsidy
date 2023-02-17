@@ -14,6 +14,8 @@ from unittest import mock
 from uuid import uuid4
 
 from django.db import models
+from edx_rbac.models import UserRole, UserRoleAssignment
+from edx_rbac.utils import ALL_ACCESS_CONTEXT
 from model_utils.models import TimeStampedModel
 from openedx_ledger import api as ledger_api
 from openedx_ledger.models import Ledger, UnitChoices
@@ -46,22 +48,15 @@ def now():
 
 class Subsidy(TimeStampedModel):
     """
-    Abstract Subsidy model.
-
-    Each subclass serves as an intermediate object to tie an enterprise customer's purchase to a Ledger, and hold any
-    relevant metadata to the subsidy.
+    Subsidy model, specifically supporting Learner Credit type of subsidies.
 
     TODO: need a hook from enterprise-access that tells the subsidy when a request has been approved, so that we can
           _create_redemption() on the subsidy.  Additionally, we'd want a hook for request denials to avoid duplicating
           work, etc.
-    """
-    class Meta:
-        """
-        Metaclass for Subsidy.
-        """
-        abstract = True
 
-    # TODO: instead of defining UUID here, consider creating an upstream model TimeStampedModelWithUUID.
+    .. no_pii:
+    """
+
     uuid = models.UUIDField(
         primary_key=True,
         default=uuid4,
@@ -78,7 +73,7 @@ class Subsidy(TimeStampedModel):
     starting_balance = models.BigIntegerField(
         null=False, blank=False,
     )
-    ledger = models.ForeignKey(Ledger, null=True, on_delete=models.SET_NULL)
+    ledger = models.OneToOneField(Ledger, null=True, on_delete=models.SET_NULL)
     unit = models.CharField(
         max_length=255,
         blank=False,
@@ -108,11 +103,22 @@ class Subsidy(TimeStampedModel):
 
     active_datetime = models.DateTimeField(null=True, default=None)
     expiration_datetime = models.DateTimeField(null=True, default=None)
-    history = HistoricalRecords(inherit=True)
+    history = HistoricalRecords()
+
+    @property
+    def enrollment_client(self):
+        """
+        TODO: implement enrollment client
+        """
+        return MOCK_ENROLLMENT_CLIENT
 
     @property
     def catalog_client(self):
         return MOCK_CATALOG_CLIENT
+
+    @lru_cache(maxsize=128)
+    def price_for_content(self, content_key):
+        return self.catalog_client.get_content_metadata(content_key).get("price") * CENTS_PER_DOLLAR
 
     def current_balance(self):
         return self.ledger.balance()
@@ -177,95 +183,6 @@ class Subsidy(TimeStampedModel):
         transaction record and the enrollment record.  The Transaction model provides a `reference_id` field for this
         purpose.
         """
-        raise NotImplementedError
-
-    def is_redeemable(self, content_key, redemption_datetime=None):
-        """
-        Check if this subsidy is redeemable (by anyone) at a given time.
-
-        For example, this may check if there is enough stored value in this subsidy's ledger to redeem for the cost of
-        the given content.
-
-        Args:
-            content_key (str): content key of content we may try to redeem.
-            redemption_datetime (datetime.datetime): The point in time to check for redemability.
-
-        Returns:
-            bool: True if redeemable.
-        """
-        raise NotImplementedError
-
-    def get_redemption(self, learner_id, content_key):
-        """
-        Return the transaction representing this redemption, if it exists.
-
-        Subclasses must override this function.
-
-        Args:
-            learner_id (str): The learner of the redemption to check.
-            content_key (str): The content of the redemption to check.
-
-        Returns:
-            openedx_ledger.models.Transaction: a ledger transaction related to the redemption.
-        """
-        raise NotImplementedError
-
-    def all_transactions(self):
-        return self.ledger.transactions  # pylint: disable=no-member
-
-    def transactions_for_learner(self, lms_user_id):
-        return self.all_transactions().filter(lms_user_id=lms_user_id)
-
-    def transactions_for_content(self, content_uuid):
-        return self.all_transactions().filter(content_uuid=content_uuid)
-
-    def transactions_for_learner_and_content(self, lms_user_id, content_uuid):
-        return self.all_transactions().filter(
-            lms_user_id=lms_user_id,
-            content_uuid=content_uuid,
-        )
-
-
-class LearnerCreditSubsidy(Subsidy):
-    """
-    A subsidy model for Learner Credit/bucket of money.
-
-    .. no_pii:
-    """
-
-    @property
-    def enrollment_client(self):
-        """
-        TODO: implement enrollment client
-        """
-        return MOCK_ENROLLMENT_CLIENT
-
-    @lru_cache(maxsize=128)
-    def price_for_content(self, content_key):
-        return self.catalog_client.get_content_metadata(content_key).get("price") * CENTS_PER_DOLLAR
-
-    def is_redeemable(self, content_key, redemption_datetime=None):
-        """
-        Check if this subsidy is redeemable (by anyone) at a given time.
-
-        TODO: take into account redemption_datetime
-
-        Args:
-            content_key (str): content key of content we may try to redeem.
-            redemption_datetime (datetime.datetime): The point in time to check for redemability.
-
-        Returns:
-            bool: True if redeemable.
-        """
-        return self.current_balance() >= self.price_for_content(content_key)
-
-    def get_redemption(self, learner_id, content_key):
-        return self.transactions_for_learner_and_content(learner_id, content_key)
-
-    def _create_redemption(self, learner_id, content_key, **kwargs):
-        """
-        Enroll the learner in the given content, debiting the learner credit balance.
-        """
         transaction_metadata = {
             "content_key": content_key,
             "learner_id": learner_id,
@@ -294,76 +211,12 @@ class LearnerCreditSubsidy(Subsidy):
 
         return ledger_transaction
 
-
-class SubscriptionSubsidy(Subsidy):
-    """
-    A subsidy backed by a subscription.
-
-    Currently subscriptions licenses are tracked in a separate IDA (license-manager) rather than internal models,
-    and as such does not make use of a ledger.
-
-    .. no_pii:
-    """
-    subscription_plan_uuid = models.UUIDField(null=False, blank=False, db_index=True)
-
-    class Meta:
-        """
-        Metaclass for SubscriptionSubsidy.
-        """
-        # The choice of what a subsidy is unique on dictates behavior
-        # that we can implement around the lifecycle of the subsidy.
-        # For instance, making this type of subsidy unique on the (customer, plan id, unit)
-        # means that every renewal or roll-over of a plan must result in a new plan id.
-        unique_together = []
-
-    @property
-    def subscription_client(self):
-        """
-        Return an API client for the subscription service.
-        """
-        MOCK_SUBSCRIPTION_CLIENT.create_license.return_value = uuid4()
-        MOCK_SUBSCRIPTION_CLIENT.get_license.return_value = {
-            "uuid": uuid4(),
-            "status": "activated",
-        }
-        return MOCK_SUBSCRIPTION_CLIENT
-
-    def _is_license_available(self):
-        """
-        Check that there are available licenses in the current subscription plan.
-        """
-        plan_metadata = self.subscription_client.get_plan_metadata(
-            self.subscription_plan_uuid,
-        )
-        return plan_metadata["licenses"]["pending"] > 0
-
-    def _get_license_for_learner(self, learner_id):
-        return self.subscription_client.get_license(
-            self.subscription_plan_uuid,
-            learner_id,
-        )
-
-    def _assign_license(self, learner_id, **kwargs):
-        """
-        Calls an subscription API client to grant a license as a redemption
-        for this subsidy.
-        """
-        # Note: licenses are created when the plan is created
-        # so we're not creating a new one, here.
-        license_metadata = self.subscription_client.assign_license(
-            self.subscription_plan_uuid,
-            learner_id,
-        )
-        return license_metadata
-
-    def get_redemption(self, learner_id, content_key):
-        return self._get_license_for_learner(learner_id)
-
-    def is_redeemable(self, content_key, redemption_datetime=None):
+    def is_redeemable(self, content_key, redemption_datetime=None):  # pylint: disable=unused-argument
         """
         Check if this subsidy is redeemable (by anyone) at a given time.
 
-        TODO: take into account redemption_datetime
+        Is there enough stored value in this subsidy's ledger to redeem for the cost of the given content?
+        TODO: Also take into account redemption_datetime.
 
         Args:
             content_key (str): content key of content we may try to redeem.
@@ -372,12 +225,98 @@ class SubscriptionSubsidy(Subsidy):
         Returns:
             bool: True if redeemable.
         """
-        return self._is_license_available()
+        return self.current_balance() >= self.price_for_content(content_key)
 
-    def _create_redemption(self, learner_id, content_key, **kwargs):
+    def get_redemption(self, learner_id, content_key):
         """
-        For subscription subsidies, a redemption is either the fact that the
-        learner is already assigned a license for the plan, or the result
-        of assigning an available license to the learner.
+        Return the transaction representing this redemption, if it exists.
+
+        Args:
+            learner_id (str): The learner of the redemption to check.
+            content_key (str): The content of the redemption to check.
+
+        Returns:
+            openedx_ledger.models.Transaction: a ledger transaction related to the redemption.
         """
-        return self._assign_license(learner_id)
+        return self.transactions_for_learner_and_content(learner_id, content_key)
+
+    def all_transactions(self):
+        return self.ledger.transactions  # pylint: disable=no-member
+
+    def transactions_for_learner(self, lms_user_id):
+        return self.all_transactions().filter(lms_user_id=lms_user_id)
+
+    def transactions_for_content(self, content_uuid):
+        return self.all_transactions().filter(content_uuid=content_uuid)
+
+    def transactions_for_learner_and_content(self, lms_user_id, content_uuid):
+        return self.all_transactions().filter(
+            lms_user_id=lms_user_id,
+            content_uuid=content_uuid,
+        )
+
+
+#
+# Two edx-rbac supporting models follows.
+#
+class EnterpriseSubsidyFeatureRole(UserRole):
+    """
+    User role definitions specific to Enterprise Subsidy.
+
+     .. no_pii:
+    """
+
+    def __str__(self):
+        """
+        Return human-readable string representation.
+        """
+        return f"EnterpriseSubsidyFeatureRole(name={self.name})"
+
+    def __repr__(self):
+        """
+        Return uniquely identifying string representation.
+        """
+        return self.__str__()
+
+
+class EnterpriseSubsidyRoleAssignment(UserRoleAssignment):
+    """
+    Model to map users to an EnterpriseSubsidyFeatureRole.
+
+     .. no_pii:
+    """
+
+    role_class = EnterpriseSubsidyFeatureRole
+    enterprise_id = models.UUIDField(blank=True, null=True, verbose_name='Enterprise Customer UUID')
+
+    def get_context(self):
+        """
+        Generate an access context string for this assignment.
+
+        Returns:
+            str: The enterprise customer UUID or `*` if the user has access to all resources.
+        """
+        if self.enterprise_id:
+            # converting the UUID('ee5e6b3a-069a-4947-bb8d-d2dbc323396c') to 'ee5e6b3a-069a-4947-bb8d-d2dbc323396c'
+            return str(self.enterprise_id)
+        return ALL_ACCESS_CONTEXT
+
+    @classmethod
+    def user_assignments_for_role_name(cls, user, role_name):
+        """
+        Find assignments for a given user and role name.
+        """
+        return cls.objects.filter(user__id=user.id, role__name=role_name)
+
+    def __str__(self):
+        """
+        Human-readable string representation.
+        """
+        # pylint: disable=no-member
+        return f"EnterpriseSubsidyRoleAssignment(name={self.role.name}, user={self.user.id})"
+
+    def __repr__(self):
+        """
+        Human-readable string representation.
+        """
+        return self.__str__()

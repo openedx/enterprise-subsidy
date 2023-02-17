@@ -41,6 +41,9 @@ unittests.xml
 # PII annotation reports
 pii_report
 
+# reserved_keyword_linter reports
+reserved_keywords_report
+
 ### Internationalization artifacts
 *.mo
 *.po
