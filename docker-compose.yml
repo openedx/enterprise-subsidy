@@ -1,7 +1,7 @@
 version: "2.1"
 services:
   db:
-    image: mysql:5.6
+    image: edxops/mysql:5.7
     container_name: enterprise_subsidy.db
     environment:
       MYSQL_ROOT_PASSWORD: ""
@@ -9,7 +9,7 @@ services:
     networks:
       - devstack_default
     volumes:
-      - enterprise_subsidy_mysql:/var/lib/mysql
+      - enterprise_subsidy_mysql57:/var/lib/mysql
 
   memcache:
     image: memcached:1.4.24
@@ -41,4 +41,4 @@ networks:
     external: true
 
 volumes:
-  enterprise_subsidy_mysql:
+  enterprise_subsidy_mysql57:

@@ -58,6 +58,7 @@ enterprise_subsidy/conf/locale/messages.mo
 .mr.developer.cfg
 .project
 .pydevproject
+.vscode
 
 # QA
 coverage.xml
