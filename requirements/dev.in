@@ -3,6 +3,7 @@
 -r pip-tools.txt          # pip-tools and its deps, for managing requirements files
 -r validation.txt         # Core, testing, and quality check dependencies
 
+ddt
 diff-cover                # Changeset diff test coverage
 edx-i18n-tools            # For i18n_tool dummy
 django-debug-toolbar      # For debugging Django

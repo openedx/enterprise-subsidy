@@ -35,9 +35,7 @@ social_django.Partial:
   ".. no_pii:": "This model has no PII"
 social_django.UserSocialAuth:
   ".. no_pii:": "This model has no PII"
-subsidy.HistoricalLearnerCreditSubsidy:
-  ".. no_pii:": "This model has no PII"
-subsidy.HistoricalSubscriptionSubsidy:
+subsidy.HistoricalSubsidy:
   ".. no_pii:": "This model has no PII"
 waffle.Flag:
   ".. no_pii:": "This model has no PII"

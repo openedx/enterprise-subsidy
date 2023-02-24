@@ -4,18 +4,11 @@ Admin configuration for subsidy models.
 from django.contrib import admin
 from simple_history.admin import SimpleHistoryAdmin
 
-from .models import LearnerCreditSubsidy, SubscriptionSubsidy
+from enterprise_subsidy.apps.subsidy.models import Subsidy
 
 
-@admin.register(LearnerCreditSubsidy)
-class LearnerCreditSubsidyAdmin(SimpleHistoryAdmin):
+@admin.register(Subsidy)
+class SubsidyAdmin(SimpleHistoryAdmin):
     class Meta:
-        model = LearnerCreditSubsidy
-        fields = '__all__'
-
-
-@admin.register(SubscriptionSubsidy)
-class SubscriptionSubsidyAdmin(SimpleHistoryAdmin):
-    class Meta:
-        model = SubscriptionSubsidy
+        model = Subsidy
         fields = '__all__'

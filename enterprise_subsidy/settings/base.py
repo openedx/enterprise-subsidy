@@ -3,6 +3,15 @@ from os.path import abspath, dirname, join
 
 from corsheaders.defaults import default_headers as corsheaders_default_headers
 
+from enterprise_subsidy.apps.subsidy.constants import (
+    ENTERPRISE_SUBSIDY_ADMIN_ROLE,
+    ENTERPRISE_SUBSIDY_LEARNER_ROLE,
+    ENTERPRISE_SUBSIDY_OPERATOR_ROLE,
+    SYSTEM_ENTERPRISE_ADMIN_ROLE,
+    SYSTEM_ENTERPRISE_CATALOG_ADMIN_ROLE,
+    SYSTEM_ENTERPRISE_LEARNER_ROLE,
+    SYSTEM_ENTERPRISE_OPERATOR_ROLE
+)
 from enterprise_subsidy.settings.utils import get_logger_config
 
 # PATH vars
@@ -44,6 +53,7 @@ THIRD_PARTY_APPS = (
     'simple_history',
     'social_django',
     'waffle',
+    'rules.apps.AutodiscoverRulesConfig',
 )
 
 PROJECT_APPS = (
@@ -82,9 +92,10 @@ MIDDLEWARE = (
     'edx_rest_framework_extensions.middleware.RequestCustomAttributesMiddleware',
     # Ensures proper DRF permissions in support of JWTs
     'edx_rest_framework_extensions.auth.jwt.middleware.EnsureJWTAuthSettingsMiddleware',
-
     # Track who made each change to a model using HistoryRequestMiddleware
     'simple_history.middleware.HistoryRequestMiddleware',
+    # Used by custom django-rules predicates.
+    'crum.CurrentRequestUserMiddleware',
 )
 
 # Enable CORS
@@ -214,6 +225,7 @@ AUTH_USER_MODEL = 'core.User'
 
 AUTHENTICATION_BACKENDS = (
     'auth_backends.backends.EdXOAuth2',
+    'rules.permissions.ObjectPermissionBackend',
     'django.contrib.auth.backends.ModelBackend',
 )
 
@@ -243,14 +255,35 @@ JWT_AUTH = {
     'JWT_AUTH_COOKIE_HEADER_PAYLOAD': 'edx-jwt-cookie-header-payload',
     'JWT_AUTH_COOKIE_SIGNATURE': 'edx-jwt-cookie-signature',
     'JWT_AUTH_REFRESH_COOKIE': 'edx-jwt-refresh-cookie',
+    'JWT_SECRET_KEY': 'SET-ME-PLEASE',
+    # JWT_ISSUERS enables token decoding for multiple issuers (Note: This is not a native DRF-JWT field)
+    # We use it to allow different values for the 'ISSUER' field, but keep the same SECRET_KEY and
+    # AUDIENCE values across all issuers.
+    'JWT_ISSUERS': [
+        {
+            'AUDIENCE': 'SET-ME-PLEASE',
+            'ISSUER': 'http://localhost:18000/oauth2',
+            'SECRET_KEY': 'SET-ME-PLEASE'
+        },
+    ],
 }
 
 # Request the user's permissions in the ID token
 EXTRA_SCOPE = ['permissions']
 
-# TODO Set this to another (non-staff, ideally) path.
-LOGIN_REDIRECT_URL = '/admin/'
+LOGIN_REDIRECT_URL = '/api-docs/'
 # END AUTHENTICATION CONFIGURATION
+
+# Set up system-to-feature roles mapping for edx-rbac.
+SYSTEM_TO_FEATURE_ROLE_MAPPING = {
+    SYSTEM_ENTERPRISE_LEARNER_ROLE: [ENTERPRISE_SUBSIDY_LEARNER_ROLE],
+    SYSTEM_ENTERPRISE_ADMIN_ROLE: [ENTERPRISE_SUBSIDY_LEARNER_ROLE, ENTERPRISE_SUBSIDY_ADMIN_ROLE],
+    SYSTEM_ENTERPRISE_OPERATOR_ROLE: [
+        ENTERPRISE_SUBSIDY_LEARNER_ROLE, ENTERPRISE_SUBSIDY_ADMIN_ROLE, ENTERPRISE_SUBSIDY_OPERATOR_ROLE
+    ],
+    # The catalog admin role doesn't award any permissions in the subsidy service.
+    SYSTEM_ENTERPRISE_CATALOG_ADMIN_ROLE: [],
+}
 
 
 # OPENEDX-SPECIFIC CONFIGURATION
