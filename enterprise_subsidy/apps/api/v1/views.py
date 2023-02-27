@@ -35,11 +35,11 @@ class SubsidyViewSet(
     """
     authentication_classes = [JwtAuthentication, SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
-    lookup_field = 'uuid'
+    lookup_field = "uuid"
     serializer_class = SubsidySerializer
 
     # Fields that control permissions for 'list' actions, required by PermissionRequiredForListingMixin.
-    list_lookup_field = 'enterprise_customer_uuid'
+    list_lookup_field = "enterprise_customer_uuid"
     allowed_roles = [ENTERPRISE_SUBSIDY_ADMIN_ROLE, ENTERPRISE_SUBSIDY_OPERATOR_ROLE]
     role_assignment_class = EnterpriseSubsidyRoleAssignment
 
@@ -74,7 +74,7 @@ class SubsidyViewSet(
 
         For detail endpoints, the PK can simply be found in ``self.kwargs``.
         """
-        return self.kwargs.get('uuid')
+        return self.kwargs.get("uuid")
 
     @property
     def base_queryset(self):
@@ -85,18 +85,18 @@ class SubsidyViewSet(
         """
         kwargs = {}
         if self.requested_enterprise_customer_uuid:
-            kwargs.update({'enterprise_customer_uuid': self.requested_enterprise_customer_uuid})
+            kwargs.update({"enterprise_customer_uuid": self.requested_enterprise_customer_uuid})
         if self.requested_subsidy_uuid:
-            kwargs.update({'uuid': self.requested_subsidy_uuid})
+            kwargs.update({"uuid": self.requested_subsidy_uuid})
 
         return Subsidy.objects.filter(**kwargs).prefetch_related(
             # Fields used for calculating the ledger balance.
-            'ledger__transactions__state',
-            'ledger__transactions__quantity',
-            'ledger__transactions__reversal',
-            'ledger__transactions__reversal__state',
-            'ledger__transactions__reversal__quantity',
-        ).order_by('uuid')
+            "ledger__transactions__state",
+            "ledger__transactions__quantity",
+            "ledger__transactions__reversal",
+            "ledger__transactions__reversal__state",
+            "ledger__transactions__reversal__quantity",
+        ).order_by("uuid")
 
 
 class TransactionViewSet(
@@ -123,11 +123,11 @@ class TransactionViewSet(
     """
     authentication_classes = [JwtAuthentication, SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
-    lookup_field = 'uuid'
+    lookup_field = "uuid"
     serializer_class = TransactionSerializer
 
     # Fields that control permissions for 'list' actions, required by PermissionRequiredForListingMixin.
-    list_lookup_field = 'ledger__subisidy__enterprise_customer_uuid'
+    list_lookup_field = "ledger__subisidy__enterprise_customer_uuid"
     allowed_roles = [ENTERPRISE_SUBSIDY_ADMIN_ROLE, ENTERPRISE_SUBSIDY_LEARNER_ROLE, ENTERPRISE_SUBSIDY_OPERATOR_ROLE]
     role_assignment_class = EnterpriseSubsidyRoleAssignment
 
@@ -162,7 +162,7 @@ class TransactionViewSet(
 
         For detail endpoints, the PK can simply be found in ``self.kwargs``.
         """
-        return self.kwargs.get('uuid')
+        return self.kwargs.get("uuid")
 
     @property
     def base_queryset(self):
@@ -173,8 +173,8 @@ class TransactionViewSet(
         """
         kwargs = {}
         if self.requested_enterprise_customer_uuid:
-            kwargs.update({'ledger__subsidy__enterprise_customer_uuid': self.requested_enterprise_customer_uuid})
+            kwargs.update({"ledger__subsidy__enterprise_customer_uuid": self.requested_enterprise_customer_uuid})
         if self.requested_transaction_uuid:
-            kwargs.update({'uuid': self.requested_transaction_uuid})
+            kwargs.update({"uuid": self.requested_transaction_uuid})
 
-        return Transaction.objects.filter(**kwargs).order_by('uuid')
+        return Transaction.objects.filter(**kwargs).order_by("uuid")
