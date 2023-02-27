@@ -160,8 +160,8 @@ Inputs
 - ``subsidy-uuid`` (URL path, required): The uuid (primary key) of the subsidy for which transactions should be listed.
 - ``include_aggregates`` (query param, optional): Specifies if aggregates (quantities, number of transactions) should be
   returned as part of the paginated response.  Defaults to ``true``.
-- ``user_id`` (query param, optional): If present, filters returned transactions and/or aggregates to only
-  those associated with the specified ``user_id`` value.
+- ``learner_id`` (query param, optional): If present, filters returned transactions and/or aggregates to only
+  those associated with the specified ``learner_id`` value.
 - ``content_key`` (query param, optional): If present, filters returned transactions and/or aggregates to only
   those associated with the specified ``content_key`` value.
 
@@ -185,7 +185,7 @@ Returns a paginated list of aggregate and transaction data:
                'uuid': 'the-transaction-uuid',
                'status': 'completed',  TODO: enumerate valid statuses
                'idempotency_key': 'the-idempotency-key',
-               'user_id': 54321,
+               'learner_id': 54321,
                'content_key': 'demox_1234+2T2023',
                'quantity': 19900,
                'unit': 'USD_CENTS',
@@ -237,7 +237,7 @@ Returns a single transaction object (or 404 if no such transaction exists).
        'uuid': 'the-transaction-uuid',
        'status': 'completed',  TODO: enumerate valid statuses
        'idempotency_key': 'the-idempotency-key',
-       'user_id': 54321,
+       'learner_id': 54321,
        'content_key': 'demox_1234+2T2023',
        'quantity': 19900,
        'unit': 'USD_CENTS',
@@ -254,7 +254,7 @@ Permissions
 -----------
 
 enterprise_learner
-  The transaction object should only be returned if requesting user's ``lms_user_id`` matches the ``user_id``
+  The transaction object should only be returned if requesting user's ``lms_user_id`` matches the ``learner_id``
   for the transaction record.
 
 enterprise_admin
@@ -267,7 +267,7 @@ openedx_operator
 
 POST enterprise subsidy transaction
 ===================================
-**/api/v1/subsidies/[subsidy-uuid]/transactions/**
+**/api/v1/transactions/**
 
 Create a new subsidy transaction in the subsidy's ledger.
 Only service users (those with ``openedx_operator`` role assignment) can do this.
@@ -279,32 +279,33 @@ on the course-discovery service for this data.
 Inputs
 ------
 
-- ``subsidy-uuid`` (URL path, required): The uuid (primary key) of the subsidy for which transactions should be listed.
-- ``user_id`` (POST data, required): The user for whom the transaction is written and for which a fulfillment should occur.
+- ``subsidy_uuid`` (POST data, required): The uuid (primary key) of the subsidy for which transactions should be created.
+- ``learner_id`` (POST data, required): The user for whom the transaction is written and for which a fulfillment should occur.
 - ``content_key`` (POST data, required): The content for which a fulfillment is created.
-- ``access_policy_uuid`` (POST data, required): The uuid of the policy that allowed the ledger transaction to be created.
+- ``subsidy_access_policy_uuid`` (POST data, required):
+      The uuid of the policy that allowed the ledger transaction to be created.
 
 Outputs
 -------
 Returns data about the transaction.
 
-::
+.. code-block:: json
 
    {
-       'uuid': 'the-transaction-uuid',
-       'status': 'completed',
-       'idempotency_key': 'the-idempotency-key',
-       'user_id': 54321,
-       'content_key': 'demox_1234+2T2023',
-       'quantity': 19900,
-       'unit': 'USD_CENTS',
-       'reference_id': 1234,
-       'reference_table': 'enrollments',
-       'subsidy_access_policy_uuid': 'a-policy-uuid',
-       'metadata': {...},
-       'created': 'created-datetime',
-       'modified': 'modified-datetime',
-       'reversals': []
+       "uuid": "the-transaction-uuid",
+       "state": "committed",
+       "idempotency_key": "the-idempotency-key",
+       "learner_id": 54321,
+       "content_key": "demox_1234+2T2023",
+       "quantity": 19900,
+       "unit": "USD_CENTS",
+       "reference_id": 1234,
+       "reference_type": "PlaceholderOCMEnrollmentReferenceType",
+       "subsidy_access_policy_uuid": "a-policy-uuid",
+       "metadata": {...},
+       "created": "created-datetime",
+       "modified": "modified-datetime",
+       "reversals": []
    }
 
 Permissions
@@ -346,7 +347,7 @@ Returns data about the transaction and its reversals.
        'uuid': 'the-transaction-uuid',
        'status': 'completed',
        'idempotency_key': 'the-idempotency-key',
-       'user_id': 54321,
+       'learner_id': 54321,
        'content_key': 'demox_1234+2T2023',
        'quantity': 19900,
        'unit': 'USD_CENTS',
@@ -392,7 +393,7 @@ Inputs
 ------
 
 - ``subsidy-uuid`` (URL path, required): The uuid (primary key) of the subsidy for which transactions should be listed.
-- ``user_id`` (POST data, required): The user to whom the query pertains.
+- ``learner_id`` (POST data, required): The user to whom the query pertains.
 - ``content_key`` (POST data, required): The content to which the query pertains.
 
 Outputs
