@@ -27,6 +27,7 @@ MOCK_ENROLLMENT_CLIENT = mock.MagicMock()
 MOCK_SUBSCRIPTION_CLIENT = mock.MagicMock()
 
 CENTS_PER_DOLLAR = 100
+OCM_ENROLLMENT_REFERENCE_TYPE = "PlaceholderOCMEnrollmentReferenceType"  # TODO: hammer this out.
 
 
 class SubsidyReferenceChoices:
@@ -110,10 +111,17 @@ class Subsidy(TimeStampedModel):
         """
         TODO: implement enrollment client
         """
+        MOCK_ENROLLMENT_CLIENT.enroll.return_value = "test-enroll-reference-id"
         return MOCK_ENROLLMENT_CLIENT
 
     @property
     def catalog_client(self):
+        """
+        TODO: implement enterprise-catalog client
+        """
+        content_metadata_mock = mock.MagicMock()
+        content_metadata_mock.get.return_value = 100
+        MOCK_CATALOG_CLIENT.get_content_metadata.return_value = content_metadata_mock
         return MOCK_CATALOG_CLIENT
 
     @lru_cache(maxsize=128)
@@ -123,23 +131,66 @@ class Subsidy(TimeStampedModel):
     def current_balance(self):
         return self.ledger.balance()
 
-    def create_transaction(self, idempotency_key, quantity, metadata):
+    def create_transaction(
+        self,
+        idempotency_key,
+        quantity,
+        lms_user_id=None,
+        content_key=None,
+        subsidy_access_policy_uuid=None,
+        **transaction_metadata
+    ):
+        """
+        Create a new Ledger Transaction and commit it to the database with a "created" state.
+        """
         return ledger_api.create_transaction(
             ledger=self.ledger,
             quantity=quantity,
             idempotency_key=idempotency_key,
-            metadata=metadata,
+            lms_user_id=lms_user_id,
+            content_key=content_key,
+            subsidy_access_policy_uuid=subsidy_access_policy_uuid,
+            **transaction_metadata,
         )
 
-    def commit_transaction(self, ledger_transaction, reference_id):
-        ledger_transaction.reference_id = reference_id
+    def commit_transaction(self, ledger_transaction, reference_id=None, reference_type=None):
+        """
+        Finalize a Ledger Transaction by populating the reference_id (from the enrollment) and transitioning its state
+        to "committed".
+
+        TODO: Shouldn't we require a reference_id in some cases?  Maybe when the transaction doesn't have an "initial"
+              key in the metadata?
+
+        Raises:
+          ValueError: If a reference_id was provided, but no reference_type.
+        """
+        if reference_id:
+            if not reference_type:
+                raise ValueError("A reference_id was provided without a reference_type.")
+            ledger_transaction.reference_id = reference_id
+            ledger_transaction.reference_type = reference_type
+        ledger_transaction.state = "committed"
         ledger_transaction.save()
 
     def rollback_transaction(self, ledger_transaction):
         # delete it, or set some state?
         pass
 
-    def redeem(self, learner_id, content_key):
+    def initialize_ledger(self):
+        """
+        Initialize the ledger with a transaction reflecting the starting_balance.
+        """
+        transaction_metadata = {"initial": True}
+        idempotency_key = create_idempotency_key_for_transaction(self, self.starting_balance, **transaction_metadata)
+        ledger_transaction = self.create_transaction(
+            idempotency_key,
+            self.starting_balance,
+            **transaction_metadata
+        )
+        self.commit_transaction(ledger_transaction)
+        return ledger_transaction
+
+    def redeem(self, learner_id, content_key, subsidy_access_policy_uuid, idempotency_key=None):
         """
         Redeem this subsidy and enroll the learner.
 
@@ -147,17 +198,26 @@ class Subsidy(TimeStampedModel):
         by the learner.
 
         Returns:
-            openedx_ledger.models.Transaction: a ledger transaction related to the redemption.
+            tuple(openedx_ledger.models.Transaction, bool):
+                The first tuple element is a ledger transaction related to the redemption, or None if the subsidy is not
+                redeemable for the given content.  The second element of the tuple is True if a Transaction was created
+                as part of this request.
         """
-        if redemption := self.get_redemption(learner_id, content_key):
-            return redemption
-
+        if existing_transaction := self.get_redemption(learner_id, content_key):
+            return (existing_transaction, False)
         if not self.is_redeemable(content_key, now()):
-            return None
+            return (None, False)
+        transaction = self._create_redemption(
+            learner_id,
+            content_key,
+            subsidy_access_policy_uuid,
+            idempotency_key=idempotency_key,
+        )
+        if transaction:
+            return (transaction, True)
+        return (None, False)
 
-        return self._create_redemption(learner_id, content_key)
-
-    def _create_redemption(self, learner_id, content_key, **kwargs):
+    def _create_redemption(self, learner_id, content_key, subsidy_access_policy_uuid, idempotency_key=None, **kwargs):
         """
         Synchronously and idempotently enroll the learner in the content and record it in the Ledger.
 
@@ -183,28 +243,26 @@ class Subsidy(TimeStampedModel):
         transaction record and the enrollment record.  The Transaction model provides a `reference_id` field for this
         purpose.
         """
-        transaction_metadata = {
-            "content_key": content_key,
-            "learner_id": learner_id,
-        }
-
-        quantity = self.price_for_content(content_key)
-
-        idempotency_key = create_idempotency_key_for_transaction(
-            self,
-            quantity,
-            learner_id=learner_id,
-            content_key=content_key,
-        )
+        transaction_metadata = {}  # TODO: what to pass into metadata???
+        quantity = -1 * self.price_for_content(content_key)
+        if not idempotency_key:
+            idempotency_key = create_idempotency_key_for_transaction(self, quantity, **transaction_metadata)
         ledger_transaction = self.create_transaction(
             idempotency_key,
-            quantity * -1,
-            transaction_metadata,
+            quantity,
+            content_key=content_key,
+            lms_user_id=learner_id,
+            subsidy_access_policy_uuid=subsidy_access_policy_uuid,
+            **transaction_metadata,
         )
 
         try:
             reference_id = self.enrollment_client.enroll(learner_id, content_key, ledger_transaction)
-            self.commit_transaction(ledger_transaction, reference_id)
+            self.commit_transaction(
+                ledger_transaction,
+                reference_id=reference_id,
+                reference_type=OCM_ENROLLMENT_REFERENCE_TYPE,
+            )
         except Exception as exc:
             self.rollback_transaction(ledger_transaction)
             raise exc
@@ -246,13 +304,13 @@ class Subsidy(TimeStampedModel):
     def transactions_for_learner(self, lms_user_id):
         return self.all_transactions().filter(lms_user_id=lms_user_id)
 
-    def transactions_for_content(self, content_uuid):
-        return self.all_transactions().filter(content_uuid=content_uuid)
+    def transactions_for_content(self, content_key):
+        return self.all_transactions().filter(content_key=content_key)
 
-    def transactions_for_learner_and_content(self, lms_user_id, content_uuid):
+    def transactions_for_learner_and_content(self, lms_user_id, content_key):
         return self.all_transactions().filter(
             lms_user_id=lms_user_id,
-            content_uuid=content_uuid,
+            content_key=content_key,
         )
 
 

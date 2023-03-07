@@ -3,7 +3,7 @@ The python API.
 """
 
 from openedx_ledger.api import create_ledger
-from openedx_ledger.utils import create_idempotency_key_for_subsidy, create_idempotency_key_for_transaction
+from openedx_ledger.utils import create_idempotency_key_for_subsidy
 
 from enterprise_subsidy.apps.subsidy.models import Subsidy
 
@@ -44,10 +44,10 @@ def get_or_create_learner_credit_subsidy(
 
     if not subsidy.ledger:
         ledger = create_ledger(unit=default_unit, idempotency_key=create_idempotency_key_for_subsidy(subsidy))
+        ledger.save()
         subsidy.ledger = ledger
         # Seed the new ledger with its first transaction that reflects the requested starting balance:
-        idpk = create_idempotency_key_for_transaction(subsidy, default_starting_balance)
-        _ = subsidy.create_transaction(idpk, default_starting_balance, {})
+        subsidy.initialize_ledger()
 
     subsidy.save()
     return (subsidy, created)
