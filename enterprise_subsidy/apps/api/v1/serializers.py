@@ -12,6 +12,8 @@ class SubsidySerializer(serializers.ModelSerializer):
     """
     Serializer for the `Subsidy` model.
     """
+    current_balance = serializers.SerializerMethodField()
+
     class Meta:
         """
         Meta class for SubsidySerializer.
@@ -26,10 +28,13 @@ class SubsidySerializer(serializers.ModelSerializer):
             "unit",
             "reference_id",
             "reference_type",
+            "current_balance",
             # TODO: serialize derived fields:
             # "subsidy_type",  # which Subsidy subtype is this?
-            # "remaining_balance",  # calculate the ledger.balance()
         ]
+
+    def get_current_balance(self, obj):
+        return obj.current_balance()
 
 
 class ReversalSerializer(serializers.ModelSerializer):

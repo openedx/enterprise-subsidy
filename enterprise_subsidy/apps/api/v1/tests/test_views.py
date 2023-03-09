@@ -3,6 +3,7 @@ Tests for views.
 """
 import json
 import uuid
+from functools import partial
 
 import ddt
 from rest_framework import status
@@ -10,6 +11,8 @@ from rest_framework.reverse import reverse
 
 from enterprise_subsidy.apps.api.v1.tests.mixins import APITestMixin
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
+
+SERIALIZED_DATE_PATTERN = '%Y-%m-%dT%H:%M:%SZ'
 
 
 class APITestBase(APITestMixin):
@@ -31,6 +34,44 @@ class APITestBase(APITestMixin):
         self.subsidy_two = SubsidyFactory(enterprise_customer_uuid=uuid.uuid4(), starting_balance=10000)
         self.ledger_two = self.subsidy_two.ledger
         self.transaction_two = self.subsidy_two.initialize_ledger()
+
+
+@ddt.ddt
+class SubsidyViewSetTests(APITestBase):
+    """
+    Test SubsidyViewSet.
+    """
+    get_details_url = partial(reverse, "api:v1:subsidy-detail")
+    get_list_url = partial(reverse, "api:v1:subsidy-list")
+
+    def test_get_one_subsidy(self):
+        """
+        Test that a subsidy detail call returns the expected
+        serialized response.
+        """
+        self.set_up_admin(enterprise_uuids=[self.subsidy_one.enterprise_customer_uuid])
+        response = self.client.get(self.get_details_url([self.subsidy_one.uuid]))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        expected_result = {
+            "uuid": str(self.subsidy_one.uuid),
+            "title": self.subsidy_one.title,
+            "enterprise_customer_uuid": self.subsidy_one.enterprise_customer_uuid,
+            "active_datetime": self.subsidy_one.active_datetime.strftime(SERIALIZED_DATE_PATTERN),
+            "expiration_datetime": self.subsidy_one.expiration_datetime.strftime(SERIALIZED_DATE_PATTERN),
+            "unit": self.subsidy_one.unit,
+            "reference_id": self.subsidy_one.reference_id,
+            "reference_type": self.subsidy_one.reference_type,
+            "current_balance": self.subsidy_one.current_balance(),
+        }
+        self.assertEqual(expected_result, response.json())
+
+    def test_get_one_subsidy_learner_not_allowed(self):
+        """
+        Test that learner roles do not allow access to read subsidies.
+        """
+        self.set_up_learner()
+        response = self.client.get(self.get_details_url([self.subsidy_one.uuid]))
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
 @ddt.ddt

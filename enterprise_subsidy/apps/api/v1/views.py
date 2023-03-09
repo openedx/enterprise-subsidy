@@ -2,7 +2,7 @@
 Views for the enterprise-subsidy service.
 """
 import json
-import uuid
+from uuid import UUID
 
 from django.core.exceptions import ValidationError
 from edx_rbac.mixins import PermissionRequiredForListingMixin
@@ -63,7 +63,20 @@ class SubsidyViewSet(
             "retrieve": PERMISSION_CAN_READ_SUBSIDIES,
         }
         permission_required = permission_for_action.get(self.request_action, PERMISSION_NOT_GRANTED)
-        return permission_required
+        return [permission_required]
+
+    def get_permission_object(self):
+        """
+        Determine the correct enterprise customer uuid that role-based
+        permissions should be checked against.
+        """
+        if self.requested_enterprise_customer_uuid:
+            return self.requested_enterprise_customer_uuid
+        try:
+            subsidy_record = Subsidy.objects.get(uuid=self.requested_subsidy_uuid)
+            return str(subsidy_record.enterprise_customer_uuid)
+        except Subsidy.DoesNotExist:
+            return None
 
     @property
     def requested_enterprise_customer_uuid(self):
@@ -280,8 +293,8 @@ class TransactionViewSet(
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
-            uuid.UUID(subsidy_uuid)
-            uuid.UUID(access_policy_uuid)
+            UUID(subsidy_uuid)
+            UUID(access_policy_uuid)
         except ValueError:
             return Response(
                 {"Error": "One or more UUID fields are not valid UUIDs: [subsidy_uuid, access_policy_uuid]"},
