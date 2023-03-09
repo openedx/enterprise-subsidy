@@ -102,6 +102,12 @@ class Subsidy(TimeStampedModel):
         db_index=True,
     )
 
+    internal_only = models.BooleanField(
+        blank=False,
+        null=False,
+        default=False
+    )
+
     active_datetime = models.DateTimeField(null=True, default=None)
     expiration_datetime = models.DateTimeField(null=True, default=None)
     history = HistoricalRecords()
