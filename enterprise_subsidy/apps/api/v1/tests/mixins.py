@@ -75,21 +75,23 @@ class APITestMixin(JwtMixin, APITestCase):
         self.desired_system_wide_role = None
         self.desired_feature_role = None
 
-    def set_up_admin(self):
+    def set_up_admin(self, enterprise_uuids=None):
         """
         Helper for setting up a user and assigning the staff role.
         """
         self.desired_system_wide_role = SYSTEM_ENTERPRISE_ADMIN_ROLE
         self.desired_feature_role = ENTERPRISE_SUBSIDY_ADMIN_ROLE
-        self.set_up_user_with_assignments(is_staff=True)
+        self.set_up_user_with_assignments(is_staff=True, enterprise_uuids=enterprise_uuids)
 
-    def set_up_learner(self):
+    def set_up_learner(self, enterprise_uuids=None):
         """
-        Helper for setting up a user and assigning the learner role.
+        Helper for setting up a user and assigning the learner role.  By default,
+        assigns the learner roles for self.enterprise_uuid in the JWT roles
+        and DB assignments.
         """
         self.desired_system_wide_role = SYSTEM_ENTERPRISE_LEARNER_ROLE
         self.desired_feature_role = ENTERPRISE_SUBSIDY_LEARNER_ROLE
-        self.set_up_user_with_assignments(is_staff=False)
+        self.set_up_user_with_assignments(is_staff=False, enterprise_uuids=enterprise_uuids)
 
     def set_up_operator(self):
         """
@@ -99,13 +101,19 @@ class APITestMixin(JwtMixin, APITestCase):
         self.desired_feature_role = ENTERPRISE_SUBSIDY_OPERATOR_ROLE
         self.set_up_user_with_assignments(is_staff=True)
 
-    def set_up_user_with_assignments(self, is_staff=False):
+    def set_up_user_with_assignments(self, is_staff=False, enterprise_uuids=None):
         """
         Helper for setting up a basic user with implicit and explicit role assignments.
         """
         self.set_up_user(is_staff=is_staff)
-        self.assign_implicit_jwt_system_wide_role(system_wide_role=self.desired_system_wide_role)
-        self.assign_explicit_db_feature_role(feature_role=self.desired_feature_role)
+        self.assign_implicit_jwt_system_wide_role(
+            system_wide_role=self.desired_system_wide_role,
+            jwt_contexts=enterprise_uuids,
+        )
+        self.assign_explicit_db_feature_role(
+            feature_role=self.desired_feature_role,
+            enterprise_uuids=enterprise_uuids,
+        )
 
     def set_up_user(self, is_staff=False):
         """
