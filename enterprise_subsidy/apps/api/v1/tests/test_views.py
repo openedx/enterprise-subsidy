@@ -4,12 +4,15 @@ Tests for views.
 import json
 import uuid
 from functools import partial
+from unittest import mock
 
 import ddt
+from openedx_ledger.models import TransactionStateChoices
 from rest_framework import status
 from rest_framework.reverse import reverse
 
 from enterprise_subsidy.apps.api.v1.tests.mixins import APITestMixin
+from enterprise_subsidy.apps.subsidy.models import OCM_ENROLLMENT_REFERENCE_TYPE
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
 
 SERIALIZED_DATE_PATTERN = '%Y-%m-%dT%H:%M:%SZ'
@@ -83,11 +86,14 @@ class TransactionViewSetTests(APITestBase):
     # Uncomment this later once we have segment events firing.
     # @mock.patch('enterprise_subsidy.apps.api.v1.event_utils.track_event')
     # def test_create(self, mock_track_event):
-    def test_create(self):
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
+    def test_create(self, mock_enterprise_client):
         """
         Test create Transaction, happy case.
         """
         url = reverse("api:v1:transaction-list")
+        test_enroll_reference_id = "test-enroll-reference-id"
+        mock_enterprise_client.enroll.return_value = test_enroll_reference_id
         # Create privileged staff user that should be able to create Transactions.
         self.set_up_operator()
         post_data = {
@@ -100,17 +106,18 @@ class TransactionViewSetTests(APITestBase):
         assert response.status_code == status.HTTP_201_CREATED
         create_response_data = response.json()
         assert len(create_response_data["uuid"]) == 36
-        assert create_response_data["idempotency_key"]  # TODO: fix this once the idempotency key format is finalized.
+        # TODO: make this assertion more specific once we hookup the idempotency_key to the request body.
+        assert create_response_data["idempotency_key"]
         assert create_response_data["content_key"] == post_data["content_key"]
         assert create_response_data["lms_user_id"] == post_data["learner_id"]
         assert create_response_data["subsidy_access_policy_uuid"] == post_data["access_policy_uuid"]
         assert json.loads(create_response_data["metadata"]) == {}
         assert create_response_data["unit"] == self.ledger_one.unit
         assert create_response_data["quantity"] < 0  # No need to be exact at this time, I'm just testing create works.
-        assert create_response_data["reference_id"]  # Ditto ^
-        assert create_response_data["reference_type"]  # Ditto ^
+        assert create_response_data["reference_id"] == test_enroll_reference_id
+        assert create_response_data["reference_type"] == OCM_ENROLLMENT_REFERENCE_TYPE
         assert create_response_data["reversal"] is None
-        assert create_response_data["state"] == "committed"
+        assert create_response_data["state"] == TransactionStateChoices.COMMITTED
 
         # `create` was successful, so now call `retreive` to read the new Transaction and do a basic smoke test.
         detail_url = reverse("api:v1:transaction-detail", kwargs={"uuid": create_response_data["uuid"]})

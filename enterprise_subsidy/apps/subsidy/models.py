@@ -14,6 +14,7 @@ from unittest import mock
 from uuid import uuid4
 
 from django.db import models
+from django.utils.functional import cached_property
 from edx_rbac.models import UserRole, UserRoleAssignment
 from edx_rbac.utils import ALL_ACCESS_CONTEXT
 from model_utils.models import TimeStampedModel
@@ -22,12 +23,16 @@ from openedx_ledger.models import Ledger, UnitChoices
 from openedx_ledger.utils import create_idempotency_key_for_transaction
 from simple_history.models import HistoricalRecords
 
+from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
+
 MOCK_CATALOG_CLIENT = mock.MagicMock()
 MOCK_ENROLLMENT_CLIENT = mock.MagicMock()
 MOCK_SUBSCRIPTION_CLIENT = mock.MagicMock()
 
 CENTS_PER_DOLLAR = 100
-OCM_ENROLLMENT_REFERENCE_TYPE = "PlaceholderOCMEnrollmentReferenceType"  # TODO: hammer this out.
+# TODO: hammer this out.  Do we want this to be the name of a joinable table name?  Do we want it to reflect the field
+# name of the response from the enrollment API?
+OCM_ENROLLMENT_REFERENCE_TYPE = "enterprise_fufillment_source_uuid"
 
 
 class SubsidyReferenceChoices:
@@ -74,7 +79,7 @@ class Subsidy(TimeStampedModel):
     starting_balance = models.BigIntegerField(
         null=False, blank=False,
     )
-    ledger = models.OneToOneField(Ledger, null=True, on_delete=models.SET_NULL)
+    ledger = models.OneToOneField(Ledger, null=True, on_delete=models.SET_NULL, related_name="subsidy")
     unit = models.CharField(
         max_length=255,
         blank=False,
@@ -112,13 +117,13 @@ class Subsidy(TimeStampedModel):
     expiration_datetime = models.DateTimeField(null=True, default=None)
     history = HistoricalRecords()
 
-    @property
-    def enrollment_client(self):
+    @cached_property
+    def enterprise_client(self):
         """
-        TODO: implement enrollment client
+        Get a client for accessing the Enterprise API (edx-enterprise endpoints via edx-platform).  This contains
+        funcitons used for enrolling learners in OCM courses.  Cached to reduce the chance of repeated calls to auth.
         """
-        MOCK_ENROLLMENT_CLIENT.enroll.return_value = "test-enroll-reference-id"
-        return MOCK_ENROLLMENT_CLIENT
+        return EnterpriseApiClient()
 
     @property
     def catalog_client(self):
@@ -263,7 +268,7 @@ class Subsidy(TimeStampedModel):
         )
 
         try:
-            reference_id = self.enrollment_client.enroll(learner_id, content_key, ledger_transaction)
+            reference_id = self.enterprise_client.enroll(learner_id, content_key, ledger_transaction)
             self.commit_transaction(
                 ledger_transaction,
                 reference_id=reference_id,
