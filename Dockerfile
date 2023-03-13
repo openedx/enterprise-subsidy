@@ -33,6 +33,7 @@ RUN apt-get update && apt-get -qy install --no-install-recommends \
  libssl-dev \
  python3-dev \
  gcc \
+ git \
  make
 
 ENV VIRTUAL_ENV=/edx/venvs/enterprise-subsidy
