@@ -5,8 +5,16 @@ from uuid import uuid4
 import ddt
 from django.conf import settings
 from django.test import TestCase
+from openedx_ledger.models import TransactionStateChoices
+from openedx_ledger.test_utils.factories import TransactionFactory
+from requests.exceptions import HTTPError
 
-from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
+from enterprise_subsidy.apps.api_client.enterprise import (
+    ENROLLMENT_REF_ID_FIELD_NAME,
+    EnrollmentException,
+    EnterpriseApiClient
+)
+from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
 from test_utils.utils import MockResponse
 
 
@@ -46,8 +54,11 @@ class EnterpriseApiClientTests(TestCase):
         response = enterprise_client.bulk_enroll_enterprise_learners(self.enterprise_customer_uuid, options)
         assert response.get('successes') == [{'email': self.user_email, 'course_run_key': self.courserun_key}]
         mock_oauth_client().post.assert_called_with(
-            os.path.join(EnterpriseApiClient.enterprise_customer_endpoint, str(self.enterprise_customer_uuid)) +
-            '/enroll_learners_in_courses/',
+            os.path.join(
+                EnterpriseApiClient.enterprise_customer_endpoint,
+                str(self.enterprise_customer_uuid),
+                'enroll_learners_in_courses/',
+            ),
             json={'enrollments_info': [{
                 'email': self.user_email,
                 'course_run_key': self.courserun_key,
@@ -59,36 +70,99 @@ class EnterpriseApiClientTests(TestCase):
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
     def test_successful_create_single_learner_enrollment(self, mock_oauth_client):
         """
-        Test the enterprise client's ability to handle successful api requests to create a course enrollments
-        for a single learner
+        Test the enterprise client's ability to handle successful api requests to create a course enrollment
+        for a single learner using client.enroll().
         """
+        expected_reference_id = 'test-reference-id'
         mock_oauth_client.return_value.post.return_value = MockResponse(
             {
-                'successes': [{'email': self.user_email, 'course_run_key': self.courserun_key}],
+                'successes': [{
+                    'user_id': self.user_id,
+                    'email': self.user_email,
+                    'course_run_key': self.courserun_key,
+                    ENROLLMENT_REF_ID_FIELD_NAME: expected_reference_id,
+                }],
                 'pending': [],
                 'failures': []
             },
             201,
         )
+        subsidy = SubsidyFactory(enterprise_customer_uuid=self.enterprise_customer_uuid, starting_balance=10000)
+        transaction = TransactionFactory(
+            state=TransactionStateChoices.PENDING,
+            quantity=-1000,
+            ledger=subsidy.ledger,
+            idempotency_key=f"{subsidy.ledger.idempotency_key}--1000-abcd"
+        )
 
         enterprise_client = EnterpriseApiClient()
-        response = enterprise_client.enroll_enterprise_learner_in_courserun(
-            'some-transaction-id',
-            self.user_email,
-            self.courserun_key,
-            self.enterprise_customer_uuid,
-        )
-        assert response.get('successes') == [{'email': self.user_email, 'course_run_key': self.courserun_key}]
+        actual_reference_id = enterprise_client.enroll(self.user_id, self.courserun_key, transaction)
+
+        assert actual_reference_id == expected_reference_id
         mock_oauth_client().post.assert_called_with(
-            os.path.join(EnterpriseApiClient.enterprise_customer_endpoint, str(self.enterprise_customer_uuid)) +
-            '/enroll_learners_in_courses/',
+            os.path.join(
+                EnterpriseApiClient.enterprise_customer_endpoint,
+                str(self.enterprise_customer_uuid),
+                'enroll_learners_in_courses/',
+            ),
             json={'enrollments_info': [{
-                'email': self.user_email,
+                'user_id': self.user_id,
                 'course_run_key': self.courserun_key,
-                'transaction_id': 'some-transaction-id',
+                'transaction_id': transaction.uuid,
             }]},
             timeout=settings.BULK_ENROLL_REQUEST_TIMEOUT_SECONDS
         )
+
+    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
+    def test_failed_create_single_learner_enrollment_2xx(self, mock_oauth_client):
+        """
+        Something bad happened on the enrollment API side which caused a response without any successful enrollments.
+
+        Special case where the status code was still 2xx.
+        """
+        expected_reference_id = 'test-reference-id'
+        mock_oauth_client.return_value.post.return_value = MockResponse(
+            {
+                'successes': [
+                    # something weird happened that caused no successful enrollments (despite 201 status I guess...)
+                ],
+                'pending': [],
+                'failures': []
+            },
+            201,
+        )
+        subsidy = SubsidyFactory(enterprise_customer_uuid=self.enterprise_customer_uuid, starting_balance=10000)
+        transaction = TransactionFactory(
+            state=TransactionStateChoices.PENDING,
+            quantity=-1000,
+            ledger=subsidy.ledger,
+            idempotency_key=f"{subsidy.ledger.idempotency_key}--1000-abcd"
+        )
+
+        enterprise_client = EnterpriseApiClient()
+        with self.assertRaises(EnrollmentException):
+            enterprise_client.enroll(self.user_id, self.courserun_key, transaction)
+
+    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
+    def test_failed_create_single_learner_enrollment_4xx(self, mock_oauth_client):
+        """
+        Something bad happened on the enrollment API side which caused a response without any successful enrollments.
+
+        Special case where the status code was 4xx.
+        """
+        expected_reference_id = 'test-reference-id'
+        mock_oauth_client.return_value.post.return_value = MockResponse(None, 403)
+        subsidy = SubsidyFactory(enterprise_customer_uuid=self.enterprise_customer_uuid, starting_balance=10000)
+        transaction = TransactionFactory(
+            state=TransactionStateChoices.PENDING,
+            quantity=-1000,
+            ledger=subsidy.ledger,
+            idempotency_key=f"{subsidy.ledger.idempotency_key}--1000-abcd"
+        )
+
+        enterprise_client = EnterpriseApiClient()
+        with self.assertRaises(HTTPError):
+            enterprise_client.enroll(self.user_id, self.courserun_key, transaction)
 
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
     def test_successful_fetch_enterprise_data(self, mock_oauth_client):

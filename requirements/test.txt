@@ -171,13 +171,13 @@ edx-rbac==1.7.0
     #   openedx-ledger
 edx-rest-api-client==5.5.0
     # via -r requirements/base.txt
-exceptiongroup==1.1.0
+exceptiongroup==1.1.1
     # via pytest
 factory-boy==3.2.1
     # via -r requirements/test.in
 faker==17.6.0
     # via factory-boy
-fastavro==1.7.2
+fastavro==1.7.3
     # via
     #   -r requirements/base.txt
     #   openedx-events
@@ -237,11 +237,11 @@ oauthlib==3.2.2
     #   -r requirements/base.txt
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==6.0.0
+openedx-events==7.0.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-openedx-ledger==0.1.6
+openedx-ledger==0.1.7
     # via -r requirements/base.txt
 packaging==23.0
     # via
@@ -253,7 +253,7 @@ pbr==5.11.1
     # via
     #   -r requirements/base.txt
     #   stevedore
-platformdirs==3.1.0
+platformdirs==3.1.1
     # via
     #   pylint
     #   virtualenv
@@ -291,7 +291,7 @@ pyjwt[crypto]==2.6.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==2.16.4
+pylint==2.17.0
     # via
     #   edx-lint
     #   pylint-celery
@@ -436,11 +436,11 @@ uritemplate==4.1.1
     #   -r requirements/base.txt
     #   coreapi
     #   drf-yasg
-urllib3==1.26.14
+urllib3==1.26.15
     # via
     #   -r requirements/base.txt
     #   requests
-virtualenv==20.20.0
+virtualenv==20.21.0
     # via tox
 wrapt==1.15.0
     # via astroid

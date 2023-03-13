@@ -118,7 +118,7 @@ edx-rbac==1.7.0
     #   openedx-ledger
 edx-rest-api-client==5.5.0
     # via -r requirements/base.in
-fastavro==1.7.2
+fastavro==1.7.3
     # via openedx-events
 future==0.18.3
     # via pyjwkest
@@ -146,11 +146,11 @@ oauthlib==3.2.2
     # via
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==6.0.0
+openedx-events==7.0.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-openedx-ledger==0.1.6
+openedx-ledger==0.1.7
     # via -r requirements/base.in
 packaging==23.0
     # via drf-yasg
@@ -239,5 +239,5 @@ uritemplate==4.1.1
     # via
     #   coreapi
     #   drf-yasg
-urllib3==1.26.14
+urllib3==1.26.15
     # via requests

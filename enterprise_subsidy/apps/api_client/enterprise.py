@@ -11,6 +11,16 @@ from enterprise_subsidy.apps.api_client.base_oauth import BaseOAuthClient
 
 logger = logging.getLogger(__name__)
 
+# Name of field in JSON response from bulk enrollment API that contains the value to be used as the reference to the
+# newly created enrollment.
+ENROLLMENT_REF_ID_FIELD_NAME = "enterprise_fufillment_source_uuid"
+
+
+class EnrollmentException(Exception):
+    """
+    Thrown if something goes wrong trying to create an enrollment.
+    """
+
 
 class EnterpriseApiClient(BaseOAuthClient):
     """
@@ -55,33 +65,37 @@ class EnterpriseApiClient(BaseOAuthClient):
                 )
             raise exc
 
-    def enroll_enterprise_learner_in_courserun(
-        self,
-        transaction_id,
-        user_email,
-        course_run_key,
-        enterprise_customer_uuid
-    ):
+    def enroll(self, learner_id, course_run_key, ledger_transaction):
         """
-        Creates a single subsidy enrollment in a course run for an enterprise learner.
-
+        Creates a single subsidy enrollment in a course run for an enterprise learner from a subsidy transaction.
         Arguments:
-            transaction_id (UUID): UUID representation of the subsidy transaction for the enrollment
-            user_email (str): Email value of the user to be enrolled
+            learner_id (int): lms_user_id of the learner to be enrolled
             course_run_key (str): Course run key value of the course run to be enrolled in
-            enterprise_customer_uuid (UUID): UUID representation of the customer that the enrollment will be linked to
+            ledger_transaction (openedx_ledger.models.Transaction): the Transaction returned from the ledger
         Returns:
-            response (dict): JSON response data
+            reference_id (str): EnterpriseCourseEnrollment reference id for ledger transaction confirmation
         Raises:
-            requests.exceptions.HTTPError: if service is down/unavailable or status code comes back >= 300,
-            the method will log and throw an HTTPError exception.
+            requests.exceptions.HTTPError:
+                If service is down/unavailable or status code comes back >= 300, the method will log and throw an
+                HTTPError exception.
+            EnrollmentError:
+                If enrollment response contained an unexpected output, such as missing data.
         """
         enrollments_info = [{
-            'email': user_email,
+            'user_id': learner_id,
             'course_run_key': course_run_key,
-            'transaction_id': transaction_id,
+            'transaction_id': ledger_transaction.uuid,
         }]
-        return self.bulk_enroll_enterprise_learners(enterprise_customer_uuid, enrollments_info)
+        customer_uuid = ledger_transaction.ledger.subsidy.enterprise_customer_uuid
+        response = self.bulk_enroll_enterprise_learners(customer_uuid, enrollments_info)
+        if "successes" not in response or len(response["successes"]) != 1:
+            raise EnrollmentException("Enrollment response should contain exactly one successful enrollment.")
+        enrollment_success_info = response["successes"][0]
+        if ENROLLMENT_REF_ID_FIELD_NAME not in enrollment_success_info:
+            raise EnrollmentException(
+                f"Enrollment response missing a reference ID to the created object ({ENROLLMENT_REF_ID_FIELD_NAME})."
+            )
+        return enrollment_success_info.get(ENROLLMENT_REF_ID_FIELD_NAME)
 
     def bulk_enroll_enterprise_learners(self, enterprise_customer_uuid, enrollments_info):
         """
@@ -91,14 +105,14 @@ class EnterpriseApiClient(BaseOAuthClient):
             enterprise_customer_uuid (UUID): UUID representation of the customer that the enrollment will be linked to
             enrollment_info (list[dicts]): List of enrollment information required to enroll.
                 Each index must contain key/value pairs:
-                    email: the email of the learner to be enrolled
+                    user_id: ID of the learner to be enrolled
                     course_run_key: the course run key to be enrolled in by the user
                     transaction_id: uuid represenation of the transaction for the enrollment
 
                 Example::
                     [
                         {
-                            'email': 'newuser2@test.com',
+                            'user_id': 1234,
                             'course_run_key': 'course-v2:edX+FunX+Fun_Course',
                             'transaction_id': '84kdbdbade7b4fcb838f8asjke8e18ae',
                         },
