@@ -241,7 +241,7 @@ openedx-events==7.0.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-openedx-ledger==0.1.8
+openedx-ledger==0.2.0
     # via -r requirements/base.txt
 packaging==23.0
     # via
