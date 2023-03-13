@@ -80,7 +80,12 @@ class Subsidy(TimeStampedModel):
     starting_balance = models.BigIntegerField(
         null=False, blank=False,
     )
-    ledger = models.OneToOneField(Ledger, null=True, on_delete=models.SET_NULL, related_name="subsidy")
+    ledger = models.OneToOneField(
+        Ledger,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL,
+    )
     unit = models.CharField(
         max_length=255,
         blank=False,
@@ -188,20 +193,6 @@ class Subsidy(TimeStampedModel):
         # delete it, or set some state?
         pass
 
-    def initialize_ledger(self):
-        """
-        Initialize the ledger with a transaction reflecting the starting_balance.
-        """
-        transaction_metadata = {"initial": True}
-        idempotency_key = create_idempotency_key_for_transaction(self, self.starting_balance, **transaction_metadata)
-        ledger_transaction = self.create_transaction(
-            idempotency_key,
-            self.starting_balance,
-            **transaction_metadata
-        )
-        self.commit_transaction(ledger_transaction)
-        return ledger_transaction
-
     def redeem(self, learner_id, content_key, subsidy_access_policy_uuid, idempotency_key=None):
         """
         Redeem this subsidy and enroll the learner.
@@ -255,17 +246,22 @@ class Subsidy(TimeStampedModel):
         transaction record and the enrollment record.  The Transaction model provides a `reference_id` field for this
         purpose.
         """
-        transaction_metadata = {}  # TODO: what to pass into metadata???
         quantity = -1 * self.price_for_content(content_key)
         if not idempotency_key:
-            idempotency_key = create_idempotency_key_for_transaction(self, quantity, **transaction_metadata)
+            idempotency_key = create_idempotency_key_for_transaction(
+                self.ledger,
+                quantity,
+                learner_id=learner_id,
+                content_key=content_key,
+                subsidy_access_policy_uuid=subsidy_access_policy_uuid,
+            )
         ledger_transaction = self.create_transaction(
             idempotency_key,
             quantity,
             content_key=content_key,
             lms_user_id=learner_id,
             subsidy_access_policy_uuid=subsidy_access_policy_uuid,
-            **transaction_metadata,
+            **kwargs,
         )
 
         try:
@@ -324,6 +320,9 @@ class Subsidy(TimeStampedModel):
             lms_user_id=lms_user_id,
             content_key=content_key,
         )
+
+    def __str__(self):
+        return f'<Subsidy uuid={self.uuid}, title={self.title}>'
 
 
 #

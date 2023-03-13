@@ -64,6 +64,12 @@ ENABLE_AUTO_AUTH = True
 
 LOGGING = get_logger_config(debug=DEBUG)
 
+# Shell plus
+# https://django-extensions.readthedocs.io/en/latest/shell_plus.html#interactive-python-shells
+INSTALLED_APPS += ('django_extensions',)
+SHELL_PLUS_DONT_LOAD = ['HistoricalSubsidy', ]
+# SHELL_PLUS = 'ipython'
+
 #####################################################################
 # Lastly, see if the developer has any local overrides.
 if os.path.isfile(join(dirname(abspath(__file__)), 'private.py')):

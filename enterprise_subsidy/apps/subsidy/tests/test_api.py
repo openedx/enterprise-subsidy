@@ -24,8 +24,9 @@ def learner_credit_fixture():
 @pytest.mark.django_db
 def test_create_learner_credit_subsidy(learner_credit_fixture):
     """
-    Test that a Subsidy, associated Ledger, and initial Transaction all got created successfully.  This can be easily
-    confirmed by calling subsidy.current_balance() which reads all 3 related objects.
+    Test that a Subsidy, associated Ledger, and initial Transaction all are
+    created successfully.  This can be easily confirmed by calling
+    ``subsidy.current_balance()``, which reads all 3 related objects.
     """
     assert learner_credit_fixture.current_balance() == 1000000
 

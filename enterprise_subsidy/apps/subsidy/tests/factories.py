@@ -28,7 +28,7 @@ class SubsidyFactory(factory.django.DjangoModelFactory):
 
     uuid = factory.LazyFunction(uuid4)
     starting_balance = factory.Faker("random_int", min=10000, max=1000000)
-    ledger = factory.SubFactory(LedgerFactory)
+    # ledger = factory.SubFactory(LedgerFactory)
     unit = UnitChoices.USD_CENTS
     reference_id = factory.Faker("lexify", text="????????")
     reference_type = SubsidyReferenceChoices.OPPORTUNITY_PRODUCT_ID
@@ -37,7 +37,7 @@ class SubsidyFactory(factory.django.DjangoModelFactory):
     expiration_datetime = factory.Faker("future_datetime")
 
     # Register hook to seed initial value for this test subsidy.
-    initialize_ledger = factory.PostGenerationMethodCall("initialize_ledger")
+    # initialize_ledger = factory.PostGenerationMethodCall("initialize_ledger")
 
 
 class UserFactory(factory.django.DjangoModelFactory):

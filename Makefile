@@ -46,7 +46,7 @@ pip_requirements:  ## install pip-sync
 dev_requirements: pip_requirements ## sync to requirements for local development
 	pip-sync -q requirements/dev.txt requirements/private.*
 
-validation_requirements: ## sync to requirements for testing & code quality checking
+validation_requirements: pip_requirements ## sync to requirements for testing & code quality checking
 	pip-sync -q requirements/validation.txt
 
 doc_requirements:

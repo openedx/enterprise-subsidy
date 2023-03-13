@@ -7,3 +7,4 @@ ddt
 diff-cover                # Changeset diff test coverage
 edx-i18n-tools            # For i18n_tool dummy
 django-debug-toolbar      # For debugging Django
+django-extensions         # custom extensions for Django

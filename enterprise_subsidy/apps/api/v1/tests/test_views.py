@@ -45,12 +45,12 @@ class APITestBase(APITestMixin):
         super().setUp()
 
         # Create a subsidy that the test learner, test admin, and test operater should all be able to access.
-        self.subsidy_1 = SubsidyFactory(
+        self.subsidy_1 = SubsidyFactory.create(
             uuid=self.subsidy_1_uuid,
             enterprise_customer_uuid=self.enterprise_1_uuid,
             starting_balance=15000
         )
-        self.subsidy_1_transaction_initial = self.subsidy_1.initialize_ledger()
+        self.subsidy_1_transaction_initial = self.subsidy_1.ledger.transactions.first()
         TransactionFactory(
             uuid=self.subsidy_1_transaction_1_uuid,
             state=TransactionStateChoices.COMMITTED,
@@ -67,13 +67,13 @@ class APITestBase(APITestMixin):
         )
 
         # Create an extra subsidy with the same enterprise_customer_uuid, but the learner does not have any transactions
-        # in tihs one.
-        self.subsidy_2 = SubsidyFactory(
+        # in this one.
+        self.subsidy_2 = SubsidyFactory.create(
             uuid=self.subsidy_2_uuid,
             enterprise_customer_uuid=self.enterprise_1_uuid,
             starting_balance=15000
         )
-        self.subsidy_2_transaction_initial = self.subsidy_2.initialize_ledger()
+        self.subsidy_2_transaction_initial = self.subsidy_2.ledger.transactions.first()
         TransactionFactory(
             uuid=self.subsidy_2_transaction_1_uuid,
             state=TransactionStateChoices.COMMITTED,
@@ -96,7 +96,7 @@ class APITestBase(APITestMixin):
             enterprise_customer_uuid=self.enterprise_2_uuid,
             starting_balance=15000
         )
-        self.subsidy_3_transaction_initial = self.subsidy_3.initialize_ledger()
+        self.subsidy_3_transaction_initial = self.subsidy_3.ledger.transactions.first()
         TransactionFactory(
             uuid=self.subsidy_3_transaction_1_uuid,
             state=TransactionStateChoices.COMMITTED,
