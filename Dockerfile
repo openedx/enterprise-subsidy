@@ -1,7 +1,6 @@
 FROM ubuntu:focal as app
 MAINTAINER sre@edx.org
 
-
 # Packages installed:
 
 # language-pack-en locales; ubuntu locale support so that system utilities have a consistent
@@ -20,6 +19,8 @@ MAINTAINER sre@edx.org
 
 # gcc; for compiling python extensions distributed with python packages like mysql-client
 
+# git; necessary to install local python packages in editable mode via pip.  It's got electrolytes.
+
 # make; we use makefiles for all sorts of stuff
 
 # If you add a package here please include a comment above describing what it is used for
@@ -28,18 +29,21 @@ RUN apt-get update && apt-get -qy install --no-install-recommends \
  locales \
  python3.8 \
  python3-pip \
+ python3.8-venv \
  libmysqlclient-dev \
  libssl-dev \
- python3-dev \
+ python3.8-dev \
  gcc \
+ git \
  make
 
-
-RUN pip install --upgrade pip setuptools
 # delete apt package lists because we do not need them inflating our image
 RUN rm -rf /var/lib/apt/lists/*
 
-RUN ln -s /usr/bin/python3 /usr/bin/python
+# Create a virtualenv for sanity
+ENV VIRTUAL_ENV=/edx/venvs/enterprise-subsidy
+RUN python3.8 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN locale-gen en_US.UTF-8
 ENV LANG en_US.UTF-8
@@ -55,8 +59,10 @@ WORKDIR /edx/app/enterprise-subsidy
 # Copy the requirements explicitly even though we copy everything below
 # this prevents the image cache from busting unless the dependencies have changed.
 COPY requirements/production.txt /edx/app/enterprise-subsidy/requirements/production.txt
+COPY requirements/pip.txt /edx/app/enterprise-subsidy/requirements/pip.txt
 
 # Dependencies are installed as root so they cannot be modified by the application user.
+RUN pip install -r requirements/pip.txt
 RUN pip install -r requirements/production.txt
 
 RUN mkdir -p /edx/var/log
