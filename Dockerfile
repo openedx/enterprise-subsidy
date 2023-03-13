@@ -27,6 +27,7 @@ RUN apt-get update && apt-get -qy install --no-install-recommends \
  language-pack-en \
  locales \
  python3.8 \
+ python3.8-venv \
  python3-pip \
  libmysqlclient-dev \
  libssl-dev \
@@ -34,6 +35,9 @@ RUN apt-get update && apt-get -qy install --no-install-recommends \
  gcc \
  make
 
+ENV VIRTUAL_ENV=/edx/venvs/enterprise-subsidy
+RUN python3.8 -m venv $VIRTUAL_ENV
+ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN pip install --upgrade pip setuptools
 # delete apt package lists because we do not need them inflating our image
