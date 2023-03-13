@@ -16,8 +16,7 @@ services:
     container_name: enterprise_subsidy.memcache
 
   app:
-    # Uncomment this line to use the official enterprise_subsidy base image
-    # image: openedx/enterprise_subsidy
+    image: openedx/enterprise-subsidy
     build:
       context: .
       dockerfile: Dockerfile

@@ -157,7 +157,7 @@ detect_changed_source_translations: ## check if translation files are up-to-date
 validate_translations: fake_translations detect_changed_source_translations ## install fake translations and check if translation files are up-to-date
 
 docker_build:
-	docker build . -f Dockerfile -t openedx/enterprise-subsidy
+	docker build . -f Dockerfile -t openedx/enterprise-subsidy --no-cache
 
 # devstack-themed shortcuts
 dev.up: # Starts all containers
@@ -165,6 +165,10 @@ dev.up: # Starts all containers
 
 dev.up.build:
 	docker-compose up -d --build
+
+dev.up.build-no-cache:
+	docker-compose build --no-cache
+	docker-compose up -d
 
 dev.down: # Kills containers and all of their data that isn't in volumes
 	docker-compose down
