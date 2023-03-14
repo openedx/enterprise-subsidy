@@ -20,3 +20,7 @@ PERMISSION_CAN_READ_TRANSACTIONS = "subsidy.can_read_transactions"
 # Provide a convenience permission which should never be granted.  This is helpful for being explicit when overriding
 # `get_permission_required()`.
 PERMISSION_NOT_GRANTED = 'subsidy.not_granted'
+
+EXECUTIVE_EDUCATION_MODE = "paid-executive-education"
+EDX_PRODUCT_SOURCE = "edX"
+EDX_VERIFIED_COURSE_MODE = "verified"

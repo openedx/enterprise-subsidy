@@ -24,6 +24,7 @@ class APITestBase(APITestMixin):
 
     Contains boilerplate to create a couple of subsidies with related ledgers and starting transactions.
     """
+
     def setUp(self):
         super().setUp()
 
@@ -87,13 +88,15 @@ class TransactionViewSetTests(APITestBase):
     # @mock.patch('enterprise_subsidy.apps.api.v1.event_utils.track_event')
     # def test_create(self, mock_track_event):
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
-    def test_create(self, mock_enterprise_client):
+    @mock.patch("enterprise_subsidy.apps.api_client.enterprise_catalog.EnterpriseCatalogApiClient.get_course_price")
+    def test_create(self, mock_get_course_price, mock_enterprise_client):
         """
         Test create Transaction, happy case.
         """
         url = reverse("api:v1:transaction-list")
         test_enroll_reference_id = "test-enroll-reference-id"
         mock_enterprise_client.enroll.return_value = test_enroll_reference_id
+        mock_get_course_price.return_value = "100.00"
         # Create privileged staff user that should be able to create Transactions.
         self.set_up_operator()
         post_data = {
