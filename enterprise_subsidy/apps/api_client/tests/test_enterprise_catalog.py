@@ -7,6 +7,7 @@ from django.conf import settings
 from django.test import TestCase
 
 from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
+from enterprise_subsidy.apps.subsidy.constants import EDX_PRODUCT_SOURCE
 from test_utils.utils import MockResponse
 
 
@@ -97,15 +98,65 @@ class EnterpriseCatalogApiClientTests(TestCase):
         )
         assert response == self.course_metadata
 
+    @ddt.data(
+        {
+            'entitlements': [
+                {
+                    "mode": "paid-executive-education",
+                    "price": "2100.00",
+                    "currency": "USD",
+                    "sku": "B98DE21",
+                }
+            ],
+            'product_source': '2U',
+        },
+        {
+            'entitlements': [
+                {
+                    "mode": "verified",
+                    "price": "794.00",
+                    "currency": "USD",
+                    "sku": "B6DE08E",
+                }
+            ],
+            'product_source': None,
+        },
+    )
+    @ddt.unpack
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
-    def test_successful_fetch_course_price(self, mock_oauth_client):
+    def test_client_can_fetch_mode_specific_prices(
+        self,
+        mock_oauth_client,
+        entitlements,
+        product_source,
+    ):
         """
         Test the enterprise catalog client's ability to handle api requests to fetch content metadata from the catalog
-        service and return formatted pricing data on the content.
+        service and return formatted pricing data on the content based on content mode.
         """
-        mock_oauth_client.return_value.get.return_value = MockResponse(self.course_metadata, 200)
+        mocked_data = self.course_metadata.copy()
+        mocked_data['product_source'] = product_source
+        mocked_data['entitlements'] = entitlements
+        mock_oauth_client.return_value.get.return_value = MockResponse(mocked_data, 200)
         enterprise_catalog_client = EnterpriseCatalogApiClient()
         response = enterprise_catalog_client.get_course_price(
             self.enterprise_customer_uuid, self.course_key
         )
-        assert response == self.course_entitlements
+        assert response == entitlements[0].get('price')
+
+    @ddt.data('2U', None)
+    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
+    def test_client_discern_product_source(self, product_source, mock_oauth_client):
+        """
+        Test that the catalog client has the ability to smartly return the product source value from the content
+        metadata payload
+        """
+        mocked_data = self.course_metadata.copy()
+        mocked_data['product_source'] = product_source
+        mock_oauth_client.return_value.get.return_value = MockResponse(mocked_data, 200)
+        enterprise_catalog_client = EnterpriseCatalogApiClient()
+        response = enterprise_catalog_client.get_product_source(
+            self.enterprise_customer_uuid, self.course_key
+        )
+        expected_source = product_source if product_source else EDX_PRODUCT_SOURCE
+        assert expected_source == response

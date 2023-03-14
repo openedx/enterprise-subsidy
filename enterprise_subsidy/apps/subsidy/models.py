@@ -24,6 +24,7 @@ from openedx_ledger.utils import create_idempotency_key_for_transaction
 from simple_history.models import HistoricalRecords
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
+from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
 
 MOCK_CATALOG_CLIENT = mock.MagicMock()
 MOCK_ENROLLMENT_CLIENT = mock.MagicMock()
@@ -125,19 +126,19 @@ class Subsidy(TimeStampedModel):
         """
         return EnterpriseApiClient()
 
-    @property
+    @cached_property
     def catalog_client(self):
         """
-        TODO: implement enterprise-catalog client
+        Get a client for access the Enterprise Catalog service API (enterprise-catalog endpoints).  This contains
+        functions used for fetching full content metadata and pricing data on courses. Cached to reduce the chance of
+        repeated calls to auth.
         """
-        content_metadata_mock = mock.MagicMock()
-        content_metadata_mock.get.return_value = 100
-        MOCK_CATALOG_CLIENT.get_content_metadata.return_value = content_metadata_mock
-        return MOCK_CATALOG_CLIENT
+        return EnterpriseCatalogApiClient()
 
     @lru_cache(maxsize=128)
     def price_for_content(self, content_key):
-        return self.catalog_client.get_content_metadata(content_key).get("price") * CENTS_PER_DOLLAR
+        price = self.catalog_client.get_course_price(self.enterprise_customer_uuid, content_key)
+        return int(float(price)) * CENTS_PER_DOLLAR
 
     def current_balance(self):
         return self.ledger.balance()

@@ -9,6 +9,12 @@ from edx_rest_api_client.client import OAuthAPIClient
 logger = logging.getLogger(__name__)
 
 
+class ApiClientException(Exception):
+    """
+    Base API Client Exception thrown if something goes wrong while executing client requests.
+    """
+
+
 class BaseOAuthClient:
     """
     API client for calls to the enterprise service.
