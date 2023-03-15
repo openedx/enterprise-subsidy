@@ -63,7 +63,8 @@ class SubsidyViewSet(
             "retrieve": PERMISSION_CAN_READ_SUBSIDIES,
         }
         permission_required = permission_for_action.get(self.request_action, PERMISSION_NOT_GRANTED)
-        return permission_required
+
+        return [permission_required]
 
     @property
     def requested_enterprise_customer_uuid(self):
@@ -148,7 +149,7 @@ class TransactionViewSet(
             "reverse": PERMISSION_CAN_CREATE_TRANSACTIONS,
         }
         permission_required = permission_for_action.get(self.request_action, PERMISSION_NOT_GRANTED)
-        return (permission_required,)
+        return [permission_required]
 
     def get_permission_object(self):
         """

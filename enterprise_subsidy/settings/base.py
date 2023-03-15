@@ -31,7 +31,7 @@ SECRET_KEY = os.environ.get('EDX_ENTERPRISE_SUBSIDY_SECRET_KEY', 'insecure-secre
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 

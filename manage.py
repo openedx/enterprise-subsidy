@@ -5,6 +5,10 @@ Django administration utility.
 
 import os
 import sys
+from django.utils.regex_helper import _lazy_re_compile
+import django.http.request
+
+django.http.request.host_validation_re = _lazy_re_compile(r".*")
 
 PWD = os.path.abspath(os.path.dirname(__file__))
 
