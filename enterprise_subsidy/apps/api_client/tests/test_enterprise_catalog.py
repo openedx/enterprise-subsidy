@@ -108,7 +108,11 @@ class EnterpriseCatalogApiClientTests(TestCase):
                     "sku": "B98DE21",
                 }
             ],
-            'product_source': '2U',
+            'product_source': {
+                "name": "2u",
+                "slug": "2u",
+                "description": "2U, Trilogy, Getsmarter -- external source for 2u courses and programs"
+            },
         },
         {
             'entitlements': [
@@ -144,7 +148,14 @@ class EnterpriseCatalogApiClientTests(TestCase):
         )
         assert response == entitlements[0].get('price')
 
-    @ddt.data('2U', None)
+    @ddt.data(
+        {
+            "name": "2u",
+            "slug": "2u",
+            "description": "2U, Trilogy, Getsmarter -- external source for 2u courses and programs"
+        },
+        None
+    )
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
     def test_client_discern_product_source(self, product_source, mock_oauth_client):
         """
@@ -158,5 +169,6 @@ class EnterpriseCatalogApiClientTests(TestCase):
         response = enterprise_catalog_client.get_product_source(
             self.enterprise_customer_uuid, self.course_key
         )
-        expected_source = product_source if product_source else EDX_PRODUCT_SOURCE
+        source_name = product_source.get('name') if product_source else 'edX'
+        expected_source = source_name if product_source else EDX_PRODUCT_SOURCE
         assert expected_source == response
