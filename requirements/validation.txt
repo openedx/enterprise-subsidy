@@ -75,7 +75,7 @@ coreschema==0.0.4
     #   -r requirements/test.txt
     #   coreapi
     #   drf-yasg
-coverage[toml]==7.2.1
+coverage[toml]==7.2.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -201,7 +201,7 @@ edx-django-release-util==1.2.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-edx-django-utils==5.2.0
+edx-django-utils==5.3.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -213,7 +213,7 @@ edx-drf-extensions==8.4.1
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   edx-rbac
-edx-lint==5.3.2
+edx-lint==5.3.4
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -251,7 +251,7 @@ fastavro==1.7.3
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-events
-filelock==3.9.0
+filelock==3.10.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -372,7 +372,7 @@ openedx-events==7.0.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-openedx-ledger==0.1.7
+openedx-ledger==0.1.8
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -616,12 +616,12 @@ snowballstemmer==2.2.0
     # via
     #   -r requirements/quality.txt
     #   pydocstyle
-social-auth-app-django==5.0.0
+social-auth-app-django==5.1.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   edx-auth-backends
-social-auth-core==4.3.0
+social-auth-core==4.4.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt

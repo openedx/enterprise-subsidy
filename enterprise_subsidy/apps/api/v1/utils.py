@@ -3,7 +3,17 @@ Common utility functions for the subsidy API.
 """
 import uuid
 
+from edx_rest_framework_extensions.auth.jwt.authentication import get_decoded_jwt_from_auth
+from edx_rest_framework_extensions.auth.jwt.cookies import get_decoded_jwt
 from rest_framework.exceptions import ParseError
+
+
+def get_decoded_jwt_from_auth_or_cookie(request):
+    """
+    Get the JWT token from the request and decode it.  For some reason, this isn't just defined in
+    edx_rest_framework_extensions.
+    """
+    return get_decoded_jwt(request) or get_decoded_jwt_from_auth(request)
 
 
 def get_enterprise_uuid_from_request_query_params(request):

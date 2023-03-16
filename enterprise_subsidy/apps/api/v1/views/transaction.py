@@ -5,7 +5,10 @@ import json
 from uuid import UUID
 
 from django.core.exceptions import ValidationError
+from django.db.models import Q
+from django.utils.decorators import method_decorator
 from edx_rbac.mixins import PermissionRequiredForListingMixin
+from edx_rbac.utils import contexts_accessible_from_jwt
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
 from openedx_ledger.models import Transaction
 from rest_framework import mixins, permissions, status, viewsets
@@ -13,6 +16,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.response import Response
 
 from enterprise_subsidy.apps.api.v1 import utils
+from enterprise_subsidy.apps.api.v1.decorators import require_at_least_one_query_parameter
 from enterprise_subsidy.apps.api.v1.serializers import TransactionSerializer
 from enterprise_subsidy.apps.subsidy.constants import (
     ENTERPRISE_SUBSIDY_ADMIN_ROLE,
@@ -121,29 +125,161 @@ class TransactionViewSet(
     @property
     def requested_subsidy_uuid(self):
         """
-        Fetch the subsidy UUID from the URL location.
+        Fetch the subsidy UUID from either the URL query parameters or JSON body.
         """
-        if self.kwargs.get("subsidy_uuid"):
-            return self.kwargs.get("subsidy_uuid")
-        try:
-            return json.loads(self.request.body).get("subsidy_uuid")
-        except json.decoder.JSONDecodeError:
-            return None
+        subsidy_uuid = self.request.query_params.get("subsidy_uuid")
+        if not subsidy_uuid:
+            try:
+                subsidy_uuid = json.loads(self.request.body).get("subsidy_uuid")
+            except json.decoder.JSONDecodeError:
+                pass
+        return subsidy_uuid
 
     @property
     def base_queryset(self):
         """
-        Required by the ``PermissionRequiredForListingMixin``.
-        For non-list actions, this is what's returned by ``get_queryset()``.
-        For list actions, some non-strict subset of this is what's returned by ``get_queryset()``.
-        """
-        kwargs = {}
-        if self.requested_enterprise_customer_uuid:
-            kwargs.update({"ledger__subsidy__enterprise_customer_uuid": self.requested_enterprise_customer_uuid})
-        if self.requested_transaction_uuid:
-            kwargs.update({"uuid": self.requested_transaction_uuid})
+        Return a queryset that acts as the "base case".
 
-        return Transaction.objects.filter(**kwargs).order_by("uuid")
+        From edx-rbac docs: "It should generally return all accessible instances for a user who has access to everything
+        within this viewset (like a superuser or admin)."
+
+        In other words, ONLY filter the objects based on explicit request parameters (such as if a specific transaction
+        or subsidy UUID has been requested), rather than narrowing the scope of objects based on what contexts the
+        requester has permissions against (assume an all-access context)
+
+        EXCEPTION: In the case of a learner calling this view, a special filter is also applied to limit the
+        transactions to only their own, within the context the role applies to.  We must not allow learners to view
+        other learners' transactions, even if they are part of the same subsidy.
+        """
+        queryset = Transaction.objects.all()
+
+        #
+        # First, filter transactions to prevent learners from being able to read each other's transactions.
+        #
+        request_jwt = utils.get_decoded_jwt_from_auth_or_cookie(self.request)
+        learner_contexts = contexts_accessible_from_jwt(request_jwt, [ENTERPRISE_SUBSIDY_LEARNER_ROLE])
+        admin_operator_contexts = contexts_accessible_from_jwt(
+            request_jwt,
+            [ENTERPRISE_SUBSIDY_ADMIN_ROLE, ENTERPRISE_SUBSIDY_OPERATOR_ROLE],
+        )
+        learner_only_contexts = set(learner_contexts) - set(admin_operator_contexts)
+        for learner_only_context in learner_only_contexts:
+            # For each context (enterprise_customer_uuid) that the requester only has learner access to, filter
+            # transactions related to that context to only include their own transactions.
+            # pylint: disable=unsupported-binary-operation
+            queryset = queryset.filter(
+                (
+                    Q(ledger__subsidy__enterprise_customer_uuid=learner_only_context)
+                    &
+                    Q(lms_user_id=request_jwt["user_id"])
+                )
+                |
+                ~Q(ledger__subsidy__enterprise_customer_uuid=learner_only_context)
+            )
+
+        #
+        # Next, filter transactions based on the request parameters.
+        #
+        request_based_kwargs = {}
+        if self.requested_enterprise_customer_uuid:
+            request_based_kwargs.update({
+                "ledger__subsidy__enterprise_customer_uuid": self.requested_enterprise_customer_uuid
+            })
+        if self.requested_subsidy_uuid:
+            request_based_kwargs.update({"ledger__subsidy__uuid": self.requested_subsidy_uuid})
+        if self.requested_transaction_uuid:
+            request_based_kwargs.update({"uuid": self.requested_transaction_uuid})
+
+        #
+        # Finally, overlay both `user_id`-based and request-parameter-based filters in to one big happy queryset.
+        #
+        return queryset.filter(**request_based_kwargs).order_by("uuid")
+
+    def retrieve(self, request, *args, **kwargs):  # pylint: disable=useless-parent-delegation
+        """
+        Retrieve Transactions.
+
+        Implemented as a passthrough to super.
+
+        Endpoint Location: GET /api/v1/transactions/<transaction_uuid>
+
+        Request Arguments:
+        - ``transaction_uuid`` (URL location, required):
+              The uuid (primary key) of the subsidy from which transactions should be listed.
+
+        Returns:
+            rest_framework.response.Response:
+                403/404: If the requester does not have permission to access the transaction, or it does not exist.
+                200: If a Transaction was successfully retrieved.  Response body is JSON with a serialized Transaction
+                     containing the following keys (sample values):
+                     {
+                         "uuid": "the-transaction-uuid",
+                         "state": "COMMITTED",
+                         "idempotency_key": "the-idempotency-key",
+                         "lms_user_id": 54321,
+                         "content_key": "demox_1234+2T2023",
+                         "quantity": 19900,
+                         "unit": "USD_CENTS",
+                         "reference_id": 1234,
+                         "reference_type": "enterprise_fufillment_source_uuid",
+                         "subsidy_access_policy_uuid": "a-policy-uuid",
+                         "metadata": {...},
+                         "created": "created-datetime",
+                         "modified": "modified-datetime",
+                         "reversals": []
+                     }
+        """
+        return super().retrieve(request, *args, **kwargs)
+
+    @method_decorator(require_at_least_one_query_parameter('subsidy_uuid'))
+    def list(self, request, *args, **kwargs):
+        """
+        List Transactions.
+
+        Implemented as a passthrough to super, but require a `subsidy_uuid` query param.
+
+        Endpoint Location:
+        GET /api/v1/transactions/?subsidy_uuid=<subsidy_uuid>&enterprise_customer_uuid=<enterprise_customer_uui>
+
+        Request Arguments:
+        - ``subsidy_uuid`` (query param, required):
+              The uuid (primary key) of the subsidy from which transactions should be listed.
+        - ``enterprise_customer_uuid`` (query param, optional):
+              The enterprise customer UUID corresponding to the subsidies from which transactions should be listed.
+
+        Returns:
+            rest_framework.response.Response:
+                400: If there are missing or otherwise invalid input parameters.  Response body is JSON with a single
+                     `Error` key.
+                200: In all other cases, return 200 regardless of whether any transactions were found.  Response body is
+                     JSON with a paginated list of serialized Transactions containing the following keys (sample
+                     values):
+                     {
+                       "count": 3,
+                       "next": null,
+                       "previous": null,
+                       "results": [
+                         {
+                           "uuid": "the-transaction-uuid",
+                           "state": "COMMITTED",
+                           "idempotency_key": "the-idempotency-key",
+                           "lms_user_id": 54321,
+                           "content_key": "demox_1234+2T2023",
+                           "quantity": 19900,
+                           "unit": "USD_CENTS",
+                           "reference_id": 1234,
+                           "reference_type": "enterprise_fufillment_source_uuid",
+                           "subsidy_access_policy_uuid": "a-policy-uuid",
+                           "metadata": {...},
+                           "created": "created-datetime",
+                           "modified": "modified-datetime",
+                           "reversals": []
+                         },
+                         [...]
+                       ]
+                     }
+        """
+        return super().list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         """
@@ -180,8 +316,7 @@ class TransactionViewSet(
                          "quantity": 19900,
                          "unit": "USD_CENTS",
                          "reference_id": 1234,
-                         "reference_type": "NameOfSomeEnrollmentOrEntitlementModelTBD",
-                         "reference_table": "enrollments",
+                         "reference_type": "enterprise_fufillment_source_uuid",
                          "subsidy_access_policy_uuid": "a-policy-uuid",
                          "metadata": {...},
                          "created": "created-datetime",
