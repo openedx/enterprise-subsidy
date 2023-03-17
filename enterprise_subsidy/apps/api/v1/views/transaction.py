@@ -53,7 +53,7 @@ class TransactionViewSet(
     serializer_class = TransactionSerializer
 
     # Fields that control permissions for 'list' actions, required by PermissionRequiredForListingMixin.
-    list_lookup_field = "ledger__subisidy__enterprise_customer_uuid"
+    list_lookup_field = "ledger__subsidy__enterprise_customer_uuid"
     allowed_roles = [ENTERPRISE_SUBSIDY_ADMIN_ROLE, ENTERPRISE_SUBSIDY_LEARNER_ROLE, ENTERPRISE_SUBSIDY_OPERATOR_ROLE]
     role_assignment_class = EnterpriseSubsidyRoleAssignment
 
