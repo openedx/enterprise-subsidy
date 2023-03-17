@@ -24,6 +24,7 @@ from enterprise_subsidy.apps.subsidy.tests.factories import (
 )
 
 STATIC_LMS_USER_ID = 999
+STATIC_ENTERPRISE_UUID = str(uuid.uuid4())
 
 
 class JwtMixin():
@@ -70,7 +71,7 @@ class APITestMixin(JwtMixin, APITestCase):
 
     def setUp(self):
         super().setUp()
-        self.enterprise_uuid = str(uuid.uuid4())
+        self.enterprise_uuid = STATIC_ENTERPRISE_UUID
         self.enterprise_name = 'Test Enterprise'
         self.enterprise_slug = 'test-enterprise'
         self.desired_system_wide_role = None
@@ -100,7 +101,7 @@ class APITestMixin(JwtMixin, APITestCase):
         """
         self.desired_system_wide_role = SYSTEM_ENTERPRISE_OPERATOR_ROLE
         self.desired_feature_role = ENTERPRISE_SUBSIDY_OPERATOR_ROLE
-        self.set_up_user_with_assignments(is_staff=True)
+        self.set_up_user_with_assignments(is_staff=True, enterprise_uuids=['*'])
 
     def set_up_user_with_assignments(self, is_staff=False, enterprise_uuids=None):
         """
@@ -136,7 +137,7 @@ class APITestMixin(JwtMixin, APITestCase):
             self.role_assignment = EnterpriseSubsidyRoleAssignmentFactory(
                 role=self.role,
                 user=user or self.user,
-                enterprise_id=enterprise_uuid,
+                enterprise_id=enterprise_uuid if enterprise_uuid != '*' else None,
             )
 
     def assign_implicit_jwt_system_wide_role(self, system_wide_role=None, jwt_contexts=None):

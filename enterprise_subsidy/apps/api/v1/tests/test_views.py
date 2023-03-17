@@ -2,16 +2,19 @@
 Tests for views.
 """
 import json
+import os
+import urllib
 import uuid
 from functools import partial
 from unittest import mock
 
 import ddt
 from openedx_ledger.models import TransactionStateChoices
+from openedx_ledger.test_utils.factories import TransactionFactory
 from rest_framework import status
 from rest_framework.reverse import reverse
 
-from enterprise_subsidy.apps.api.v1.tests.mixins import APITestMixin
+from enterprise_subsidy.apps.api.v1.tests.mixins import STATIC_ENTERPRISE_UUID, STATIC_LMS_USER_ID, APITestMixin
 from enterprise_subsidy.apps.subsidy.models import OCM_ENROLLMENT_REFERENCE_TYPE
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
 from test_utils.utils import MockResponse
@@ -26,19 +29,88 @@ class APITestBase(APITestMixin):
     Contains boilerplate to create a couple of subsidies with related ledgers and starting transactions.
     """
 
+    enterprise_1_uuid = STATIC_ENTERPRISE_UUID
+    enterprise_2_uuid = str(uuid.uuid4())
+    subsidy_1_uuid = str(uuid.uuid4())
+    subsidy_2_uuid = str(uuid.uuid4())
+    subsidy_3_uuid = str(uuid.uuid4())
+    subsidy_1_transaction_1_uuid = str(uuid.uuid4())
+    subsidy_1_transaction_2_uuid = str(uuid.uuid4())
+    subsidy_2_transaction_1_uuid = str(uuid.uuid4())
+    subsidy_2_transaction_2_uuid = str(uuid.uuid4())
+    subsidy_3_transaction_1_uuid = str(uuid.uuid4())
+    subsidy_3_transaction_2_uuid = str(uuid.uuid4())
+
     def setUp(self):
         super().setUp()
 
-        # Create the main test objects that the test users should be able to access.
-        self.subsidy_one = SubsidyFactory(enterprise_customer_uuid=self.enterprise_uuid, starting_balance=10000)
-        self.ledger_one = self.subsidy_one.ledger
-        self.transaction_one = self.subsidy_one.initialize_ledger()
+        # Create a subsidy that the test learner, test admin, and test operater should all be able to access.
+        self.subsidy_1 = SubsidyFactory(
+            uuid=self.subsidy_1_uuid,
+            enterprise_customer_uuid=self.enterprise_1_uuid,
+            starting_balance=15000
+        )
+        self.subsidy_1_transaction_initial = self.subsidy_1.initialize_ledger()
+        TransactionFactory(
+            uuid=self.subsidy_1_transaction_1_uuid,
+            state=TransactionStateChoices.COMMITTED,
+            quantity=-1000,
+            ledger=self.subsidy_1.ledger,
+            lms_user_id=STATIC_LMS_USER_ID,  # This is the only transaction belonging to the requester.
+        )
+        TransactionFactory(
+            uuid=self.subsidy_1_transaction_2_uuid,
+            state=TransactionStateChoices.COMMITTED,
+            quantity=-1000,
+            ledger=self.subsidy_1.ledger,
+            lms_user_id=STATIC_LMS_USER_ID+1000,
+        )
 
-        # Create an extra subsidy corresponding to a different enterprise customer an unprivileged default test user
-        # should not be able to access.
-        self.subsidy_two = SubsidyFactory(enterprise_customer_uuid=uuid.uuid4(), starting_balance=10000)
-        self.ledger_two = self.subsidy_two.ledger
-        self.transaction_two = self.subsidy_two.initialize_ledger()
+        # Create an extra subsidy with the same enterprise_customer_uuid, but the learner does not have any transactions
+        # in tihs one.
+        self.subsidy_2 = SubsidyFactory(
+            uuid=self.subsidy_2_uuid,
+            enterprise_customer_uuid=self.enterprise_1_uuid,
+            starting_balance=15000
+        )
+        self.subsidy_2_transaction_initial = self.subsidy_2.initialize_ledger()
+        TransactionFactory(
+            uuid=self.subsidy_2_transaction_1_uuid,
+            state=TransactionStateChoices.COMMITTED,
+            quantity=-1000,
+            ledger=self.subsidy_2.ledger,
+            lms_user_id=STATIC_LMS_USER_ID+1000,
+        )
+        TransactionFactory(
+            uuid=self.subsidy_2_transaction_2_uuid,
+            state=TransactionStateChoices.COMMITTED,
+            quantity=-1000,
+            ledger=self.subsidy_2.ledger,
+            lms_user_id=STATIC_LMS_USER_ID+1000,
+        )
+
+        # Create third subsidy with a different enterprise_customer_uuid.  Neither test learner nor the test admin
+        # should be able to access this one.  Only the operator should have privileges.
+        self.subsidy_3 = SubsidyFactory(
+            uuid=self.subsidy_3_uuid,
+            enterprise_customer_uuid=self.enterprise_2_uuid,
+            starting_balance=15000
+        )
+        self.subsidy_3_transaction_initial = self.subsidy_3.initialize_ledger()
+        TransactionFactory(
+            uuid=self.subsidy_3_transaction_1_uuid,
+            state=TransactionStateChoices.COMMITTED,
+            quantity=-1000,
+            ledger=self.subsidy_3.ledger,
+            lms_user_id=STATIC_LMS_USER_ID+1000,
+        )
+        TransactionFactory(
+            uuid=self.subsidy_3_transaction_2_uuid,
+            state=TransactionStateChoices.COMMITTED,
+            quantity=-1000,
+            ledger=self.subsidy_3.ledger,
+            lms_user_id=STATIC_LMS_USER_ID+1000,
+        )
 
 
 @ddt.ddt
@@ -54,19 +126,19 @@ class SubsidyViewSetTests(APITestBase):
         Test that a subsidy detail call returns the expected
         serialized response.
         """
-        self.set_up_admin(enterprise_uuids=[self.subsidy_one.enterprise_customer_uuid])
-        response = self.client.get(self.get_details_url([self.subsidy_one.uuid]))
+        self.set_up_admin(enterprise_uuids=[self.subsidy_1.enterprise_customer_uuid])
+        response = self.client.get(self.get_details_url([self.subsidy_1.uuid]))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         expected_result = {
-            "uuid": str(self.subsidy_one.uuid),
-            "title": self.subsidy_one.title,
-            "enterprise_customer_uuid": self.subsidy_one.enterprise_customer_uuid,
-            "active_datetime": self.subsidy_one.active_datetime.strftime(SERIALIZED_DATE_PATTERN),
-            "expiration_datetime": self.subsidy_one.expiration_datetime.strftime(SERIALIZED_DATE_PATTERN),
-            "unit": self.subsidy_one.unit,
-            "reference_id": self.subsidy_one.reference_id,
-            "reference_type": self.subsidy_one.reference_type,
-            "current_balance": self.subsidy_one.current_balance(),
+            "uuid": str(self.subsidy_1.uuid),
+            "title": self.subsidy_1.title,
+            "enterprise_customer_uuid": self.subsidy_1.enterprise_customer_uuid,
+            "active_datetime": self.subsidy_1.active_datetime.strftime(SERIALIZED_DATE_PATTERN),
+            "expiration_datetime": self.subsidy_1.expiration_datetime.strftime(SERIALIZED_DATE_PATTERN),
+            "unit": self.subsidy_1.unit,
+            "reference_id": self.subsidy_1.reference_id,
+            "reference_type": self.subsidy_1.reference_type,
+            "current_balance": self.subsidy_1.current_balance(),
         }
         self.assertEqual(expected_result, response.json())
 
@@ -75,7 +147,7 @@ class SubsidyViewSetTests(APITestBase):
         Test that learner roles do not allow access to read subsidies.
         """
         self.set_up_learner()
-        response = self.client.get(self.get_details_url([self.subsidy_one.uuid]))
+        response = self.client.get(self.get_details_url([self.subsidy_1.uuid]))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
 
@@ -84,6 +156,303 @@ class TransactionViewSetTests(APITestBase):
     """
     Test TransactionViewSet.
     """
+
+    @ddt.data(
+        # Test that a subsidy_uuid query parameter is actually required.
+        {
+            "role": "operator",
+            "request_query_params": {},
+            "expected_response_status": 400,
+            "expected_response_uuids": [],
+        },
+        # Test that an operator with all access can list every transaction across all enterprise customers.
+        {
+            "role": "operator",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_1_transaction_1_uuid,
+                APITestBase.subsidy_1_transaction_2_uuid,
+            ],
+        },
+        # continued...
+        {
+            "role": "operator",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_2_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_2_transaction_1_uuid,
+                APITestBase.subsidy_2_transaction_2_uuid,
+            ],
+        },
+        # continued...
+        {
+            "role": "operator",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_3_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_3_transaction_1_uuid,
+                APITestBase.subsidy_3_transaction_2_uuid,
+            ],
+        },
+        # Test that an enterprise admin can only list transactions within their enterprise.
+        {
+            "role": "admin",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_1_transaction_1_uuid,
+                APITestBase.subsidy_1_transaction_2_uuid,
+            ],
+        },
+        # continued...
+        {
+            "role": "admin",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_2_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_2_transaction_1_uuid,
+                APITestBase.subsidy_2_transaction_2_uuid,
+            ],
+        },
+        # continued...
+        {
+            "role": "admin",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_3_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [],
+        },
+        # Test that a learner can only list their own transaction.
+        {
+            "role": "learner",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_1_transaction_1_uuid,
+            ],
+        },
+        # Test that a learner can't list other learners' transactions in a different subsidy, but part of the same
+        # enterprise customer.
+        {
+            "role": "learner",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_2_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [],
+        },
+        # Test that an operator with all access can list every transaction across all requested enterprise customers.
+        {
+            "role": "operator",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+                "enterprise_customer_uuid": APITestBase.enterprise_1_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_1_transaction_1_uuid,
+                APITestBase.subsidy_1_transaction_2_uuid,
+            ],
+        },
+        # continued...
+        {
+            "role": "operator",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_2_uuid,
+                "enterprise_customer_uuid": APITestBase.enterprise_1_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_2_transaction_1_uuid,
+                APITestBase.subsidy_2_transaction_2_uuid,
+            ],
+        },
+        # continued...
+        {
+            "role": "operator",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_3_uuid,
+                "enterprise_customer_uuid": APITestBase.enterprise_2_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_3_transaction_1_uuid,
+                APITestBase.subsidy_3_transaction_2_uuid,
+            ],
+        },
+        # Test that an enterprise admin can list transactions within their enterprise (also provided as a query param).
+        {
+            "role": "admin",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+                "enterprise_customer_uuid": APITestBase.enterprise_1_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_1_transaction_1_uuid,
+                APITestBase.subsidy_1_transaction_2_uuid,
+            ],
+        },
+        # continued...
+        {
+            "role": "admin",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_2_uuid,
+                "enterprise_customer_uuid": APITestBase.enterprise_1_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_2_transaction_1_uuid,
+                APITestBase.subsidy_2_transaction_2_uuid,
+            ],
+        },
+        # Test that a learner can only list their own transaction (also with enterprise_customer_uuid provided).
+        {
+            "role": "learner",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+                "enterprise_customer_uuid": APITestBase.enterprise_1_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_1_transaction_1_uuid,
+            ],
+        },
+        # Test that an operator with all access can list every transaction across enterprise customer number 2.
+        {
+            "role": "operator",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_3_uuid,
+                "enterprise_customer_uuid": APITestBase.enterprise_2_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_3_transaction_1_uuid,
+                APITestBase.subsidy_3_transaction_2_uuid,
+            ],
+        },
+        # Test that an enterprise admin cannot list transactions outside their enterprise.
+        {
+            "role": "admin",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_3_uuid,
+                "enterprise_customer_uuid": APITestBase.enterprise_2_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [],
+        },
+        # Test that learner cannot list transactions outside their enterprise.
+        {
+            "role": "learner",
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_3_uuid,
+                "enterprise_customer_uuid": APITestBase.enterprise_2_uuid,
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [],
+        },
+    )
+    @ddt.unpack
+    def test_list_access(self, role, request_query_params, expected_response_status, expected_response_uuids):
+        """
+        Test list Transactions permissions.
+        """
+        if role == "admin":
+            self.set_up_admin()
+        elif role == "learner":
+            self.set_up_learner()
+        elif role == "operator":
+            self.set_up_operator()
+        url = reverse("api:v1:transaction-list")
+        query_string = urllib.parse.urlencode(request_query_params)
+        if query_string:
+            query_string = "?" + query_string
+        response = self.client.get(url + query_string)
+        assert response.status_code == expected_response_status
+        if response.status_code < 300:
+            list_response_data = response.json()["results"]
+            response_uuids = [tx["uuid"] for tx in list_response_data]
+            initial_transactions = set([
+                str(self.subsidy_1_transaction_initial.uuid),
+                str(self.subsidy_2_transaction_initial.uuid),
+                str(self.subsidy_3_transaction_initial.uuid),
+            ])
+            assert set(response_uuids) - initial_transactions == set(expected_response_uuids) - initial_transactions
+
+    @ddt.data(
+        # Test that an operator with all access can retrieve a random transaction.
+        {
+            "role": "operator",
+            "request_pk": APITestBase.subsidy_1_transaction_2_uuid,
+            "expected_response_status": 200,
+            "expected_response_uuid": APITestBase.subsidy_1_transaction_2_uuid,
+        },
+        # Test that an enterprise admin can retrieve a random transaction in their enterprise.
+        {
+            "role": "admin",
+            "request_pk": APITestBase.subsidy_1_transaction_2_uuid,
+            "expected_response_status": 200,
+            "expected_response_uuid": APITestBase.subsidy_1_transaction_2_uuid,
+        },
+        # Test that an enterprise admin can't retrieve a transaction not in their enterprise.
+        {
+            "role": "admin",
+            "request_pk": APITestBase.subsidy_3_transaction_1_uuid,
+            "expected_response_status": 403,
+            "expected_response_uuid": None,
+        },
+        # Test that a learner can retrieve their own transaction.
+        {
+            "role": "learner",
+            "request_pk": APITestBase.subsidy_1_transaction_1_uuid,
+            "expected_response_status": 200,
+            "expected_response_uuid": APITestBase.subsidy_1_transaction_1_uuid,
+        },
+        # Test that a learner can't retrieve somebody else's transaction in the same subsidy.
+        {
+            "role": "learner",
+            "request_pk": APITestBase.subsidy_1_transaction_2_uuid,
+            "expected_response_status": 404,
+            "expected_response_uuid": None,
+        },
+        # Test that a learner can't retrieve somebody else's transaction in the a different subsidy.
+        {
+            "role": "learner",
+            "request_pk": APITestBase.subsidy_2_transaction_1_uuid,
+            "expected_response_status": 404,
+            "expected_response_uuid": None,
+        },
+    )
+    @ddt.unpack
+    def test_retrieve_access(self, role, request_pk, expected_response_status, expected_response_uuid):
+        """
+        Test list Transactions permissions.
+        """
+        if role == "admin":
+            self.set_up_admin()
+        elif role == "learner":
+            self.set_up_learner()
+        elif role == "operator":
+            self.set_up_operator()
+        url = reverse("api:v1:transaction-list")
+        response = self.client.get(os.path.join(url, request_pk + "/"))
+        assert response.status_code == expected_response_status
+        if response.status_code < 300:
+            assert response.json()["uuid"] == expected_response_uuid
 
     # Uncomment this later once we have segment events firing.
     # @mock.patch('enterprise_subsidy.apps.api.v1.event_utils.track_event')
@@ -101,7 +470,7 @@ class TransactionViewSetTests(APITestBase):
         # Create privileged staff user that should be able to create Transactions.
         self.set_up_operator()
         post_data = {
-            "subsidy_uuid": str(self.subsidy_one.uuid),
+            "subsidy_uuid": str(self.subsidy_1.uuid),
             "learner_id": 1234,
             "content_key": "course-v1:edX-test-course",
             "access_policy_uuid": str(uuid.uuid4()),
@@ -116,7 +485,7 @@ class TransactionViewSetTests(APITestBase):
         assert create_response_data["lms_user_id"] == post_data["learner_id"]
         assert create_response_data["subsidy_access_policy_uuid"] == post_data["access_policy_uuid"]
         assert json.loads(create_response_data["metadata"]) == {}
-        assert create_response_data["unit"] == self.ledger_one.unit
+        assert create_response_data["unit"] == self.subsidy_1.ledger.unit
         assert create_response_data["quantity"] < 0  # No need to be exact at this time, I'm just testing create works.
         assert create_response_data["reference_id"] == test_enroll_reference_id
         assert create_response_data["reference_type"] == OCM_ENROLLMENT_REFERENCE_TYPE
@@ -139,7 +508,7 @@ class TransactionViewSetTests(APITestBase):
         #     SegmentEvents.TRANSACTION_CREATED,
         #     {
         #         "ledger_transaction_uuid": create_response_data["uuid"],
-        #         "enterprise_customer_uuid": str(self.subsidy_one.enterprise_customer_uuid),
+        #         "enterprise_customer_uuid": str(self.subsidy_1.enterprise_customer_uuid),
         #         "subsidy_uuid": str(self.curation_config_one.uuid),
         #     },
         # )
@@ -155,7 +524,7 @@ class TransactionViewSetTests(APITestBase):
             self.set_up_learner()
         url = reverse("api:v1:transaction-list")
         post_data = {
-            "subsidy_uuid": str(self.subsidy_one.uuid),
+            "subsidy_uuid": str(self.subsidy_1.uuid),
             "learner_id": 1234,
             "content_key": "course-v1:edX-test-course",
             "access_policy_uuid": str(uuid.uuid4()),
@@ -174,7 +543,7 @@ class TransactionViewSetTests(APITestBase):
         self.set_up_operator()
 
         post_data = {
-            "subsidy_uuid": str(self.subsidy_one.uuid) + "a",  # Make uuid invalid.
+            "subsidy_uuid": str(self.subsidy_1.uuid) + "a",  # Make uuid invalid.
             "learner_id": 1234,
             "content_key": "course-v1:edX-test-course",
             "access_policy_uuid": str(uuid.uuid4()),
@@ -192,7 +561,7 @@ class TransactionViewSetTests(APITestBase):
         self.set_up_operator()
 
         post_data = {
-            "subsidy_uuid": str(self.subsidy_one.uuid),
+            "subsidy_uuid": str(self.subsidy_1.uuid),
             "learner_id": 1234,
             "content_key": "course-v1:edX-test-course",
             "access_policy_uuid": str(uuid.uuid4()) + "a",  # Make uuid invalid.
@@ -211,7 +580,7 @@ class TransactionViewSetTests(APITestBase):
         self.set_up_operator()
 
         post_data = {
-            "subsidy_uuid": str(self.subsidy_one.uuid),
+            "subsidy_uuid": str(self.subsidy_1.uuid),
             "learner_id": 1234,
             "content_key": "course-v1:edX-test-course",
             "access_policy_uuid": str(uuid.uuid4()),
