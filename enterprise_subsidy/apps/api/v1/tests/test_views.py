@@ -14,6 +14,7 @@ from rest_framework.reverse import reverse
 from enterprise_subsidy.apps.api.v1.tests.mixins import APITestMixin
 from enterprise_subsidy.apps.subsidy.models import OCM_ENROLLMENT_REFERENCE_TYPE
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
+from test_utils.utils import MockResponse
 
 SERIALIZED_DATE_PATTERN = '%Y-%m-%dT%H:%M:%SZ'
 
@@ -220,3 +221,145 @@ class TransactionViewSetTests(APITestBase):
         assert response.status_code >= 400 and response.status_code < 500
         # Just make sure there's any parseable json which is likely to contain an explanation of the error.
         assert response.json()
+
+
+@ddt.ddt
+class ContentMetadataViewSetTests(APITestBase):
+    """
+    Test ContentMetadataViewSet.
+    """
+    content_uuid_1 = str(uuid.uuid4())
+    content_price_1 = 100
+    content_key_1 = "edX+DemoX"
+    content_uuid_2 = str(uuid.uuid4())
+    content_price_2 = 200
+    content_key_2 = "edX+DemoX2"
+    edx_course_metadata = {
+        "key": content_key_1,
+        "content_type": "course",
+        "uuid": content_uuid_1,
+        "title": "Demonstration Course",
+        "entitlements": [
+            {
+                "mode": "verified",
+                "price": content_price_1,
+                "currency": "USD",
+                "sku": "8A47F9E",
+                "expires": "null"
+            }
+        ],
+        "product_source": None,
+    }
+    executive_education_course_metadata = {
+        "key": content_key_2,
+        "content_type": "course",
+        "uuid": content_uuid_2,
+        "title": "Demonstration Course",
+        "entitlements": [
+            {
+                "mode": "paid-executive-education",
+                "price": content_price_2,
+                "currency": "USD",
+                "sku": "B98DE21",
+                "expires": "null"
+            }
+        ],
+        "product_source": {
+            "name": "2u",
+            "slug": "2u",
+            "description": "2U, Trilogy, Getsmarter -- external source for 2u courses and programs"
+        },
+    }
+    mock_http_error_reason = 'Something Went Wrong'
+    mock_http_error_url = 'foobar.com'
+
+    @ddt.data(
+        {
+            'content_uuid': content_uuid_1,
+            'content_key': content_key_1,
+            'content_price': content_price_1,
+            'mock_metadata': edx_course_metadata,
+            'source': 'edX'
+        },
+        {
+            'content_uuid': content_uuid_2,
+            'content_key': content_key_2,
+            'content_price': content_price_2,
+            'mock_metadata': executive_education_course_metadata,
+            'source': '2u'
+        },
+    )
+    @ddt.unpack
+    def test_successful_get(
+        self,
+        content_uuid,
+        content_key,
+        content_price,
+        mock_metadata,
+        source,
+    ):
+        with mock.patch(
+            'enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient',
+            return_value=mock.MagicMock()
+        ) as mock_oauth_client:
+            customer_uuid = uuid.uuid4()
+            self.set_up_admin(enterprise_uuids=[str(customer_uuid)])
+            mock_oauth_client.return_value.get.return_value = MockResponse(mock_metadata, 200)
+            url = reverse('api:v1:content-metadata', kwargs={'content_identifier': content_key})
+            response = self.client.get(url + f'?enterprise_customer_uuid={str(customer_uuid)}')
+            assert response.status_code == 200
+            assert response.json() == {
+                'content_uuid': str(content_uuid),
+                'content_key': content_key,
+                'source': source,
+                'content_price': content_price,
+            }
+
+            # Everything after this line is testing the view's cache
+            # If this mock response is ever hit, the test will fail, caching prevents it.
+            mock_oauth_client.return_value.get.side_effect = Exception("Does not reach this")
+            response = self.client.get(url + f'?enterprise_customer_uuid={str(customer_uuid)}')
+            assert response.status_code == 200
+            assert response.json() == {
+                'content_uuid': str(content_uuid),
+                'content_key': content_key,
+                'source': source,
+                'content_price': content_price,
+            }
+
+    def test_failure_no_permission(self):
+        self.set_up_admin(enterprise_uuids=[str(uuid.uuid4())])
+        url = reverse('api:v1:content-metadata', kwargs={'content_identifier': self.content_key_1})
+        response = self.client.get(url + f'?enterprise_customer_uuid={str(uuid.uuid4())}')
+        assert response.status_code == 403
+        assert response.json() == {'detail': 'MISSING: subsidy.can_read_metadata'}
+
+    @ddt.data(
+        {
+            'catalog_status_code': 404,
+            'expected_response': 'Content not found',
+        },
+        {
+            'catalog_status_code': 403,
+            'expected_response': f'Failed to fetch data from catalog service with exc: '
+                                 f'403 Client Error: {mock_http_error_reason} for url: {mock_http_error_url}',
+        },
+    )
+    @ddt.unpack
+    def test_failure_exception_while_gather_metadata(self, catalog_status_code, expected_response):
+        with mock.patch(
+            'enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient',
+            return_value=mock.MagicMock()
+        ) as mock_oauth_client:
+            customer_uuid = uuid.uuid4()
+            self.set_up_admin(enterprise_uuids=[str(customer_uuid)])
+            mock_oauth_client.return_value.get.return_value = MockResponse(
+                {"something": "fail"},
+                catalog_status_code,
+                reason=self.mock_http_error_reason,
+                url=self.mock_http_error_url
+            )
+            url = reverse('api:v1:content-metadata', kwargs={'content_identifier': 'content_key'})
+            response = self.client.get(url + f'?enterprise_customer_uuid={str(customer_uuid)}')
+            assert response.status_code == catalog_status_code
+            assert response.json() == expected_response

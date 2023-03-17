@@ -55,7 +55,7 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
         """
         course_details = self.get_content_metadata_for_customer(enterprise_customer_uuid, content_identifier)
         if product_source := course_details.get('product_source'):
-            return product_source
+            return product_source.get('name')
         return EDX_PRODUCT_SOURCE
 
     def get_course_price(self, enterprise_customer_uuid, content_identifier):

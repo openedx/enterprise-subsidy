@@ -17,6 +17,7 @@ ENTERPRISE_SUBSIDY_OPERATOR_ROLE = 'enterprise_subsidy_operator'
 PERMISSION_CAN_CREATE_TRANSACTIONS = "subsidy.can_create_transactions"
 PERMISSION_CAN_READ_SUBSIDIES = "subsidy.can_read_subsidies"
 PERMISSION_CAN_READ_TRANSACTIONS = "subsidy.can_read_transactions"
+PERMISSION_CAN_READ_CONTENT_METADATA = "subsidy.can_read_metadata"
 # Provide a convenience permission which should never be granted.  This is helpful for being explicit when overriding
 # `get_permission_required()`.
 PERMISSION_NOT_GRANTED = 'subsidy.not_granted'
