@@ -19,7 +19,7 @@ from enterprise_subsidy.apps.subsidy.models import OCM_ENROLLMENT_REFERENCE_TYPE
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
 from test_utils.utils import MockResponse
 
-SERIALIZED_DATE_PATTERN = '%Y-%m-%dT%H:%M:%SZ'
+SERIALIZED_DATE_PATTERN = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 
 class APITestBase(APITestMixin):
@@ -134,6 +134,11 @@ class SubsidyViewSetTests(APITestBase):
     """
     get_details_url = partial(reverse, "api:v1:subsidy-detail")
     get_list_url = partial(reverse, "api:v1:subsidy-list")
+    get_can_redeem_url = partial(reverse, "api:v1:subsidy-can-redeem")
+
+    def setUp(self):
+        super().setUp()
+        self.subsidy_1.catalog_client = mock.MagicMock()
 
     def test_get_one_subsidy(self):
         """
@@ -163,6 +168,76 @@ class SubsidyViewSetTests(APITestBase):
         self.set_up_learner()
         response = self.client.get(self.get_details_url([self.subsidy_1.uuid]))
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    @ddt.data(
+        {'lms_user_id': '', 'content_key': ''},
+        {'lms_user_id': 123, 'content_key': ''},
+        {'lms_user_id': '', 'content_key': 'some-content-key'},
+    )
+    def test_can_redeem_bad_request(self, query_params):
+        """
+        Tests that client receives a 400 status code if either of the required
+        query parameters are missing.
+        """
+        self.set_up_admin(enterprise_uuids=[self.subsidy_1.enterprise_customer_uuid])
+
+        response = self.client.get(
+            self.get_can_redeem_url([self.subsidy_1.uuid]),
+            data=query_params,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    @mock.patch('enterprise_subsidy.apps.api.v1.views.subsidy.can_redeem')
+    @ddt.data(False, True)
+    def test_can_redeem_happy_path(self, has_existing_transaction, mock_can_redeem):
+        """
+        Tests that the result of ``api.can_redeem()`` is returned as the response
+        payload for a POST to the can_redeem action, including any relevant
+        existing transaction.
+        """
+        self.set_up_admin(enterprise_uuids=[self.subsidy_1.enterprise_customer_uuid])
+        expected_redeemable = True
+        expected_price = 350
+        existing_transaction = None
+        if has_existing_transaction:
+            existing_transaction = self.subsidy_1_transaction_1
+        mock_can_redeem.return_value = (expected_redeemable, expected_price, existing_transaction)
+        query_params = {'lms_user_id': 32, 'content_key': 'some-content-key'}
+
+        response = self.client.get(
+            self.get_can_redeem_url([self.subsidy_1.uuid]),
+            data=query_params,
+        )
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+        expected_existing_transaction = None
+        if has_existing_transaction:
+            expected_existing_transaction = {
+                'created': self.subsidy_1_transaction_1.created.strftime(SERIALIZED_DATE_PATTERN),
+                'idempotency_key': str(self.subsidy_1_transaction_1.idempotency_key),
+                'metadata': None,
+                'modified': self.subsidy_1_transaction_1.modified.strftime(SERIALIZED_DATE_PATTERN),
+                'uuid': str(self.subsidy_1_transaction_1_uuid),
+                'reference_id': None,
+                'reference_type': None,
+                'reversal': None,
+                'unit': self.subsidy_1.unit,
+                'state': TransactionStateChoices.COMMITTED,
+                'quantity': -1000,
+                'lms_user_id': STATIC_LMS_USER_ID,
+                'subsidy_access_policy_uuid': str(self.subsidy_access_policy_1_uuid),
+                'content_key': self.content_key_1,
+            }
+
+        expected_response_data = {
+            'can_redeem': expected_redeemable,
+            'content_price': expected_price,
+            'unit': self.subsidy_1.unit,
+            'existing_transaction': expected_existing_transaction,
+        }
+        self.assertEqual(response.json(), expected_response_data)
 
 
 @ddt.ddt

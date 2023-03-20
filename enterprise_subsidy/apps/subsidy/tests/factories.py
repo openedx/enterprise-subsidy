@@ -1,12 +1,15 @@
 """
 Test factories for subsidy models.
 """
+import random
+from datetime import timedelta
 from uuid import uuid4
 
 import factory
+import pytz
 from factory.fuzzy import FuzzyText
+from faker import Faker
 from openedx_ledger.models import UnitChoices
-from openedx_ledger.test_utils.factories import LedgerFactory
 
 from enterprise_subsidy.apps.core.models import User
 from enterprise_subsidy.apps.subsidy.models import (
@@ -18,6 +21,16 @@ from enterprise_subsidy.apps.subsidy.models import (
 
 USER_PASSWORD = 'password'
 
+FAKER = Faker()
+
+
+def fake_datetime(is_future=False):
+    """ Helper to get past or future localized datetime with microseconds. """
+    delta = timedelta(microseconds=random.randint(0, 999999))
+    if is_future:
+        return FAKER.future_datetime(tzinfo=pytz.UTC) + delta
+    return FAKER.past_datetime(tzinfo=pytz.UTC) + delta
+
 
 class SubsidyFactory(factory.django.DjangoModelFactory):
     """
@@ -28,16 +41,12 @@ class SubsidyFactory(factory.django.DjangoModelFactory):
 
     uuid = factory.LazyFunction(uuid4)
     starting_balance = factory.Faker("random_int", min=10000, max=1000000)
-    # ledger = factory.SubFactory(LedgerFactory)
     unit = UnitChoices.USD_CENTS
     reference_id = factory.Faker("lexify", text="????????")
     reference_type = SubsidyReferenceChoices.OPPORTUNITY_PRODUCT_ID
     enterprise_customer_uuid = factory.LazyFunction(uuid4)
-    active_datetime = factory.Faker("past_datetime")
-    expiration_datetime = factory.Faker("future_datetime")
-
-    # Register hook to seed initial value for this test subsidy.
-    # initialize_ledger = factory.PostGenerationMethodCall("initialize_ledger")
+    active_datetime = factory.LazyFunction(fake_datetime)
+    expiration_datetime = factory.LazyFunction(lambda: fake_datetime(True))
 
 
 class UserFactory(factory.django.DjangoModelFactory):

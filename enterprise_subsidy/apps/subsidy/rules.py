@@ -28,7 +28,12 @@ def _user_has_explicit_access_via_feature_role(user, context, feature_role):
     """
     if not context:
         return False
-    return user_has_access_via_database(user, feature_role, EnterpriseSubsidyRoleAssignment, context)
+    return user_has_access_via_database(
+        user,
+        feature_role,
+        EnterpriseSubsidyRoleAssignment,
+        context,
+    )
 
 
 def _user_has_implicit_access_via_feature_role(user, context, feature_role):  # pylint: disable=unused-argument
@@ -42,7 +47,11 @@ def _user_has_implicit_access_via_feature_role(user, context, feature_role):  # 
         return False
     request = crum.get_current_request()
     decoded_jwt = get_decoded_jwt(request) or get_decoded_jwt_from_auth(request)
-    return request_user_has_implicit_access_via_jwt(decoded_jwt, feature_role, context)
+    return request_user_has_implicit_access_via_jwt(
+        decoded_jwt,
+        feature_role,
+        context,
+    )
 
 
 @rules.predicate
