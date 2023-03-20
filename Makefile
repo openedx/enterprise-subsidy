@@ -177,10 +177,10 @@ dev.stop: # Stops containers so they can be restarted
 	docker-compose stop
 
 app-shell: # Run the app shell as root
-	docker exec -u 0 -it enterprise_subsidy.app bash
+	docker exec -u 0 -it enterprise-subsidy.app bash
 
 db-shell: # Run the app shell as root, enter the app's database
-	docker exec -u 0 -it enterprise_subsidy.db mysql -u root enterprise_subsidy
+	docker exec -u 0 -it enterprise-subsidy.db mysql -u root enterprise_subsidy
 
 %-logs: # View the logs of the specified service container
 	docker-compose logs -f --tail=500 $*
@@ -192,7 +192,7 @@ app-restart-devserver:  # restart just the app Django dev server
 	docker-compose exec app bash -c 'kill $$(ps aux | egrep "manage.py ?\w* runserver" | egrep -v "while|grep" | awk "{print \$$2}")'
 
 %-attach:
-	docker attach enterprise_subsidy.$*
+	docker attach enterprise-subsidy.$*
 
 github_docker_build:
 	docker build . -f Dockerfile --target app -t openedx/enterprise-subsidy
