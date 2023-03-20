@@ -2,7 +2,7 @@ version: "2.1"
 services:
   db:
     image: edxops/mysql:5.7
-    container_name: enterprise_subsidy.db
+    container_name: enterprise-subsidy.db
     environment:
       MYSQL_ROOT_PASSWORD: ""
       MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
@@ -13,14 +13,14 @@ services:
 
   memcache:
     image: memcached:1.4.24
-    container_name: enterprise_subsidy.memcache
+    container_name: enterprise-subsidy.memcache
 
   app:
     image: openedx/enterprise-subsidy
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: enterprise_subsidy.app
+    container_name: enterprise-subsidy.app
     volumes:
       - .:/edx/app/enterprise-subsidy
       - ../src:/edx/src:cached
