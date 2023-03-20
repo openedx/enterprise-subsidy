@@ -1,5 +1,7 @@
 from enterprise_subsidy.settings.base import *
 
+ALLOWED_HOSTS = ['*']
+
 DEBUG = True
 
 # CACHE CONFIGURATION
