@@ -29,8 +29,32 @@ from enterprise_subsidy.apps.subsidy.constants import (
 from enterprise_subsidy.apps.subsidy.models import EnterpriseSubsidyRoleAssignment, Subsidy
 
 
+class TransactionPermissionRequiredMixin:
+    """
+    Helper/mixin for common logic that maps model actions
+    to the permission required to perform those actions.
+    """
+    def get_permission_required(self):
+        """
+        Return permissions required for the current requested action.
+
+        We override the function here instead of just setting the ``permission_required`` class attribute because that
+        attribute only supports requiring a single permission for the entire viewset.  This override logic allows for
+        the permission required to be based conditionally on the type of action.
+        """
+        permission_for_action = {
+            "list": PERMISSION_CAN_READ_TRANSACTIONS,
+            "retrieve": PERMISSION_CAN_READ_TRANSACTIONS,
+            "create": PERMISSION_CAN_CREATE_TRANSACTIONS,
+            "reverse": PERMISSION_CAN_CREATE_TRANSACTIONS,
+        }
+        permission_required = permission_for_action.get(self.request_action, PERMISSION_NOT_GRANTED)
+        return (permission_required,)
+
+
 class TransactionViewSet(
     PermissionRequiredForListingMixin,
+    TransactionPermissionRequiredMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.CreateModelMixin,
@@ -60,23 +84,6 @@ class TransactionViewSet(
     list_lookup_field = "ledger__subsidy__enterprise_customer_uuid"
     allowed_roles = [ENTERPRISE_SUBSIDY_ADMIN_ROLE, ENTERPRISE_SUBSIDY_LEARNER_ROLE, ENTERPRISE_SUBSIDY_OPERATOR_ROLE]
     role_assignment_class = EnterpriseSubsidyRoleAssignment
-
-    def get_permission_required(self):
-        """
-        Return permissions required for the current requested action.
-
-        We override the function here instead of just setting the ``permission_required`` class attribute because that
-        attribute only supports requiring a single permission for the entire viewset.  This override logic allows for
-        the permission required to be based conditionally on the type of action.
-        """
-        permission_for_action = {
-            "list": PERMISSION_CAN_READ_TRANSACTIONS,
-            "retrieve": PERMISSION_CAN_READ_TRANSACTIONS,
-            "create": PERMISSION_CAN_CREATE_TRANSACTIONS,
-            "reverse": PERMISSION_CAN_CREATE_TRANSACTIONS,
-        }
-        permission_required = permission_for_action.get(self.request_action, PERMISSION_NOT_GRANTED)
-        return (permission_required,)
 
     def get_permission_object(self):
         """
@@ -363,3 +370,44 @@ class TransactionViewSet(
             TransactionSerializer(transaction).data,
             status=status.HTTP_201_CREATED if created else status.HTTP_200_OK
         )
+
+
+class TransactionReadOnlyBaseViewSet(
+    PermissionRequiredForListingMixin,
+    TransactionPermissionRequiredMixin,
+    mixins.ReadOnlyModelViewSet,
+):
+    """
+    Base viewset for logic pertaining to retrieval of listing
+    of transactions in a subsidy.
+    """
+    authentication_classes = [JwtAuthentication, SessionAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+    lookup_field = "uuid"
+    serializer_class = TransactionSerializer
+
+    # Fields that control permissions for 'list' actions, required by PermissionRequiredForListingMixin.
+    list_lookup_field = "ledger__subsidy__enterprise_customer_uuid"
+    role_assignment_class = EnterpriseSubsidyRoleAssignment
+
+    @property
+    def base_queryset(self):
+        """
+        Return a queryset that acts as the "base case" for list() actions.
+        """
+        queryset = Transaction.objects.filter(ledger__subsidy__uuid=self.requested_subsidy_uuid)
+        return queryset.filter(**request_based_kwargs).order_by('-created')
+
+class TransactionAdminReadOnlyViewSet(
+    TransactionReadOnlyBaseViewSet,
+):
+    """
+    Viewset that allows users with the ENTERPRISE_SUBSIDY_ADMIN_ROLE or ENTERPRISE_SUBSIDY_OPERATOR_ROLE
+    to list or retrieve all transactions related to a particular ledgered-subsidy record.
+
+    GET  /api/v1/{subsidy_uuid}/transactions/
+    """
+    allowed_roles = [
+        ENTERPRISE_SUBSIDY_ADMIN_ROLE,
+        ENTERPRISE_SUBSIDY_OPERATOR_ROLE,
+    ]
