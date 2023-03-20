@@ -64,7 +64,7 @@ class TransactionSerializer(serializers.ModelSerializer):
 
     When using this serializer on a queryset, it can help with performance to prefectch the following:
 
-      .prefectch_related("ledger__unit", "reversal")
+      .prefetch_related("reversal")
     """
     unit = serializers.SerializerMethodField()
     reversal = ReversalSerializer(read_only=True)

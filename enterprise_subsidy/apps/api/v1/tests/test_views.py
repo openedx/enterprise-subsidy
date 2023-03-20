@@ -40,6 +40,8 @@ class APITestBase(APITestMixin):
     subsidy_2_transaction_2_uuid = str(uuid.uuid4())
     subsidy_3_transaction_1_uuid = str(uuid.uuid4())
     subsidy_3_transaction_2_uuid = str(uuid.uuid4())
+    subsidy_access_policy_1_uuid = str(uuid.uuid4())
+    subsidy_access_policy_2_uuid = str(uuid.uuid4())
 
     def setUp(self):
         super().setUp()
@@ -57,6 +59,7 @@ class APITestBase(APITestMixin):
             quantity=-1000,
             ledger=self.subsidy_1.ledger,
             lms_user_id=STATIC_LMS_USER_ID,  # This is the only transaction belonging to the requester.
+            subsidy_access_policy_uuid=self.subsidy_access_policy_1_uuid
         )
         TransactionFactory(
             uuid=self.subsidy_1_transaction_2_uuid,
@@ -64,6 +67,7 @@ class APITestBase(APITestMixin):
             quantity=-1000,
             ledger=self.subsidy_1.ledger,
             lms_user_id=STATIC_LMS_USER_ID+1000,
+            subsidy_access_policy_uuid=self.subsidy_access_policy_2_uuid
         )
 
         # Create an extra subsidy with the same enterprise_customer_uuid, but the learner does not have any transactions
@@ -111,6 +115,12 @@ class APITestBase(APITestMixin):
             ledger=self.subsidy_3.ledger,
             lms_user_id=STATIC_LMS_USER_ID+1000,
         )
+
+        self.all_initial_transactions = set([
+            str(self.subsidy_1_transaction_initial.uuid),
+            str(self.subsidy_2_transaction_initial.uuid),
+            str(self.subsidy_3_transaction_initial.uuid),
+        ])
 
 
 @ddt.ddt
@@ -386,12 +396,51 @@ class TransactionViewSetTests(APITestBase):
         if response.status_code < 300:
             list_response_data = response.json()["results"]
             response_uuids = [tx["uuid"] for tx in list_response_data]
-            initial_transactions = set([
-                str(self.subsidy_1_transaction_initial.uuid),
-                str(self.subsidy_2_transaction_initial.uuid),
-                str(self.subsidy_3_transaction_initial.uuid),
-            ])
-            assert set(response_uuids) - initial_transactions == set(expected_response_uuids) - initial_transactions
+            assert (
+                set(response_uuids) - self.all_initial_transactions ==
+                set(expected_response_uuids) - self.all_initial_transactions
+            )
+
+    @ddt.data(
+        # Test that the transaction subsidy_1_transaction_1_uuid is found via subsidy_access_policy_uuid filtering.
+        {
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+                "subsidy_access_policy_uuid": APITestBase.subsidy_access_policy_1_uuid,
+            },
+            "expected_response_uuids": [
+                APITestBase.subsidy_1_transaction_1_uuid,  # This transaction has the first test access policy on it.
+            ],
+        },
+        # Perform the same test as above, but look for a different transaction in the same subsidy.
+        {
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+                "subsidy_access_policy_uuid": APITestBase.subsidy_access_policy_2_uuid,
+            },
+            "expected_response_uuids": [
+                APITestBase.subsidy_1_transaction_2_uuid,  # This transaction has the second test access policy on it.
+            ],
+        },
+    )
+    @ddt.unpack
+    def test_list_filtering(self, request_query_params, expected_response_uuids):
+        """
+        Test list Transactions works with query parameter filtering.
+        """
+        self.set_up_operator()
+        url = reverse("api:v1:transaction-list")
+        query_string = urllib.parse.urlencode(request_query_params)
+        if query_string:
+            query_string = "?" + query_string
+        response = self.client.get(url + query_string)
+        assert response.status_code == status.HTTP_200_OK
+        list_response_data = response.json()["results"]
+        response_uuids = [tx["uuid"] for tx in list_response_data]
+        assert (
+            set(response_uuids) - self.all_initial_transactions ==
+            set(expected_response_uuids) - self.all_initial_transactions
+        )
 
     @ddt.data(
         # Test that an operator with all access can retrieve a random transaction.
@@ -440,7 +489,7 @@ class TransactionViewSetTests(APITestBase):
     @ddt.unpack
     def test_retrieve_access(self, role, request_pk, expected_response_status, expected_response_uuid):
         """
-        Test list Transactions permissions.
+        Test retrieve Transactions permissions.
         """
         if role == "admin":
             self.set_up_admin()
@@ -454,9 +503,19 @@ class TransactionViewSetTests(APITestBase):
         if response.status_code < 300:
             assert response.json()["uuid"] == expected_response_uuid
 
+    def test_retrieve_invalid_uuid(self):
+        """
+        Test that providing an invalid transaction UUID throws a 400.
+        """
+        self.set_up_operator()
+        url = reverse("api:v1:transaction-list")
+        request_pk = "invalid-uuid"
+        response = self.client.get(os.path.join(url, request_pk + "/"))
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
+        assert response.json() == {"detail": "invalid-uuid is not a valid uuid."}
+
     # Uncomment this later once we have segment events firing.
     # @mock.patch('enterprise_subsidy.apps.api.v1.event_utils.track_event')
-    # def test_create(self, mock_track_event):
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.api_client.enterprise_catalog.EnterpriseCatalogApiClient.get_course_price")
     def test_create(self, mock_get_course_price, mock_enterprise_client):
@@ -473,7 +532,7 @@ class TransactionViewSetTests(APITestBase):
             "subsidy_uuid": str(self.subsidy_1.uuid),
             "learner_id": 1234,
             "content_key": "course-v1:edX-test-course",
-            "access_policy_uuid": str(uuid.uuid4()),
+            "subsidy_access_policy_uuid": str(uuid.uuid4()),
         }
         response = self.client.post(url, post_data)
         assert response.status_code == status.HTTP_201_CREATED
@@ -483,7 +542,7 @@ class TransactionViewSetTests(APITestBase):
         assert create_response_data["idempotency_key"]
         assert create_response_data["content_key"] == post_data["content_key"]
         assert create_response_data["lms_user_id"] == post_data["learner_id"]
-        assert create_response_data["subsidy_access_policy_uuid"] == post_data["access_policy_uuid"]
+        assert create_response_data["subsidy_access_policy_uuid"] == post_data["subsidy_access_policy_uuid"]
         assert json.loads(create_response_data["metadata"]) == {}
         assert create_response_data["unit"] == self.subsidy_1.ledger.unit
         assert create_response_data["quantity"] < 0  # No need to be exact at this time, I'm just testing create works.
@@ -527,7 +586,7 @@ class TransactionViewSetTests(APITestBase):
             "subsidy_uuid": str(self.subsidy_1.uuid),
             "learner_id": 1234,
             "content_key": "course-v1:edX-test-course",
-            "access_policy_uuid": str(uuid.uuid4()),
+            "subsidy_access_policy_uuid": str(uuid.uuid4()),
         }
         response = self.client.post(url, post_data)
         assert response.status_code == status.HTTP_403_FORBIDDEN
@@ -536,7 +595,7 @@ class TransactionViewSetTests(APITestBase):
 
     def test_create_invalid_subsidy_uuid(self):
         """
-        Test create Transaction, failed due to invalid uuid.
+        Test create Transaction, failed due to invalid subsidy UUID.
         """
         url = reverse("api:v1:transaction-list")
         # Create privileged staff user that should be able to create Transactions.
@@ -546,15 +605,15 @@ class TransactionViewSetTests(APITestBase):
             "subsidy_uuid": str(self.subsidy_1.uuid) + "a",  # Make uuid invalid.
             "learner_id": 1234,
             "content_key": "course-v1:edX-test-course",
-            "access_policy_uuid": str(uuid.uuid4()),
+            "subsidy_access_policy_uuid": str(uuid.uuid4()),
         }
         response = self.client.post(url, post_data)
-        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "detail" in response.json()
 
     def test_create_invalid_access_policy_uuid(self):
         """
-        Test create Transaction, failed due to invalid uuid.
+        Test create Transaction, failed due to invalid subsidy access policy UUID.
         """
         url = reverse("api:v1:transaction-list")
         # Create privileged staff user that should be able to create Transactions.
@@ -564,13 +623,13 @@ class TransactionViewSetTests(APITestBase):
             "subsidy_uuid": str(self.subsidy_1.uuid),
             "learner_id": 1234,
             "content_key": "course-v1:edX-test-course",
-            "access_policy_uuid": str(uuid.uuid4()) + "a",  # Make uuid invalid.
+            "subsidy_access_policy_uuid": str(uuid.uuid4()) + "a",  # Make uuid invalid.
         }
         response = self.client.post(url, post_data)
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Error" in response.json()
 
-    @ddt.data("subsidy_uuid", "learner_id", "content_key", "access_policy_uuid")
+    @ddt.data("subsidy_uuid", "learner_id", "content_key", "subsidy_access_policy_uuid")
     def test_create_missing_inputs(self, missing_post_arg):
         """
         Test create Transaction, 4xx due to missing inputs.
@@ -583,7 +642,7 @@ class TransactionViewSetTests(APITestBase):
             "subsidy_uuid": str(self.subsidy_1.uuid),
             "learner_id": 1234,
             "content_key": "course-v1:edX-test-course",
-            "access_policy_uuid": str(uuid.uuid4()),
+            "subsidy_access_policy_uuid": str(uuid.uuid4()),
         }
         del post_data[missing_post_arg]
         response = self.client.post(url, post_data)

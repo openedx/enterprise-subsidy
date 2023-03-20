@@ -1,7 +1,6 @@
 """
 Views for the enterprise-subsidy service relating to the Transaction model
 """
-import json
 from uuid import UUID
 
 from django.core.exceptions import ValidationError
@@ -13,6 +12,7 @@ from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthenticat
 from openedx_ledger.models import Transaction
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.authentication import SessionAuthentication
+from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 
 from enterprise_subsidy.apps.api.v1 import utils
@@ -107,6 +107,19 @@ class TransactionViewSet(
         return enterprise_customer_uuid
 
     @property
+    def requested_subsidy_access_policy_uuid(self):
+        """
+        Fetch the subsidy access policy UUID from the URL query parameters.
+        """
+        subsidy_access_policy_uuid = self.request.query_params.get("subsidy_access_policy_uuid")
+        if subsidy_access_policy_uuid:
+            try:
+                subsidy_access_policy_uuid = UUID(subsidy_access_policy_uuid)
+            except ValueError as exc:
+                raise ParseError(f"{subsidy_access_policy_uuid} is not a valid uuid.") from exc
+        return subsidy_access_policy_uuid
+
+    @property
     def requested_enterprise_customer_uuid(self):
         """
         Look in the query parameters for an enterprise customer UUID.
@@ -120,19 +133,29 @@ class TransactionViewSet(
 
         For detail endpoints, the PK can simply be found in ``self.kwargs``.
         """
-        return self.kwargs.get("uuid")
+        transaction_uuid = self.kwargs.get("uuid")
+        if transaction_uuid:
+            try:
+                transaction_uuid = UUID(transaction_uuid)
+            except ValueError as exc:
+                raise ParseError(f"{transaction_uuid} is not a valid uuid.") from exc
+        return transaction_uuid
 
     @property
     def requested_subsidy_uuid(self):
         """
-        Fetch the subsidy UUID from either the URL query parameters or JSON body.
+        Fetch the subsidy UUID from either the URL query parameters or request body.
+
+        Note: if the request contains both, the query parameter takes priority.
         """
         subsidy_uuid = self.request.query_params.get("subsidy_uuid")
         if not subsidy_uuid:
+            subsidy_uuid = self.request.data.get("subsidy_uuid")
+        if subsidy_uuid:
             try:
-                subsidy_uuid = json.loads(self.request.body).get("subsidy_uuid")
-            except json.decoder.JSONDecodeError:
-                pass
+                subsidy_uuid = UUID(subsidy_uuid)
+            except ValueError as exc:
+                raise ParseError(f"{subsidy_uuid} is not a valid uuid.") from exc
         return subsidy_uuid
 
     @property
@@ -189,6 +212,8 @@ class TransactionViewSet(
             request_based_kwargs.update({"ledger__subsidy__uuid": self.requested_subsidy_uuid})
         if self.requested_transaction_uuid:
             request_based_kwargs.update({"uuid": self.requested_transaction_uuid})
+        if self.requested_subsidy_access_policy_uuid:
+            request_based_kwargs.update({"subsidy_access_policy_uuid": self.requested_subsidy_access_policy_uuid})
 
         #
         # Finally, overlay both `user_id`-based and request-parameter-based filters in to one big happy queryset.
@@ -246,6 +271,8 @@ class TransactionViewSet(
               The uuid (primary key) of the subsidy from which transactions should be listed.
         - ``enterprise_customer_uuid`` (query param, optional):
               The enterprise customer UUID corresponding to the subsidies from which transactions should be listed.
+        - ``subsidy_access_policy_uuid`` (query param, optional):
+              The subsidy access policy UUID responsible for creating the listed transactions.
 
         Returns:
             rest_framework.response.Response:
@@ -296,7 +323,7 @@ class TransactionViewSet(
               The user for whom the transaction is written and for which a fulfillment should occur.
         - ``content_key`` (POST data, required):
               The content for which a fulfillment is created.
-        - ``access_policy_uuid`` (POST data, required):
+        - ``subsidy_access_policy_uuid`` (POST data, required):
               The uuid of the policy that allowed the ledger transaction to be created.
 
         Returns:
@@ -327,23 +354,23 @@ class TransactionViewSet(
         subsidy_uuid = request.data.get("subsidy_uuid")
         learner_id = request.data.get("learner_id")
         content_key = request.data.get("content_key")
-        access_policy_uuid = request.data.get("access_policy_uuid")
-        if not all([subsidy_uuid, learner_id, content_key, access_policy_uuid]):
+        subsidy_access_policy_uuid = request.data.get("subsidy_access_policy_uuid")
+        if not all([subsidy_uuid, learner_id, content_key, subsidy_access_policy_uuid]):
             return Response(
                 {
                     "Error": (
                         "One or more required fields were not provided in the request body: "
-                        "[subsidy_uuid, learner_id, content_key, access_policy_uuid]"
+                        "[subsidy_uuid, learner_id, content_key, subsidy_access_policy_uuid]"
                     )
                 },
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
             UUID(subsidy_uuid)
-            UUID(access_policy_uuid)
+            UUID(subsidy_access_policy_uuid)
         except ValueError:
             return Response(
-                {"Error": "One or more UUID fields are not valid UUIDs: [subsidy_uuid, access_policy_uuid]"},
+                {"Error": "One or more UUID fields are not valid UUIDs: [subsidy_uuid, subsidy_access_policy_uuid]"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
@@ -353,7 +380,7 @@ class TransactionViewSet(
                 {"Error": "The provided subsidy_uuid does not match an existing subsidy."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        transaction, created = subsidy.redeem(learner_id, content_key, access_policy_uuid)
+        transaction, created = subsidy.redeem(learner_id, content_key, subsidy_access_policy_uuid)
         if not transaction:
             return Response(
                 {"Error": "The given content_key is not currently redeemable for the given subsidy."},
