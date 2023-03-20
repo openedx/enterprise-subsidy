@@ -338,7 +338,7 @@ class TransactionViewSet(
         """
         base_response = super().list(request, *args, **kwargs)
 
-        if self.request.query_params.get("include_aggregates") == "true":
+        if self.request.query_params.get("include_aggregates", "").lower() == "true":
             subsidy = Subsidy.objects.get(uuid=self.requested_subsidy_uuid)
             aggregates = {
                 "unit": subsidy.unit,

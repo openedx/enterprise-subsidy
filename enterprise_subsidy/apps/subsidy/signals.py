@@ -25,7 +25,7 @@ def subsidy_pre_save(sender, instance, *args, **kwargs):  # pylint: disable=unus
     # If a transaction for the starting_balance is created,
     # that transaction record is also saved during
     # the create_ledger() call.
-    instance.ledger = create_ledger(
+    instance.ledger = create_ledger(  # pylint: disable=no-value-for-parameter,useless-suppression
         unit=instance.unit,
         subsidy_uuid=instance.uuid,
         initial_deposit=instance.starting_balance,

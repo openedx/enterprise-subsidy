@@ -9,16 +9,9 @@ from edx_rbac.utils import ALL_ACCESS_CONTEXT
 
 from enterprise_subsidy.apps.api.v1.tests.mixins import APITestMixin
 from enterprise_subsidy.apps.subsidy.constants import (
-    ENTERPRISE_SUBSIDY_ADMIN_ROLE,
-    ENTERPRISE_SUBSIDY_LEARNER_ROLE,
-    ENTERPRISE_SUBSIDY_OPERATOR_ROLE,
     PERMISSION_CAN_CREATE_TRANSACTIONS,
     PERMISSION_CAN_READ_SUBSIDIES,
-    PERMISSION_CAN_READ_TRANSACTIONS,
-    SYSTEM_ENTERPRISE_ADMIN_ROLE,
-    SYSTEM_ENTERPRISE_CATALOG_ADMIN_ROLE,
-    SYSTEM_ENTERPRISE_LEARNER_ROLE,
-    SYSTEM_ENTERPRISE_OPERATOR_ROLE
+    PERMISSION_CAN_READ_TRANSACTIONS
 )
 
 
@@ -28,6 +21,7 @@ class TestSubsidyAdminRBACPermissions(APITestMixin):
     Test defined django rules for authorization checks.
     """
     def set_up_user_by_type(self, user_type, authentication_type, jwt_context_override=False):
+        """ Inner helper for setting up JWT roles. """
         if user_type == "learner":
             self.set_up_learner()
         elif user_type == "admin":

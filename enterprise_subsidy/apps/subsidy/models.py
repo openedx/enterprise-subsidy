@@ -19,7 +19,7 @@ from edx_rbac.models import UserRole, UserRoleAssignment
 from edx_rbac.utils import ALL_ACCESS_CONTEXT
 from model_utils.models import TimeStampedModel
 from openedx_ledger import api as ledger_api
-from openedx_ledger.models import Ledger, UnitChoices
+from openedx_ledger.models import Ledger, TransactionStateChoices, UnitChoices
 from openedx_ledger.utils import create_idempotency_key_for_transaction
 from simple_history.models import HistoricalRecords
 
@@ -140,10 +140,10 @@ class Subsidy(TimeStampedModel):
         """
         return EnterpriseCatalogApiClient()
 
-    @lru_cache(maxsize=128)
+    @lru_cache(maxsize=64)
     def price_for_content(self, content_key):
         price = self.catalog_client.get_course_price(self.enterprise_customer_uuid, content_key)
-        return int(float(price)) * CENTS_PER_DOLLAR
+        return int(float(price) * CENTS_PER_DOLLAR)
 
     def current_balance(self):
         return self.ledger.balance()
@@ -208,7 +208,9 @@ class Subsidy(TimeStampedModel):
         """
         if existing_transaction := self.get_redemption(learner_id, content_key):
             return (existing_transaction, False)
-        if not self.is_redeemable(content_key, now()):
+
+        is_redeemable, _ = self.is_redeemable(content_key)
+        if not is_redeemable:
             return (None, False)
         transaction = self._create_redemption(
             learner_id,
@@ -277,37 +279,43 @@ class Subsidy(TimeStampedModel):
 
         return ledger_transaction
 
-    def is_redeemable(self, content_key, redemption_datetime=None):  # pylint: disable=unused-argument
+    def is_redeemable(self, content_key):
         """
         Check if this subsidy is redeemable (by anyone) at a given time.
 
         Is there enough stored value in this subsidy's ledger to redeem for the cost of the given content?
-        TODO: Also take into account redemption_datetime.
 
         Args:
             content_key (str): content key of content we may try to redeem.
             redemption_datetime (datetime.datetime): The point in time to check for redemability.
 
         Returns:
-            bool: True if redeemable.
+            2-tuple of (bool: True if redeemable, int: price of content)
         """
-        return self.current_balance() >= self.price_for_content(content_key)
+        content_price = self.price_for_content(content_key)
+        redeemable = self.current_balance() >= content_price
+        return redeemable, content_price
 
     def get_redemption(self, learner_id, content_key):
         """
-        Return the transaction representing this redemption, if it exists.
+        Return the committed transaction representing this redemption,
+        or None if no such transaction exists.
 
         Args:
             learner_id (str): The learner of the redemption to check.
             content_key (str): The content of the redemption to check.
 
         Returns:
-            openedx_ledger.models.Transaction: a ledger transaction related to the redemption.
+            openedx_ledger.models.Transaction: a ledger transaction representing the redemption.
         """
-        return self.transactions_for_learner_and_content(learner_id, content_key)
+        return self.transactions_for_learner_and_content(learner_id, content_key).filter(
+            state=TransactionStateChoices.COMMITTED,
+        ).first()
 
     def all_transactions(self):
-        return self.ledger.transactions  # pylint: disable=no-member
+        return self.ledger.transactions.select_related(
+            'reversal',
+        )
 
     def transactions_for_learner(self, lms_user_id):
         return self.all_transactions().filter(lms_user_id=lms_user_id)
