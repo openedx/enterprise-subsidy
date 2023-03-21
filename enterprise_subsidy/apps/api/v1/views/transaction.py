@@ -297,7 +297,7 @@ class TransactionViewSet(
         - ``content_key`` (query_param, optional):
               Filter the output to only include transactions assoicated with the given content_key.
         - ``include_aggregates`` (query_param, optional):
-              Optionally include the ``aggregates`` key (quantities, number of transactions) in the response.
+              If "true", include the ``aggregates`` key (quantities, number of transactions) in the response.
 
         Returns:
             rest_framework.response.Response:
@@ -338,7 +338,7 @@ class TransactionViewSet(
         """
         base_response = super().list(request, *args, **kwargs)
 
-        if self.request.query_params.get("include_aggregates"):
+        if self.request.query_params.get("include_aggregates") == "true":
             subsidy = Subsidy.objects.get(uuid=self.requested_subsidy_uuid)
             aggregates = {
                 "unit": subsidy.unit,
