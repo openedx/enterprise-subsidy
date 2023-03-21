@@ -192,7 +192,7 @@ exceptiongroup==1.1.1
     #   pytest
 factory-boy==3.2.1
     # via -r requirements/test.txt
-faker==17.6.0
+faker==18.2.1
     # via
     #   -r requirements/test.txt
     #   factory-boy
@@ -213,7 +213,7 @@ idna==3.4
     # via
     #   -r requirements/test.txt
     #   requests
-importlib-metadata==6.0.0
+importlib-metadata==6.1.0
     # via
     #   keyring
     #   twine
@@ -277,7 +277,7 @@ mysqlclient==2.1.1
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-newrelic==8.7.0
+newrelic==8.7.1
     # via
     #   -r requirements/test.txt
     #   edx-django-utils
@@ -290,7 +290,7 @@ openedx-events==7.0.0
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-openedx-ledger==0.2.0
+openedx-ledger==0.2.1
     # via -r requirements/test.txt
 packaging==23.0
     # via
@@ -418,7 +418,7 @@ pyyaml==6.0
     #   edx-django-release-util
 readme-renderer==37.3
     # via twine
-redis==4.5.1
+redis==4.5.2
     # via
     #   -r requirements/test.txt
     #   openedx-ledger

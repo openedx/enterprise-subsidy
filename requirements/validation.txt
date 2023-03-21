@@ -241,7 +241,7 @@ factory-boy==3.2.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-faker==17.6.0
+faker==18.2.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -267,7 +267,7 @@ idna==3.4
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   requests
-importlib-metadata==6.0.0
+importlib-metadata==6.1.0
     # via
     #   -r requirements/quality.txt
     #   keyring
@@ -356,7 +356,7 @@ mysqlclient==2.1.1
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-newrelic==8.7.0
+newrelic==8.7.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -372,7 +372,7 @@ openedx-events==7.0.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-openedx-ledger==0.2.0
+openedx-ledger==0.2.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -534,7 +534,7 @@ readme-renderer==37.3
     # via
     #   -r requirements/quality.txt
     #   twine
-redis==4.5.1
+redis==4.5.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt

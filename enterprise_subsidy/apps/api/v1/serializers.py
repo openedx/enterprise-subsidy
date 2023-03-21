@@ -62,9 +62,9 @@ class TransactionSerializer(serializers.ModelSerializer):
     """
     Serializer for the `Transaction` model.
 
-    When using this serializer on a queryset, it can help with performance to prefectch the following:
+    When using this serializer on a queryset, it can help with performance to select_related reversals:
 
-      .prefectch_related("ledger__unit", "reversal")
+      Transaction.objects.select_related("reversal")
     """
     unit = serializers.SerializerMethodField()
     reversal = ReversalSerializer(read_only=True)
