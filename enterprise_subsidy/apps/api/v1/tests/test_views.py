@@ -500,6 +500,18 @@ class TransactionViewSetTests(APITestBase):
             set(expected_response_uuids) - self.all_initial_transactions
         )
 
+    def test_list_no_include_aggregates(self):
+        """
+        Test list() Transactions without include_aggregates flag.
+        """
+        self.set_up_operator()
+        url = reverse("api:v1:transaction-list")
+        request_query_params = {"subsidy_uuid": APITestBase.subsidy_1_uuid}
+        query_string = urllib.parse.urlencode(request_query_params)
+        response = self.client.get(url + "?" + query_string)
+        assert response.status_code == status.HTTP_200_OK
+        assert "aggregates" not in response.json()
+
     def test_list_include_aggregates(self):
         """
         Test list() Transactions include_aggregates flag.
@@ -508,7 +520,7 @@ class TransactionViewSetTests(APITestBase):
         url = reverse("api:v1:transaction-list")
         request_query_params = {
             "subsidy_uuid": APITestBase.subsidy_1_uuid,
-            "include_aggregates": True,
+            "include_aggregates": "true",
             "content_key": APITestBase.content_key_1,
         }
         query_string = urllib.parse.urlencode(request_query_params)
