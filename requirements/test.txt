@@ -175,7 +175,7 @@ exceptiongroup==1.1.1
     # via pytest
 factory-boy==3.2.1
     # via -r requirements/test.in
-faker==17.6.0
+faker==18.2.1
     # via factory-boy
 fastavro==1.7.3
     # via
@@ -228,7 +228,7 @@ mysqlclient==2.1.1
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-newrelic==8.7.0
+newrelic==8.7.1
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -241,7 +241,7 @@ openedx-events==7.0.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-openedx-ledger==0.2.0
+openedx-ledger==0.2.1
     # via -r requirements/base.txt
 packaging==23.0
     # via
@@ -344,7 +344,7 @@ pyyaml==6.0
     #   -r requirements/base.txt
     #   code-annotations
     #   edx-django-release-util
-redis==4.5.1
+redis==4.5.2
     # via
     #   -r requirements/base.txt
     #   openedx-ledger

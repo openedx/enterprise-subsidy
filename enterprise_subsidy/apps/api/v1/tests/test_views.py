@@ -42,6 +42,8 @@ class APITestBase(APITestMixin):
     subsidy_3_transaction_2_uuid = str(uuid.uuid4())
     subsidy_access_policy_1_uuid = str(uuid.uuid4())
     subsidy_access_policy_2_uuid = str(uuid.uuid4())
+    content_key_1 = "course-v1:edX+test+course.1"
+    content_key_2 = "course-v1:edX+test+course.2"
 
     def setUp(self):
         super().setUp()
@@ -53,21 +55,23 @@ class APITestBase(APITestMixin):
             starting_balance=15000
         )
         self.subsidy_1_transaction_initial = self.subsidy_1.ledger.transactions.first()
-        TransactionFactory(
+        self.subsidy_1_transaction_1 = TransactionFactory(
             uuid=self.subsidy_1_transaction_1_uuid,
             state=TransactionStateChoices.COMMITTED,
             quantity=-1000,
             ledger=self.subsidy_1.ledger,
             lms_user_id=STATIC_LMS_USER_ID,  # This is the only transaction belonging to the requester.
-            subsidy_access_policy_uuid=self.subsidy_access_policy_1_uuid
+            subsidy_access_policy_uuid=self.subsidy_access_policy_1_uuid,
+            content_key=self.content_key_1,
         )
-        TransactionFactory(
+        self.subsidy_1_transaction_2 = TransactionFactory(
             uuid=self.subsidy_1_transaction_2_uuid,
             state=TransactionStateChoices.COMMITTED,
             quantity=-1000,
             ledger=self.subsidy_1.ledger,
             lms_user_id=STATIC_LMS_USER_ID+1000,
-            subsidy_access_policy_uuid=self.subsidy_access_policy_2_uuid
+            subsidy_access_policy_uuid=self.subsidy_access_policy_2_uuid,
+            content_key=self.content_key_2,
         )
 
         # Create an extra subsidy with the same enterprise_customer_uuid, but the learner does not have any transactions
@@ -422,6 +426,60 @@ class TransactionViewSetTests(APITestBase):
                 APITestBase.subsidy_1_transaction_2_uuid,  # This transaction has the second test access policy on it.
             ],
         },
+        # Perform the same test as above, but look for a non-existent access_policy_uuid.
+        {
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+                "subsidy_access_policy_uuid": str(uuid.uuid4()),
+            },
+            "expected_response_uuids": [],
+        },
+        # Test filtering by content_key.
+        {
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+                "content_key": APITestBase.content_key_1,
+            },
+            "expected_response_uuids": [
+                APITestBase.subsidy_1_transaction_1_uuid,  # This transaction has the first test content_key on it.
+            ],
+        },
+        # Perform the same test as above, but look for the second course.
+        {
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+                "content_key": APITestBase.content_key_2,
+            },
+            "expected_response_uuids": [
+                APITestBase.subsidy_1_transaction_2_uuid,  # This transaction has the second test content_key on it.
+            ],
+        },
+        # Perform the same test as above, but look for a non-existent course.
+        {
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+                "content_key": "course-v1:does+not+exist",
+            },
+            "expected_response_uuids": [],
+        },
+        # Test filtering by learner_id.
+        {
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+                "learner_id": STATIC_LMS_USER_ID,
+            },
+            "expected_response_uuids": [
+                APITestBase.subsidy_1_transaction_1_uuid,
+            ],
+        },
+        # Perform the same test as above, but look for a non-existent user
+        {
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+                "learner_id": -1,
+            },
+            "expected_response_uuids": [],
+        },
     )
     @ddt.unpack
     def test_list_filtering(self, request_query_params, expected_response_uuids):
@@ -441,6 +499,25 @@ class TransactionViewSetTests(APITestBase):
             set(response_uuids) - self.all_initial_transactions ==
             set(expected_response_uuids) - self.all_initial_transactions
         )
+
+    def test_list_include_aggregates(self):
+        """
+        Test list() Transactions include_aggregates flag.
+        """
+        self.set_up_operator()
+        url = reverse("api:v1:transaction-list")
+        request_query_params = {
+            "subsidy_uuid": APITestBase.subsidy_1_uuid,
+            "include_aggregates": True,
+            "content_key": APITestBase.content_key_1,
+        }
+        query_string = urllib.parse.urlencode(request_query_params)
+        response = self.client.get(url + "?" + query_string)
+        assert response.status_code == status.HTTP_200_OK
+        list_response_aggregates = response.json()["aggregates"]
+        assert list_response_aggregates["total_quantity"] == self.subsidy_1_transaction_1.quantity
+        assert list_response_aggregates["unit"] == self.subsidy_1.unit
+        assert list_response_aggregates["remaining_subsidy_balance"] == self.subsidy_1.current_balance()
 
     @ddt.data(
         # Test that an operator with all access can retrieve a random transaction.

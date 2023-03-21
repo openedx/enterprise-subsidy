@@ -120,6 +120,20 @@ class TransactionViewSet(
         return subsidy_access_policy_uuid
 
     @property
+    def requested_content_key(self):
+        """
+        Fetch the content_key from the URL query parameters.
+        """
+        return self.request.query_params.get("content_key")
+
+    @property
+    def requested_learner_id(self):
+        """
+        Fetch the learner_id from the URL query parameters.
+        """
+        return self.request.query_params.get("learner_id")
+
+    @property
     def requested_enterprise_customer_uuid(self):
         """
         Look in the query parameters for an enterprise customer UUID.
@@ -214,6 +228,10 @@ class TransactionViewSet(
             request_based_kwargs.update({"uuid": self.requested_transaction_uuid})
         if self.requested_subsidy_access_policy_uuid:
             request_based_kwargs.update({"subsidy_access_policy_uuid": self.requested_subsidy_access_policy_uuid})
+        if self.requested_learner_id:
+            request_based_kwargs.update({"lms_user_id": self.requested_learner_id})
+        if self.requested_content_key:
+            request_based_kwargs.update({"content_key": self.requested_content_key})
 
         #
         # Finally, overlay both `user_id`-based and request-parameter-based filters in to one big happy queryset.
@@ -270,9 +288,16 @@ class TransactionViewSet(
         - ``subsidy_uuid`` (query param, required):
               The uuid (primary key) of the subsidy from which transactions should be listed.
         - ``enterprise_customer_uuid`` (query param, optional):
-              The enterprise customer UUID corresponding to the subsidies from which transactions should be listed.
+              Filter the output to only include transactions part of subsidies corresponding to the given enterprise
+              customer UUID.
         - ``subsidy_access_policy_uuid`` (query param, optional):
-              The subsidy access policy UUID responsible for creating the listed transactions.
+              Filter the output to only include transactions created by the given subsidy access policy UUID.
+        - ``learner_id`` (query_param, optional):
+              Filter the output to only include transactions assoicated with the given learner ID.
+        - ``content_key`` (query_param, optional):
+              Filter the output to only include transactions assoicated with the given content_key.
+        - ``include_aggregates`` (query_param, optional):
+              Optionally include the ``aggregates`` key (quantities, number of transactions) in the response.
 
         Returns:
             rest_framework.response.Response:
@@ -285,6 +310,11 @@ class TransactionViewSet(
                        "count": 3,
                        "next": null,
                        "previous": null,
+                       "aggregates": {
+                           "total_quantity": 12350,
+                           "unit": "USD_CENTS",
+                           "remaining_subsidy_balance": 987650
+                       },
                        "results": [
                          {
                            "uuid": "the-transaction-uuid",
@@ -306,7 +336,21 @@ class TransactionViewSet(
                        ]
                      }
         """
-        return super().list(request, *args, **kwargs)
+        base_response = super().list(request, *args, **kwargs)
+
+        if self.request.query_params.get("include_aggregates"):
+            subsidy = Subsidy.objects.get(uuid=self.requested_subsidy_uuid)
+            aggregates = {
+                "unit": subsidy.unit,
+                "remaining_subsidy_balance": subsidy.current_balance(),
+                "total_quantity": subsidy.ledger.subset_balance(self.get_queryset()),
+            }
+            # Compose a response that combines the base response with additional aggregates data.
+            response_data = {"aggregates": aggregates}
+            response_data.update(base_response.data)
+            return Response(response_data, status=base_response.status_code, headers=base_response.headers)
+        else:
+            return base_response
 
     def create(self, request, *args, **kwargs):
         """
