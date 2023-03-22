@@ -9,7 +9,9 @@ asgiref==3.6.0
 async-timeout==4.0.2
     # via redis
 attrs==22.2.0
-    # via openedx-events
+    # via
+    #   jsonschema
+    #   openedx-events
 certifi==2022.12.7
     # via requests
 cffi==1.15.1
@@ -41,10 +43,10 @@ django==3.2.18
     #   django-cors-headers
     #   django-crum
     #   django-extensions
-    #   django-filter
     #   django-model-utils
     #   djangorestframework
     #   drf-jwt
+    #   drf-spectacular
     #   drf-yasg
     #   edx-auth-backends
     #   edx-django-release-util
@@ -64,8 +66,10 @@ django-extensions==3.2.1
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-django-filter==22.1
-    # via openedx-ledger
+django-filter==1.1.0
+    # via
+    #   djangorestframework-filters
+    #   openedx-ledger
 django-model-utils==4.3.1
     # via edx-rbac
 django-simple-history==3.0.0
@@ -85,11 +89,17 @@ djangoql==0.17.1
 djangorestframework==3.14.0
     # via
     #   -r requirements/base.in
+    #   djangorestframework-filters
     #   drf-jwt
+    #   drf-spectacular
     #   drf-yasg
     #   edx-drf-extensions
+djangorestframework-filters==0.11.1
+    # via -r requirements/base.in
 drf-jwt==1.19.2
     # via edx-drf-extensions
+drf-spectacular==0.26.1
+    # via -r requirements/base.in
 drf-yasg==1.21.5
     # via -r requirements/base.in
 edx-auth-backends==4.1.0
@@ -124,8 +134,12 @@ future==0.18.3
     # via pyjwkest
 idna==3.4
     # via requests
+importlib-resources==5.12.0
+    # via jsonschema
 inflection==0.5.1
-    # via drf-yasg
+    # via
+    #   drf-spectacular
+    #   drf-yasg
 itypes==1.2.0
     # via coreapi
 jinja2==3.1.2
@@ -134,6 +148,8 @@ jsonfield2==4.0.0.post0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
+jsonschema==4.17.3
+    # via drf-spectacular
 markupsafe==2.1.2
     # via jinja2
 mysqlclient==2.1.1
@@ -150,12 +166,14 @@ openedx-events==7.0.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-openedx-ledger==0.2.1
+openedx-ledger==0.2.2
     # via -r requirements/base.in
 packaging==23.0
     # via drf-yasg
 pbr==5.11.1
     # via stevedore
+pkgutil-resolve-name==1.3.10
+    # via jsonschema
 ply==3.11
     # via djangoql
 psutil==5.9.4
@@ -177,6 +195,8 @@ pymongo==3.13.0
     # via edx-opaque-keys
 pynacl==1.5.0
     # via edx-django-utils
+pyrsistent==0.19.3
+    # via jsonschema
 python-dateutil==2.8.2
     # via edx-drf-extensions
 python3-openid==3.2.0
@@ -189,8 +209,10 @@ pytz==2022.7.1
     #   drf-yasg
     #   openedx-ledger
 pyyaml==6.0
-    # via edx-django-release-util
-redis==4.5.2
+    # via
+    #   drf-spectacular
+    #   edx-django-release-util
+redis==4.5.3
     # via openedx-ledger
 requests==2.28.2
     # via
@@ -238,6 +260,9 @@ stevedore==5.0.0
 uritemplate==4.1.1
     # via
     #   coreapi
+    #   drf-spectacular
     #   drf-yasg
 urllib3==1.26.15
     # via requests
+zipp==3.15.0
+    # via importlib-resources

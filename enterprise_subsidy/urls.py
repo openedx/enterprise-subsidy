@@ -20,7 +20,8 @@ import os
 from auth_backends.urls import oauth2_urlpatterns
 from django.conf import settings
 from django.contrib import admin
-from django.urls import include, re_path
+from django.urls import include, path, re_path
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
 from rest_framework import permissions
@@ -34,10 +35,22 @@ schema_view = get_schema_view(
    openapi.Info(
       title="enterprise-subsidy API",
       default_version='v1',
-      description="enterprise-subsidy API Docs",
+      description="<h1>enterprise-subsidy API Docs, check out /api/schema/redoc/ instead</h1>",
    ),
    public=False,
    permission_classes=[permissions.AllowAny],
+)
+
+spectacular_view = SpectacularAPIView(
+    api_version='v1',
+    title='my-title-here',
+)
+
+spec_swagger_view = SpectacularSwaggerView()
+
+spec_redoc_view = SpectacularRedocView(
+    title='Redoc view for the enterprise-subsidy API.',
+    url_name='schema',
 )
 
 urlpatterns = oauth2_urlpatterns + [
@@ -48,6 +61,11 @@ urlpatterns = oauth2_urlpatterns + [
     re_path(r'^auto_auth/$', core_views.AutoAuth.as_view(), name='auto_auth'),
     re_path(r'', include('csrf.urls')),  # Include csrf urls from edx-drf-extensions
     re_path(r'^health/$', core_views.health, name='health'),
+    # DRF-spectacular routes below
+    # TODO: deprecate the `/api-docs/` route in favor of the routes below.
+    path('api/schema/', spectacular_view.as_view(), name='schema'),
+    path('api/schema/swagger-ui/', spec_swagger_view.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/schema/redoc/', spec_redoc_view.as_view(url_name='schema'), name='redoc'),
 ]
 
 if settings.DEBUG and os.environ.get('ENABLE_DJANGO_TOOLBAR', False):  # pragma: no cover

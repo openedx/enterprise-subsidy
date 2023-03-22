@@ -66,7 +66,9 @@ class TransactionSerializer(serializers.ModelSerializer):
 
       Transaction.objects.select_related("reversal")
     """
-    unit = serializers.SerializerMethodField()
+    unit = serializers.SerializerMethodField(
+        help_text="The unit in which this transaction's quantity is denominated."
+    )
     reversal = ReversalSerializer(read_only=True)
 
     class Meta:
@@ -99,3 +101,36 @@ class TransactionSerializer(serializers.ModelSerializer):
             str: unit slug.
         """
         return obj.ledger.unit if obj.ledger else None
+
+
+# pylint: disable=abstract-method
+class CanRedeemResponseSerializer(serializers.Serializer):
+    """
+    Serializer for providing responses to queries about redeemability
+    for a particular user id and content_key.
+    """
+    can_redeem = serializers.BooleanField(
+        default=True,
+        help_text='Whether the provided learner/content can redeem via this Subsidy.'
+    )
+    content_price = serializers.IntegerField(
+        default=1,
+        help_text='The price of the queried content_key.',
+    )
+    unit = serializers.CharField(
+        default='usd_cents',
+        help_text='The unit in which price is denominated.'
+    )
+    existing_transaction = TransactionSerializer(
+        required=False,
+        allow_null=True,
+    )
+
+
+class ExceptionSerializer(serializers.Serializer):
+    """
+    Read-only serializer for responding with data about errors.
+    """
+    detail = serializers.CharField(
+        help_text="A description of the reason for the error.",
+    )

@@ -49,6 +49,7 @@ INSTALLED_APPS = (
 THIRD_PARTY_APPS = (
     'corsheaders',
     'csrf.apps.CsrfAppConfig',  # Enables frontend apps to retrieve CSRF tokens
+    'drf_spectacular',
     'drf_yasg',
     # "App Permissions" compatiblity: this provides the manage_user and manage_group management commands.
     'edx_django_utils.user',
@@ -140,9 +141,31 @@ REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
     ),
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
     'PAGE_SIZE': 10,
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Enterprise Subsidy API',
+    'DESCRIPTION': 'API for controlling disbursement of value for ledger-based subsidy records.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'ENUM_ADD_EXPLICIT_BLANK_NULL_CHOICE': False,
+    'TAGS': [
+        {
+            'name': 'subsidy',
+            'description': '<h3>All endpoints that query or command directly against Subsidy records.</h3>',
+        },
+        {
+            'name': 'transactions',
+            'description': '<h3>All endpoints that query or command directly against Transaction records</h3>.',
+        },
+        {
+            'name': 'api',
+            'description': '<h3>All endpoints not tagged by anything else.</h3>',
+        },
+    ],
 }
 
 # Internationalization

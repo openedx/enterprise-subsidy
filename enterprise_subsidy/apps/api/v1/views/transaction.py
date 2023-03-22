@@ -6,6 +6,7 @@ from uuid import UUID
 from django.core.exceptions import ValidationError
 from django.db.models import Q
 from django.utils.decorators import method_decorator
+from drf_spectacular.utils import extend_schema
 from edx_rbac.mixins import PermissionRequiredForListingMixin
 from edx_rbac.utils import contexts_accessible_from_jwt
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
@@ -274,6 +275,12 @@ class TransactionViewSet(
         """
         return super().retrieve(request, *args, **kwargs)
 
+    @extend_schema(
+        request=TransactionSerializer,
+        responses={
+            status.HTTP_200_OK: TransactionSerializer,
+        },
+    )
     @method_decorator(require_at_least_one_query_parameter('subsidy_uuid'))
     def list(self, request, *args, **kwargs):
         """
@@ -299,42 +306,45 @@ class TransactionViewSet(
         - ``include_aggregates`` (query_param, optional):
               If "true", include the ``aggregates`` key (quantities, number of transactions) in the response.
 
-        Returns:
-            rest_framework.response.Response:
-                400: If there are missing or otherwise invalid input parameters.  Response body is JSON with a single
-                     `Error` key.
-                200: In all other cases, return 200 regardless of whether any transactions were found.  Response body is
-                     JSON with a paginated list of serialized Transactions containing the following keys (sample
-                     values):
-                     {
-                       "count": 3,
-                       "next": null,
-                       "previous": null,
-                       "aggregates": {
-                           "total_quantity": 12350,
-                           "unit": "USD_CENTS",
-                           "remaining_subsidy_balance": 987650
-                       },
-                       "results": [
-                         {
-                           "uuid": "the-transaction-uuid",
-                           "state": "COMMITTED",
-                           "idempotency_key": "the-idempotency-key",
-                           "lms_user_id": 54321,
-                           "content_key": "demox_1234+2T2023",
-                           "quantity": 19900,
-                           "unit": "USD_CENTS",
-                           "reference_id": 1234,
-                           "reference_type": "enterprise_fufillment_source_uuid",
-                           "subsidy_access_policy_uuid": "a-policy-uuid",
-                           "metadata": {...},
-                           "created": "created-datetime",
-                           "modified": "modified-datetime",
-                           "reversals": []
-                         },
-                         [...]
-                       ]
-                     }
+        Response codes:
+        - ``400``: If there are missing or otherwise invalid input parameters.  Response body is JSON with a single
+        `Error` key.
+        - ``200``: In all other cases, return 200 regardless of whether any transactions were found.  Response body is
+        JSON with a paginated list of serialized Transactions containing keys and values
+        as demonstrated below.
+
+        Example response body:
+        ```
+        {
+          "count": 3,
+          "next": null,
+          "previous": null,
+          "aggregates": {
+              "total_quantity": 12350,
+              "unit": "USD_CENTS",
+              "remaining_subsidy_balance": 987650
+          },
+          "results": [
+            {
+              "uuid": "the-transaction-uuid",
+              "state": "COMMITTED",
+              "idempotency_key": "the-idempotency-key",
+              "lms_user_id": 54321,
+              "content_key": "demox_1234+2T2023",
+              "quantity": 19900,
+              "unit": "USD_CENTS",
+              "reference_id": 1234,
+              "reference_type": "enterprise_fufillment_source_uuid",
+              "subsidy_access_policy_uuid": "a-policy-uuid",
+              "metadata": {...},
+              "created": "created-datetime",
+              "modified": "modified-datetime",
+              "reversals": []
+            },
+            [...]
+          ]
+        }
+        ```
         """
         base_response = super().list(request, *args, **kwargs)
 

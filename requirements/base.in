@@ -8,6 +8,8 @@ django-extensions
 django-simple-history
 django-waffle
 djangorestframework
+djangorestframework-filters
+drf-spectacular
 drf_yasg
 edx-auth-backends
 edx-django-utils
