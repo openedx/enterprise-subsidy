@@ -45,7 +45,11 @@ class ContentMetadataViewSet(
     authentication_classes = [JwtAuthentication, SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-    allowed_roles = [ENTERPRISE_SUBSIDY_ADMIN_ROLE, ENTERPRISE_SUBSIDY_LEARNER_ROLE, ENTERPRISE_SUBSIDY_OPERATOR_ROLE]
+    allowed_roles = [
+        ENTERPRISE_SUBSIDY_ADMIN_ROLE,
+        ENTERPRISE_SUBSIDY_LEARNER_ROLE,
+        ENTERPRISE_SUBSIDY_OPERATOR_ROLE,
+    ]
     role_assignment_class = EnterpriseSubsidyRoleAssignment
 
     permission_required = PERMISSION_CAN_READ_CONTENT_METADATA
@@ -98,12 +102,12 @@ class ContentMetadataViewSet(
             else:
                 content_source = EDX_PRODUCT_SOURCE
                 source_mode = EDX_VERIFIED_COURSE_MODE
-            content_price = None
-            for entitlement in content_data.get('entitlements'):
-                if entitlement.get('mode') == source_mode:
-                    content_price = entitlement.get('price')
+
+            content_price = catalog_client.price_for_content(content_data, source_mode)
+
             if not content_price:
                 return Response("Could not find course price in content data payload", 404)
+
             response_body = {
                 'content_uuid': content_data.get('uuid'),
                 'content_key': content_data.get('key'),

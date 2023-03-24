@@ -78,12 +78,28 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
         """
         course_details = self.get_content_metadata_for_customer(enterprise_customer_uuid, content_identifier)
         source_mode = EXECUTIVE_EDUCATION_MODE if course_details.get('product_source') else EDX_VERIFIED_COURSE_MODE
-        for entitlement in course_details.get('entitlements'):
-            if entitlement.get('mode') == source_mode:
-                return entitlement.get('price')
+
+        if content_price := self.price_for_content(course_details, source_mode):
+            return content_price
+
         raise ApiClientException(
             f'Missing content pricing mode: {source_mode} in content: {content_identifier} entitlements'
         )
+
+    def price_for_content(self, content_data, source_mode):
+        """
+        Helper to return the "official" price for content.
+        """
+        content_price = None
+        if content_data.get('first_enrollable_paid_seat_price'):
+            content_price = content_data['first_enrollable_paid_seat_price']
+
+        if not content_price:
+            for entitlement in content_data.get('entitlements', []):
+                if entitlement.get('mode') == source_mode:
+                    content_price = entitlement.get('price')
+
+        return content_price
 
     def get_content_metadata_for_customer(self, enterprise_customer_uuid, content_identifier):
         """

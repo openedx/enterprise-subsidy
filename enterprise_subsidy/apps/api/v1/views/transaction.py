@@ -205,16 +205,20 @@ class TransactionViewSet(
             # For each context (enterprise_customer_uuid) that the requester only has learner access to, filter
             # transactions related to that context to only include their own transactions.
             # pylint: disable=unsupported-binary-operation
-            queryset = queryset.filter(
-                (
-                    Q(ledger__subsidy__enterprise_customer_uuid=learner_only_context)
-                    &
-                    Q(lms_user_id=request_jwt["user_id"])
+            if request_jwt.get('user_id'):
+                queryset = queryset.filter(
+                    (
+                        Q(ledger__subsidy__enterprise_customer_uuid=learner_only_context)
+                        &
+                        Q(lms_user_id=request_jwt["user_id"])
+                    )
+                    |
+                    ~Q(ledger__subsidy__enterprise_customer_uuid=learner_only_context)
                 )
-                |
-                ~Q(ledger__subsidy__enterprise_customer_uuid=learner_only_context)
-            )
-
+            else:
+                queryset = queryset.filter(
+                    ~Q(ledger__subsidy__enterprise_customer_uuid=learner_only_context)
+                )
         #
         # Next, filter transactions based on the request parameters.
         #

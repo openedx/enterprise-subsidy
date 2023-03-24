@@ -76,7 +76,7 @@ isort: ## run isort to sort imports in all Python files
 	isort --recursive --atomic enterprise_subsidy/
 
 style: ## run Python style checker
-	pylint --rcfile=pylintrc enterprise_subsidy *.py
+	pycodestyle enterprise_subsidy manage.py
 
 lint: ## run Python code linting
 	pylint --rcfile=pylintrc enterprise_subsidy *.py
