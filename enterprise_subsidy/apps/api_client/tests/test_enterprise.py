@@ -108,7 +108,7 @@ class EnterpriseApiClientTests(TestCase):
             json={'enrollments_info': [{
                 'user_id': self.user_id,
                 'course_run_key': self.courserun_key,
-                'transaction_id': transaction.uuid,
+                'transaction_id': str(transaction.uuid),
             }]},
             timeout=settings.BULK_ENROLL_REQUEST_TIMEOUT_SECONDS
         )

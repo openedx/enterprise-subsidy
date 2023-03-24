@@ -84,7 +84,7 @@ class EnterpriseApiClient(BaseOAuthClient):
         enrollments_info = [{
             'user_id': learner_id,
             'course_run_key': course_run_key,
-            'transaction_id': ledger_transaction.uuid,
+            'transaction_id': str(ledger_transaction.uuid),
         }]
         customer_uuid = ledger_transaction.ledger.subsidy.enterprise_customer_uuid
         response = self.bulk_enroll_enterprise_learners(customer_uuid, enrollments_info)
