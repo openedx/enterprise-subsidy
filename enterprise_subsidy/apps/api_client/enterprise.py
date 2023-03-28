@@ -129,7 +129,6 @@ class EnterpriseApiClient(BaseOAuthClient):
         try:
             response = self.client.post(
                 bulk_enrollment_url,
-                params={'force_cache_miss': 'true'},
                 json=options,
                 timeout=settings.BULK_ENROLL_REQUEST_TIMEOUT_SECONDS
             )
