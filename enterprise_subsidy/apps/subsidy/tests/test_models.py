@@ -8,7 +8,11 @@ from uuid import uuid4
 import ddt
 from django.test import TestCase
 from openedx_ledger.models import TransactionStateChoices
-from openedx_ledger.test_utils.factories import TransactionFactory
+from openedx_ledger.test_utils.factories import (
+    ExternalFulfillmentProviderFactory,
+    ExternalTransactionReferenceFactory,
+    TransactionFactory
+)
 
 from ..models import CENTS_PER_DOLLAR
 from .factories import SubsidyFactory
@@ -108,3 +112,31 @@ class SubsidyModelRedemptionTestCase(TestCase):
             self.assertEqual(transaction.content_key, content_key)
             self.assertEqual(transaction.quantity, -1000)
             self.assertEqual(transaction.state, TransactionStateChoices.COMMITTED)
+
+    def test_commit_transaction(self):
+        """
+        Tests that commit_transaction creates a transaction with the correct state.
+        """
+        transaction = TransactionFactory.create(
+            state=TransactionStateChoices.PENDING,
+            ledger=self.subsidy.ledger,
+        )
+        fulfillment_identifier = 'some-fulfillment-identifier'
+        provider = ExternalFulfillmentProviderFactory()
+        external_reference = ExternalTransactionReferenceFactory(
+            external_fulfillment_provider=provider,
+        )
+        self.subsidy.commit_transaction(
+            ledger_transaction=transaction,
+            fulfillment_identifier=fulfillment_identifier,
+            external_reference=external_reference,
+        )
+        transaction.refresh_from_db()
+        self.assertEqual(
+            transaction.external_reference.first(),
+            external_reference
+        )
+        self.assertEqual(
+            transaction.external_reference.first().external_fulfillment_provider,
+            provider
+        )

@@ -227,22 +227,18 @@ class Subsidy(TimeStampedModel):
             **transaction_metadata,
         )
 
-    def commit_transaction(self, ledger_transaction, reference_id=None, reference_type=None):
+    def commit_transaction(self, ledger_transaction, fulfillment_identifier=None, external_reference=None):
         """
-        Finalize a Ledger Transaction by populating the reference_id (from the enrollment) and transitioning its state
-        to "committed".
+        Finalize a Ledger Transaction by populating the fulfillment_identifier (from the platform enrollment
+        request) and transitioning its state to "committed".
 
-        TODO: Shouldn't we require a reference_id in some cases?  Maybe when the transaction doesn't have an "initial"
-              key in the metadata?
-
-        Raises:
-          ValueError: If a reference_id was provided, but no reference_type.
+        TODO: Shouldn't we require a fulfillment_identifier in some cases?  Maybe when the transaction
+        doesn't have an "initial" key in the metadata?
         """
-        if reference_id:
-            if not reference_type:
-                raise ValueError("A reference_id was provided without a reference_type.")
-            ledger_transaction.reference_id = reference_id
-            ledger_transaction.reference_type = reference_type
+        if fulfillment_identifier:
+            ledger_transaction.fulfillment_identifier = fulfillment_identifier
+        if external_reference:
+            ledger_transaction.external_reference.set([external_reference])
         ledger_transaction.state = "committed"
         ledger_transaction.save()
 
@@ -324,11 +320,11 @@ class Subsidy(TimeStampedModel):
         )
 
         try:
-            reference_id = self.enterprise_client.enroll(learner_id, content_key, ledger_transaction)
+            enterprise_fulfillment_uuid = self.enterprise_client.enroll(learner_id, content_key, ledger_transaction)
+            # TODO: once GEAG support is implemented we should pass external_reference (obj) to `commit_transactions`
             self.commit_transaction(
                 ledger_transaction,
-                reference_id=reference_id,
-                reference_type=OCM_ENROLLMENT_REFERENCE_TYPE,
+                fulfillment_identifier=enterprise_fulfillment_uuid,
             )
         except Exception as exc:
             self.rollback_transaction(ledger_transaction)
