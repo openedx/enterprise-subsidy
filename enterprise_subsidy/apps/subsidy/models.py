@@ -14,6 +14,7 @@ from unittest import mock
 from uuid import uuid4
 
 from django.db import models
+from django.db.models import Q
 from django.utils.functional import cached_property
 from edx_rbac.models import UserRole, UserRoleAssignment
 from edx_rbac.utils import ALL_ACCESS_CONTEXT
@@ -39,14 +40,27 @@ OCM_ENROLLMENT_REFERENCE_TYPE = "enterprise_fufillment_source_uuid"
 
 class SubsidyReferenceChoices:
     """
-    Enumerate different choices for a subsidy originator ID.
-
-    The originator is the object that caused the subsidy to come into existence.  Currently, the only such object is the
-    "product" inside the Salesforce opportunity.
+    Enumerate different choices for the type of object that the subsidy's reference_id points to.  This is the type of
+    object that caused the subsidy to come into existence.
     """
-    OPPORTUNITY_PRODUCT_ID = 'opportunity_product_id'
+    # TODO: confirm the actual Salesforce object to use, I sort of just made up "opportunity_product_id"...
+    OPPORTUNITY_PRODUCT_ID = "opportunity_product_id"
     CHOICES = (
-        (OPPORTUNITY_PRODUCT_ID, 'Opportunity Product ID'),
+        (OPPORTUNITY_PRODUCT_ID, "Opportunity Product ID"),
+    )
+
+
+class RevenueCategoryChoices:
+    """
+    Enumerate different choices for the type of Subsidy.  For example, this can be used to control whether enrollments
+    associated with this Subsidy should be rev rec'd through our standard commercial process or not.
+    """
+    BULK_ENROLLMENT_PREPAY = 'bulk-enrollment-prepay'
+    PARTNER_NO_REV_PREPAY = 'partner-no-rev-prepay'
+    CHOICES = (
+        # TODO: do we have better human-readable names for these?
+        (BULK_ENROLLMENT_PREPAY, 'bulk-enrollment-prepay'),
+        (PARTNER_NO_REV_PREPAY, 'partner-no-rev-prepay'),
     )
 
 
@@ -65,6 +79,23 @@ class Subsidy(TimeStampedModel):
     .. no_pii:
     """
 
+    class Meta:
+        """
+        Metaclass for Subsidy.
+        """
+        constraints = [
+            models.UniqueConstraint(
+                condition=Q(internal_only=False),  # Allow more flexibility for internal/test subsidies.
+                fields=["reference_id", "reference_type"],
+                name="unique_reference_id_non_internal",
+            )
+        ]
+
+    # Please reserve the "subsidy_type" field name for the future when we use it to distinguish between
+    # LearnerCreditSubsidy vs. SubscriptionSubsidy.
+    #
+    # subsidy_type = models.CharField(max_length=64, editable=False)
+
     uuid = models.UUIDField(
         primary_key=True,
         default=uuid4,
@@ -77,15 +108,19 @@ class Subsidy(TimeStampedModel):
         max_length=255,
         blank=True,
         null=True,
+        help_text="A human-readable title decided by the staff that is provisioning this Subisdy for the customer."
     )
     starting_balance = models.BigIntegerField(
-        null=False, blank=False,
+        null=False,
+        blank=False,
+        help_text="The positive balance this Subidy will be initially provisioned to start with."
     )
     ledger = models.OneToOneField(
         Ledger,
         null=True,
         blank=True,
         on_delete=models.SET_NULL,
+        help_text="The one Ledger uniquely associated with this Subsidy."
     )
     unit = models.CharField(
         max_length=255,
@@ -94,11 +129,16 @@ class Subsidy(TimeStampedModel):
         choices=UnitChoices.CHOICES,
         default=UnitChoices.USD_CENTS,
         db_index=True,
+        help_text="Unit of currency used for all values of quantity for this Subsidy and associated transactions."
     )
     reference_id = models.CharField(
         max_length=255,
         blank=True,
         null=True,
+        help_text=(
+            "Identifier of the upstream Salesforce object that represents the deal that led to the creation of this "
+            "Subsidy."
+        ),
     )
     reference_type = models.CharField(
         max_length=255,
@@ -107,17 +147,34 @@ class Subsidy(TimeStampedModel):
         choices=SubsidyReferenceChoices.CHOICES,
         default=SubsidyReferenceChoices.OPPORTUNITY_PRODUCT_ID,
         db_index=True,
+        help_text=(
+            "The type of object identified by the <code>reference_id</code> field.  Likely to be a type of Salesforce "
+            "object."
+        ),
     )
     enterprise_customer_uuid = models.UUIDField(
         blank=False,
         null=False,
         db_index=True,
+        help_text="UUID of the enterprise customer assigned this Subsidy.",
     )
-
     internal_only = models.BooleanField(
         blank=False,
         null=False,
-        default=False
+        default=False,
+        help_text="If set, this subsidy will not be customer facing, nor have any influence on enterprise customers.",
+    )
+    revenue_category = models.CharField(
+        max_length=255,
+        blank=False,
+        null=False,
+        choices=RevenueCategoryChoices.CHOICES,
+        default=RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
+        help_text=(
+            'Control how revenue is recognized for subsidized enrollments.  In spirit, this is equivalent to the '
+            '"Cataloge Category" for Coupons.  This field is only used downstream analytics and does not change any '
+            'business logic.'
+        ),
     )
 
     active_datetime = models.DateTimeField(null=True, default=None)

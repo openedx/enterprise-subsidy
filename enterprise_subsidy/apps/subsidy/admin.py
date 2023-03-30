@@ -29,6 +29,7 @@ class SubsidyAdmin(SimpleHistoryAdmin):
 
     _all_fields = [field.name for field in Subsidy._meta.get_fields()]
     # TODO: make this reasonable, see https://2u-internal.atlassian.net/browse/ENT-6622
+    # TODO: make the revenue_category field readonly to enterprise_admins.
     # readonly_fields = list(_all_fields)
     # if can_modify():
     #     readonly_fields = []

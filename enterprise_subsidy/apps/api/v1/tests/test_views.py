@@ -15,7 +15,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 
 from enterprise_subsidy.apps.api.v1.tests.mixins import STATIC_ENTERPRISE_UUID, STATIC_LMS_USER_ID, APITestMixin
-from enterprise_subsidy.apps.subsidy.models import OCM_ENROLLMENT_REFERENCE_TYPE
+from enterprise_subsidy.apps.subsidy.models import OCM_ENROLLMENT_REFERENCE_TYPE, RevenueCategoryChoices
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
 from test_utils.utils import MockResponse
 
@@ -158,6 +158,8 @@ class SubsidyViewSetTests(APITestBase):
             "reference_id": self.subsidy_1.reference_id,
             "reference_type": self.subsidy_1.reference_type,
             "current_balance": self.subsidy_1.current_balance(),
+            "internal_only": False,
+            "revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
         }
         self.assertEqual(expected_result, response.json())
 
