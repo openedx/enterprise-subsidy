@@ -9,6 +9,7 @@ from django.conf import settings
 
 from enterprise_subsidy.apps.api_client.base_oauth import ApiClientException, BaseOAuthClient
 from enterprise_subsidy.apps.subsidy.constants import (
+    CENTS_PER_DOLLAR,
     EDX_PRODUCT_SOURCE,
     EDX_VERIFIED_COURSE_MODE,
     EXECUTIVE_EDUCATION_MODE
@@ -89,6 +90,9 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
     def price_for_content(self, content_data, source_mode):
         """
         Helper to return the "official" price for content.
+        The endpoint at ``self.content_metadata_url`` will always return price fields
+        as USD (dollars), and possibly as a string.  This method converts
+        those values to USD cents as a float
         """
         content_price = None
         if content_data.get('first_enrollable_paid_seat_price'):
@@ -99,7 +103,9 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
                 if entitlement.get('mode') == source_mode:
                     content_price = entitlement.get('price')
 
-        return content_price
+        if content_price:
+            return float(content_price) * CENTS_PER_DOLLAR
+        return None
 
     def get_content_metadata_for_customer(self, enterprise_customer_uuid, content_identifier):
         """

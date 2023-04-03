@@ -821,10 +821,8 @@ class ContentMetadataViewSetTests(APITestBase):
     Test ContentMetadataViewSet.
     """
     content_uuid_1 = str(uuid.uuid4())
-    content_price_1 = 100
     content_key_1 = "edX+DemoX"
     content_uuid_2 = str(uuid.uuid4())
-    content_price_2 = 200
     content_key_2 = "edX+DemoX2"
     edx_course_metadata = {
         "key": content_key_1,
@@ -834,7 +832,7 @@ class ContentMetadataViewSetTests(APITestBase):
         "entitlements": [
             {
                 "mode": "verified",
-                "price": content_price_1,
+                "price": "149.00",
                 "currency": "USD",
                 "sku": "8A47F9E",
                 "expires": "null"
@@ -850,7 +848,7 @@ class ContentMetadataViewSetTests(APITestBase):
         "entitlements": [
             {
                 "mode": "paid-executive-education",
-                "price": content_price_2,
+                "price": "599.49",
                 "currency": "USD",
                 "sku": "B98DE21",
                 "expires": "null"
@@ -867,28 +865,28 @@ class ContentMetadataViewSetTests(APITestBase):
 
     @ddt.data(
         {
-            'content_uuid': content_uuid_1,
-            'content_key': content_key_1,
-            'content_price': content_price_1,
+            'expected_content_uuid': content_uuid_1,
+            'expected_content_key': content_key_1,
+            'expected_content_price': 14900.0,
             'mock_metadata': edx_course_metadata,
-            'source': 'edX'
+            'expected_source': 'edX'
         },
         {
-            'content_uuid': content_uuid_2,
-            'content_key': content_key_2,
-            'content_price': content_price_2,
+            'expected_content_uuid': content_uuid_2,
+            'expected_content_key': content_key_2,
+            'expected_content_price': 59949,
             'mock_metadata': executive_education_course_metadata,
-            'source': '2u'
+            'expected_source': '2u'
         },
     )
     @ddt.unpack
     def test_successful_get(
         self,
-        content_uuid,
-        content_key,
-        content_price,
+        expected_content_uuid,
+        expected_content_key,
+        expected_content_price,
         mock_metadata,
-        source,
+        expected_source,
     ):
         with mock.patch(
             'enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient',
@@ -897,14 +895,14 @@ class ContentMetadataViewSetTests(APITestBase):
             customer_uuid = uuid.uuid4()
             self.set_up_admin(enterprise_uuids=[str(customer_uuid)])
             mock_oauth_client.return_value.get.return_value = MockResponse(mock_metadata, 200)
-            url = reverse('api:v1:content-metadata', kwargs={'content_identifier': content_key})
+            url = reverse('api:v1:content-metadata', kwargs={'content_identifier': expected_content_key})
             response = self.client.get(url + f'?enterprise_customer_uuid={str(customer_uuid)}')
             assert response.status_code == 200
             assert response.json() == {
-                'content_uuid': str(content_uuid),
-                'content_key': content_key,
-                'source': source,
-                'content_price': content_price,
+                'content_uuid': str(expected_content_uuid),
+                'content_key': expected_content_key,
+                'source': expected_source,
+                'content_price': expected_content_price,
             }
 
             # Everything after this line is testing the view's cache
@@ -913,10 +911,10 @@ class ContentMetadataViewSetTests(APITestBase):
             response = self.client.get(url + f'?enterprise_customer_uuid={str(customer_uuid)}')
             assert response.status_code == 200
             assert response.json() == {
-                'content_uuid': str(content_uuid),
-                'content_key': content_key,
-                'source': source,
-                'content_price': content_price,
+                'content_uuid': str(expected_content_uuid),
+                'content_key': expected_content_key,
+                'source': expected_source,
+                'content_price': expected_content_price,
             }
 
     def test_failure_no_permission(self):

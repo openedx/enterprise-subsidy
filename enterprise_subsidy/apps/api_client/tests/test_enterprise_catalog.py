@@ -1,13 +1,11 @@
-import os
 from unittest import mock
 from uuid import uuid4
 
 import ddt
-from django.conf import settings
 from django.test import TestCase
 
 from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
-from enterprise_subsidy.apps.subsidy.constants import EDX_PRODUCT_SOURCE
+from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR, EDX_PRODUCT_SOURCE
 from test_utils.utils import MockResponse
 
 
@@ -143,10 +141,10 @@ class EnterpriseCatalogApiClientTests(TestCase):
         mocked_data['entitlements'] = entitlements
         mock_oauth_client.return_value.get.return_value = MockResponse(mocked_data, 200)
         enterprise_catalog_client = EnterpriseCatalogApiClient()
-        response = enterprise_catalog_client.get_course_price(
+        price_in_cents = enterprise_catalog_client.get_course_price(
             self.enterprise_customer_uuid, self.course_key
         )
-        assert response == entitlements[0].get('price')
+        assert price_in_cents == float(entitlements[0].get('price')) * CENTS_PER_DOLLAR
 
     @ddt.data(
         {

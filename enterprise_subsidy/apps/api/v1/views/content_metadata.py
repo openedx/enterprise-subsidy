@@ -81,8 +81,10 @@ class ContentMetadataViewSet(
             Subsidy content metadata payload:
                 content_uuid (uuid4): UUID identifier conencted to the content
                 content_key (str): String content key identifier connected to the content
-                source (str): Product source string, as of 3/16/23 this is either `2u` or `edX`]
-                content_price (str): String representation of the course price, read from the entitlements field
+                source (str): Product source string, as of 3/16/23 this is either `2u` or `edX`.
+                content_price (float): Float representation of the course price in USD cents,
+                  read from either the ``first_enrollable_paid_seat_price`` or from ``entitlements``
+                  for the content.
 
             404 Content Not Found IFF
                 - The content identifier does not exist OR the content is not connected to the enterprise customer
