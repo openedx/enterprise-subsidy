@@ -81,6 +81,8 @@ style: ## run Python style checker
 lint: ## run Python code linting
 	pylint --rcfile=pylintrc enterprise_subsidy *.py
 
+pylint: lint
+
 quality:
 	tox -e quality 
 
