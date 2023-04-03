@@ -1,6 +1,8 @@
 """
 Views for the enterprise-subsidy service relating to content metadata.
 """
+import logging
+
 import requests
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
@@ -17,15 +19,14 @@ from enterprise_subsidy.apps.api.v1 import utils
 from enterprise_subsidy.apps.api.v1.decorators import require_at_least_one_query_parameter
 from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
 from enterprise_subsidy.apps.subsidy.constants import (
-    EDX_PRODUCT_SOURCE,
-    EDX_VERIFIED_COURSE_MODE,
     ENTERPRISE_SUBSIDY_ADMIN_ROLE,
     ENTERPRISE_SUBSIDY_LEARNER_ROLE,
     ENTERPRISE_SUBSIDY_OPERATOR_ROLE,
-    EXECUTIVE_EDUCATION_MODE,
     PERMISSION_CAN_READ_CONTENT_METADATA
 )
 from enterprise_subsidy.apps.subsidy.models import EnterpriseSubsidyRoleAssignment
+
+logger = logging.getLogger(__name__)
 
 
 class ContentMetadataViewSet(
@@ -98,26 +99,11 @@ class ContentMetadataViewSet(
                 enterprise_customer_uuid[0],
                 content_identifier
             )
-            if source_dict := content_data.get('product_source'):
-                content_source = source_dict.get('name')
-                source_mode = EXECUTIVE_EDUCATION_MODE
-            else:
-                content_source = EDX_PRODUCT_SOURCE
-                source_mode = EDX_VERIFIED_COURSE_MODE
-
-            content_price = catalog_client.price_for_content(content_data, source_mode)
-
-            if not content_price:
-                return Response("Could not find course price in content data payload", 404)
-
-            response_body = {
-                'content_uuid': content_data.get('uuid'),
-                'content_key': content_data.get('key'),
-                'source': content_source,
-                'content_price': content_price,
-            }
+            content_summary = catalog_client.summary_data_for_content(content_data)
+            if not content_summary.get('content_price'):
+                logger.warning("Could not find course price in metadata for {content_identifier}")
         except requests.exceptions.HTTPError as exc:
             if exc.response.status_code == 404:
                 return Response("Content not found", HTTP_404_NOT_FOUND)
             return Response(f"Failed to fetch data from catalog service with exc: {exc}", exc.response.status_code)
-        return Response(response_body, 200)
+        return Response(content_summary, 200)

@@ -25,6 +25,7 @@ PERMISSION_CAN_READ_CONTENT_METADATA = "subsidy.can_read_metadata"
 # `get_permission_required()`.
 PERMISSION_NOT_GRANTED = 'subsidy.not_granted'
 
-EXECUTIVE_EDUCATION_MODE = "paid-executive-education"
 EDX_PRODUCT_SOURCE = "edX"
+TWOU_PRODUCT_SOURCE = "2u"
+EXECUTIVE_EDUCATION_MODE = "paid-executive-education"
 EDX_VERIFIED_COURSE_MODE = "verified"
