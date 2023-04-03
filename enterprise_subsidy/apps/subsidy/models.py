@@ -43,10 +43,9 @@ class SubsidyReferenceChoices:
     Enumerate different choices for the type of object that the subsidy's reference_id points to.  This is the type of
     object that caused the subsidy to come into existence.
     """
-    # TODO: confirm the actual Salesforce object to use, I sort of just made up "opportunity_product_id"...
-    OPPORTUNITY_PRODUCT_ID = "opportunity_product_id"
+    SALESFORCE_OPPORTUNITY_LINE_ITEM = "salesforce_opportunity_line_item"
     CHOICES = (
-        (OPPORTUNITY_PRODUCT_ID, "Opportunity Product ID"),
+        (SALESFORCE_OPPORTUNITY_LINE_ITEM, "Salesforce OpportunityLineItem (i.e. Opportunity Product)"),
     )
 
 
@@ -145,7 +144,7 @@ class Subsidy(TimeStampedModel):
         blank=False,
         null=False,
         choices=SubsidyReferenceChoices.CHOICES,
-        default=SubsidyReferenceChoices.OPPORTUNITY_PRODUCT_ID,
+        default=SubsidyReferenceChoices.SALESFORCE_OPPORTUNITY_LINE_ITEM,
         db_index=True,
         help_text=(
             "The type of object identified by the <code>reference_id</code> field.  Likely to be a type of Salesforce "
