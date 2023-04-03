@@ -26,11 +26,12 @@ from simple_history.models import HistoricalRecords
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
 
+from .constants import CENTS_PER_DOLLAR
+
 MOCK_CATALOG_CLIENT = mock.MagicMock()
 MOCK_ENROLLMENT_CLIENT = mock.MagicMock()
 MOCK_SUBSCRIPTION_CLIENT = mock.MagicMock()
 
-CENTS_PER_DOLLAR = 100
 # TODO: hammer this out.  Do we want this to be the name of a joinable table name?  Do we want it to reflect the field
 # name of the response from the enrollment API?
 OCM_ENROLLMENT_REFERENCE_TYPE = "enterprise_fufillment_source_uuid"
