@@ -43,7 +43,7 @@ class SubsidyFactory(factory.django.DjangoModelFactory):
     starting_balance = factory.Faker("random_int", min=10000, max=1000000)
     unit = UnitChoices.USD_CENTS
     reference_id = factory.Faker("lexify", text="????????")
-    reference_type = SubsidyReferenceChoices.OPPORTUNITY_PRODUCT_ID
+    reference_type = SubsidyReferenceChoices.SALESFORCE_OPPORTUNITY_LINE_ITEM
     enterprise_customer_uuid = factory.LazyFunction(uuid4)
     active_datetime = factory.LazyFunction(fake_datetime)
     expiration_datetime = factory.LazyFunction(lambda: fake_datetime(True))
