@@ -29,8 +29,11 @@ class SubsidySerializer(serializers.ModelSerializer):
             "reference_id",
             "reference_type",
             "current_balance",
-            # TODO: serialize derived fields:
-            # "subsidy_type",  # which Subsidy subtype is this?
+            "internal_only",
+            "revenue_category",
+            # In the MVP implementation, there are only learner_credit subsidies.  Uncomment after subscription
+            # subsidies are introduced.
+            # "subsidy_type",
         ]
 
     def get_current_balance(self, obj):
