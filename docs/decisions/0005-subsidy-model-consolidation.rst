@@ -1,10 +1,10 @@
-0004 Subsidy Model Consolidation
+0005 Subsidy Model Consolidation
 ################################
 
 Status
 ******
 
-**Provisional**
+**Accepted** March 2023
 
 Context
 *******
@@ -37,7 +37,7 @@ Subscription-backed subsidy is still up in the air at the time of writing, we de
 the Learner Credit use case.
 
 The result is just a single concrete Subsidy model which will refer to Learner Credit.  Going forward, we can still
-fast-follow with added Subscription support by piling into the same Subscription model with a ``type`` field and
+fast-follow with added Subscription support by piling into the same Subsidy model with a ``subsidy_type`` field and
 additional branching logic.
 
 Consequences
