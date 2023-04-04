@@ -2,6 +2,7 @@
 Enterprise Catalog api client for the subsidy service.
 """
 import logging
+from decimal import Decimal
 from urllib.parse import urljoin
 
 import requests
@@ -89,8 +90,8 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
         """
         Helper to return the "official" price for content.
         The endpoint at ``self.content_metadata_url`` will always return price fields
-        as USD (dollars), and possibly as a string.  This method converts
-        those values to USD cents as a float
+        as USD (dollars), possibly as a string or a float.  This method converts
+        those values to USD cents as an integer.
         """
         content_price = None
         if content_data.get('first_enrollable_paid_seat_price'):
@@ -103,7 +104,7 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
                     content_price = entitlement.get('price')
 
         if content_price:
-            return float(content_price) * CENTS_PER_DOLLAR
+            return int(Decimal(content_price) * CENTS_PER_DOLLAR)
         return None
 
     def mode_for_content(self, content_data):
