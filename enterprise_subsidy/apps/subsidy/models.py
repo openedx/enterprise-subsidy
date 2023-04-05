@@ -320,8 +320,12 @@ class Subsidy(TimeStampedModel):
         )
 
         try:
-            enterprise_fulfillment_uuid = self.enterprise_client.enroll(learner_id, content_key, ledger_transaction)
-            # TODO: once GEAG support is implemented we should pass external_reference (obj) to `commit_transactions`
+            enterprise_fulfillment_uuid = self.enterprise_client.enroll(
+                learner_id,
+                content_key,
+                self.enterprise_customer_uuid,
+                ledger_transaction.uuid,
+            )
             self.commit_transaction(
                 ledger_transaction,
                 fulfillment_identifier=enterprise_fulfillment_uuid,
