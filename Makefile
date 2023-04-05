@@ -162,15 +162,18 @@ docker_build:
 	docker build . -f Dockerfile -t openedx/enterprise-subsidy --no-cache
 
 # devstack-themed shortcuts
-dev.up: # Starts all containers
+dev.up: dev.up.redis
 	docker-compose up -d
 
-dev.up.build:
+dev.up.build: dev.up.redis
 	docker-compose up -d --build
 
-dev.up.build-no-cache:
+dev.up.build-no-cache: dev.up.redis
 	docker-compose build --no-cache
 	docker-compose up -d
+
+dev.up.redis: # This has the nice side effect of starting the devstack_default network
+	docker-compose -f $(DEVSTACK_WORKSPACE)/devstack/docker-compose.yml up -d redis
 
 dev.down: # Kills containers and all of their data that isn't in volumes
 	docker-compose down

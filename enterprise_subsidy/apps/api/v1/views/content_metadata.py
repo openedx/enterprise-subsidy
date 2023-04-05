@@ -18,6 +18,7 @@ from rest_framework.status import HTTP_404_NOT_FOUND
 from enterprise_subsidy.apps.api.v1 import utils
 from enterprise_subsidy.apps.api.v1.decorators import require_at_least_one_query_parameter
 from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
+from enterprise_subsidy.apps.content_metadata.api import summary_data_for_content
 from enterprise_subsidy.apps.subsidy.constants import (
     ENTERPRISE_SUBSIDY_ADMIN_ROLE,
     ENTERPRISE_SUBSIDY_LEARNER_ROLE,
@@ -99,7 +100,7 @@ class ContentMetadataViewSet(
                 enterprise_customer_uuid[0],
                 content_identifier
             )
-            content_summary = catalog_client.summary_data_for_content(content_data)
+            content_summary = summary_data_for_content(content_data)
             if not content_summary.get('content_price'):
                 logger.warning("Could not find course price in metadata for {content_identifier}")
         except requests.exceptions.HTTPError as exc:

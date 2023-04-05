@@ -65,13 +65,15 @@ class EnterpriseApiClient(BaseOAuthClient):
                 )
             raise exc
 
-    def enroll(self, learner_id, course_run_key, ledger_transaction):
+    def enroll(self, learner_id, course_run_key, enterprise_customer_uuid, transaction_uuid):
         """
         Creates a single subsidy enrollment in a course run for an enterprise learner from a subsidy transaction.
         Arguments:
             learner_id (int): lms_user_id of the learner to be enrolled
             course_run_key (str): Course run key value of the course run to be enrolled in
-            ledger_transaction (openedx_ledger.models.Transaction): the Transaction returned from the ledger
+            enterprise_customer_uuid (UUID): the UUID for the enterprise customer
+              the transaction and enrollment is associated with.
+            transaction_uuid (UUID): the Transaction UUID which this enrollment fulfills.
         Returns:
             reference_id (str): EnterpriseCourseEnrollment reference id for ledger transaction confirmation
         Raises:
@@ -84,10 +86,9 @@ class EnterpriseApiClient(BaseOAuthClient):
         enrollments_info = [{
             'user_id': learner_id,
             'course_run_key': course_run_key,
-            'transaction_id': str(ledger_transaction.uuid),
+            'transaction_id': str(transaction_uuid),
         }]
-        customer_uuid = ledger_transaction.ledger.subsidy.enterprise_customer_uuid
-        response = self.bulk_enroll_enterprise_learners(customer_uuid, enrollments_info)
+        response = self.bulk_enroll_enterprise_learners(enterprise_customer_uuid, enrollments_info)
         if "successes" not in response or len(response["successes"]) != 1:
             raise EnrollmentException("Enrollment response should contain exactly one successful enrollment.")
         enrollment_success_info = response["successes"][0]

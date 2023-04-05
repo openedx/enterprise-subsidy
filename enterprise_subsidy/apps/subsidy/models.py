@@ -325,7 +325,12 @@ class Subsidy(TimeStampedModel):
         )
 
         try:
-            reference_id = self.enterprise_client.enroll(learner_id, content_key, ledger_transaction)
+            reference_id = self.enterprise_client.enroll(
+                learner_id,
+                content_key,
+                self.enterprise_customer_uuid,
+                ledger_transaction.uuid,
+            )
             self.commit_transaction(
                 ledger_transaction,
                 reference_id=reference_id,

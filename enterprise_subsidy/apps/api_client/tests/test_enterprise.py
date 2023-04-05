@@ -96,7 +96,9 @@ class EnterpriseApiClientTests(TestCase):
         )
 
         enterprise_client = EnterpriseApiClient()
-        actual_reference_id = enterprise_client.enroll(self.user_id, self.courserun_key, transaction)
+        actual_reference_id = enterprise_client.enroll(
+            self.user_id, self.courserun_key, self.enterprise_customer_uuid, transaction.uuid
+        )
 
         assert actual_reference_id == expected_reference_id
         mock_oauth_client().post.assert_called_with(
@@ -141,7 +143,9 @@ class EnterpriseApiClientTests(TestCase):
 
         enterprise_client = EnterpriseApiClient()
         with self.assertRaises(EnrollmentException):
-            enterprise_client.enroll(self.user_id, self.courserun_key, transaction)
+            enterprise_client.enroll(
+                self.user_id, self.courserun_key, self.enterprise_customer_uuid, transaction.uuid
+            )
 
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
     def test_failed_create_single_learner_enrollment_4xx(self, mock_oauth_client):
@@ -162,7 +166,9 @@ class EnterpriseApiClientTests(TestCase):
 
         enterprise_client = EnterpriseApiClient()
         with self.assertRaises(HTTPError):
-            enterprise_client.enroll(self.user_id, self.courserun_key, transaction)
+            enterprise_client.enroll(
+                self.user_id, self.courserun_key, self.enterprise_customer_uuid, transaction.uuid
+            )
 
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
     def test_successful_fetch_enterprise_data(self, mock_oauth_client):

@@ -1,34 +1,74 @@
 """
+WORK-IN-PROGRESS
+
 Python API for interacting with fulfillment operations
 related to subsidy redemptions.
 """
-# pylint: disable=unused-import
-from enterprise_subsidy.apps.content_metadata import api as content_metadata_api
-
-from .constants import EXEC_ED_2U_COURSE_TYPES, OPEN_COURSES_COURSE_TYPES
+# pylint: disable=abstract-method,inconsistent-return-statements,no-member
+from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 
 
-def create_fulfillment(subsidy_uuid, learner_id, content_key, **metadata):
+class FulfillmentHandler:
     """
-    Creates a fulfillment.
+    Base class for fulfilling a transaction.
     """
-    raise NotImplementedError
+    def __init__(self, content_metadata):
+        self.content_metadata = content_metadata
+
+    def fulfill(self, transaction):
+        raise NotImplementedError
 
 
-def determine_fulfillment_client(subsidy_uuid, content_key):
+class OpenCourseFulfillmentHandler(FulfillmentHandler):
     """
-    Function stub.
-    Determines which API client can fulfill a redemption for the given content_key.
-    The implementation will likely want to follow a pattern like this:
+    Creates an Open Course enrollment to fulfill a transaction.
+    """
+    def enterprise_client(self):
+        """
+        Get a client for accessing the Enterprise API (edx-enterprise endpoints via edx-platform).
+        This contains funcitons used for enrolling learners in OCM courses.
+        """
+        return EnterpriseApiClient()
 
-    metadata = content_metadata_api.get_content_metadata(content_key)
-    course_type = metadata.get('course_type')
-    if course_type in EXEC_ED_2U_COURSE_TYPES:
-        # really we need to return an exec-ed-capable client
-        return None
-    if course_type in OPEN_COURSES_COURSE_TYPES:
-        # return an edx-enterprise client
-        return None
-    return None
+    def fulfill(self, transaction):
+        reference_id = self.enterprise_client.enroll(
+            transaction.lms_user_id,
+            transaction.content_key,
+        )
+        return reference_id
+
+
+class ExternalFulfillmentHandler(FulfillmentHandler):
     """
-    raise NotImplementedError
+    An object to fulfill a transaction.
+    """
+    def get_client(self):
+        pass
+
+
+class GEAGFulfillmentHandler(ExternalFulfillmentHandler):
+    def fulfill(self, transaction):
+        # call GEAG client
+        # init GEAG client
+        # allocation_id = geag_client.allocate(...)
+        # enterprise_client.enroll(...)
+        # return allocation_id, edx_fulfillment_uuid, maybe?
+        # but then also do an enroll in edx-enterprise
+        # maybe via a sub-OpenCourseFulfillmentHandler?
+        pass
+
+
+class FulfillmentManager:
+    """
+    Manager for creating an appropriate handler
+    and storing any log-level facts about the fulfillment attempt.
+    """
+
+
+def get_fulfillment_handlers(content_metadata):
+    """
+    Could implement this as multiple fulfillment operations, but all on a single
+    transaction record to fulfill.
+    """
+    if content_metadata.get('product_source') == 'the-twou-product-source':
+        return [GEAGFulfillmentHandler(content_metadata), OpenCourseFulfillmentHandler(content_metadata)]

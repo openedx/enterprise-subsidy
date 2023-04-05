@@ -871,14 +871,16 @@ class ContentMetadataViewSetTests(APITestBase):
             'expected_content_key': content_key_1,
             'expected_content_price': 14900.0,
             'mock_metadata': edx_course_metadata,
-            'expected_source': 'edX'
+            'expected_source': 'edX',
+            'expected_mode': 'verified',
         },
         {
             'expected_content_uuid': content_uuid_2,
             'expected_content_key': content_key_2,
             'expected_content_price': 59949,
             'mock_metadata': executive_education_course_metadata,
-            'expected_source': '2u'
+            'expected_source': '2u',
+            'expected_mode': 'paid-executive-education',
         },
     )
     @ddt.unpack
@@ -889,6 +891,7 @@ class ContentMetadataViewSetTests(APITestBase):
         expected_content_price,
         mock_metadata,
         expected_source,
+        expected_mode,
     ):
         with mock.patch(
             'enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient',
@@ -905,6 +908,7 @@ class ContentMetadataViewSetTests(APITestBase):
                 'content_key': expected_content_key,
                 'source': expected_source,
                 'content_price': expected_content_price,
+                'mode': expected_mode,
             }
 
             # Everything after this line is testing the view's cache
@@ -917,6 +921,7 @@ class ContentMetadataViewSetTests(APITestBase):
                 'content_key': expected_content_key,
                 'source': expected_source,
                 'content_price': expected_content_price,
+                'mode': expected_mode,
             }
 
     def test_failure_no_permission(self):
