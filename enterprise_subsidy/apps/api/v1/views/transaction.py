@@ -1,6 +1,7 @@
 """
 Views for the enterprise-subsidy service relating to the Transaction model
 """
+import logging
 from uuid import UUID
 
 from django.core.exceptions import ValidationError
@@ -10,7 +11,7 @@ from drf_spectacular.utils import extend_schema
 from edx_rbac.mixins import PermissionRequiredForListingMixin
 from edx_rbac.utils import contexts_accessible_from_jwt
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
-from openedx_ledger.models import Transaction
+from openedx_ledger.models import LedgerLockAttemptFailed, Transaction
 from rest_framework import mixins, permissions, status, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import ParseError
@@ -28,6 +29,8 @@ from enterprise_subsidy.apps.subsidy.constants import (
     PERMISSION_NOT_GRANTED
 )
 from enterprise_subsidy.apps.subsidy.models import EnterpriseSubsidyRoleAssignment, Subsidy
+
+logger = logging.getLogger(__name__)
 
 
 class TransactionViewSet(
@@ -386,11 +389,17 @@ class TransactionViewSet(
 
         Returns:
             rest_framework.response.Response:
-                400: If there are missing or otherwise invalid input parameters.  Response body is JSON with a single
+                400: There are missing or otherwise invalid input parameters.  Response body is JSON with a single
                      `Error` key.
-                403: If the requester has insufficient create permissions, or the subisdy is not redeemable.  Response
-                     body is JSON with a single `Error` key.
-                201: If a Transaction was successfully created.  Response body is JSON with a serialized Transaction
+                403: The requester has insufficient create permissions.  Response body is JSON with a single `Error`
+                     key.
+                422: The subisdy is not redeemable in a way that IS NOT retryable (e.g. the balance is too low, or
+                     content is not in catalog, etc.).  Response body is JSON with a
+                     single `Error` key.
+                429: The subisdy is not redeemable in a way that IS retryable (e.g. something else is already holding a
+                     lock on the requested Ledger).  Response body is JSON with a single
+                     `Error` key.
+                201: A Transaction was successfully created.  Response body is JSON with a serialized Transaction
                      containing the following keys (sample values):
                      {
                          "uuid": "the-transaction-uuid",
@@ -438,11 +447,18 @@ class TransactionViewSet(
                 {"Error": "The provided subsidy_uuid does not match an existing subsidy."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
-        transaction, created = subsidy.redeem(learner_id, content_key, subsidy_access_policy_uuid)
+        try:
+            transaction, created = subsidy.redeem(learner_id, content_key, subsidy_access_policy_uuid)
+        except LedgerLockAttemptFailed as exc:
+            logger.error(exc)
+            return Response(
+                {"Error": "Attempt to lock the Ledger failed, please try again."},
+                status=status.HTTP_429_TOO_MANY_REQUESTS,
+            )
         if not transaction:
             return Response(
                 {"Error": "The given content_key is not currently redeemable for the given subsidy."},
-                status=status.HTTP_403_FORBIDDEN,
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             )
         return Response(
             TransactionSerializer(transaction).data,

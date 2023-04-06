@@ -216,6 +216,12 @@ class Subsidy(TimeStampedModel):
     ):
         """
         Create a new Ledger Transaction and commit it to the database with a "created" state.
+
+        Raises:
+            openedx_ledger.models.LedgerLockAttemptFailed:
+                Raises this if there's another attempt in process to add a transaction to this Ledger.
+            openedx_ledger.api.LedgerBalanceExceeded:
+                Raises this if the transaction would cause the balance of the ledger to become negative.
         """
         return ledger_api.create_transaction(
             ledger=self.ledger,
@@ -240,11 +246,15 @@ class Subsidy(TimeStampedModel):
         if external_reference:
             ledger_transaction.external_reference.set([external_reference])
         ledger_transaction.state = "committed"
+        ledger_transaction.state = TransactionStateChoices.COMMITTED
         ledger_transaction.save()
 
     def rollback_transaction(self, ledger_transaction):
-        # delete it, or set some state?
-        pass
+        """
+        Progress the transaction to a failed state.
+        """
+        ledger_transaction.state = TransactionStateChoices.FAILED
+        ledger_transaction.save()
 
     def redeem(self, learner_id, content_key, subsidy_access_policy_uuid, idempotency_key=None):
         """
@@ -258,6 +268,13 @@ class Subsidy(TimeStampedModel):
                 The first tuple element is a ledger transaction related to the redemption, or None if the subsidy is not
                 redeemable for the given content.  The second element of the tuple is True if a Transaction was created
                 as part of this request.
+
+        Raises:
+            openedx_ledger.models.LedgerLockAttemptFailed:
+                Raises this if there's another attempt in process to add a transaction to this Ledger.
+            Exception:
+                All other exceptions raised during the creation of an enrollment.  This should have already triggered
+                the rollback of a pending transaction.
         """
         if existing_transaction := self.get_redemption(learner_id, content_key):
             return (existing_transaction, False)
@@ -265,12 +282,15 @@ class Subsidy(TimeStampedModel):
         is_redeemable, _ = self.is_redeemable(content_key)
         if not is_redeemable:
             return (None, False)
-        transaction = self._create_redemption(
-            learner_id,
-            content_key,
-            subsidy_access_policy_uuid,
-            idempotency_key=idempotency_key,
-        )
+        try:
+            transaction = self._create_redemption(
+                learner_id,
+                content_key,
+                subsidy_access_policy_uuid,
+                idempotency_key=idempotency_key,
+            )
+        except ledger_api.LedgerBalanceExceeded:
+            return (None, False)
         if transaction:
             return (transaction, True)
         return (None, False)
@@ -300,6 +320,15 @@ class Subsidy(TimeStampedModel):
         Bi-directional linking: Subclass implementations MUST also maintain bi-directional linking between the
         transaction record and the enrollment record.  The Transaction model provides a `reference_id` field for this
         purpose.
+
+        Raises:
+            openedx_ledger.models.LedgerLockAttemptFailed:
+                Raises this if there's another attempt in process to add a transaction to this Ledger.
+            openedx_ledger.api.LedgerBalanceExceeded:
+                Raises this if the transaction would cause the balance of the ledger to become negative.
+            Exception:
+                All other exceptions raised during the creation of an enrollment.  This should have already triggered
+                the rollback of a pending transaction.
         """
         quantity = -1 * self.price_for_content(content_key)
         if not idempotency_key:
@@ -318,6 +347,10 @@ class Subsidy(TimeStampedModel):
             subsidy_access_policy_uuid=subsidy_access_policy_uuid,
             **kwargs,
         )
+
+        # Progress the transaction to a pending state to indicate that we're now attempting enrollment.
+        ledger_transaction.state = TransactionStateChoices.PENDING
+        ledger_transaction.save()
 
         try:
             enterprise_fulfillment_uuid = self.enterprise_client.enroll(learner_id, content_key, ledger_transaction)
