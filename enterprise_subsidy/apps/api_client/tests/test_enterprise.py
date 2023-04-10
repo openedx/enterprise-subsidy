@@ -120,7 +120,6 @@ class EnterpriseApiClientTests(TestCase):
 
         Special case where the status code was still 2xx.
         """
-        expected_reference_id = 'test-reference-id'
         mock_oauth_client.return_value.post.return_value = MockResponse(
             {
                 'successes': [
@@ -150,7 +149,6 @@ class EnterpriseApiClientTests(TestCase):
 
         Special case where the status code was 4xx.
         """
-        expected_reference_id = 'test-reference-id'
         mock_oauth_client.return_value.post.return_value = MockResponse(None, 403)
         subsidy = SubsidyFactory(enterprise_customer_uuid=self.enterprise_customer_uuid, starting_balance=10000)
         transaction = TransactionFactory(

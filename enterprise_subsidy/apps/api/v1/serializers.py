@@ -87,13 +87,13 @@ class TransactionSerializer(serializers.ModelSerializer):
             "content_key",
             "quantity",
             "unit",  # Manually fetch from parent ledger via get_unit().
-            "reference_id",
-            "reference_type",
+            "fulfillment_identifier",
             "subsidy_access_policy_uuid",
             "metadata",
             "created",
             "modified",
             "reversal",  # Note that the `reversal` field is found via reverse relationship.
+            "external_reference",  # Note that the `external_reference` field is found via reverse relationship.
         ]
 
     def get_unit(self, obj):
