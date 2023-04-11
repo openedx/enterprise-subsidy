@@ -59,6 +59,16 @@ def product_source_for_content(content_data):
     return EDX_PRODUCT_SOURCE
 
 
+def get_varient_id_for_content(content_data):
+    """
+    Returns the GEAG ``variant_id`` or ``None``, given a dict of ``content_data``.
+    """
+    variant_id = None
+    if additional_metadata := content_data.get('additional_metadata'):
+        variant_id = additional_metadata.get('variant_id')
+    return variant_id
+
+
 def summary_data_for_content(content_data):
     """
     Returns a summary dict specifying the content_uuid, content_key, source, and content_price
@@ -70,6 +80,7 @@ def summary_data_for_content(content_data):
         'source': product_source_for_content(content_data),
         'mode': mode_for_content(content_data),
         'content_price': price_for_content(content_data),
+        'variant_id': get_varient_id_for_content(content_data),
     }
 
 

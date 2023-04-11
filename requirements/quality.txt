@@ -8,7 +8,7 @@ asgiref==3.6.0
     # via
     #   -r requirements/test.txt
     #   django
-astroid==2.15.0
+astroid==2.15.2
     # via
     #   -r requirements/test.txt
     #   pylint
@@ -62,11 +62,11 @@ coreschema==0.0.4
     #   -r requirements/test.txt
     #   coreapi
     #   drf-yasg
-coverage[toml]==7.2.2
+coverage[toml]==7.2.3
     # via
     #   -r requirements/test.txt
     #   pytest-cov
-cryptography==39.0.2
+cryptography==40.0.1
     # via
     #   -r requirements/test.txt
     #   pyjwt
@@ -107,6 +107,7 @@ django==3.2.18
     #   jsonfield2
     #   openedx-events
     #   openedx-ledger
+    #   social-auth-app-django
 django-cors-headers==3.14.0
     # via -r requirements/test.txt
 django-crum==0.7.9
@@ -174,6 +175,7 @@ edx-django-utils==5.3.0
     #   -r requirements/test.txt
     #   edx-drf-extensions
     #   edx-rest-api-client
+    #   getsmarter-api-clients
     #   openedx-ledger
 edx-drf-extensions==8.4.1
     # via
@@ -200,7 +202,7 @@ exceptiongroup==1.1.1
     #   pytest
 factory-boy==3.2.1
     # via -r requirements/test.txt
-faker==18.3.0
+faker==18.4.0
     # via
     #   -r requirements/test.txt
     #   factory-boy
@@ -208,7 +210,7 @@ fastavro==1.7.3
     # via
     #   -r requirements/test.txt
     #   openedx-events
-filelock==3.10.2
+filelock==3.11.0
     # via
     #   -r requirements/test.txt
     #   tox
@@ -217,6 +219,8 @@ future==0.18.3
     # via
     #   -r requirements/test.txt
     #   pyjwkest
+getsmarter-api-clients==0.4.0
+    # via -r requirements/test.txt
 idna==3.4
     # via
     #   -r requirements/test.txt
@@ -293,20 +297,25 @@ mysqlclient==2.1.1
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-newrelic==8.7.1
+newrelic==8.8.0
     # via
     #   -r requirements/test.txt
     #   edx-django-utils
 oauthlib==3.2.2
     # via
     #   -r requirements/test.txt
+    #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
 openedx-events==7.0.0
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
+<<<<<<< HEAD
 openedx-ledger==0.3.1
+=======
+openedx-ledger==0.3.0
+>>>>>>> a6b1e84 (feat: preparing for geag)
     # via -r requirements/test.txt
 packaging==23.0
     # via
@@ -324,7 +333,7 @@ pkgutil-resolve-name==1.3.10
     # via
     #   -r requirements/test.txt
     #   jsonschema
-platformdirs==3.1.1
+platformdirs==3.2.0
     # via
     #   -r requirements/test.txt
     #   pylint
@@ -374,7 +383,7 @@ pyjwt[crypto]==2.6.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==2.17.1
+pylint==2.17.2
     # via
     #   -r requirements/test.txt
     #   edx-lint
@@ -428,12 +437,13 @@ python3-openid==3.2.0
     # via
     #   -r requirements/test.txt
     #   social-auth-core
-pytz==2022.7.1
+pytz==2023.3
     # via
     #   -r requirements/test.txt
     #   django
     #   djangorestframework
     #   drf-yasg
+    #   getsmarter-api-clients
     #   openedx-ledger
 pyyaml==6.0
     # via
@@ -443,7 +453,7 @@ pyyaml==6.0
     #   edx-django-release-util
 readme-renderer==37.3
     # via twine
-redis==4.5.3
+redis==4.5.4
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
@@ -462,12 +472,13 @@ requests==2.28.2
 requests-oauthlib==1.3.1
     # via
     #   -r requirements/test.txt
+    #   getsmarter-api-clients
     #   social-auth-core
 requests-toolbelt==0.10.1
     # via twine
 rfc3986==2.0.0
     # via twine
-rich==13.3.2
+rich==13.3.3
     # via twine
 ruamel-yaml==0.17.21
     # via
@@ -506,11 +517,11 @@ slumber==0.7.1
     #   edx-rest-api-client
 snowballstemmer==2.2.0
     # via pydocstyle
-social-auth-app-django==5.1.0
+social-auth-app-django==5.2.0
     # via
     #   -r requirements/test.txt
     #   edx-auth-backends
-social-auth-core==4.4.0
+social-auth-core==4.4.1
     # via
     #   -r requirements/test.txt
     #   edx-auth-backends
@@ -536,7 +547,7 @@ tomli==2.0.1
     #   pylint
     #   pytest
     #   tox
-tomlkit==0.11.6
+tomlkit==0.11.7
     # via
     #   -r requirements/test.txt
     #   pylint
