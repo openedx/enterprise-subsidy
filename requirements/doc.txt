@@ -326,11 +326,7 @@ openedx-events==7.0.0
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-<<<<<<< HEAD
 openedx-ledger==0.3.1
-=======
-openedx-ledger==0.3.0
->>>>>>> a6b1e84 (feat: preparing for geag)
     # via -r requirements/test.txt
 packaging==23.0
     # via
