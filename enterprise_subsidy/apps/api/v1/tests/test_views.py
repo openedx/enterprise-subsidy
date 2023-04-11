@@ -912,6 +912,7 @@ class ContentMetadataViewSetTests(APITestBase):
             'mock_metadata': executive_education_course_metadata,
             'expected_source': '2u',
             'expected_mode': 'paid-executive-education',
+            # generated randomly using a fair die
             'expected_variant_id': '79a95406-a9ac-49b3-a27c-44f3fd06092e',
         },
     )
