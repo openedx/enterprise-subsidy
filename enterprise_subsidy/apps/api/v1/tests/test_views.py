@@ -888,6 +888,9 @@ class ContentMetadataViewSetTests(APITestBase):
             "slug": "2u",
             "description": "2U, Trilogy, Getsmarter -- external source for 2u courses and programs"
         },
+        "additional_metadata": {
+            "variant_id": "79a95406-a9ac-49b3-a27c-44f3fd06092e"
+        }
     }
     mock_http_error_reason = 'Something Went Wrong'
     mock_http_error_url = 'foobar.com'
@@ -900,6 +903,7 @@ class ContentMetadataViewSetTests(APITestBase):
             'mock_metadata': edx_course_metadata,
             'expected_source': 'edX',
             'expected_mode': 'verified',
+            'expected_variant_id': None,
         },
         {
             'expected_content_uuid': content_uuid_2,
@@ -908,6 +912,7 @@ class ContentMetadataViewSetTests(APITestBase):
             'mock_metadata': executive_education_course_metadata,
             'expected_source': '2u',
             'expected_mode': 'paid-executive-education',
+            'expected_variant_id': '79a95406-a9ac-49b3-a27c-44f3fd06092e',
         },
     )
     @ddt.unpack
@@ -919,6 +924,7 @@ class ContentMetadataViewSetTests(APITestBase):
         mock_metadata,
         expected_source,
         expected_mode,
+        expected_variant_id,
     ):
         with mock.patch(
             'enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient',
@@ -936,6 +942,7 @@ class ContentMetadataViewSetTests(APITestBase):
                 'source': expected_source,
                 'content_price': expected_content_price,
                 'mode': expected_mode,
+                'variant_id': expected_variant_id,
             }
 
             # Everything after this line is testing the view's cache
@@ -949,6 +956,7 @@ class ContentMetadataViewSetTests(APITestBase):
                 'source': expected_source,
                 'content_price': expected_content_price,
                 'mode': expected_mode,
+                'variant_id': expected_variant_id,
             }
 
     def test_failure_no_permission(self):
