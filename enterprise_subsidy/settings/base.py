@@ -60,6 +60,7 @@ THIRD_PARTY_APPS = (
     'social_django',
     'waffle',
     'rules.apps.AutodiscoverRulesConfig',
+    'edx_event_bus_kafka',
 )
 
 PROJECT_APPS = (
@@ -326,3 +327,12 @@ LOGGING = get_logger_config(debug=DEBUG)
 
 # Application settings
 ALLOW_LEDGER_MODIFICATION = False
+
+# Event Bus
+#################### Event bus backend ########################
+EVENT_BUS_PRODUCER = 'edx_event_bus_kafka.create_producer'
+EVENT_BUS_KAFKA_SCHEMA_REGISTRY_URL = 'http://localhost:8081'
+EVENT_BUS_KAFKA_BOOTSTRAP_SERVERS = 'localhost:9092'
+EVENT_BUS_TOPIC_PREFIX = 'dev'
+EVENT_BUS_KAFKA_CONSUMERS_ENABLED = True
+EVENT_BUS_KAFKA_CONSUMER_CONSECUTIVE_ERRORS_LIMIT = 5
