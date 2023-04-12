@@ -10,7 +10,7 @@ asgiref==3.6.0
     # via
     #   -r requirements/test.txt
     #   django
-astroid==2.15.0
+astroid==2.15.2
     # via
     #   -r requirements/test.txt
     #   pylint
@@ -24,7 +24,6 @@ attrs==22.2.0
     #   -r requirements/test.txt
     #   jsonschema
     #   openedx-events
-    #   pytest
 babel==2.12.1
     # via sphinx
 bleach==6.0.0
@@ -59,6 +58,9 @@ code-annotations==1.3.0
     # via
     #   -r requirements/test.txt
     #   edx-lint
+    #   edx-toggles
+confluent-kafka==2.1.0
+    # via -r requirements/test.txt
 coreapi==2.3.3
     # via
     #   -r requirements/test.txt
@@ -68,15 +70,14 @@ coreschema==0.0.4
     #   -r requirements/test.txt
     #   coreapi
     #   drf-yasg
-coverage[toml]==7.2.2
+coverage[toml]==7.2.3
     # via
     #   -r requirements/test.txt
     #   pytest-cov
-cryptography==39.0.2
+cryptography==40.0.1
     # via
     #   -r requirements/test.txt
     #   pyjwt
-    #   secretstorage
     #   social-auth-core
 ddt==1.6.0
     # via -r requirements/test.txt
@@ -109,10 +110,13 @@ django==3.2.18
     #   edx-django-release-util
     #   edx-django-utils
     #   edx-drf-extensions
+    #   edx-event-bus-kafka
     #   edx-rbac
+    #   edx-toggles
     #   jsonfield2
     #   openedx-events
     #   openedx-ledger
+    #   social-auth-app-django
 django-cors-headers==3.14.0
     # via -r requirements/test.txt
 django-crum==0.7.9
@@ -120,6 +124,7 @@ django-crum==0.7.9
     #   -r requirements/test.txt
     #   edx-django-utils
     #   edx-rbac
+    #   edx-toggles
 django-dynamic-fixture==3.1.2
     # via -r requirements/test.txt
 django-extensions==3.2.1
@@ -145,6 +150,7 @@ django-waffle==3.0.0
     #   -r requirements/test.txt
     #   edx-django-utils
     #   edx-drf-extensions
+    #   edx-toggles
 djangoql==0.17.1
     # via
     #   -r requirements/test.txt
@@ -181,16 +187,20 @@ edx-django-release-util==1.2.0
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-edx-django-utils==5.3.0
+edx-django-utils==5.4.0
     # via
     #   -r requirements/test.txt
     #   edx-drf-extensions
+    #   edx-event-bus-kafka
     #   edx-rest-api-client
+    #   edx-toggles
     #   openedx-ledger
-edx-drf-extensions==8.4.1
+edx-drf-extensions==8.5.3
     # via
     #   -r requirements/test.txt
     #   edx-rbac
+edx-event-bus-kafka==3.9.6
+    # via -r requirements/test.txt
 edx-lint==5.3.4
     # via -r requirements/test.txt
 edx-opaque-keys[django]==2.3.0
@@ -206,13 +216,17 @@ edx-rest-api-client==5.5.0
     # via -r requirements/test.txt
 edx-sphinx-theme==3.1.0
     # via -r requirements/doc.in
+edx-toggles==5.0.0
+    # via
+    #   -r requirements/test.txt
+    #   edx-event-bus-kafka
 exceptiongroup==1.1.1
     # via
     #   -r requirements/test.txt
     #   pytest
 factory-boy==3.2.1
     # via -r requirements/test.txt
-faker==18.3.0
+faker==18.4.0
     # via
     #   -r requirements/test.txt
     #   factory-boy
@@ -220,7 +234,7 @@ fastavro==1.7.3
     # via
     #   -r requirements/test.txt
     #   openedx-events
-filelock==3.10.2
+filelock==3.11.0
     # via
     #   -r requirements/test.txt
     #   tox
@@ -235,7 +249,7 @@ idna==3.4
     #   requests
 imagesize==1.4.1
     # via sphinx
-importlib-metadata==6.1.0
+importlib-metadata==6.3.0
     # via
     #   keyring
     #   sphinx
@@ -264,10 +278,6 @@ itypes==1.2.0
     #   coreapi
 jaraco-classes==3.2.3
     # via keyring
-jeepney==0.8.0
-    # via
-    #   keyring
-    #   secretstorage
 jinja2==3.1.2
     # via
     #   -r requirements/test.txt
@@ -308,7 +318,7 @@ mysqlclient==2.1.1
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-newrelic==8.7.1
+newrelic==8.8.0
     # via
     #   -r requirements/test.txt
     #   edx-django-utils
@@ -320,10 +330,11 @@ oauthlib==3.2.2
 openedx-events==7.0.0
     # via
     #   -r requirements/test.txt
+    #   edx-event-bus-kafka
     #   openedx-ledger
 openedx-ledger==0.3.1
     # via -r requirements/test.txt
-packaging==23.0
+packaging==23.1
     # via
     #   -r requirements/test.txt
     #   build
@@ -341,7 +352,7 @@ pkgutil-resolve-name==1.3.10
     # via
     #   -r requirements/test.txt
     #   jsonschema
-platformdirs==3.1.1
+platformdirs==3.2.0
     # via
     #   -r requirements/test.txt
     #   pylint
@@ -371,7 +382,7 @@ pycryptodomex==3.17
     # via
     #   -r requirements/test.txt
     #   pyjwkest
-pygments==2.14.0
+pygments==2.15.0
     # via
     #   doc8
     #   readme-renderer
@@ -389,7 +400,7 @@ pyjwt[crypto]==2.6.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==2.17.1
+pylint==2.17.2
     # via
     #   -r requirements/test.txt
     #   edx-lint
@@ -423,7 +434,7 @@ pyrsistent==0.19.3
     # via
     #   -r requirements/test.txt
     #   jsonschema
-pytest==7.2.2
+pytest==7.3.0
     # via
     #   -r requirements/test.txt
     #   pytest-cov
@@ -445,7 +456,7 @@ python3-openid==3.2.0
     # via
     #   -r requirements/test.txt
     #   social-auth-core
-pytz==2022.7.1
+pytz==2023.3
     # via
     #   -r requirements/test.txt
     #   babel
@@ -461,7 +472,7 @@ pyyaml==6.0
     #   edx-django-release-util
 readme-renderer==37.3
     # via twine
-redis==4.5.3
+redis==4.5.4
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
@@ -488,7 +499,7 @@ restructuredtext-lint==1.4.0
     # via doc8
 rfc3986==2.0.0
     # via twine
-rich==13.3.2
+rich==13.3.4
     # via twine
 ruamel-yaml==0.17.21
     # via
@@ -502,8 +513,6 @@ rules==3.3
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-secretstorage==3.3.3
-    # via keyring
 semantic-version==2.10.0
     # via
     #   -r requirements/test.txt
@@ -528,11 +537,11 @@ slumber==0.7.1
     #   edx-rest-api-client
 snowballstemmer==2.2.0
     # via sphinx
-social-auth-app-django==5.1.0
+social-auth-app-django==5.2.0
     # via
     #   -r requirements/test.txt
     #   edx-auth-backends
-social-auth-core==4.4.0
+social-auth-core==4.4.1
     # via
     #   -r requirements/test.txt
     #   edx-auth-backends
@@ -579,7 +588,7 @@ tomli==2.0.1
     #   pyproject-hooks
     #   pytest
     #   tox
-tomlkit==0.11.6
+tomlkit==0.11.7
     # via
     #   -r requirements/test.txt
     #   pylint
