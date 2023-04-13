@@ -6,6 +6,7 @@ related to subsidy redemptions.
 """
 # pylint: disable=abstract-method,inconsistent-return-statements,no-member
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
+from enterprise_subsidy.apps.content_metadata.api import summary_data_for_content
 from django.conf import settings
 from getsmarter_api_clients.geag import GetSmarterEnterpriseApiClient
 
@@ -16,6 +17,7 @@ class FulfillmentHandler:
     def __init__(self, subsidy, content_metadata):
         self.subsidy = subsidy
         self.content_metadata = content_metadata
+        self.content_summary = summary_data_for_content(content_metadata)
 
     def fulfill(self, transaction):
         raise NotImplementedError
@@ -61,6 +63,9 @@ class GEAGFulfillmentHandler(ExternalFulfillmentHandler):
     
     def _get_geag_transaction_price(self, transaction):
         return float(transaction.quantity) / self.CENTS_PER_DOLLAR
+    
+    def _get_geag_variant_id(self):
+        self.content_summary.get('variant_id')
 
     def _create_allocation_payload(self, transaction, currency='USD'):
         return {
@@ -70,15 +75,15 @@ class GEAGFulfillmentHandler(ExternalFulfillmentHandler):
             'order_items': [
                 {
                     # productId will be the variant id from product details
-                    'productId': variant_id,
+                    'productId': self._get_geag_variant_id(),
                     'quantity': 1,
-                    # TODO what do we do here?
                     # TODO prices are in dollars or cents?
                     'normalPrice': self._get_geag_transaction_price(transaction),
                     'discount': 0.0,
                     'finalPrice': self._get_geag_transaction_price(transaction)
                 }
             ],
+            # TODO we need this passed in
             'first_name': '',
             'last_name': '',
             'date_of_birth': "2021-05-12",
