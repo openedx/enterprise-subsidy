@@ -10,12 +10,16 @@ from unittest import mock
 
 import ddt
 from openedx_ledger.models import TransactionStateChoices
-from openedx_ledger.test_utils.factories import TransactionFactory
+from openedx_ledger.test_utils.factories import (
+    ExternalFulfillmentProviderFactory,
+    ExternalTransactionReferenceFactory,
+    TransactionFactory
+)
 from rest_framework import status
 from rest_framework.reverse import reverse
 
 from enterprise_subsidy.apps.api.v1.tests.mixins import STATIC_ENTERPRISE_UUID, STATIC_LMS_USER_ID, APITestMixin
-from enterprise_subsidy.apps.subsidy.models import OCM_ENROLLMENT_REFERENCE_TYPE, RevenueCategoryChoices
+from enterprise_subsidy.apps.subsidy.models import RevenueCategoryChoices
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
 from test_utils.utils import MockResponse
 
@@ -222,8 +226,7 @@ class SubsidyViewSetTests(APITestBase):
                 'metadata': None,
                 'modified': self.subsidy_1_transaction_1.modified.strftime(SERIALIZED_DATE_PATTERN),
                 'uuid': str(self.subsidy_1_transaction_1_uuid),
-                'reference_id': None,
-                'reference_type': None,
+                'fulfillment_identifier': None,
                 'reversal': None,
                 'unit': self.subsidy_1.unit,
                 'state': TransactionStateChoices.COMMITTED,
@@ -231,6 +234,7 @@ class SubsidyViewSetTests(APITestBase):
                 'lms_user_id': STATIC_LMS_USER_ID,
                 'subsidy_access_policy_uuid': str(self.subsidy_access_policy_1_uuid),
                 'content_key': self.content_key_1,
+                'external_reference': [],
             }
 
         expected_response_data = {
@@ -689,8 +693,8 @@ class TransactionViewSetTests(APITestBase):
         Test create Transaction, happy case.
         """
         url = reverse("api:v1:transaction-list")
-        test_enroll_reference_id = "test-enroll-reference-id"
-        mock_enterprise_client.enroll.return_value = test_enroll_reference_id
+        test_enroll_enterprise_fulfillment_uuid = "test-enroll-reference-id"
+        mock_enterprise_client.enroll.return_value = test_enroll_enterprise_fulfillment_uuid
         mock_get_course_price.return_value = "100.00"
         # Create privileged staff user that should be able to create Transactions.
         self.set_up_operator()
@@ -712,8 +716,7 @@ class TransactionViewSetTests(APITestBase):
         assert json.loads(create_response_data["metadata"]) == {}
         assert create_response_data["unit"] == self.subsidy_1.ledger.unit
         assert create_response_data["quantity"] < 0  # No need to be exact at this time, I'm just testing create works.
-        assert create_response_data["reference_id"] == test_enroll_reference_id
-        assert create_response_data["reference_type"] == OCM_ENROLLMENT_REFERENCE_TYPE
+        assert create_response_data["fulfillment_identifier"] == test_enroll_enterprise_fulfillment_uuid
         assert create_response_data["reversal"] is None
         assert create_response_data["state"] == TransactionStateChoices.COMMITTED
 
@@ -815,6 +818,30 @@ class TransactionViewSetTests(APITestBase):
         assert response.status_code >= 400 and response.status_code < 500
         # Just make sure there's any parseable json which is likely to contain an explanation of the error.
         assert response.json()
+
+    def test_fetch_transaction_with_external_reference(self):
+        """
+        Test fetching a Transaction with external reference.
+        """
+        url = reverse("api:v1:transaction-list")
+        # Create privileged staff user that should be able to create Transactions.
+        self.set_up_operator()
+        external_reference_id = "foobar"
+        ExternalFulfillmentProviderFactory()
+        transaction_with_external_reference = TransactionFactory(
+            quantity=-1000,
+            ledger=self.subsidy_1.ledger,
+            lms_user_id=STATIC_LMS_USER_ID,  # This is the only transaction belonging to the requester.
+            subsidy_access_policy_uuid=self.subsidy_access_policy_1_uuid,
+            content_key=self.content_key_1,
+        )
+        ExternalTransactionReferenceFactory(
+            external_reference_id=external_reference_id,
+            transaction=transaction_with_external_reference,
+        )
+        url = reverse("api:v1:transaction-list")
+        response = self.client.get(os.path.join(url, str(transaction_with_external_reference.uuid) + "/"))
+        assert response.json().get('external_reference') == [external_reference_id]
 
 
 @ddt.ddt
