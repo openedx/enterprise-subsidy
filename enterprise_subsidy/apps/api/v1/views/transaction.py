@@ -28,7 +28,11 @@ from enterprise_subsidy.apps.subsidy.constants import (
     PERMISSION_CAN_READ_TRANSACTIONS,
     PERMISSION_NOT_GRANTED
 )
-from enterprise_subsidy.apps.subsidy.models import EnterpriseSubsidyRoleAssignment, Subsidy
+from enterprise_subsidy.apps.subsidy.models import (
+    ContentNotFoundForCustomerException,
+    EnterpriseSubsidyRoleAssignment,
+    Subsidy
+)
 
 logger = logging.getLogger(__name__)
 
@@ -454,6 +458,11 @@ class TransactionViewSet(
             return Response(
                 {"Error": "Attempt to lock the Ledger failed, please try again."},
                 status=status.HTTP_429_TOO_MANY_REQUESTS,
+            )
+        except ContentNotFoundForCustomerException:
+            return Response(
+                {"Error": "The given content_key is not in any catalog for this customer."},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             )
         if not transaction:
             return Response(

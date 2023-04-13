@@ -75,9 +75,10 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
             content_identifier (str): **Either** the content UUID or content key identifier for a content record.
                 Note: the content needs to be owned by a catalog associated with the provided customer else this
                 method will throw an HTTPError.
+
         Returns:
-            Pricing (list of dicts): Array containing mappings of an individual content's course price associated with
-            a each of it's course mode
+            int: price of content in USD cents.
+
         Raises:
             requests.exceptions.HTTPError: if service is down/unavailable or status code comes back >= 300,
             the method will log and throw an HTTPError exception. A 404 exception will be thrown if the content
