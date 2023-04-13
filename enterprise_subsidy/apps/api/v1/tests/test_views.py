@@ -9,12 +9,13 @@ from functools import partial
 from unittest import mock
 
 import ddt
-from openedx_ledger.models import TransactionStateChoices
+from openedx_ledger.models import Transaction, TransactionStateChoices
 from openedx_ledger.test_utils.factories import (
     ExternalFulfillmentProviderFactory,
     ExternalTransactionReferenceFactory,
     TransactionFactory
 )
+from requests.exceptions import HTTPError
 from rest_framework import status
 from rest_framework.reverse import reverse
 
@@ -687,15 +688,15 @@ class TransactionViewSetTests(APITestBase):
     # Uncomment this later once we have segment events firing.
     # @mock.patch('enterprise_subsidy.apps.api.v1.event_utils.track_event')
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
-    @mock.patch("enterprise_subsidy.apps.api_client.enterprise_catalog.EnterpriseCatalogApiClient.get_course_price")
-    def test_create(self, mock_get_course_price, mock_enterprise_client):
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
+    def test_create(self, mock_price_for_content, mock_enterprise_client):
         """
         Test create Transaction, happy case.
         """
         url = reverse("api:v1:transaction-list")
         test_enroll_enterprise_fulfillment_uuid = "test-enroll-reference-id"
         mock_enterprise_client.enroll.return_value = test_enroll_enterprise_fulfillment_uuid
-        mock_get_course_price.return_value = "100.00"
+        mock_price_for_content.return_value = 10000
         # Create privileged staff user that should be able to create Transactions.
         self.set_up_operator()
         post_data = {
@@ -741,6 +742,30 @@ class TransactionViewSetTests(APITestBase):
         #     },
         # )
 
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
+    def test_create_ledger_locked(self, mock_price_for_content, mock_enterprise_client):
+        """
+        Test create Transaction, 429 response due to the ledger being locked.
+        """
+        url = reverse("api:v1:transaction-list")
+        test_enroll_enterprise_fulfillment_uuid = "test-enroll-reference-id"
+        mock_enterprise_client.enroll.return_value = test_enroll_enterprise_fulfillment_uuid
+        mock_price_for_content.return_value = 10000
+        # Create privileged staff user that should be able to create Transactions.
+        self.set_up_operator()
+        post_data = {
+            "subsidy_uuid": str(self.subsidy_1.uuid),
+            "learner_id": 1234,
+            "content_key": "course-v1:edX-test-course",
+            "subsidy_access_policy_uuid": str(uuid.uuid4()),
+        }
+        self.subsidy_1.ledger.acquire_lock()
+        response = self.client.post(url, post_data)
+        assert response.status_code == status.HTTP_429_TOO_MANY_REQUESTS
+        assert response.json() == {"Error": "Attempt to lock the Ledger failed, please try again."}
+        self.subsidy_1.ledger.release_lock()
+
     @ddt.data("admin", "learner")
     def test_create_denied_role(self, role):
         """
@@ -761,6 +786,50 @@ class TransactionViewSetTests(APITestBase):
         assert response.status_code == status.HTTP_403_FORBIDDEN
         # Just make sure there's any parseable json which is likely to contain an explanation of the error.
         assert response.json()
+
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
+    def test_create_too_expensive(self, mock_price_for_content):
+        """
+        Test create Transaction, 422 response due to the content price being greater than the stored value.
+        """
+        # Create privileged staff user that should be able to create Transactions.
+        self.set_up_operator()
+        url = reverse("api:v1:transaction-list")
+        mock_price_for_content.return_value = 10000000  # Wow! that's pricey!
+        post_data = {
+            "subsidy_uuid": str(self.subsidy_1.uuid),
+            "learner_id": 1234,
+            "content_key": "course-v1:edX-test-course",
+            "subsidy_access_policy_uuid": str(uuid.uuid4()),
+        }
+        response = self.client.post(url, post_data)
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.json() == {"Error": "The given content_key is not currently redeemable for the given subsidy."}
+
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
+    def test_create_external_enroll_failed(self, mock_price_for_content, mock_enterprise_client):
+        """
+        Test create Transaction, 5xx response due to the external enrollment failing. Check that a transaction is
+        created, then rolled back to "failed" state.
+        """
+        # Create privileged staff user that should be able to create Transactions.
+        self.set_up_operator()
+        url = reverse("api:v1:transaction-list")
+        mock_enterprise_client.enroll.side_effect = HTTPError()
+        mock_price_for_content.return_value = 100
+        test_content_key = "course-v1:edX+test+course.enroll.failed"
+        test_lms_user_id = 1234
+        post_data = {
+            "subsidy_uuid": str(self.subsidy_1.uuid),
+            "learner_id": test_lms_user_id,
+            "content_key": test_content_key,
+            "subsidy_access_policy_uuid": str(uuid.uuid4()),
+        }
+        with self.assertRaises(HTTPError):
+            self.client.post(url, post_data)
+        rolled_back_tx = Transaction.objects.filter(lms_user_id=test_lms_user_id, content_key=test_content_key).first()
+        assert rolled_back_tx.state == TransactionStateChoices.FAILED
 
     def test_create_invalid_subsidy_uuid(self):
         """
