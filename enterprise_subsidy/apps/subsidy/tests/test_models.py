@@ -13,8 +13,12 @@ from openedx_ledger.test_utils.factories import (
     ExternalTransactionReferenceFactory,
     TransactionFactory
 )
+from requests.exceptions import HTTPError
+from rest_framework import status
 
-from ..models import CENTS_PER_DOLLAR
+from test_utils.utils import MockResponse
+
+from ..models import ContentNotFoundForCustomerException
 from .factories import SubsidyFactory
 
 
@@ -38,22 +42,38 @@ class SubsidyModelReadTestCase(TestCase):
         cls.subsidy.catalog_client = mock.MagicMock()
         super().setUpTestData()
 
+    def setUp(self):
+        super().setUp()
+        # Clear the method cache between tests to help make tests deterministic.
+        self.subsidy.price_for_content.cache_clear()
+
     def test_price_for_content(self):
         """
         Tests that Subsidy.price_for_content returns the price of a piece
         of content from the catalog client converted to cents of a dollar.
         """
-        content_price_dollars_str = '199.98'
+        content_price_cents = 19998
 
-        self.subsidy.catalog_client.get_course_price.return_value = content_price_dollars_str
+        self.subsidy.catalog_client.get_course_price.return_value = content_price_cents
 
         actual_price_cents = self.subsidy.price_for_content('some-content-key')
-        expected_price_cents = 199.98 * CENTS_PER_DOLLAR
-        self.assertEqual(actual_price_cents, expected_price_cents)
+        self.assertEqual(actual_price_cents, content_price_cents)
         self.subsidy.catalog_client.get_course_price.assert_called_once_with(
             self.enterprise_customer_uuid,
             'some-content-key',
         )
+
+    def test_price_for_content_not_in_catalog(self):
+        """
+        Tests that Subsidy.price_for_content raises ContentNotFoundForCustomerException
+        if the content is not part of any catalog for the customer.
+        """
+        self.subsidy.catalog_client.get_course_price.side_effect = HTTPError(
+            response=MockResponse(None, status.HTTP_404_NOT_FOUND),
+        )
+
+        with self.assertRaises(ContentNotFoundForCustomerException):
+            self.subsidy.price_for_content('some-content-key')
 
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
     @ddt.data(True, False)
@@ -144,6 +164,10 @@ class SubsidyModelRedemptionTestCase(TestCase):
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
     def test_redeem_not_existing(self, mock_enterprise_client, mock_price_for_content):
+        """
+        Test Subsidy.redeem() happy path (i.e. the redemption/transaction does not already exist, and calling redeem()
+        creates one).
+        """
         learner_id = 1
         content_key = "course-v1:edX+test+course"
         subsidy_access_policy_uuid = str(uuid4())

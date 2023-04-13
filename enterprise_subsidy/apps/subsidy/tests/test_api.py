@@ -67,7 +67,7 @@ class CanRedeemTestCase(TestCase):
             starting_balance=100000,
         )
         self.subsidy.catalog_client = mock.MagicMock()
-        self.subsidy.catalog_client.get_course_price.return_value = '199.98'
+        self.subsidy.catalog_client.get_course_price.return_value = 19998
         self.lms_user_id = 42
         self.content_key = 'some-content-key'
         super().setUp()

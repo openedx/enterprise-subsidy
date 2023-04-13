@@ -22,12 +22,12 @@ from model_utils.models import TimeStampedModel
 from openedx_ledger import api as ledger_api
 from openedx_ledger.models import Ledger, TransactionStateChoices, UnitChoices
 from openedx_ledger.utils import create_idempotency_key_for_transaction
+from requests.exceptions import HTTPError
+from rest_framework import status
 from simple_history.models import HistoricalRecords
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
-
-from .constants import CENTS_PER_DOLLAR
 
 MOCK_CATALOG_CLIENT = mock.MagicMock()
 MOCK_ENROLLMENT_CLIENT = mock.MagicMock()
@@ -36,6 +36,12 @@ MOCK_SUBSCRIPTION_CLIENT = mock.MagicMock()
 # TODO: hammer this out.  Do we want this to be the name of a joinable table name?  Do we want it to reflect the field
 # name of the response from the enrollment API?
 OCM_ENROLLMENT_REFERENCE_TYPE = "enterprise_fufillment_source_uuid"
+
+
+class ContentNotFoundForCustomerException(Exception):
+    """
+    Raise this when the given content_key is not in any catalog for this customer.
+    """
 
 
 class SubsidyReferenceChoices:
@@ -199,8 +205,22 @@ class Subsidy(TimeStampedModel):
 
     @lru_cache(maxsize=64)
     def price_for_content(self, content_key):
-        price = self.catalog_client.get_course_price(self.enterprise_customer_uuid, content_key)
-        return int(float(price) * CENTS_PER_DOLLAR)
+        """
+        Return the price of the given content in USD Cents.
+
+        Returns:
+            int: Price of content in USD cents.
+
+        Raises:
+            ContentNotFoundForCustomerException:
+                The given content_key is not in any catalog for the customer associated with this subsidy.
+        """
+        try:
+            return self.catalog_client.get_course_price(self.enterprise_customer_uuid, content_key)
+        except HTTPError as exc:
+            if exc.response.status_code == status.HTTP_404_NOT_FOUND:
+                raise ContentNotFoundForCustomerException() from exc
+            raise
 
     def current_balance(self):
         return self.ledger.balance()
