@@ -39,4 +39,4 @@ class User(AbstractUser):
         return self.full_name or super().get_full_name()
 
     def __str__(self):
-        return str(self.get_full_name())
+        return str(self.get_full_name() or self.username)
