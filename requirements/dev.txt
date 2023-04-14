@@ -107,6 +107,7 @@ django==3.2.18
     #   django-crum
     #   django-debug-toolbar
     #   django-extensions
+    #   django-filter
     #   django-model-utils
     #   djangorestframework
     #   drf-jwt
@@ -138,10 +139,9 @@ django-extensions==3.2.1
     #   -r requirements/dev.in
     #   -r requirements/validation.txt
     #   openedx-ledger
-django-filter==1.1.0
+django-filter==23.2
     # via
     #   -r requirements/validation.txt
-    #   djangorestframework-filters
     #   openedx-ledger
 django-model-utils==4.3.1
     # via
@@ -167,13 +167,10 @@ djangoql==0.17.1
 djangorestframework==3.14.0
     # via
     #   -r requirements/validation.txt
-    #   djangorestframework-filters
     #   drf-jwt
     #   drf-spectacular
     #   drf-yasg
     #   edx-drf-extensions
-djangorestframework-filters==0.11.1
-    # via -r requirements/validation.txt
 docutils==0.19
     # via
     #   -r requirements/validation.txt

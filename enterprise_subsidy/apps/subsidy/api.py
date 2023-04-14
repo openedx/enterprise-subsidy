@@ -51,6 +51,22 @@ def get_or_create_learner_credit_subsidy(
     return (subsidy, created)
 
 
+def get_subsidy_by_uuid(subsidy_uuid, should_raise=False):
+    """
+    Params:
+      subsidy_uuid: The uuid of the Subsidy record to fetch.
+
+    Returns:
+      A Subsidy instance, or null if no such subsidy exists.
+    """
+    try:
+        return Subsidy.objects.get(uuid=subsidy_uuid)
+    except Subsidy.DoesNotExist:
+        if should_raise:
+            raise
+        return None
+
+
 def can_redeem(subsidy, lms_user_id, content_key):
     """
     Determines if the given learner can redeem against the
