@@ -146,6 +146,16 @@ REST_FRAMEWORK = {
     'TEST_REQUEST_DEFAULT_FORMAT': 'json',
 }
 
+# This is what populates the core.User.lms_user_id field.
+EDX_DRF_EXTENSIONS = {
+    "JWT_PAYLOAD_USER_ATTRIBUTE_MAPPING": {
+        "administrator": "is_staff",
+        "email": "email",
+        "full_name": "full_name",
+        "user_id": "lms_user_id",
+    },
+}
+
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Enterprise Subsidy API',
     'DESCRIPTION': 'API for controlling disbursement of value for ledger-based subsidy records.',

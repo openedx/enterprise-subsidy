@@ -15,6 +15,11 @@ class User(AbstractUser):
 
     """
     full_name = models.CharField(_('Full Name'), max_length=255, blank=True, null=True)
+    lms_user_id = models.IntegerField(
+        blank=True,
+        null=True,
+        help_text="The auth.User.id value of the corresponding user in edx-platform.",
+    )
 
     @property
     def access_token(self):
