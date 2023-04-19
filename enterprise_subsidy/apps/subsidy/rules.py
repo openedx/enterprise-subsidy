@@ -14,7 +14,8 @@ from enterprise_subsidy.apps.subsidy.constants import (
     PERMISSION_CAN_CREATE_TRANSACTIONS,
     PERMISSION_CAN_READ_CONTENT_METADATA,
     PERMISSION_CAN_READ_SUBSIDIES,
-    PERMISSION_CAN_READ_TRANSACTIONS
+    PERMISSION_CAN_READ_TRANSACTIONS,
+    PERMISSION_CAN_WRITE_SUBSIDIES
 )
 from enterprise_subsidy.apps.subsidy.models import EnterpriseSubsidyRoleAssignment
 
@@ -106,3 +107,4 @@ rules.add_perm(PERMISSION_CAN_CREATE_TRANSACTIONS, has_operator_level_access)
 rules.add_perm(PERMISSION_CAN_READ_SUBSIDIES, has_admin_level_access)
 rules.add_perm(PERMISSION_CAN_READ_TRANSACTIONS, has_learner_level_access)
 rules.add_perm(PERMISSION_CAN_READ_CONTENT_METADATA, has_learner_level_access)
+rules.add_perm(PERMISSION_CAN_WRITE_SUBSIDIES, has_operator_level_access)

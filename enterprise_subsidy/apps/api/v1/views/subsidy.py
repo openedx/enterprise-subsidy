@@ -2,6 +2,7 @@
 Views for the enterprise-subsidy service relating to the Subsidy model
  service.
 """
+from django.core.exceptions import MultipleObjectsReturned
 from django.utils.functional import cached_property
 from drf_spectacular.utils import extend_schema
 from edx_rbac.mixins import PermissionRequiredForListingMixin
@@ -12,12 +13,18 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 
 from enterprise_subsidy.apps.api.v1 import utils
-from enterprise_subsidy.apps.api.v1.serializers import CanRedeemResponseSerializer, SubsidySerializer
-from enterprise_subsidy.apps.subsidy.api import can_redeem
+from enterprise_subsidy.apps.api.v1.exceptions import ServerError
+from enterprise_subsidy.apps.api.v1.serializers import (
+    CanRedeemResponseSerializer,
+    SubsidyCreationRequestSerializer,
+    SubsidySerializer
+)
+from enterprise_subsidy.apps.subsidy.api import can_redeem, get_or_create_learner_credit_subsidy
 from enterprise_subsidy.apps.subsidy.constants import (
     ENTERPRISE_SUBSIDY_ADMIN_ROLE,
     ENTERPRISE_SUBSIDY_OPERATOR_ROLE,
     PERMISSION_CAN_READ_SUBSIDIES,
+    PERMISSION_CAN_WRITE_SUBSIDIES,
     PERMISSION_NOT_GRANTED
 )
 from enterprise_subsidy.apps.subsidy.models import EnterpriseSubsidyRoleAssignment, Subsidy
@@ -41,7 +48,12 @@ class CanRedeemResult:
 
 
 class SubsidyViewSet(
-    PermissionRequiredForListingMixin, mixins.RetrieveModelMixin, mixins.ListModelMixin, viewsets.GenericViewSet
+    PermissionRequiredForListingMixin,
+    mixins.CreateModelMixin,
+    mixins.DestroyModelMixin,
+    mixins.ListModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet,
 ):
     """
     ViewSet for the Subsidy model.
@@ -76,6 +88,9 @@ class SubsidyViewSet(
             "list": PERMISSION_CAN_READ_SUBSIDIES,
             "retrieve": PERMISSION_CAN_READ_SUBSIDIES,
             "can_redeem": PERMISSION_CAN_READ_SUBSIDIES,
+            "create": PERMISSION_CAN_WRITE_SUBSIDIES,
+            "update": PERMISSION_CAN_WRITE_SUBSIDIES,
+            "destroy": PERMISSION_CAN_WRITE_SUBSIDIES,
         }
         permission_required = permission_for_action.get(self.request_action, PERMISSION_NOT_GRANTED)
         return [permission_required]
@@ -86,10 +101,18 @@ class SubsidyViewSet(
         permissions should be checked against, or None if no such
         customer UUID can be determined from the request payload.
         """
-        if self.requested_enterprise_customer_uuid:
-            context = self.requested_enterprise_customer_uuid
+        if self.request_action == 'create':
+            try:
+                subsidy = Subsidy.objects.get(reference_id=self.request.data['reference_id'])
+                context = subsidy.enterprise_customer_uuid
+            except Subsidy.DoesNotExist:
+                context = self.request.data['default_enterprise_customer_uuid']
         else:
-            context = getattr(self.requested_subsidy, 'enterprise_customer_uuid', None)
+            context = (
+                self.requested_enterprise_customer_uuid
+                or
+                getattr(self.requested_subsidy, 'enterprise_customer_uuid', None)
+            )
         return str(context) if context else None
 
     @property
@@ -174,3 +197,78 @@ class SubsidyViewSet(
             )
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
+
+    @extend_schema(
+        tags=['subsidy'],
+        request=SubsidyCreationRequestSerializer,
+        responses={
+            201: SubsidySerializer,
+            200: SubsidySerializer,
+            403: exceptions.PermissionDenied,
+            400: exceptions.ValidationError,
+            500: exceptions.APIException,
+        },
+    )
+    def create(self, request, *args, **kwargs):
+        """
+        Get or create a new subsidy
+
+        Endpoint Location: POST /api/v1/subsidies/
+        """
+        create_serializer = SubsidyCreationRequestSerializer(data=request.data)
+        if create_serializer.is_valid(raise_exception=True):
+            try:
+                subsidy, created = get_or_create_learner_credit_subsidy(
+                    create_serializer.data['reference_id'],
+                    create_serializer.data['default_title'],
+                    create_serializer.data['default_enterprise_customer_uuid'],
+                    create_serializer.data['default_unit'],
+                    create_serializer.data['default_starting_balance'],
+                    create_serializer.data['default_revenue_category'],
+                    create_serializer.data['default_internal_only'],
+                )
+
+                if created:
+                    return Response(SubsidySerializer(subsidy).data, status=status.HTTP_201_CREATED)
+                if subsidy:
+                    return Response(SubsidySerializer(subsidy).data, status=status.HTTP_200_OK)
+                else:
+                    raise ServerError(
+                        code="could_not_create_subsidy",
+                        detail="Could not create subsidy",
+                        user_message="Could not create subsidy",
+                    )
+            except MultipleObjectsReturned as exc:
+                raise ServerError(
+                        code="multiple_subsidies_found",
+                        detail="Multiple subsidies with given reference_id found.",
+                        user_message="Multiple subsidies with given reference_id found.",
+                    ) from exc
+            except Exception as exc:  # pylint: disable=broad-except
+                raise ServerError(
+                    code="could_not_create_subsidy",
+                    detail=f"Subsidy could not be created: {exc}",
+                    user_message="Subsidy could not be created.",
+                ) from exc
+        else:
+            return Response(create_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    @extend_schema(
+        tags=['subsidy'],
+        request=SubsidySerializer,
+        responses={
+            201: SubsidySerializer,
+            200: SubsidySerializer,
+            403: exceptions.PermissionDenied,
+            400: exceptions.ValidationError,
+            500: exceptions.APIException,
+        },
+    )
+    def destroy(self, request, *args, **kwargs):
+        """
+        Delete a subsidy
+
+        Endpoint Location: DELETE /api/v1/subsidies/{uuid}/
+        """
+        response = super().destroy(request, kwargs['uuid'])
+        return response
