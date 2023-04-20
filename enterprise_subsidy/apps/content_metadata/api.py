@@ -7,14 +7,14 @@ from decimal import Decimal
 
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 
-from .constants import EDX_PRODUCT_SOURCE, EDX_VERIFIED_COURSE_MODE, EXECUTIVE_EDUCATION_MODE, TWOU_PRODUCT_SOURCE
+from .constants import CourseModes, ProductSources
 
 logger = logging.getLogger(__name__)
 
 
 CONTENT_MODES_BY_PRODUCT_SOURCE = {
-    EDX_PRODUCT_SOURCE: EDX_VERIFIED_COURSE_MODE,
-    TWOU_PRODUCT_SOURCE: EXECUTIVE_EDUCATION_MODE,
+    ProductSources.EDX.value: CourseModes.EDX_VERIFIED.value,
+    ProductSources.TWOU.value: CourseModes.EXECUTIVE_EDUCATION.value,
 }
 
 
@@ -45,7 +45,7 @@ def mode_for_content(content_data):
     Helper to extract the relevant enrollment mode for a piece of content metadata.
     """
     product_source = product_source_for_content(content_data)
-    return CONTENT_MODES_BY_PRODUCT_SOURCE.get(product_source, EDX_VERIFIED_COURSE_MODE)
+    return CONTENT_MODES_BY_PRODUCT_SOURCE.get(product_source, CourseModes.EDX_VERIFIED.value)
 
 
 def product_source_for_content(content_data):
@@ -56,7 +56,7 @@ def product_source_for_content(content_data):
         source_name = product_source.get('name')
         if source_name in CONTENT_MODES_BY_PRODUCT_SOURCE:
             return source_name
-    return EDX_PRODUCT_SOURCE
+    return ProductSources.EDX.value
 
 
 def get_geag_variant_id_for_content(content_data):

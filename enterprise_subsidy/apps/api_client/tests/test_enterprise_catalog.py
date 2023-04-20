@@ -5,7 +5,8 @@ import ddt
 from django.test import TestCase
 
 from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
-from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR, EDX_PRODUCT_SOURCE
+from enterprise_subsidy.apps.content_metadata.constants import ProductSources
+from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 from test_utils.utils import MockResponse
 
 
@@ -168,5 +169,5 @@ class EnterpriseCatalogApiClientTests(TestCase):
             self.enterprise_customer_uuid, self.course_key
         )
         source_name = product_source.get('name') if product_source else 'edX'
-        expected_source = source_name if product_source else EDX_PRODUCT_SOURCE
+        expected_source = source_name if product_source else ProductSources.EDX.value
         assert expected_source == response

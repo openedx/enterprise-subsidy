@@ -1,7 +1,19 @@
+from enum import Enum
+
 """
 Constants about content metadata.
 """
-EDX_PRODUCT_SOURCE = "edX"
-TWOU_PRODUCT_SOURCE = "2u"
-EXECUTIVE_EDUCATION_MODE = "paid-executive-education"
-EDX_VERIFIED_COURSE_MODE = "verified"
+
+class ProductSources(Enum):
+    """
+    Content metadata product_source keys
+    """
+    EDX = "edX"  # e.g. OCM courses
+    TWOU = "2u"  # e.g. ExecEd courses
+
+class CourseModes(Enum):
+    """
+    Content metadata course mode keys
+    """
+    EDX_VERIFIED = "verified"  # e.g. edX Verified Courses
+    EXECUTIVE_EDUCATION = "paid-executive-education"  # e.g. ExecEd courses
