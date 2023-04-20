@@ -3,12 +3,14 @@ Constants about content metadata.
 """
 from enum import Enum
 
+
 class ProductSources(Enum):
     """
     Content metadata product_source keys
     """
     EDX = "edX"  # e.g. OCM courses
     TWOU = "2u"  # e.g. ExecEd courses
+
 
 class CourseModes(Enum):
     """
