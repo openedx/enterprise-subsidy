@@ -23,7 +23,7 @@ services:
     container_name: enterprise-subsidy.app
     volumes:
       - .:/edx/app/enterprise-subsidy
-      - ../src:/edx/src:cached
+      - ../src:/edx/src
 
     command: bash -c 'while true; do python /edx/app/enterprise-subsidy/manage.py runserver 0.0.0.0:18280; sleep 2; done'
     environment:
