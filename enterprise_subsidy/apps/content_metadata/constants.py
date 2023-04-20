@@ -1,8 +1,7 @@
-from enum import Enum
-
 """
 Constants about content metadata.
 """
+from enum import Enum
 
 class ProductSources(Enum):
     """
