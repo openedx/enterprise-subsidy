@@ -59,7 +59,7 @@ def product_source_for_content(content_data):
     return EDX_PRODUCT_SOURCE
 
 
-def get_geag_varient_id_for_content(content_data):
+def get_geag_variant_id_for_content(content_data):
     """
     Returns the GEAG ``variant_id`` or ``None``, given a dict of ``content_data``.
     """
@@ -80,7 +80,7 @@ def summary_data_for_content(content_data):
         'source': product_source_for_content(content_data),
         'mode': mode_for_content(content_data),
         'content_price': price_for_content(content_data),
-        'geag_variant_id': get_geag_varient_id_for_content(content_data),
+        'geag_variant_id': get_geag_variant_id_for_content(content_data),
     }
 
 
