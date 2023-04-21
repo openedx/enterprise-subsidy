@@ -18,6 +18,7 @@ CONTENT_MODES_BY_PRODUCT_SOURCE = {
     ProductSources.TWOU.value: CourseModes.EXECUTIVE_EDUCATION.value,
 }
 
+
 class ContentMetadataApi:
     """
     An API for interacting with enterprise catalog content metadata.
