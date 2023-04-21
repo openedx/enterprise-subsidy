@@ -27,7 +27,7 @@ from rest_framework import status
 from simple_history.models import HistoricalRecords
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
-from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
+from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
 
 MOCK_CATALOG_CLIENT = mock.MagicMock()
 MOCK_ENROLLMENT_CLIENT = mock.MagicMock()
@@ -194,14 +194,11 @@ class Subsidy(TimeStampedModel):
         """
         return EnterpriseApiClient()
 
-    @cached_property
-    def catalog_client(self):
+    def content_metadata_api(self):
         """
-        Get a client for access the Enterprise Catalog service API (enterprise-catalog endpoints).  This contains
-        functions used for fetching full content metadata and pricing data on courses. Cached to reduce the chance of
-        repeated calls to auth.
+        API layer for interacting with enterprise catalog content metadata
         """
-        return EnterpriseCatalogApiClient()
+        return ContentMetadataApi()
 
     @lru_cache(maxsize=64)
     def price_for_content(self, content_key):
@@ -216,7 +213,7 @@ class Subsidy(TimeStampedModel):
                 The given content_key is not in any catalog for the customer associated with this subsidy.
         """
         try:
-            return self.catalog_client.get_course_price(self.enterprise_customer_uuid, content_key)
+            return self.content_metadata_api().get_course_price(self.enterprise_customer_uuid, content_key)
         except HTTPError as exc:
             if exc.response.status_code == status.HTTP_404_NOT_FOUND:
                 raise ContentNotFoundForCustomerException() from exc

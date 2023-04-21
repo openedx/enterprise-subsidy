@@ -17,7 +17,7 @@ from rest_framework.status import HTTP_404_NOT_FOUND
 
 from enterprise_subsidy.apps.api.v1 import utils
 from enterprise_subsidy.apps.api.v1.decorators import require_at_least_one_query_parameter
-from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
+from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
 from enterprise_subsidy.apps.subsidy.constants import (
     ENTERPRISE_SUBSIDY_ADMIN_ROLE,
     ENTERPRISE_SUBSIDY_LEARNER_ROLE,
@@ -62,6 +62,12 @@ class ContentMetadataViewSet(
         """
         return str(self.requested_enterprise_customer_uuid)
 
+    def content_metadata_api(self):
+        """
+        Api for interacting with catalog content
+        """
+        return ContentMetadataApi()
+
     @property
     def requested_enterprise_customer_uuid(self):
         """
@@ -93,13 +99,11 @@ class ContentMetadataViewSet(
                 - The content metadata payload does not contain an appropriate entitlement mode and price or the
                     content's associated product source
         """
-        catalog_client = EnterpriseCatalogApiClient()
         try:
-            content_data = catalog_client.get_content_metadata_for_customer(
+            content_summary = self.content_metadata_api().get_content_summary(
                 enterprise_customer_uuid[0],
                 content_identifier
             )
-            content_summary = catalog_client.summary_data_for_content(content_data)
             if not content_summary.get('content_price'):
                 logger.warning("Could not find course price in metadata for {content_identifier}")
         except requests.exceptions.HTTPError as exc:

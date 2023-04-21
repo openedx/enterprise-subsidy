@@ -802,15 +802,15 @@ class TransactionViewSetTests(APITestBase):
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         assert response.json() == {"Error": "The given content_key is not currently redeemable for the given subsidy."}
 
-    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.catalog_client")
-    def test_create_content_not_in_catalog(self, mock_catalog_client):
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.content_metadata_api")
+    def test_create_content_not_in_catalog(self, mock_content_metadata_api):
         """
         Test create Transaction, 422 response due to the content not existing in any catalog of the enterprise customer.
         """
         # Create privileged staff user that should be able to create Transactions.
         self.set_up_operator()
         url = reverse("api:v1:transaction-list")
-        mock_catalog_client.get_course_price.side_effect = HTTPError(
+        mock_content_metadata_api().get_course_price.side_effect = HTTPError(
             response=MockResponse(None, status.HTTP_404_NOT_FOUND),
         )
         post_data = {
@@ -824,8 +824,8 @@ class TransactionViewSetTests(APITestBase):
         assert response.json() == {"Error": "The given content_key is not in any catalog for this customer."}
 
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
-    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
-    def test_create_external_enroll_failed(self, mock_price_for_content, mock_enterprise_client):
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.content_metadata_api")
+    def test_create_external_enroll_failed(self, mock_content_metadata_api, mock_enterprise_client):
         """
         Test create Transaction, 5xx response due to the external enrollment failing. Check that a transaction is
         created, then rolled back to "failed" state.
@@ -834,7 +834,7 @@ class TransactionViewSetTests(APITestBase):
         self.set_up_operator()
         url = reverse("api:v1:transaction-list")
         mock_enterprise_client.enroll.side_effect = HTTPError()
-        mock_price_for_content.return_value = 100
+        mock_content_metadata_api().get_course_price.return_value = 100
         test_content_key = "course-v1:edX+test+course.enroll.failed"
         test_lms_user_id = 1234
         post_data = {
@@ -974,6 +974,9 @@ class ContentMetadataViewSetTests(APITestBase):
             "slug": "2u",
             "description": "2U, Trilogy, Getsmarter -- external source for 2u courses and programs"
         },
+        "additional_metadata": {
+            "variant_id": "79a95406-a9ac-49b3-a27c-44f3fd06092e"
+        }
     }
     mock_http_error_reason = 'Something Went Wrong'
     mock_http_error_url = 'foobar.com'
@@ -984,14 +987,19 @@ class ContentMetadataViewSetTests(APITestBase):
             'expected_content_key': content_key_1,
             'expected_content_price': 14900.0,
             'mock_metadata': edx_course_metadata,
-            'expected_source': 'edX'
+            'expected_source': 'edX',
+            'expected_mode': 'verified',
+            'expected_geag_variant_id': None,
         },
         {
             'expected_content_uuid': content_uuid_2,
             'expected_content_key': content_key_2,
             'expected_content_price': 59949,
             'mock_metadata': executive_education_course_metadata,
-            'expected_source': '2u'
+            'expected_source': '2u',
+            'expected_mode': 'paid-executive-education',
+            # generated randomly using a fair die
+            'expected_geag_variant_id': '79a95406-a9ac-49b3-a27c-44f3fd06092e',
         },
     )
     @ddt.unpack
@@ -1002,6 +1010,8 @@ class ContentMetadataViewSetTests(APITestBase):
         expected_content_price,
         mock_metadata,
         expected_source,
+        expected_mode,
+        expected_geag_variant_id,
     ):
         with mock.patch(
             'enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient',
@@ -1018,6 +1028,8 @@ class ContentMetadataViewSetTests(APITestBase):
                 'content_key': expected_content_key,
                 'source': expected_source,
                 'content_price': expected_content_price,
+                'mode': expected_mode,
+                'geag_variant_id': expected_geag_variant_id,
             }
 
             # Everything after this line is testing the view's cache
@@ -1030,6 +1042,8 @@ class ContentMetadataViewSetTests(APITestBase):
                 'content_key': expected_content_key,
                 'source': expected_source,
                 'content_price': expected_content_price,
+                'mode': expected_mode,
+                'geag_variant_id': expected_geag_variant_id,
             }
 
     def test_failure_no_permission(self):

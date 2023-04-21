@@ -24,8 +24,3 @@ PERMISSION_CAN_READ_CONTENT_METADATA = "subsidy.can_read_metadata"
 # Provide a convenience permission which should never be granted.  This is helpful for being explicit when overriding
 # `get_permission_required()`.
 PERMISSION_NOT_GRANTED = 'subsidy.not_granted'
-
-EDX_PRODUCT_SOURCE = "edX"
-TWOU_PRODUCT_SOURCE = "2u"
-EXECUTIVE_EDUCATION_MODE = "paid-executive-education"
-EDX_VERIFIED_COURSE_MODE = "verified"
