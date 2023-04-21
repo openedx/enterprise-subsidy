@@ -4,14 +4,16 @@ from uuid import uuid4
 import ddt
 from django.test import TestCase
 
-from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
+from enterprise_subsidy.apps.content_metadata.api import get_course_price, get_product_source
+from enterprise_subsidy.apps.content_metadata.constants import ProductSources
+from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 from test_utils.utils import MockResponse
 
 
 @ddt.ddt
-class EnterpriseCatalogApiClientTests(TestCase):
+class ContentMetadataApiTests(TestCase):
     """
-    Tests for the enterprise catalog api client.
+    Tests for the content metadata api.
     """
     @classmethod
     def setUpTestData(cls):
@@ -82,15 +84,75 @@ class EnterpriseCatalogApiClientTests(TestCase):
             'active': False
         }
 
+    @ddt.data(
+        {
+            'entitlements': [
+                {
+                    "mode": "paid-executive-education",
+                    "price": "2100.00",
+                    "currency": "USD",
+                    "sku": "B98DE21",
+                }
+            ],
+            'product_source': {
+                "name": "2u",
+                "slug": "2u",
+                "description": "2U, Trilogy, Getsmarter -- external source for 2u courses and programs"
+            },
+        },
+        {
+            'entitlements': [
+                {
+                    "mode": "verified",
+                    "price": "794.00",
+                    "currency": "USD",
+                    "sku": "B6DE08E",
+                }
+            ],
+            'product_source': None,
+        },
+    )
+    @ddt.unpack
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
-    def test_successful_fetch_course_content_metadata(self, mock_oauth_client):
+    def test_client_can_fetch_mode_specific_prices(
+        self,
+        mock_oauth_client,
+        entitlements,
+        product_source,
+    ):
         """
         Test the enterprise catalog client's ability to handle api requests to fetch content metadata from the catalog
-        service.
+        service and return formatted pricing data on the content based on content mode.
         """
-        mock_oauth_client.return_value.get.return_value = MockResponse(self.course_metadata, 200)
-        enterprise_catalog_client = EnterpriseCatalogApiClient()
-        response = enterprise_catalog_client.get_content_metadata_for_customer(
+        mocked_data = self.course_metadata.copy()
+        mocked_data['product_source'] = product_source
+        mocked_data['entitlements'] = entitlements
+        mock_oauth_client.return_value.get.return_value = MockResponse(mocked_data, 200)
+        price_in_cents = get_course_price(
             self.enterprise_customer_uuid, self.course_key
         )
-        assert response == self.course_metadata
+        assert price_in_cents == float(entitlements[0].get('price')) * CENTS_PER_DOLLAR
+
+    @ddt.data(
+        {
+            "name": "2u",
+            "slug": "2u",
+            "description": "2U, Trilogy, Getsmarter -- external source for 2u courses and programs"
+        },
+        None
+    )
+    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
+    def test_client_discern_product_source(self, product_source, mock_oauth_client):
+        """
+        Test that the catalog client has the ability to smartly return the product source value from the content
+        metadata payload
+        """
+        mocked_data = self.course_metadata.copy()
+        mocked_data['product_source'] = product_source
+        mock_oauth_client.return_value.get.return_value = MockResponse(mocked_data, 200)
+        response = get_product_source(
+            self.enterprise_customer_uuid, self.course_key
+        )
+        source_name = product_source.get('name') if product_source else 'edX'
+        expected_source = source_name if product_source else ProductSources.EDX.value
+        assert expected_source == response

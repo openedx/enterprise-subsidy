@@ -5,6 +5,7 @@ during subsidy redemption and fulfillment.
 import logging
 from decimal import Decimal
 
+from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 
 from .constants import CourseModes, ProductSources
@@ -83,17 +84,60 @@ def summary_data_for_content(content_data):
         'geag_variant_id': get_geag_variant_id_for_content(content_data),
     }
 
+def get_content_summary(enterprise_customer_uuid, content_identifier):
+    """
+    Returns a summary dict some content metadata, makes the client call
+    """
+    course_details = get_content_metadata(enterprise_customer_uuid, content_identifier)
+    return summary_data_for_content(course_details)
 
-def get_content_metadata(content_key=None, content_uuid=None):
+def get_content_metadata(enterprise_customer_uuid, content_identifier):
     """
     Returns a dictionary of content metadata for the given
     identifier.
-    At least one of ``content_key`` or ``content_uuid`` is required.
-    If both are non-null, ``content_key`` will be used as the primary
-    lookup identifier.
     """
-    identifier = content_key or content_uuid
-    if not identifier:
-        # pylint: disable=broad-exception-raised
-        raise Exception('One of content_key or content_uuid is required')
-    raise NotImplementedError
+    catalog_client = EnterpriseCatalogApiClient()
+    return catalog_client.get_content_metadata_for_customer(enterprise_customer_uuid, content_identifier)
+
+
+def get_course_price(enterprise_customer_uuid, content_identifier):
+    """
+    Returns the price of a content as it's defined within the entitlements of the Enterprise Catalog's content
+    metadata record for a piece of content.
+
+    Arguments:
+        enterprise_customer_uuid (UUID): UUID of the customer associated with an enterprise
+        content_identifier (str): **Either** the content UUID or content key identifier for a content record.
+            Note: the content needs to be owned by a catalog associated with the provided customer else this
+            method will throw an HTTPError.
+    Returns:
+        Pricing (list of dicts): Array containing mappings of an individual content's course price associated with
+        a each of it's course mode
+    Raises:
+        requests.exceptions.HTTPError: if service is down/unavailable or status code comes back >= 300,
+        the method will log and throw an HTTPError exception. A 404 exception will be thrown if the content
+        does not exist, or is not present in a catalog associated with the customer.
+    """
+    course_details = get_content_metadata(enterprise_customer_uuid, content_identifier)
+    return price_for_content(course_details)
+
+
+def get_product_source(enterprise_customer_uuid, content_identifier):
+    """
+    Returns the a specific piece of content's product source as it's defined within the content metadata of the
+    Enterprise Catalog service.
+
+    Arguments:
+        enterprise_customer_uuid (UUID): UUID of the customer associated with an enterprise
+        content_identifier (str): **Either** the content UUID or content key identifier for a content record.
+            Note: the content needs to be owned by a catalog associated with the provided customer else this
+            method will throw an HTTPError.
+    Returns:
+        Either `2U` or `edX` based on the content's product source content metadata field
+    Raises:
+        requests.exceptions.HTTPError: if service is down/unavailable or status code comes back >= 300,
+        the method will log and throw an HTTPError exception. A 404 exception will be thrown if the content
+        does not exist, or is not present in a catalog associated with the customer.
+    """
+    course_details = get_content_metadata(enterprise_customer_uuid, content_identifier)
+    return product_source_for_content(course_details)
