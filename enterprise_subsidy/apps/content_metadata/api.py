@@ -72,6 +72,7 @@ class ContentMetadataApi:
     def get_geag_variant_id_for_content(self, content_data):
         """
         Returns the GEAG ``variant_id`` or ``None``, given a dict of ``content_data``.
+        In the GEAG system a ``variant_id`` is aka a ``product_id``.
         """
         variant_id = None
         if additional_metadata := content_data.get('additional_metadata'):
