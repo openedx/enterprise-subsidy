@@ -802,15 +802,15 @@ class TransactionViewSetTests(APITestBase):
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         assert response.json() == {"Error": "The given content_key is not currently redeemable for the given subsidy."}
 
-    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.catalog_client")
-    def test_create_content_not_in_catalog(self, mock_catalog_client):
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.content_metadata_api")
+    def test_create_content_not_in_catalog(self, mock_content_metadata_api):
         """
         Test create Transaction, 422 response due to the content not existing in any catalog of the enterprise customer.
         """
         # Create privileged staff user that should be able to create Transactions.
         self.set_up_operator()
         url = reverse("api:v1:transaction-list")
-        mock_catalog_client.get_course_price.side_effect = HTTPError(
+        mock_content_metadata_api().get_course_price.side_effect = HTTPError(
             response=MockResponse(None, status.HTTP_404_NOT_FOUND),
         )
         post_data = {
@@ -824,8 +824,8 @@ class TransactionViewSetTests(APITestBase):
         assert response.json() == {"Error": "The given content_key is not in any catalog for this customer."}
 
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
-    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
-    def test_create_external_enroll_failed(self, mock_price_for_content, mock_enterprise_client):
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.content_metadata_api")
+    def test_create_external_enroll_failed(self, mock_content_metadata_api, mock_enterprise_client):
         """
         Test create Transaction, 5xx response due to the external enrollment failing. Check that a transaction is
         created, then rolled back to "failed" state.
@@ -834,7 +834,7 @@ class TransactionViewSetTests(APITestBase):
         self.set_up_operator()
         url = reverse("api:v1:transaction-list")
         mock_enterprise_client.enroll.side_effect = HTTPError()
-        mock_price_for_content.return_value = 100
+        mock_content_metadata_api().get_course_price.return_value = 100
         test_content_key = "course-v1:edX+test+course.enroll.failed"
         test_lms_user_id = 1234
         post_data = {

@@ -39,7 +39,7 @@ class SubsidyModelReadTestCase(TestCase):
         cls.subsidy = SubsidyFactory.create(
             enterprise_customer_uuid=cls.enterprise_customer_uuid,
         )
-        cls.subsidy.catalog_client = mock.MagicMock()
+        cls.subsidy.content_metadata_api = mock.MagicMock()
         super().setUpTestData()
 
     def setUp(self):
@@ -54,11 +54,11 @@ class SubsidyModelReadTestCase(TestCase):
         """
         content_price_cents = 19998
 
-        self.subsidy.catalog_client.get_course_price.return_value = content_price_cents
+        self.subsidy.content_metadata_api().get_course_price.return_value = content_price_cents
 
         actual_price_cents = self.subsidy.price_for_content('some-content-key')
         self.assertEqual(actual_price_cents, content_price_cents)
-        self.subsidy.catalog_client.get_course_price.assert_called_once_with(
+        self.subsidy.content_metadata_api().get_course_price.assert_called_once_with(
             self.enterprise_customer_uuid,
             'some-content-key',
         )
@@ -68,16 +68,15 @@ class SubsidyModelReadTestCase(TestCase):
         Tests that Subsidy.price_for_content raises ContentNotFoundForCustomerException
         if the content is not part of any catalog for the customer.
         """
-        self.subsidy.catalog_client.get_course_price.side_effect = HTTPError(
+        self.subsidy.content_metadata_api().get_course_price.side_effect = HTTPError(
             response=MockResponse(None, status.HTTP_404_NOT_FOUND),
         )
 
         with self.assertRaises(ContentNotFoundForCustomerException):
             self.subsidy.price_for_content('some-content-key')
 
-    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
     @ddt.data(True, False)
-    def test_is_redeemable(self, expected_to_be_redeemable, mock_price_for_content):
+    def test_is_redeemable(self, expected_to_be_redeemable):
         """
         Tests that Subsidy.is_redeemable() returns true when the subsidy
         has enough remaining balance to cover the price of the given content,
@@ -88,7 +87,7 @@ class SubsidyModelReadTestCase(TestCase):
         # mock it to be slightly affordable if true.
         constant = -100 if expected_to_be_redeemable else 100
         content_price = self.subsidy.current_balance() + constant
-        mock_price_for_content.return_value = content_price
+        self.subsidy.content_metadata_api().get_course_price.return_value = content_price
 
         is_redeemable, actual_content_price = self.subsidy.is_redeemable('some-content-key')
 

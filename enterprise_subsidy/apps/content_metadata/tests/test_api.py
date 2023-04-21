@@ -4,7 +4,7 @@ from uuid import uuid4
 import ddt
 from django.test import TestCase
 
-from enterprise_subsidy.apps.content_metadata.api import get_course_price, get_product_source
+from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
 from enterprise_subsidy.apps.content_metadata.constants import ProductSources
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 from test_utils.utils import MockResponse
@@ -19,6 +19,7 @@ class ContentMetadataApiTests(TestCase):
     def setUpTestData(cls):
         super().setUpTestData()
 
+        cls.content_metadata_api = ContentMetadataApi()
         cls.enterprise_customer_uuid = uuid4()
         cls.user_id = 3
         cls.user_email = 'ayy@lmao.com'
@@ -128,7 +129,7 @@ class ContentMetadataApiTests(TestCase):
         mocked_data['product_source'] = product_source
         mocked_data['entitlements'] = entitlements
         mock_oauth_client.return_value.get.return_value = MockResponse(mocked_data, 200)
-        price_in_cents = get_course_price(
+        price_in_cents = self.content_metadata_api.get_course_price(
             self.enterprise_customer_uuid, self.course_key
         )
         assert price_in_cents == float(entitlements[0].get('price')) * CENTS_PER_DOLLAR
@@ -150,7 +151,7 @@ class ContentMetadataApiTests(TestCase):
         mocked_data = self.course_metadata.copy()
         mocked_data['product_source'] = product_source
         mock_oauth_client.return_value.get.return_value = MockResponse(mocked_data, 200)
-        response = get_product_source(
+        response = self.content_metadata_api.get_product_source(
             self.enterprise_customer_uuid, self.course_key
         )
         source_name = product_source.get('name') if product_source else 'edX'
