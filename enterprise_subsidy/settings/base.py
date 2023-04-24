@@ -70,6 +70,7 @@ PROJECT_APPS = (
     'enterprise_subsidy.apps.subsidy',
     'enterprise_subsidy.apps.fulfillment',
     'enterprise_subsidy.apps.content_metadata',
+    'enterprise_subsidy.apps.transaction'
 )
 
 INSTALLED_APPS += THIRD_PARTY_APPS

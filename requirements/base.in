@@ -6,6 +6,7 @@ djangoql
 django-cors-headers
 django-extensions
 django-filter
+django-object-actions
 django-simple-history
 django-waffle
 djangorestframework
