@@ -111,23 +111,23 @@ class SubsidyModelRedemptionTestCase(TestCase):
         """
         Tests that get_redemption appropriately filters by learner and content identifiers.
         """
-        alice_learner_id, bob_learner_id = (23, 42)
+        alice_lms_user_id, bob_lms_user_id = (23, 42)
         learner_content_pairs = list(product(
-            (alice_learner_id, bob_learner_id),
+            (alice_lms_user_id, bob_lms_user_id),
             ('science-content-key', 'art-content-key'),
         ))
-        for learner_id, content_key in learner_content_pairs:
+        for lms_user_id, content_key in learner_content_pairs:
             TransactionFactory.create(
                 state=TransactionStateChoices.COMMITTED,
                 quantity=-1000,
                 ledger=self.subsidy.ledger,
-                lms_user_id=learner_id,
+                lms_user_id=lms_user_id,
                 content_key=content_key
             )
 
-        for learner_id, content_key in learner_content_pairs:
-            transaction = self.subsidy.get_redemption(learner_id, content_key)
-            self.assertEqual(transaction.lms_user_id, learner_id)
+        for lms_user_id, content_key in learner_content_pairs:
+            transaction = self.subsidy.get_redemption(lms_user_id, content_key)
+            self.assertEqual(transaction.lms_user_id, lms_user_id)
             self.assertEqual(transaction.content_key, content_key)
             self.assertEqual(transaction.quantity, -1000)
             self.assertEqual(transaction.state, TransactionStateChoices.COMMITTED)
@@ -167,7 +167,7 @@ class SubsidyModelRedemptionTestCase(TestCase):
         Test Subsidy.redeem() happy path (i.e. the redemption/transaction does not already exist, and calling redeem()
         creates one).
         """
-        learner_id = 1
+        lms_user_id = 1
         content_key = "course-v1:edX+test+course"
         subsidy_access_policy_uuid = str(uuid4())
         mock_enterprise_fulfillment_uuid = str(uuid4())
@@ -175,7 +175,7 @@ class SubsidyModelRedemptionTestCase(TestCase):
         mock_price_for_content.return_value = mock_content_price
         mock_enterprise_client.enroll.return_value = mock_enterprise_fulfillment_uuid
         new_transaction, transaction_created = self.subsidy.redeem(
-            learner_id,
+            lms_user_id,
             content_key,
             subsidy_access_policy_uuid
         )
@@ -189,7 +189,7 @@ class SubsidyModelRedemptionTestCase(TestCase):
         """
         Test Subsidy.redeem() happy path with additional metadata
         """
-        learner_id = 1
+        lms_user_id = 1
         content_key = "course-v1:edX+test+course"
         subsidy_access_policy_uuid = str(uuid4())
         mock_enterprise_fulfillment_uuid = str(uuid4())
@@ -201,7 +201,7 @@ class SubsidyModelRedemptionTestCase(TestCase):
             'geag_last_name': 'Kerabatsos',
         }
         new_transaction, transaction_created = self.subsidy.redeem(
-            learner_id,
+            lms_user_id,
             content_key,
             subsidy_access_policy_uuid,
             metadata=tx_metadata

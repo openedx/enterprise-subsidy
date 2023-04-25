@@ -65,11 +65,11 @@ class EnterpriseApiClient(BaseOAuthClient):
                 )
             raise exc
 
-    def enroll(self, learner_id, course_run_key, ledger_transaction):
+    def enroll(self, lms_user_id, course_run_key, ledger_transaction):
         """
         Creates a single subsidy enrollment in a course run for an enterprise learner from a subsidy transaction.
         Arguments:
-            learner_id (int): lms_user_id of the learner to be enrolled
+            lms_user_id (int): lms_user_id of the learner to be enrolled
             course_run_key (str): Course run key value of the course run to be enrolled in
             ledger_transaction (openedx_ledger.models.Transaction): the Transaction returned from the ledger
         Returns:
@@ -82,7 +82,7 @@ class EnterpriseApiClient(BaseOAuthClient):
                 If enrollment response contained an unexpected output, such as missing data.
         """
         enrollments_info = [{
-            'user_id': learner_id,
+            'user_id': lms_user_id,
             'course_run_key': course_run_key,
             'transaction_id': str(ledger_transaction.uuid),
         }]
