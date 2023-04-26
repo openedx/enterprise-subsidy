@@ -29,6 +29,7 @@ class SubsidySerializer(serializers.ModelSerializer):
             "reference_id",
             "reference_type",
             "current_balance",
+            "starting_balance",
             "internal_only",
             "revenue_category",
             # In the MVP implementation, there are only learner_credit subsidies.  Uncomment after subscription
@@ -136,4 +137,33 @@ class ExceptionSerializer(serializers.Serializer):
     """
     detail = serializers.CharField(
         help_text="A description of the reason for the error.",
+    )
+
+
+# pylint: disable=abstract-method
+class SubsidyCreationRequestSerializer(serializers.Serializer):
+    """
+    Serializer for creating a subsidy request
+    """
+    reference_id = serializers.CharField(
+        required=True,
+        help_text="Reference id",
+    )
+    default_title = serializers.CharField(
+        required=True,
+    )
+    default_enterprise_customer_uuid = serializers.UUIDField(
+        required=True,
+    )
+    default_unit = serializers.CharField(
+        required=True,
+    )
+    default_starting_balance = serializers.IntegerField(
+        required=True,
+    )
+    default_revenue_category = serializers.CharField(
+        required=True,
+    )
+    default_internal_only = serializers.BooleanField(
+        required=True,
     )

@@ -9,7 +9,8 @@ from functools import partial
 from unittest import mock
 
 import ddt
-from openedx_ledger.models import Transaction, TransactionStateChoices
+from django.core.exceptions import MultipleObjectsReturned
+from openedx_ledger.models import Transaction, TransactionStateChoices, UnitChoices
 from openedx_ledger.test_utils.factories import (
     ExternalFulfillmentProviderFactory,
     ExternalTransactionReferenceFactory,
@@ -138,7 +139,7 @@ class SubsidyViewSetTests(APITestBase):
     Test SubsidyViewSet.
     """
     get_details_url = partial(reverse, "api:v1:subsidy-detail")
-    get_list_url = partial(reverse, "api:v1:subsidy-list")
+    get_list_url = reverse("api:v1:subsidy-list")
     get_can_redeem_url = partial(reverse, "api:v1:subsidy-can-redeem")
 
     def test_get_one_subsidy(self):
@@ -159,6 +160,7 @@ class SubsidyViewSetTests(APITestBase):
             "reference_id": self.subsidy_1.reference_id,
             "reference_type": self.subsidy_1.reference_type,
             "current_balance": self.subsidy_1.current_balance(),
+            "starting_balance": self.subsidy_1.starting_balance,
             "internal_only": False,
             "revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
         }
@@ -241,6 +243,133 @@ class SubsidyViewSetTests(APITestBase):
             'existing_transaction': expected_existing_transaction,
         }
         self.assertEqual(response.json(), expected_response_data)
+
+    @ddt.data(
+            ('operator', status.HTTP_201_CREATED),
+            ('learner', status.HTTP_403_FORBIDDEN),
+            ('admin', status.HTTP_403_FORBIDDEN),
+    )
+    @ddt.unpack
+    def test_create_new_subsidy_with_permissions(self, role, status_code):
+        if role == "admin":
+            self.set_up_admin()
+        elif role == "learner":
+            self.set_up_learner()
+        elif role == "operator":
+            self.set_up_operator()
+        url = self.get_list_url
+        data = {
+            "reference_id": "aksdkjtkwekwl88890",
+            "default_title": "title",
+            "default_enterprise_customer_uuid": str(uuid.uuid4()),
+            "default_unit": UnitChoices.USD_CENTS,
+            "default_starting_balance": "10000",
+            "default_revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
+            "default_internal_only": True,
+        }
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status_code)
+
+    def test_create_subsidy_when_subsidy_exists(self):
+        self.set_up_operator()
+        url = self.get_list_url
+        data_with_existing_reference_id = {
+            "reference_id": self.subsidy_1.reference_id,
+            "default_title": "title",
+            "default_enterprise_customer_uuid": str(uuid.uuid4()),
+            "default_unit": UnitChoices.USD_CENTS,
+            "default_starting_balance": "10000",
+            "default_revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
+            "default_internal_only": True,
+        }
+        response = self.client.post(url, data_with_existing_reference_id, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_create_new_subsidy_invalid_data(self):
+        self.set_up_operator()
+        url = self.get_list_url
+        data = {
+            "reference_id": "",
+            "default_title": "title",
+            "default_enterprise_customer_uuid": str(uuid.uuid4()),
+            "default_unit": UnitChoices.USD_CENTS,
+            "default_starting_balance": "10000",
+            "default_revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
+            "default_internal_only": True,
+        }
+        response = self.client.post(url, data, format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertDictEqual(response.json(), {
+            "reference_id": ["This field may not be blank."]
+        })
+
+    @ddt.data(
+            ('operator', status.HTTP_204_NO_CONTENT),
+            ('learner', status.HTTP_403_FORBIDDEN),
+            ('admin', status.HTTP_403_FORBIDDEN),
+    )
+    @ddt.unpack
+    def test_valid_delete_subsidy_by_role(self, role, status_code):
+        if role == "admin":
+            self.set_up_admin()
+        elif role == "learner":
+            self.set_up_learner()
+        elif role == "operator":
+            self.set_up_operator()
+        response = self.client.delete(self.get_details_url([self.subsidy_1.uuid]))
+
+        self.assertEqual(response.status_code, status_code)
+
+    def test_delete_subsidy_with_invalid_uuid(self):
+        self.set_up_operator()
+        response = self.client.delete(self.get_details_url([str(uuid.uuid4())]))
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertDictEqual(response.json(), {
+            'detail': 'MISSING: subsidy.can_write_subsidies'
+        })
+
+    @mock.patch('enterprise_subsidy.apps.api.v1.views.subsidy.get_or_create_learner_credit_subsidy')
+    def test_create_new_subsidy_unexpected_error(self, mock_get_or_create):
+        self.set_up_operator()
+        mock_get_or_create.side_effect = Exception("Unexpected error")
+
+        url = self.get_list_url
+        data = {
+            "reference_id": "aksdkjtkwekwl88890",
+            "default_title": "title",
+            "default_enterprise_customer_uuid": str(uuid.uuid4()),
+            "default_unit": UnitChoices.USD_CENTS,
+            "default_starting_balance": "10000",
+            "default_revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
+            "default_internal_only": True,
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertDictEqual(response.json(), {'detail': 'Subsidy could not be created: Unexpected error'})
+
+    @mock.patch('enterprise_subsidy.apps.api.v1.views.subsidy.get_or_create_learner_credit_subsidy')
+    def test_create_new_subsidy_multiple_objects_returned(self, mock_get_or_create):
+        self.set_up_operator()
+        mock_get_or_create.side_effect = MultipleObjectsReturned("Multiple objects returned")
+
+        url = self.get_list_url
+        data = {
+            "reference_id": "aksdkjtkwekwl88890",
+            "default_title": "title",
+            "default_enterprise_customer_uuid": str(uuid.uuid4()),
+            "default_unit": UnitChoices.USD_CENTS,
+            "default_starting_balance": "10000",
+            "default_revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
+            "default_internal_only": True,
+        }
+
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
+        self.assertDictEqual(response.json(), {'detail': "Multiple subsidies with given reference_id found."})
 
 
 @ddt.ddt
