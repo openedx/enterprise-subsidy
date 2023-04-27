@@ -453,7 +453,12 @@ class TransactionViewSet(
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
-            transaction, created = subsidy.redeem(learner_id, content_key, subsidy_access_policy_uuid, metadata)
+            transaction, created = subsidy.redeem(
+                learner_id,
+                content_key,
+                subsidy_access_policy_uuid,
+                metadata=metadata
+            )
         except LedgerLockAttemptFailed as exc:
             logger.error(exc)
             return Response(

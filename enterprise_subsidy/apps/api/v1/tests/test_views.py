@@ -1,7 +1,6 @@
 """
 Tests for views.
 """
-import json
 import os
 import urllib
 import uuid
@@ -839,7 +838,7 @@ class TransactionViewSetTests(APITestBase):
         assert create_response_data["content_key"] == post_data["content_key"]
         assert create_response_data["lms_user_id"] == post_data["learner_id"]
         assert create_response_data["subsidy_access_policy_uuid"] == post_data["subsidy_access_policy_uuid"]
-        assert json.loads(create_response_data["metadata"]) == {}
+        self.assertDictEqual(create_response_data["metadata"], {})
         assert create_response_data["unit"] == self.subsidy_1.ledger.unit
         assert create_response_data["quantity"] < 0  # No need to be exact at this time, I'm just testing create works.
         assert create_response_data["fulfillment_identifier"] == test_enroll_enterprise_fulfillment_uuid
@@ -866,6 +865,56 @@ class TransactionViewSetTests(APITestBase):
         #         "subsidy_uuid": str(self.curation_config_one.uuid),
         #     },
         # )
+
+    # Uncomment this later once we have segment events firing.
+    # @mock.patch('enterprise_subsidy.apps.api.v1.event_utils.track_event')
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
+    def test_create_with_metadata(self, mock_price_for_content, mock_enterprise_client):
+        """
+        Test create Transaction, happy case.
+        """
+        url = reverse("api:v1:transaction-list")
+        test_enroll_enterprise_fulfillment_uuid = "test-enroll-reference-id"
+        mock_enterprise_client.enroll.return_value = test_enroll_enterprise_fulfillment_uuid
+        mock_price_for_content.return_value = 10000
+        # Create privileged staff user that should be able to create Transactions.
+        self.set_up_operator()
+        tx_metadata = {
+                "geag_first_name": "Donny",
+                "geag_last_name": "Kerabatsos",
+            }
+        post_data = {
+            "subsidy_uuid": str(self.subsidy_1.uuid),
+            "learner_id": 1234,
+            "content_key": "course-v1:edX-test-course",
+            "subsidy_access_policy_uuid": str(uuid.uuid4()),
+            "metadata": tx_metadata
+        }
+        response = self.client.post(url, post_data)
+        assert response.status_code == status.HTTP_201_CREATED
+        create_response_data = response.json()
+        assert len(create_response_data["uuid"]) == 36
+        # TODO: make this assertion more specific once we hookup the idempotency_key to the request body.
+        assert create_response_data["idempotency_key"]
+        assert create_response_data["content_key"] == post_data["content_key"]
+        assert create_response_data["lms_user_id"] == post_data["learner_id"]
+        assert create_response_data["subsidy_access_policy_uuid"] == post_data["subsidy_access_policy_uuid"]
+        assert isinstance(create_response_data["metadata"], dict)
+        self.assertDictEqual(create_response_data["metadata"], tx_metadata)
+        assert create_response_data["unit"] == self.subsidy_1.ledger.unit
+        assert create_response_data["quantity"] < 0  # No need to be exact at this time, I'm just testing create works.
+        assert create_response_data["fulfillment_identifier"] == test_enroll_enterprise_fulfillment_uuid
+        assert create_response_data["reversal"] is None
+        assert create_response_data["state"] == TransactionStateChoices.COMMITTED
+
+        # `create` was successful, so now call `retreive` to read the new Transaction and do a basic smoke test.
+        detail_url = reverse("api:v1:transaction-detail", kwargs={"uuid": create_response_data["uuid"]})
+        retrieve_response = self.client.get(detail_url)
+        assert retrieve_response.status_code == status.HTTP_200_OK
+        retrieve_response_data = retrieve_response.json()
+        assert retrieve_response_data["uuid"] == create_response_data["uuid"]
+        assert retrieve_response_data["idempotency_key"] == create_response_data["idempotency_key"]
 
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")

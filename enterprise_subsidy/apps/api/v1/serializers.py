@@ -74,6 +74,7 @@ class TransactionSerializer(serializers.ModelSerializer):
         help_text="The unit in which this transaction's quantity is denominated."
     )
     reversal = ReversalSerializer(read_only=True)
+    metadata = serializers.SerializerMethodField()
 
     class Meta:
         """
@@ -96,6 +97,12 @@ class TransactionSerializer(serializers.ModelSerializer):
             "reversal",  # Note that the `reversal` field is found via reverse relationship.
             "external_reference",  # Note that the `external_reference` field is found via reverse relationship.
         ]
+
+    def get_metadata(self, obj):
+        """
+        Properly serialize this json/dict
+        """
+        return obj.metadata
 
     def get_unit(self, obj):
         """
