@@ -426,6 +426,7 @@ class TransactionViewSet(
         learner_id = request.data.get("learner_id")
         content_key = request.data.get("content_key")
         subsidy_access_policy_uuid = request.data.get("subsidy_access_policy_uuid")
+        metadata = request.data.get("metadata")
         if not all([subsidy_uuid, learner_id, content_key, subsidy_access_policy_uuid]):
             return Response(
                 {
@@ -452,7 +453,12 @@ class TransactionViewSet(
                 status=status.HTTP_400_BAD_REQUEST,
             )
         try:
-            transaction, created = subsidy.redeem(learner_id, content_key, subsidy_access_policy_uuid)
+            transaction, created = subsidy.redeem(
+                learner_id,
+                content_key,
+                subsidy_access_policy_uuid,
+                metadata=metadata
+            )
         except LedgerLockAttemptFailed as exc:
             logger.error(exc)
             return Response(

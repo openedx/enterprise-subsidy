@@ -74,6 +74,8 @@ class TransactionSerializer(serializers.ModelSerializer):
         help_text="The unit in which this transaction's quantity is denominated."
     )
     reversal = ReversalSerializer(read_only=True)
+    # http://web.archive.org/web/20230427144910/https://romansorin.com/blog/using-djangos-jsonfield-you-probably-dont-need-it-heres-why
+    metadata = serializers.SerializerMethodField()
 
     class Meta:
         """
@@ -96,6 +98,13 @@ class TransactionSerializer(serializers.ModelSerializer):
             "reversal",  # Note that the `reversal` field is found via reverse relationship.
             "external_reference",  # Note that the `external_reference` field is found via reverse relationship.
         ]
+
+    def get_metadata(self, obj):
+        """
+        Properly serialize this json/dict
+        http://web.archive.org/web/20230427144910/https://romansorin.com/blog/using-djangos-jsonfield-you-probably-dont-need-it-heres-why
+        """
+        return obj.metadata
 
     def get_unit(self, obj):
         """
