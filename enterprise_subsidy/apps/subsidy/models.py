@@ -273,7 +273,7 @@ class Subsidy(TimeStampedModel):
         ledger_transaction.state = TransactionStateChoices.FAILED
         ledger_transaction.save()
 
-    def redeem(self, learner_id, content_key, subsidy_access_policy_uuid, idempotency_key=None, metadata=None):
+    def redeem(self, lms_user_id, content_key, subsidy_access_policy_uuid, idempotency_key=None, metadata=None):
         """
         Redeem this subsidy and enroll the learner.
 
@@ -293,7 +293,7 @@ class Subsidy(TimeStampedModel):
                 All other exceptions raised during the creation of an enrollment.  This should have already triggered
                 the rollback of a pending transaction.
         """
-        if existing_transaction := self.get_redemption(learner_id, content_key):
+        if existing_transaction := self.get_redemption(lms_user_id, content_key):
             return (existing_transaction, False)
 
         is_redeemable, _ = self.is_redeemable(content_key)
@@ -301,7 +301,7 @@ class Subsidy(TimeStampedModel):
             return (None, False)
         try:
             transaction = self._create_redemption(
-                learner_id,
+                lms_user_id,
                 content_key,
                 subsidy_access_policy_uuid,
                 idempotency_key=idempotency_key,
@@ -315,7 +315,7 @@ class Subsidy(TimeStampedModel):
 
     def _create_redemption(
             self,
-            learner_id,
+            lms_user_id,
             content_key,
             subsidy_access_policy_uuid,
             idempotency_key=None,
@@ -360,7 +360,7 @@ class Subsidy(TimeStampedModel):
             idempotency_key = create_idempotency_key_for_transaction(
                 self.ledger,
                 quantity,
-                learner_id=learner_id,
+                lms_user_id=lms_user_id,
                 content_key=content_key,
                 subsidy_access_policy_uuid=subsidy_access_policy_uuid,
             )
@@ -369,7 +369,7 @@ class Subsidy(TimeStampedModel):
             idempotency_key,
             quantity,
             content_key=content_key,
-            lms_user_id=learner_id,
+            lms_user_id=lms_user_id,
             subsidy_access_policy_uuid=subsidy_access_policy_uuid,
             **tx_metadata,
         )
@@ -379,7 +379,7 @@ class Subsidy(TimeStampedModel):
         ledger_transaction.save()
 
         try:
-            enterprise_fulfillment_uuid = self.enterprise_client.enroll(learner_id, content_key, ledger_transaction)
+            enterprise_fulfillment_uuid = self.enterprise_client.enroll(lms_user_id, content_key, ledger_transaction)
             # TODO: once GEAG support is implemented we should pass external_reference (obj) to `commit_transactions`
             self.commit_transaction(
                 ledger_transaction,
@@ -408,19 +408,19 @@ class Subsidy(TimeStampedModel):
         redeemable = self.current_balance() >= content_price
         return redeemable, content_price
 
-    def get_redemption(self, learner_id, content_key):
+    def get_redemption(self, lms_user_id, content_key):
         """
         Return the committed transaction representing this redemption,
         or None if no such transaction exists.
 
         Args:
-            learner_id (str): The learner of the redemption to check.
+            lms_user_id (str): The learner of the redemption to check.
             content_key (str): The content of the redemption to check.
 
         Returns:
             openedx_ledger.models.Transaction: a ledger transaction representing the redemption.
         """
-        return self.transactions_for_learner_and_content(learner_id, content_key).filter(
+        return self.transactions_for_learner_and_content(lms_user_id, content_key).filter(
             state=TransactionStateChoices.COMMITTED,
         ).first()
 

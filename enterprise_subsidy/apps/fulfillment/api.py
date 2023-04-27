@@ -8,7 +8,7 @@ from enterprise_subsidy.apps.content_metadata import api as content_metadata_api
 from .constants import EXEC_ED_2U_COURSE_TYPES, OPEN_COURSES_COURSE_TYPES
 
 
-def create_fulfillment(subsidy_uuid, learner_id, content_key, **metadata):
+def create_fulfillment(subsidy_uuid, lms_user_id, content_key, **metadata):
     """
     Creates a fulfillment.
     """

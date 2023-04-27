@@ -135,11 +135,11 @@ class TransactionViewSet(
         return self.request.query_params.get("content_key")
 
     @property
-    def requested_learner_id(self):
+    def requested_lms_user_id(self):
         """
-        Fetch the learner_id from the URL query parameters.
+        Fetch the lms_user_id from the URL query parameters.
         """
-        return self.request.query_params.get("learner_id")
+        return self.request.query_params.get("lms_user_id")
 
     @property
     def requested_enterprise_customer_uuid(self):
@@ -240,8 +240,8 @@ class TransactionViewSet(
             request_based_kwargs.update({"uuid": self.requested_transaction_uuid})
         if self.requested_subsidy_access_policy_uuid:
             request_based_kwargs.update({"subsidy_access_policy_uuid": self.requested_subsidy_access_policy_uuid})
-        if self.requested_learner_id:
-            request_based_kwargs.update({"lms_user_id": self.requested_learner_id})
+        if self.requested_lms_user_id:
+            request_based_kwargs.update({"lms_user_id": self.requested_lms_user_id})
         if self.requested_content_key:
             request_based_kwargs.update({"content_key": self.requested_content_key})
 
@@ -310,7 +310,7 @@ class TransactionViewSet(
               customer UUID.
         - ``subsidy_access_policy_uuid`` (query param, optional):
               Filter the output to only include transactions created by the given subsidy access policy UUID.
-        - ``learner_id`` (query_param, optional):
+        - ``lms_user_id`` (query_param, optional):
               Filter the output to only include transactions assoicated with the given learner ID.
         - ``content_key`` (query_param, optional):
               Filter the output to only include transactions assoicated with the given content_key.
@@ -384,7 +384,7 @@ class TransactionViewSet(
         Request Arguments:
         - ``subsidy_uuid`` (POST data, required):
               The uuid (primary key) of the subsidy for which transactions should be created.
-        - ``learner_id`` (POST data, required):
+        - ``lms_user_id`` (POST data, required):
               The user for whom the transaction is written and for which a fulfillment should occur.
         - ``content_key`` (POST data, required):
               The content for which a fulfillment is created.
@@ -423,16 +423,16 @@ class TransactionViewSet(
                      }
         """
         subsidy_uuid = request.data.get("subsidy_uuid")
-        learner_id = request.data.get("learner_id")
+        lms_user_id = request.data.get("lms_user_id")
         content_key = request.data.get("content_key")
         subsidy_access_policy_uuid = request.data.get("subsidy_access_policy_uuid")
         metadata = request.data.get("metadata")
-        if not all([subsidy_uuid, learner_id, content_key, subsidy_access_policy_uuid]):
+        if not all([subsidy_uuid, lms_user_id, content_key, subsidy_access_policy_uuid]):
             return Response(
                 {
                     "Error": (
                         "One or more required fields were not provided in the request body: "
-                        "[subsidy_uuid, learner_id, content_key, subsidy_access_policy_uuid]"
+                        "[subsidy_uuid, lms_user_id, content_key, subsidy_access_policy_uuid]"
                     )
                 },
                 status=status.HTTP_400_BAD_REQUEST,
@@ -454,7 +454,7 @@ class TransactionViewSet(
             )
         try:
             transaction, created = subsidy.redeem(
-                learner_id,
+                lms_user_id,
                 content_key,
                 subsidy_access_policy_uuid,
                 metadata=metadata

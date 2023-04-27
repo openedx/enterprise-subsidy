@@ -668,11 +668,11 @@ class TransactionViewSetTests(APITestBase):
             },
             "expected_response_uuids": [],
         },
-        # Test filtering by learner_id.
+        # Test filtering by lms_user_id.
         {
             "request_query_params": {
                 "subsidy_uuid": APITestBase.subsidy_1_uuid,
-                "learner_id": STATIC_LMS_USER_ID,
+                "lms_user_id": STATIC_LMS_USER_ID,
             },
             "expected_response_uuids": [
                 APITestBase.subsidy_1_transaction_1_uuid,
@@ -682,7 +682,7 @@ class TransactionViewSetTests(APITestBase):
         {
             "request_query_params": {
                 "subsidy_uuid": APITestBase.subsidy_1_uuid,
-                "learner_id": -1,
+                "lms_user_id": -1,
             },
             "expected_response_uuids": [],
         },
@@ -825,7 +825,7 @@ class TransactionViewSetTests(APITestBase):
         self.set_up_operator()
         post_data = {
             "subsidy_uuid": str(self.subsidy_1.uuid),
-            "learner_id": 1234,
+            "lms_user_id": 1234,
             "content_key": "course-v1:edX-test-course",
             "subsidy_access_policy_uuid": str(uuid.uuid4()),
         }
@@ -836,7 +836,7 @@ class TransactionViewSetTests(APITestBase):
         # TODO: make this assertion more specific once we hookup the idempotency_key to the request body.
         assert create_response_data["idempotency_key"]
         assert create_response_data["content_key"] == post_data["content_key"]
-        assert create_response_data["lms_user_id"] == post_data["learner_id"]
+        assert create_response_data["lms_user_id"] == post_data["lms_user_id"]
         assert create_response_data["subsidy_access_policy_uuid"] == post_data["subsidy_access_policy_uuid"]
         self.assertDictEqual(create_response_data["metadata"], {})
         assert create_response_data["unit"] == self.subsidy_1.ledger.unit
@@ -886,7 +886,7 @@ class TransactionViewSetTests(APITestBase):
             }
         post_data = {
             "subsidy_uuid": str(self.subsidy_1.uuid),
-            "learner_id": 1234,
+            "lms_user_id": 1234,
             "content_key": "course-v1:edX-test-course",
             "subsidy_access_policy_uuid": str(uuid.uuid4()),
             "metadata": tx_metadata
@@ -898,7 +898,7 @@ class TransactionViewSetTests(APITestBase):
         # TODO: make this assertion more specific once we hookup the idempotency_key to the request body.
         assert create_response_data["idempotency_key"]
         assert create_response_data["content_key"] == post_data["content_key"]
-        assert create_response_data["lms_user_id"] == post_data["learner_id"]
+        assert create_response_data["lms_user_id"] == post_data["lms_user_id"]
         assert create_response_data["subsidy_access_policy_uuid"] == post_data["subsidy_access_policy_uuid"]
         self.assertDictEqual(create_response_data["metadata"], tx_metadata)
         assert create_response_data["unit"] == self.subsidy_1.ledger.unit
@@ -929,7 +929,7 @@ class TransactionViewSetTests(APITestBase):
         self.set_up_operator()
         post_data = {
             "subsidy_uuid": str(self.subsidy_1.uuid),
-            "learner_id": 1234,
+            "lms_user_id": 1234,
             "content_key": "course-v1:edX-test-course",
             "subsidy_access_policy_uuid": str(uuid.uuid4()),
         }
@@ -951,7 +951,7 @@ class TransactionViewSetTests(APITestBase):
         url = reverse("api:v1:transaction-list")
         post_data = {
             "subsidy_uuid": str(self.subsidy_1.uuid),
-            "learner_id": 1234,
+            "lms_user_id": 1234,
             "content_key": "course-v1:edX-test-course",
             "subsidy_access_policy_uuid": str(uuid.uuid4()),
         }
@@ -971,7 +971,7 @@ class TransactionViewSetTests(APITestBase):
         mock_price_for_content.return_value = 10000000  # Wow! that's pricey!
         post_data = {
             "subsidy_uuid": str(self.subsidy_1.uuid),
-            "learner_id": 1234,
+            "lms_user_id": 1234,
             "content_key": "course-v1:edX-test-course",
             "subsidy_access_policy_uuid": str(uuid.uuid4()),
         }
@@ -992,7 +992,7 @@ class TransactionViewSetTests(APITestBase):
         )
         post_data = {
             "subsidy_uuid": str(self.subsidy_1.uuid),
-            "learner_id": 1234,
+            "lms_user_id": 1234,
             "content_key": "course-v1:edX-test-course",
             "subsidy_access_policy_uuid": str(uuid.uuid4()),
         }
@@ -1016,7 +1016,7 @@ class TransactionViewSetTests(APITestBase):
         test_lms_user_id = 1234
         post_data = {
             "subsidy_uuid": str(self.subsidy_1.uuid),
-            "learner_id": test_lms_user_id,
+            "lms_user_id": test_lms_user_id,
             "content_key": test_content_key,
             "subsidy_access_policy_uuid": str(uuid.uuid4()),
         }
@@ -1035,7 +1035,7 @@ class TransactionViewSetTests(APITestBase):
 
         post_data = {
             "subsidy_uuid": str(self.subsidy_1.uuid) + "a",  # Make uuid invalid.
-            "learner_id": 1234,
+            "lms_user_id": 1234,
             "content_key": "course-v1:edX-test-course",
             "subsidy_access_policy_uuid": str(uuid.uuid4()),
         }
@@ -1053,7 +1053,7 @@ class TransactionViewSetTests(APITestBase):
 
         post_data = {
             "subsidy_uuid": str(self.subsidy_1.uuid),
-            "learner_id": 1234,
+            "lms_user_id": 1234,
             "content_key": "course-v1:edX-test-course",
             "subsidy_access_policy_uuid": str(uuid.uuid4()) + "a",  # Make uuid invalid.
         }
@@ -1061,7 +1061,7 @@ class TransactionViewSetTests(APITestBase):
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert "Error" in response.json()
 
-    @ddt.data("subsidy_uuid", "learner_id", "content_key", "subsidy_access_policy_uuid")
+    @ddt.data("subsidy_uuid", "lms_user_id", "content_key", "subsidy_access_policy_uuid")
     def test_create_missing_inputs(self, missing_post_arg):
         """
         Test create Transaction, 4xx due to missing inputs.
@@ -1072,7 +1072,7 @@ class TransactionViewSetTests(APITestBase):
 
         post_data = {
             "subsidy_uuid": str(self.subsidy_1.uuid),
-            "learner_id": 1234,
+            "lms_user_id": 1234,
             "content_key": "course-v1:edX-test-course",
             "subsidy_access_policy_uuid": str(uuid.uuid4()),
         }
