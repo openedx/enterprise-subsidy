@@ -900,7 +900,6 @@ class TransactionViewSetTests(APITestBase):
         assert create_response_data["content_key"] == post_data["content_key"]
         assert create_response_data["lms_user_id"] == post_data["learner_id"]
         assert create_response_data["subsidy_access_policy_uuid"] == post_data["subsidy_access_policy_uuid"]
-        assert isinstance(create_response_data["metadata"], dict)
         self.assertDictEqual(create_response_data["metadata"], tx_metadata)
         assert create_response_data["unit"] == self.subsidy_1.ledger.unit
         assert create_response_data["quantity"] < 0  # No need to be exact at this time, I'm just testing create works.
