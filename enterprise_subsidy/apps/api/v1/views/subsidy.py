@@ -244,7 +244,7 @@ class SubsidyViewSet(
                         detail="Multiple subsidies with given reference_id found.",
                         user_message="Multiple subsidies with given reference_id found.",
                     ) from exc
-            except Exception as exc:  # pylint: disable=broad-except
+            except Exception as exc:
                 raise ServerError(
                     code="could_not_create_subsidy",
                     detail=f"Subsidy could not be created: {exc}",

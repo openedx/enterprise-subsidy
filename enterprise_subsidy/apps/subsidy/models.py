@@ -273,7 +273,7 @@ class Subsidy(TimeStampedModel):
         ledger_transaction.state = TransactionStateChoices.FAILED
         ledger_transaction.save()
 
-    def redeem(self, learner_id, content_key, subsidy_access_policy_uuid, idempotency_key=None):
+    def redeem(self, learner_id, content_key, subsidy_access_policy_uuid, idempotency_key=None, metadata=None):
         """
         Redeem this subsidy and enroll the learner.
 
@@ -305,6 +305,7 @@ class Subsidy(TimeStampedModel):
                 content_key,
                 subsidy_access_policy_uuid,
                 idempotency_key=idempotency_key,
+                metadata=metadata,
             )
         except ledger_api.LedgerBalanceExceeded:
             return (None, False)
@@ -312,7 +313,14 @@ class Subsidy(TimeStampedModel):
             return (transaction, True)
         return (None, False)
 
-    def _create_redemption(self, learner_id, content_key, subsidy_access_policy_uuid, idempotency_key=None, **kwargs):
+    def _create_redemption(
+            self,
+            learner_id,
+            content_key,
+            subsidy_access_policy_uuid,
+            idempotency_key=None,
+            metadata=None
+    ):
         """
         Synchronously and idempotently enroll the learner in the content and record it in the Ledger.
 
@@ -356,13 +364,14 @@ class Subsidy(TimeStampedModel):
                 content_key=content_key,
                 subsidy_access_policy_uuid=subsidy_access_policy_uuid,
             )
+        tx_metadata = metadata or {}
         ledger_transaction = self.create_transaction(
             idempotency_key,
             quantity,
             content_key=content_key,
             lms_user_id=learner_id,
             subsidy_access_policy_uuid=subsidy_access_policy_uuid,
-            **kwargs,
+            **tx_metadata,
         )
 
         # Progress the transaction to a pending state to indicate that we're now attempting enrollment.

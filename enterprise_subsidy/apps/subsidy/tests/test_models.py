@@ -174,7 +174,39 @@ class SubsidyModelRedemptionTestCase(TestCase):
         mock_content_price = 1000
         mock_price_for_content.return_value = mock_content_price
         mock_enterprise_client.enroll.return_value = mock_enterprise_fulfillment_uuid
-        new_transaction, transaction_created = self.subsidy.redeem(learner_id, content_key, subsidy_access_policy_uuid)
+        new_transaction, transaction_created = self.subsidy.redeem(
+            learner_id,
+            content_key,
+            subsidy_access_policy_uuid
+        )
         assert transaction_created
         assert new_transaction.state == TransactionStateChoices.COMMITTED
         assert new_transaction.quantity == -mock_content_price
+
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
+    def test_redeem_with_metadata(self, mock_enterprise_client, mock_price_for_content):
+        """
+        Test Subsidy.redeem() happy path with additional metadata
+        """
+        learner_id = 1
+        content_key = "course-v1:edX+test+course"
+        subsidy_access_policy_uuid = str(uuid4())
+        mock_enterprise_fulfillment_uuid = str(uuid4())
+        mock_content_price = 1000
+        mock_price_for_content.return_value = mock_content_price
+        mock_enterprise_client.enroll.return_value = mock_enterprise_fulfillment_uuid
+        tx_metadata = {
+            'geag_first_name': 'Donny',
+            'geag_last_name': 'Kerabatsos',
+        }
+        new_transaction, transaction_created = self.subsidy.redeem(
+            learner_id,
+            content_key,
+            subsidy_access_policy_uuid,
+            metadata=tx_metadata
+        )
+        assert transaction_created
+        assert new_transaction.state == TransactionStateChoices.COMMITTED
+        assert new_transaction.quantity == -mock_content_price
+        assert new_transaction.metadata == tx_metadata
