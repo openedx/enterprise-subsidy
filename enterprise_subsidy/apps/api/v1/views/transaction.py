@@ -9,7 +9,7 @@ from django.db.models import Q
 from django.utils.decorators import method_decorator
 from drf_spectacular.utils import extend_schema
 from edx_rbac.mixins import PermissionRequiredForListingMixin
-from edx_rbac.utils import contexts_accessible_from_jwt
+from edx_rbac.utils import ALL_ACCESS_CONTEXT, contexts_accessible_from_jwt
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
 from openedx_ledger.models import LedgerLockAttemptFailed, Transaction
 from rest_framework import mixins, permissions, status, viewsets
@@ -208,6 +208,10 @@ class TransactionViewSet(
             [ENTERPRISE_SUBSIDY_ADMIN_ROLE, ENTERPRISE_SUBSIDY_OPERATOR_ROLE],
         )
         learner_only_contexts = set(learner_contexts) - set(admin_operator_contexts)
+        if ALL_ACCESS_CONTEXT in admin_operator_contexts:
+            # If there are any admin or operator roles mapped to "*" (ALL_ACCESS_CONTEXT), then by definition there are
+            # NO contexts for which the learner has ONLY learner access.
+            learner_only_contexts = set()
         for learner_only_context in learner_only_contexts:
             # For each context (enterprise_customer_uuid) that the requester only has learner access to, filter
             # transactions related to that context to only include their own transactions.

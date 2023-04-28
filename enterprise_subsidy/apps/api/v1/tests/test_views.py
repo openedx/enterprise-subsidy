@@ -9,6 +9,7 @@ from unittest import mock
 
 import ddt
 from django.core.exceptions import MultipleObjectsReturned
+from edx_rbac.utils import ALL_ACCESS_CONTEXT
 from openedx_ledger.models import Transaction, TransactionStateChoices, UnitChoices
 from openedx_ledger.test_utils.factories import (
     ExternalFulfillmentProviderFactory,
@@ -20,6 +21,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 
 from enterprise_subsidy.apps.api.v1.tests.mixins import STATIC_ENTERPRISE_UUID, STATIC_LMS_USER_ID, APITestMixin
+from enterprise_subsidy.apps.subsidy.constants import SYSTEM_ENTERPRISE_ADMIN_ROLE, SYSTEM_ENTERPRISE_LEARNER_ROLE
 from enterprise_subsidy.apps.subsidy.models import RevenueCategoryChoices
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
 from test_utils.utils import MockResponse
@@ -610,6 +612,33 @@ class TransactionViewSetTests(APITestBase):
                 set(response_uuids) - self.all_initial_transactions ==
                 set(expected_response_uuids) - self.all_initial_transactions
             )
+
+    def test_list_with_mixed_admin_and_learner_access(self):
+        """
+        Test list Transactions permissions as an all-access admin even though they still have a lingering
+        enterprise-scoped learner role.
+        """
+        self.set_up_admin()
+        self.set_jwt_cookie([
+            (SYSTEM_ENTERPRISE_ADMIN_ROLE, ALL_ACCESS_CONTEXT),
+            (SYSTEM_ENTERPRISE_LEARNER_ROLE, self.enterprise_uuid),
+        ])
+        url = reverse("api:v1:transaction-list")
+        query_string = "?" + urllib.parse.urlencode({
+                "subsidy_uuid": APITestBase.subsidy_1_uuid,
+        })
+        response = self.client.get(url + query_string)
+        assert response.status_code == 200
+        list_response_data = response.json()["results"]
+        actual_response_uuids = [tx["uuid"] for tx in list_response_data]
+        expected_response_uuids = [
+            str(self.subsidy_1_transaction_initial.uuid),
+            APITestBase.subsidy_1_transaction_1_uuid,
+            APITestBase.subsidy_1_transaction_2_uuid,
+        ]
+        assert (
+            set(actual_response_uuids) == set(expected_response_uuids)
+        )
 
     @ddt.data(
         # Test that the transaction subsidy_1_transaction_1_uuid is found via subsidy_access_policy_uuid filtering.
