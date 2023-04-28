@@ -271,24 +271,7 @@ class TransactionViewSet(
         Returns:
             rest_framework.response.Response:
                 403/404: If the requester does not have permission to access the transaction, or it does not exist.
-                200: If a Transaction was successfully retrieved.  Response body is JSON with a serialized Transaction
-                     containing the following keys (sample values):
-                     {
-                         "uuid": "the-transaction-uuid",
-                         "state": "COMMITTED",
-                         "idempotency_key": "the-idempotency-key",
-                         "lms_user_id": 54321,
-                         "content_key": "demox_1234+2T2023",
-                         "quantity": 19900,
-                         "unit": "USD_CENTS",
-                         "reference_id": 1234,
-                         "reference_type": "enterprise_fufillment_source_uuid",
-                         "subsidy_access_policy_uuid": "a-policy-uuid",
-                         "metadata": {...},
-                         "created": "created-datetime",
-                         "modified": "modified-datetime",
-                         "reversals": []
-                     }
+                200: If a Transaction was successfully retrieved.  Response body is JSON with a serialized Transaction.
         """
         return super().retrieve(request, *args, **kwargs)
 
@@ -327,41 +310,7 @@ class TransactionViewSet(
         - ``400``: If there are missing or otherwise invalid input parameters.  Response body is JSON with a single
         `Error` key.
         - ``200``: In all other cases, return 200 regardless of whether any transactions were found.  Response body is
-        JSON with a paginated list of serialized Transactions containing keys and values
-        as demonstrated below.
-
-        Example response body:
-        ```
-        {
-          "count": 3,
-          "next": null,
-          "previous": null,
-          "aggregates": {
-              "total_quantity": 12350,
-              "unit": "USD_CENTS",
-              "remaining_subsidy_balance": 987650
-          },
-          "results": [
-            {
-              "uuid": "the-transaction-uuid",
-              "state": "COMMITTED",
-              "idempotency_key": "the-idempotency-key",
-              "lms_user_id": 54321,
-              "content_key": "demox_1234+2T2023",
-              "quantity": 19900,
-              "unit": "USD_CENTS",
-              "reference_id": 1234,
-              "reference_type": "enterprise_fufillment_source_uuid",
-              "subsidy_access_policy_uuid": "a-policy-uuid",
-              "metadata": {...},
-              "created": "created-datetime",
-              "modified": "modified-datetime",
-              "reversals": []
-            },
-            [...]
-          ]
-        }
-        ```
+        JSON with a paginated list of serialized Transactions.
         """
         return super().list(request, *args, **kwargs)
 
@@ -395,24 +344,7 @@ class TransactionViewSet(
                 429: The subisdy is not redeemable in a way that IS retryable (e.g. something else is already holding a
                      lock on the requested Ledger).  Response body is JSON with a single
                      `Error` key.
-                201: A Transaction was successfully created.  Response body is JSON with a serialized Transaction
-                     containing the following keys (sample values):
-                     {
-                         "uuid": "the-transaction-uuid",
-                         "state": "COMMITTED",
-                         "idempotency_key": "the-idempotency-key",
-                         "lms_user_id": 54321,
-                         "content_key": "demox_1234+2T2023",
-                         "quantity": 19900,
-                         "unit": "USD_CENTS",
-                         "reference_id": 1234,
-                         "reference_type": "enterprise_fufillment_source_uuid",
-                         "subsidy_access_policy_uuid": "a-policy-uuid",
-                         "metadata": {...},
-                         "created": "created-datetime",
-                         "modified": "modified-datetime",
-                         "reversals": []
-                     }
+                201: A Transaction was successfully created.  Response body is JSON with a serialized Transaction.
         """
         subsidy_uuid = request.data.get("subsidy_uuid")
         lms_user_id = request.data.get("lms_user_id")

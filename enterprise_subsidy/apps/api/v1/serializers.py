@@ -3,7 +3,8 @@ Serializers for the enterprise-subsidy API.
 """
 from logging import getLogger
 
-from openedx_ledger.models import LedgerLockAttemptFailed, Reversal, Transaction
+from drf_spectacular.utils import extend_schema_field
+from openedx_ledger.models import LedgerLockAttemptFailed, Reversal, Transaction, UnitChoices
 from rest_framework import serializers
 
 from enterprise_subsidy.apps.subsidy.models import Subsidy
@@ -15,7 +16,7 @@ class SubsidySerializer(serializers.ModelSerializer):
     """
     Serializer for the `Subsidy` model.
     """
-    current_balance = serializers.SerializerMethodField()
+    current_balance = serializers.SerializerMethodField(help_text="The current (remaining) balance of this subsidy.")
 
     class Meta:
         """
@@ -40,7 +41,8 @@ class SubsidySerializer(serializers.ModelSerializer):
             # "subsidy_type",
         ]
 
-    def get_current_balance(self, obj):
+    @extend_schema_field(serializers.IntegerField)
+    def get_current_balance(self, obj) -> int:
         return obj.current_balance()
 
 
@@ -78,7 +80,9 @@ class TransactionSerializer(serializers.ModelSerializer):
     )
     reversal = ReversalSerializer(read_only=True)
     # http://web.archive.org/web/20230427144910/https://romansorin.com/blog/using-djangos-jsonfield-you-probably-dont-need-it-heres-why
-    metadata = serializers.SerializerMethodField()
+    metadata = serializers.SerializerMethodField(
+        help_text="Any additional metadata that a client may want to associate with this Transaction instance."
+    )
 
     class Meta:
         """
@@ -102,14 +106,16 @@ class TransactionSerializer(serializers.ModelSerializer):
             "external_reference",  # Note that the `external_reference` field is found via reverse relationship.
         ]
 
-    def get_metadata(self, obj):
+    @extend_schema_field(serializers.JSONField)
+    def get_metadata(self, obj) -> dict:
         """
         Properly serialize this json/dict
         http://web.archive.org/web/20230427144910/https://romansorin.com/blog/using-djangos-jsonfield-you-probably-dont-need-it-heres-why
         """
         return obj.metadata
 
-    def get_unit(self, obj):
+    @extend_schema_field(serializers.ChoiceField(UnitChoices.CHOICES))
+    def get_unit(self, obj) -> str:
         """
         Simply fetch the unit slug from the parent Ledger.
 
