@@ -73,6 +73,8 @@ django-filter==1.1.0
     #   openedx-ledger
 django-model-utils==4.3.1
     # via edx-rbac
+django-object-actions==4.1.0
+    # via openedx-ledger
 django-simple-history==3.0.0
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
@@ -171,7 +173,7 @@ openedx-events==7.0.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-openedx-ledger==0.3.1
+openedx-ledger==0.3.2
     # via -r requirements/base.in
 packaging==23.1
     # via drf-yasg
@@ -220,7 +222,7 @@ pyyaml==6.0
     #   edx-django-release-util
 redis==4.5.4
     # via openedx-ledger
-requests==2.28.2
+requests==2.29.0
     # via
     #   coreapi
     #   edx-drf-extensions
@@ -255,7 +257,7 @@ slumber==0.7.1
     # via edx-rest-api-client
 social-auth-app-django==5.2.0
     # via edx-auth-backends
-social-auth-core==4.4.1
+social-auth-core==4.4.2
     # via
     #   edx-auth-backends
     #   social-auth-app-django

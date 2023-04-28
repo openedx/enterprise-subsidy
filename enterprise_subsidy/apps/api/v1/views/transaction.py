@@ -17,6 +17,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
 
+from enterprise_subsidy.apps.api.paginators import TransactionListPaginator
 from enterprise_subsidy.apps.api.v1 import utils
 from enterprise_subsidy.apps.api.v1.decorators import require_at_least_one_query_parameter
 from enterprise_subsidy.apps.api.v1.serializers import TransactionSerializer
@@ -63,6 +64,7 @@ class TransactionViewSet(
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = "uuid"
     serializer_class = TransactionSerializer
+    pagination_class = TransactionListPaginator
 
     # Fields that control permissions for 'list' actions, required by PermissionRequiredForListingMixin.
     list_lookup_field = "ledger__subsidy__enterprise_customer_uuid"
@@ -361,21 +363,7 @@ class TransactionViewSet(
         }
         ```
         """
-        base_response = super().list(request, *args, **kwargs)
-
-        if self.request.query_params.get("include_aggregates", "").lower() == "true":
-            subsidy = Subsidy.objects.get(uuid=self.requested_subsidy_uuid)
-            aggregates = {
-                "unit": subsidy.unit,
-                "remaining_subsidy_balance": subsidy.current_balance(),
-                "total_quantity": subsidy.ledger.subset_balance(self.get_queryset()),
-            }
-            # Compose a response that combines the base response with additional aggregates data.
-            response_data = {"aggregates": aggregates}
-            response_data.update(base_response.data)
-            return Response(response_data, status=base_response.status_code, headers=base_response.headers)
-        else:
-            return base_response
+        return super().list(request, *args, **kwargs)
 
     def create(self, request, *args, **kwargs):
         """
