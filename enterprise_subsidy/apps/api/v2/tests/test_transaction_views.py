@@ -7,7 +7,7 @@ from unittest import mock
 
 import ddt
 from edx_rbac.utils import ALL_ACCESS_CONTEXT
-from openedx_ledger.models import LedgerLockAttemptFailed, Transaction, TransactionStateChoices
+from openedx_ledger.models import LedgerLockAttemptFailed, Transaction, TransactionStateChoices, UnitChoices
 from openedx_ledger.test_utils.factories import TransactionFactory
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -284,6 +284,7 @@ class TransactionAdminListViewTests(APITestBase):
             'lms_user_id': STATIC_LMS_USER_ID,
             'content_key': self.content_key_1,
             'subsidy_access_policy_uuid': self.subsidy_access_policy_1_uuid,
+            'include_aggregates': 'true',
         }
         query_string = urllib.parse.urlencode(query_params)
         url = reverse("api:v2:transaction-admin-list-create", args=[self.subsidy_1_uuid])
@@ -293,12 +294,19 @@ class TransactionAdminListViewTests(APITestBase):
 
         assert response.status_code == status.HTTP_200_OK
 
-        list_response_data = response.json()["results"]
+        response_json = response.json()
+        list_response_data = response_json["results"]
+        response_aggregates = response_json['aggregates']
         response_uuids = [tx["uuid"] for tx in list_response_data]
         expected_response_uuids = [
             self.subsidy_1_transaction_1_uuid,
         ]
         self.assertEqual(response_uuids, expected_response_uuids)
+        self.assertEqual(response_aggregates, {
+            'total_quantity': -1000,
+            'unit': UnitChoices.USD_CENTS,
+            'remaining_subsidy_balance': 13000,
+        })
 
     def test_list_no_permission_for_customer_responds_with_403(self):
         """
