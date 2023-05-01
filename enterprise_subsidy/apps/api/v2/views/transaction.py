@@ -14,6 +14,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import APIException, NotFound, PermissionDenied, Throttled
 
 from enterprise_subsidy.apps.api.filters import TransactionAdminFilterSet
+from enterprise_subsidy.apps.api.paginators import TransactionListPaginator
 from enterprise_subsidy.apps.api.utils import get_subsidy_customer_uuid_from_view
 from enterprise_subsidy.apps.api.v1.serializers import (
     TransactionCreationError,
@@ -39,10 +40,11 @@ class TransactionBaseViewMixin:
     authentication_classes = [JwtAuthentication, SessionAuthentication]
     permission_classes = [permissions.IsAuthenticated]
     serializer_class = TransactionSerializer
+    pagination_class = TransactionListPaginator
     queryset = Transaction.objects.all()
 
     @property
-    def subsidy_uuid(self):
+    def requested_subsidy_uuid(self):
         """
         Returns the requested ``subsidy_uuid`` path parameter.
         """
@@ -53,7 +55,7 @@ class TransactionBaseViewMixin:
         """
         Returns the Subsidy instance from the requested ``subsidy_uuid``.
         """
-        return get_subsidy_by_uuid(self.subsidy_uuid, should_raise=True)
+        return get_subsidy_by_uuid(self.requested_subsidy_uuid, should_raise=True)
 
     def get_queryset(self):
         """

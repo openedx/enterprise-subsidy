@@ -20,6 +20,7 @@ class TransactionListPaginator(pagination.PageNumberPagination):
         """
         Assumes that `queryset` is based on transaction records,
         and that we want an aggregate quantity computed from those records.
+        Requires that the view class defines a `requested_subsidy_uuid` property.
         """
         if request.query_params.get("include_aggregates", "").lower() == "true":
             self.subsidy = Subsidy.objects.get(uuid=view.requested_subsidy_uuid)
