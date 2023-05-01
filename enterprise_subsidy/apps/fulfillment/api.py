@@ -2,15 +2,16 @@
 Python API for interacting with fulfillment operations
 related to subsidy redemptions.
 """
+from django.conf import settings
+from getsmarter_api_clients.geag import GetSmarterEnterpriseApiClient
+from openedx_ledger.models import ExternalFulfillmentProvider, ExternalTransactionReference
+
 # pylint: disable=unused-import
 from enterprise_subsidy.apps.content_metadata import api as content_metadata_api
+from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
 
 from .constants import EXEC_ED_2U_COURSE_TYPES, OPEN_COURSES_COURSE_TYPES
 
-from django.conf import settings
-from openedx_ledger.models import ExternalFulfillmentProvider, ExternalTransactionReference
-from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
-from getsmarter_api_clients.geag import GetSmarterEnterpriseApiClient
 
 def create_fulfillment(subsidy_uuid, lms_user_id, content_key, **metadata):
     """
@@ -36,6 +37,14 @@ def determine_fulfillment_client(subsidy_uuid, content_key):
     return None
     """
     raise NotImplementedError
+
+
+class FulfillmentException(Exception):
+    pass
+
+
+class InvalidFulfillmentMetadataException(FulfillmentException):
+    pass
 
 
 class GEAGFulfillmentHandler():
@@ -67,7 +76,7 @@ class GEAGFulfillmentHandler():
         transaction_price = self._get_geag_transaction_price(transaction)
         return {
             'payment_reference': transaction.uuid,
-            'enterprise_customer_uuid': self.subsidy.enterprise_customer_uuid,
+            'enterprise_customer_uuid': self._get_enterprise_customer_uuid(transaction),
             'currency': currency,
             'order_items': [
                 {
@@ -94,8 +103,7 @@ class GEAGFulfillmentHandler():
         """
         for field in ['geag_first_name', 'geag_last_name', 'geag_date_of_birth', 'geag_terms_accepted_at']:
             if not transaction.metadata.get(field):
-                # TODO make this a proper exception class
-                raise f'missing {field} transaction metadata'
+                raise InvalidFulfillmentMetadataException(f'missing {field} transaction metadata')
 
     def _save_fulfillment_reference(self, transaction, external_reference_id):
         external_fulfillment_provider = ExternalFulfillmentProvider.objects.get_or_create(
@@ -120,8 +128,8 @@ class GEAGFulfillmentHandler():
         """
         self._validate(transaction)
         allocation_payload = self._create_allocation_payload(transaction)
-        geag_response = self.get_smarter_client(**allocation_payload)
+        geag_response = self.get_smarter_client.create_enterprise_allocation(**allocation_payload)
         external_reference_id = geag_response.json().get('orderUuid')
         if not external_reference_id:
-            raise 'missing orderUuid / external_reference_id from geag'
+            raise FulfillmentException('missing orderUuid / external_reference_id from geag')
         return self._save_fulfillment_reference(transaction, external_reference_id)

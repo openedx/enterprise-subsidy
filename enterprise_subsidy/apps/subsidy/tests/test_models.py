@@ -162,7 +162,8 @@ class SubsidyModelRedemptionTestCase(TestCase):
 
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
-    def test_redeem_not_existing(self, mock_enterprise_client, mock_price_for_content):
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_redeem_not_existing(self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content):
         """
         Test Subsidy.redeem() happy path (i.e. the redemption/transaction does not already exist, and calling redeem()
         creates one).
@@ -172,6 +173,14 @@ class SubsidyModelRedemptionTestCase(TestCase):
         subsidy_access_policy_uuid = str(uuid4())
         mock_enterprise_fulfillment_uuid = str(uuid4())
         mock_content_price = 1000
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'course-v1:edX+test+course',
+            'content_key': 'course-v1:edX+test+course',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
         mock_price_for_content.return_value = mock_content_price
         mock_enterprise_client.enroll.return_value = mock_enterprise_fulfillment_uuid
         new_transaction, transaction_created = self.subsidy.redeem(
@@ -185,7 +194,8 @@ class SubsidyModelRedemptionTestCase(TestCase):
 
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
-    def test_redeem_with_metadata(self, mock_enterprise_client, mock_price_for_content):
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_redeem_with_metadata(self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content):
         """
         Test Subsidy.redeem() happy path with additional metadata
         """
@@ -194,6 +204,14 @@ class SubsidyModelRedemptionTestCase(TestCase):
         subsidy_access_policy_uuid = str(uuid4())
         mock_enterprise_fulfillment_uuid = str(uuid4())
         mock_content_price = 1000
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'course-v1:edX+test+course',
+            'content_key': 'course-v1:edX+test+course',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
         mock_price_for_content.return_value = mock_content_price
         mock_enterprise_client.enroll.return_value = mock_enterprise_fulfillment_uuid
         tx_metadata = {
