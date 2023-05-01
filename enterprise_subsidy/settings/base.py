@@ -49,6 +49,7 @@ INSTALLED_APPS = (
 THIRD_PARTY_APPS = (
     'corsheaders',
     'csrf.apps.CsrfAppConfig',  # Enables frontend apps to retrieve CSRF tokens
+    'django_filters',
     'drf_spectacular',
     'drf_yasg',
     # "App Permissions" compatiblity: this provides the manage_user and manage_group management commands.
@@ -137,6 +138,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
 
 # Django Rest Framework
 REST_FRAMEWORK = {
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',

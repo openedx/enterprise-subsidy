@@ -38,7 +38,7 @@ class JwtMixin():
         request.COOKIES[jwt_cookie_name()] = self.client.cookies[jwt_cookie_name()].value
         return request
 
-    def _jwt_token_from_role_context_pairs(self, role_context_pairs):
+    def _jwt_token_from_role_context_pairs(self, role_context_pairs, include_user_id=True):
         """
         Generates a new JWT token with roles assigned from pairs of (role name, context).
         """
@@ -50,17 +50,16 @@ class JwtMixin():
             roles.append(role_data)
 
         payload = generate_unversioned_payload(self.user)
-        payload.update({'roles': roles})
-        payload.update({
-            'user_id': STATIC_LMS_USER_ID,
-        })
+        payload['roles'] = roles
+        if include_user_id:
+            payload['user_id'] = STATIC_LMS_USER_ID
         return generate_jwt_token(payload)
 
-    def set_jwt_cookie(self, role_context_pairs=None):
+    def set_jwt_cookie(self, role_context_pairs=None, include_user_id=True):
         """
         Set jwt token in cookies
         """
-        jwt_token = self._jwt_token_from_role_context_pairs(role_context_pairs or [])
+        jwt_token = self._jwt_token_from_role_context_pairs(role_context_pairs or [], include_user_id)
         self.client.cookies[jwt_cookie_name()] = jwt_token
 
 
@@ -85,7 +84,7 @@ class APITestMixin(JwtMixin, APITestCase):
         self.desired_feature_role = ENTERPRISE_SUBSIDY_ADMIN_ROLE
         self.set_up_user_with_assignments(is_staff=True, enterprise_uuids=enterprise_uuids)
 
-    def set_up_learner(self, enterprise_uuids=None):
+    def set_up_learner(self, enterprise_uuids=None, include_jwt_user_id=True):
         """
         Helper for setting up a user and assigning the learner role.  By default,
         assigns the learner roles for self.enterprise_uuid in the JWT roles
@@ -93,7 +92,11 @@ class APITestMixin(JwtMixin, APITestCase):
         """
         self.desired_system_wide_role = SYSTEM_ENTERPRISE_LEARNER_ROLE
         self.desired_feature_role = ENTERPRISE_SUBSIDY_LEARNER_ROLE
-        self.set_up_user_with_assignments(is_staff=False, enterprise_uuids=enterprise_uuids)
+        self.set_up_user_with_assignments(
+            is_staff=False,
+            enterprise_uuids=enterprise_uuids,
+            include_jwt_user_id=include_jwt_user_id,
+        )
 
     def set_up_operator(self):
         """
@@ -103,7 +106,7 @@ class APITestMixin(JwtMixin, APITestCase):
         self.desired_feature_role = ENTERPRISE_SUBSIDY_OPERATOR_ROLE
         self.set_up_user_with_assignments(is_staff=True, enterprise_uuids=['*'])
 
-    def set_up_user_with_assignments(self, is_staff=False, enterprise_uuids=None):
+    def set_up_user_with_assignments(self, is_staff=False, enterprise_uuids=None, include_jwt_user_id=True):
         """
         Helper for setting up a basic user with implicit and explicit role assignments.
         """
@@ -111,6 +114,7 @@ class APITestMixin(JwtMixin, APITestCase):
         self.assign_implicit_jwt_system_wide_role(
             system_wide_role=self.desired_system_wide_role,
             jwt_contexts=enterprise_uuids,
+            include_user_id=include_jwt_user_id,
         )
         self.assign_explicit_db_feature_role(
             feature_role=self.desired_feature_role,
@@ -140,7 +144,7 @@ class APITestMixin(JwtMixin, APITestCase):
                 enterprise_id=enterprise_uuid if enterprise_uuid != '*' else None,
             )
 
-    def assign_implicit_jwt_system_wide_role(self, system_wide_role=None, jwt_contexts=None):
+    def assign_implicit_jwt_system_wide_role(self, system_wide_role=None, jwt_contexts=None, include_user_id=True):
         """
         Assign the given system-wide role implicitly by creating a JWT token.
         """
@@ -149,7 +153,10 @@ class APITestMixin(JwtMixin, APITestCase):
         if not jwt_contexts:
             jwt_contexts = [self.enterprise_uuid]
 
-        self.set_jwt_cookie([(system_wide_role, jwt_context) for jwt_context in jwt_contexts])
+        self.set_jwt_cookie(
+            [(system_wide_role, jwt_context) for jwt_context in jwt_contexts],
+            include_user_id=include_user_id,
+        )
 
     def remove_explicit_db_feature_role(self):
         """

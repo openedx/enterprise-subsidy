@@ -28,6 +28,7 @@ services:
     command: bash -c 'while true; do python /edx/app/enterprise-subsidy/manage.py runserver 0.0.0.0:18280; sleep 2; done'
     environment:
       DJANGO_SETTINGS_MODULE: enterprise_subsidy.settings.devstack
+      ENABLE_DJANGO_TOOLBAR: true
     ports:
       - "18280:18280" # TODO: change this to your port
     networks:

@@ -12,6 +12,7 @@ from enterprise_subsidy.apps.subsidy.constants import (
     ENTERPRISE_SUBSIDY_LEARNER_ROLE,
     ENTERPRISE_SUBSIDY_OPERATOR_ROLE,
     PERMISSION_CAN_CREATE_TRANSACTIONS,
+    PERMISSION_CAN_READ_ALL_TRANSACTIONS,
     PERMISSION_CAN_READ_CONTENT_METADATA,
     PERMISSION_CAN_READ_SUBSIDIES,
     PERMISSION_CAN_READ_TRANSACTIONS,
@@ -106,5 +107,6 @@ has_operator_level_access = has_implicit_access_to_subsidy_operator | has_explic
 rules.add_perm(PERMISSION_CAN_CREATE_TRANSACTIONS, has_operator_level_access)
 rules.add_perm(PERMISSION_CAN_READ_SUBSIDIES, has_admin_level_access)
 rules.add_perm(PERMISSION_CAN_READ_TRANSACTIONS, has_learner_level_access)
+rules.add_perm(PERMISSION_CAN_READ_ALL_TRANSACTIONS, has_admin_level_access)
 rules.add_perm(PERMISSION_CAN_READ_CONTENT_METADATA, has_learner_level_access)
 rules.add_perm(PERMISSION_CAN_WRITE_SUBSIDIES, has_operator_level_access)

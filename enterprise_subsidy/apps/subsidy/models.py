@@ -223,7 +223,9 @@ class Subsidy(TimeStampedModel):
             return self.content_metadata_api().get_course_price(self.enterprise_customer_uuid, content_key)
         except HTTPError as exc:
             if exc.response.status_code == status.HTTP_404_NOT_FOUND:
-                raise ContentNotFoundForCustomerException() from exc
+                raise ContentNotFoundForCustomerException(
+                    'The given content_key is not in any catalog for this customer.'
+                ) from exc
             raise
 
     def current_balance(self):
