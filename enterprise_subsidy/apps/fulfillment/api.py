@@ -8,6 +8,7 @@ from enterprise_subsidy.apps.content_metadata import api as content_metadata_api
 from .constants import EXEC_ED_2U_COURSE_TYPES, OPEN_COURSES_COURSE_TYPES
 
 from django.conf import settings
+from openedx_ledger.models import ExternalFulfillmentProvider, ExternalTransactionReference
 from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
 from getsmarter_api_clients.geag import GetSmarterEnterpriseApiClient
 
@@ -42,6 +43,7 @@ class GEAGFulfillmentHandler():
     A class for fulfilling a GEAG transaction.
     """
     CENTS_PER_DOLLAR = 100.0
+    EXTERNAL_FULFILLMENT_PROVIDER_SLUG = 'geag'
 
     def get_smarter_client(self):
         return GetSmarterEnterpriseApiClient(
@@ -95,6 +97,16 @@ class GEAGFulfillmentHandler():
                 # TODO make this a proper exception class
                 raise f'missing {field} transaction metadata'
 
+    def _save_fulfillment_reference(self, transaction, external_reference_id):
+        external_fulfillment_provider = ExternalFulfillmentProvider.objects.get_or_create(
+            slug=self.EXTERNAL_FULFILLMENT_PROVIDER_SLUG
+        )
+        return ExternalTransactionReference.objects.create(
+            transaction=transaction,
+            external_fulfillment_provider=external_fulfillment_provider,
+            external_reference_id=external_reference_id,
+        )
+
     def can_fulfill(self, transaction):
         """
         A helper to let callers know if the transaction at hand can be fulfilled
@@ -109,4 +121,7 @@ class GEAGFulfillmentHandler():
         self._validate(transaction)
         allocation_payload = self._create_allocation_payload(transaction)
         geag_response = self.get_smarter_client(**allocation_payload)
-        return geag_response.json().get('orderUuid')
+        external_reference_id = geag_response.json().get('orderUuid')
+        if not external_reference_id:
+            raise 'missing orderUuid / external_reference_id from geag'
+        return self._save_fulfillment_reference(transaction, external_reference_id)
