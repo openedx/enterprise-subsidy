@@ -25,6 +25,8 @@ def learner_credit_fixture():
         default_enterprise_customer_uuid=uuid4(),
         default_unit=UnitChoices.USD_CENTS,
         default_starting_balance=1000000,
+        default_active_datetime=None,
+        default_expiration_datetime=None,
     )
     return subsidy
 
@@ -50,6 +52,8 @@ def test_get_learner_credit_subsidy(learner_credit_fixture):  # pylint: disable=
         default_enterprise_customer_uuid=uuid4(),
         default_unit=UnitChoices.USD_CENTS,
         default_starting_balance=30,
+        default_active_datetime=None,
+        default_expiration_datetime=None,
     )
     assert not created
     assert learner_credit_fixture.current_balance() == 1000000

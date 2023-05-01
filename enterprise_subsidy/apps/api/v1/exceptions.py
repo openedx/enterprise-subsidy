@@ -19,3 +19,15 @@ class ServerError(APIException):
         self.developer_message = kwargs.pop('developer_message', None)
         self.user_message = kwargs.pop('user_message', None)
         super().__init__(*args, **kwargs)
+
+    def get_full_details(self):
+        """
+        Override the default DRF to_representation method to include
+        the custom fields we've added to the exception.
+        """
+
+        return {
+            'code': self.code,
+            'developer_message': self.developer_message,
+            'user_message': self.user_message,
+        }

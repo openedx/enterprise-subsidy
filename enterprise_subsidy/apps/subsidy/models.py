@@ -181,9 +181,16 @@ class Subsidy(TimeStampedModel):
             'business logic.'
         ),
     )
-
-    active_datetime = models.DateTimeField(null=True, default=None)
-    expiration_datetime = models.DateTimeField(null=True, default=None)
+    active_datetime = models.DateTimeField(
+        null=True,
+        default=None,
+        help_text="The datetime when this Subsidy is considered active.  If null, this Subsidy is considered active."
+    )
+    expiration_datetime = models.DateTimeField(
+        null=True,
+        default=None,
+        help_text="The datetime when this Subsidy is considered expired.  If null, this Subsidy is considered active."
+        )
     history = HistoricalRecords()
 
     @cached_property

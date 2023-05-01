@@ -10,7 +10,7 @@ from unittest import mock
 import ddt
 from django.core.exceptions import MultipleObjectsReturned
 from edx_rbac.utils import ALL_ACCESS_CONTEXT
-from openedx_ledger.models import Transaction, TransactionStateChoices, UnitChoices
+from openedx_ledger.models import Transaction, TransactionStateChoices
 from openedx_ledger.test_utils.factories import (
     ExternalFulfillmentProviderFactory,
     ExternalTransactionReferenceFactory,
@@ -259,46 +259,37 @@ class SubsidyViewSetTests(APITestBase):
         elif role == "operator":
             self.set_up_operator()
         url = self.get_list_url
-        data = {
-            "reference_id": "aksdkjtkwekwl88890",
-            "default_title": "title",
-            "default_enterprise_customer_uuid": str(uuid.uuid4()),
-            "default_unit": UnitChoices.USD_CENTS,
-            "default_starting_balance": "10000",
-            "default_revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
-            "default_internal_only": True,
-        }
+        data = SubsidyFactory.to_default_fields_dict()
         response = self.client.post(url, data, format='json')
 
         self.assertEqual(response.status_code, status_code)
 
+    def test_create_subsidy_when_request_body_is_incomplete(self):
+        self.set_up_operator()
+        url = self.get_list_url
+        response = self.client.post(
+            url,
+            {
+                "reference_id": self.subsidy_1.reference_id,
+                "default_enterprise_customer_uuid": self.subsidy_1.enterprise_customer_uuid,
+            },
+            format="json",
+        )
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_create_subsidy_when_subsidy_exists(self):
         self.set_up_operator()
         url = self.get_list_url
-        data_with_existing_reference_id = {
-            "reference_id": self.subsidy_1.reference_id,
-            "default_title": "title",
-            "default_enterprise_customer_uuid": str(uuid.uuid4()),
-            "default_unit": UnitChoices.USD_CENTS,
-            "default_starting_balance": "10000",
-            "default_revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
-            "default_internal_only": True,
-        }
-        response = self.client.post(url, data_with_existing_reference_id, format='json')
+        data = SubsidyFactory.to_default_fields_dict()
+        data["reference_id"] = self.subsidy_1.reference_id
+        response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_create_new_subsidy_invalid_data(self):
         self.set_up_operator()
         url = self.get_list_url
-        data = {
-            "reference_id": "",
-            "default_title": "title",
-            "default_enterprise_customer_uuid": str(uuid.uuid4()),
-            "default_unit": UnitChoices.USD_CENTS,
-            "default_starting_balance": "10000",
-            "default_revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
-            "default_internal_only": True,
-        }
+        data = SubsidyFactory.to_default_fields_dict()
+        data["reference_id"] = ""
         response = self.client.post(url, data, format='json')
 
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
@@ -329,7 +320,9 @@ class SubsidyViewSetTests(APITestBase):
 
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertDictEqual(response.json(), {
-            'detail': 'MISSING: subsidy.can_write_subsidies'
+            "error_code": "Forbidden",
+            "developer_message": "MISSING: subsidy.can_write_subsidies",
+            "user_message": "MISSING: subsidy.can_write_subsidies",
         })
 
     @mock.patch('enterprise_subsidy.apps.api.v1.views.subsidy.get_or_create_learner_credit_subsidy')
@@ -338,19 +331,16 @@ class SubsidyViewSetTests(APITestBase):
         mock_get_or_create.side_effect = Exception("Unexpected error")
 
         url = self.get_list_url
-        data = {
-            "reference_id": "aksdkjtkwekwl88890",
-            "default_title": "title",
-            "default_enterprise_customer_uuid": str(uuid.uuid4()),
-            "default_unit": UnitChoices.USD_CENTS,
-            "default_starting_balance": "10000",
-            "default_revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
-            "default_internal_only": True,
-        }
-
+        data = SubsidyFactory.to_default_fields_dict()
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
-        self.assertDictEqual(response.json(), {'detail': 'Subsidy could not be created: Unexpected error'})
+
+        expected_response = {
+            "code": "could_not_create_subsidy",
+            "developer_message": "Subsidy could not be created: Unexpected error",
+            "user_message": "Subsidy could not be created.",
+        }
+        self.assertDictEqual(response.json(), expected_response)
 
     @mock.patch('enterprise_subsidy.apps.api.v1.views.subsidy.get_or_create_learner_credit_subsidy')
     def test_create_new_subsidy_multiple_objects_returned(self, mock_get_or_create):
@@ -358,19 +348,78 @@ class SubsidyViewSetTests(APITestBase):
         mock_get_or_create.side_effect = MultipleObjectsReturned("Multiple objects returned")
 
         url = self.get_list_url
-        data = {
-            "reference_id": "aksdkjtkwekwl88890",
-            "default_title": "title",
-            "default_enterprise_customer_uuid": str(uuid.uuid4()),
-            "default_unit": UnitChoices.USD_CENTS,
-            "default_starting_balance": "10000",
-            "default_revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
-            "default_internal_only": True,
-        }
-
+        data = SubsidyFactory.to_default_fields_dict()
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_500_INTERNAL_SERVER_ERROR)
-        self.assertDictEqual(response.json(), {'detail': "Multiple subsidies with given reference_id found."})
+        expected_response = {
+            "code": "multiple_subsidies_found",
+            "developer_message": "Multiple subsidies with given reference_id found.",
+            "user_message": "Multiple subsidies with given reference_id found.",
+        }
+        self.assertDictEqual(response.json(), expected_response)
+
+    @ddt.data(
+            ('operator', status.HTTP_200_OK),
+            ('learner', status.HTTP_403_FORBIDDEN),
+            ('admin', status.HTTP_403_FORBIDDEN),
+    )
+    @ddt.unpack
+    def test_update_subsidy_with_permissions(self, role, status_code):
+        if role == "admin":
+            self.set_up_admin()
+        elif role == "learner":
+            self.set_up_learner()
+        elif role == "operator":
+            self.set_up_operator()
+
+        subsidy = self.subsidy_1
+        url = self.get_details_url([subsidy.uuid])
+        factory_data = SubsidyFactory.to_dict()
+        factory_data["reference_id"] = subsidy.reference_id
+        factory_data["title"] = "updated title"
+        response = self.client.put(url, factory_data, format='json')
+        self.assertEqual(response.status_code, status_code)
+        if role == "operator":
+            response_data = response.json()
+            self.assertEqual(response_data["title"], "updated title")
+            self.assertEqual(response_data["unit"], "usd_cents")
+
+    def test_update_subsidy_with_invalid_uuid(self):
+        self.set_up_operator()
+        factory_data = SubsidyFactory.to_default_fields_dict()
+        factory_data["title"] = "updated title"
+        response = self.client.put(
+            self.get_details_url([str(uuid.uuid4())]),
+            factory_data,
+            format='json')
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+    def test_update_subsidy_does_not_change_read_only_field(self):
+        self.set_up_operator()
+        factory_data = SubsidyFactory.to_dict()
+        factory_data["title"] = "updated title"
+        # starting_balance is a read-only field
+        factory_data["starting_balance"] = 999
+        factory_data["uuid"] = self.subsidy_1.uuid
+        response = self.client.put(
+            self.get_details_url([self.subsidy_1.uuid]),
+            factory_data,
+            format='json')
+        response_data = response.json()
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response_data["starting_balance"], 15000)
+
+    def test_partial_update_subsidy(self):
+        self.set_up_operator()
+        subsidy = self.subsidy_1
+        url = self.get_details_url([subsidy.uuid])
+        factory_data = SubsidyFactory.to_dict()
+        factory_data.pop("expiration_datetime")
+        factory_data.pop("unit")
+        response = self.client.patch(url, factory_data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()["unit"], subsidy.unit)
 
 
 @ddt.ddt

@@ -15,6 +15,7 @@ from enterprise_subsidy.apps.core.models import User
 from enterprise_subsidy.apps.subsidy.models import (
     EnterpriseSubsidyFeatureRole,
     EnterpriseSubsidyRoleAssignment,
+    RevenueCategoryChoices,
     Subsidy,
     SubsidyReferenceChoices
 )
@@ -47,6 +48,24 @@ class SubsidyFactory(factory.django.DjangoModelFactory):
     enterprise_customer_uuid = factory.LazyFunction(uuid4)
     active_datetime = factory.LazyFunction(fake_datetime)
     expiration_datetime = factory.LazyFunction(lambda: fake_datetime(True))
+    revenue_category = RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY
+    internal_only = False
+    title = factory.Faker("sentence")
+
+    @classmethod
+    def to_dict(cls):
+        """
+        Return a dict of the subsidy.
+        """
+        return factory.build(dict, FACTORY_CLASS=SubsidyFactory)
+
+    @classmethod
+    def to_default_fields_dict(cls):
+        """
+        Return a dict of the subsidy with default values.
+        """
+        base_dict = factory.build(dict, FACTORY_CLASS=SubsidyFactory)
+        return {f"default_{key}" if key != "reference_id" else key: value for key, value in base_dict.items()}
 
 
 class UserFactory(factory.django.DjangoModelFactory):

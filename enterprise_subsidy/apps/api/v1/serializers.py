@@ -41,6 +41,12 @@ class SubsidySerializer(serializers.ModelSerializer):
             # "subsidy_type",
         ]
 
+        read_only_fields = [
+            "uuid",
+            "starting_balance",
+            "current_balance",
+        ]
+
     @extend_schema_field(serializers.IntegerField)
     def get_current_balance(self, obj) -> int:
         return obj.current_balance()
@@ -269,8 +275,15 @@ class SubsidyCreationRequestSerializer(serializers.Serializer):
         required=True,
         help_text="UUID of the enterprise customer assigned this Subsidy.",
     )
-    default_unit = serializers.ChoiceField(
-        UnitChoices.CHOICES,
+    default_active_datetime = serializers.DateTimeField(
+        required=True,
+        help_text="The datetime when this Subsidy is considered active.  If null, this Subsidy is considered active."
+    )
+    default_expiration_datetime = serializers.DateTimeField(
+        required=True,
+        help_text="The datetime when this Subsidy is considered expired.  If null, this Subsidy is considered active."
+    )
+    default_unit = serializers.CharField(
         required=True,
         help_text="Unit of currency used for all values of quantity for this Subsidy and associated transactions.",
     )
@@ -291,3 +304,37 @@ class SubsidyCreationRequestSerializer(serializers.Serializer):
         required=True,
         help_text="If set, this subsidy will not be customer facing, nor have any influence on enterprise customers.",
     )
+
+
+class SubsidyUpdateRequestSerializer(serializers.ModelSerializer):
+    """
+    Serializer for updating a subsidy
+    """
+
+    class Meta:
+        """
+        Meta class for SubsidySerializer.
+        """
+        model = Subsidy
+        fields = [
+            "title",
+            "enterprise_customer_uuid",
+            "active_datetime",
+            "expiration_datetime",
+            "unit",
+            "reference_id",
+            "reference_type",
+            "internal_only",
+            "revenue_category",
+            # In the MVP implementation, there are only learner_credit subsidies.  Uncomment after subscription
+            # subsidies are introduced.
+            # "subsidy_type",
+        ]
+
+    def to_representation(self, instance):
+        """
+        Once a Subsidy has been created, we want to serialize
+        more fields from the instance than are required in this, the input serializer.
+        """
+        subsidy_serializer = SubsidySerializer(instance)
+        return subsidy_serializer.data
