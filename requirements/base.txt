@@ -171,7 +171,7 @@ openedx-events==7.0.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-openedx-ledger==0.3.1
+openedx-ledger==0.3.3
     # via -r requirements/base.in
 packaging==23.1
     # via drf-yasg
