@@ -104,9 +104,10 @@ class GEAGFulfillmentHandler():
         for field in ['geag_first_name', 'geag_last_name', 'geag_date_of_birth', 'geag_terms_accepted_at']:
             if not transaction.metadata.get(field):
                 raise InvalidFulfillmentMetadataException(f'missing {field} transaction metadata')
+        return True
 
     def _save_fulfillment_reference(self, transaction, external_reference_id):
-        external_fulfillment_provider = ExternalFulfillmentProvider.objects.get_or_create(
+        external_fulfillment_provider, _ = ExternalFulfillmentProvider.objects.get_or_create(
             slug=self.EXTERNAL_FULFILLMENT_PROVIDER_SLUG
         )
         return ExternalTransactionReference.objects.create(
@@ -122,14 +123,17 @@ class GEAGFulfillmentHandler():
         """
         return self._get_geag_variant_id(transaction)
 
+    def _fulfill_in_geag(self, allocation_payload):
+        geag_response = self.get_smarter_client.create_enterprise_allocation(**allocation_payload)
+        return geag_response.json().get('orderUuid')
+
     def fulfill(self, transaction):
         """
         Attempt to fulfill a ledger transaction with the GEAG fulfillment system
         """
         self._validate(transaction)
         allocation_payload = self._create_allocation_payload(transaction)
-        geag_response = self.get_smarter_client.create_enterprise_allocation(**allocation_payload)
-        external_reference_id = geag_response.json().get('orderUuid')
+        external_reference_id = self._fulfill_in_geag(allocation_payload)
         if not external_reference_id:
             raise FulfillmentException('missing orderUuid / external_reference_id from geag')
         return self._save_fulfillment_reference(transaction, external_reference_id)
