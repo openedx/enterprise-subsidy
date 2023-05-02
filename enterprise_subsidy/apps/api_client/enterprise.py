@@ -28,6 +28,7 @@ class EnterpriseApiClient(BaseOAuthClient):
     """
     api_base_url = settings.LMS_URL + '/enterprise/api/v1/'
     enterprise_customer_endpoint = api_base_url + 'enterprise-customer/'
+    enterprise_subsidy_fulfillment_endpoint = api_base_url + 'enterprise-subsidy-fulfillment/'
 
     def enterprise_customer_url(self, enterprise_customer_uuid):
         return os.path.join(
@@ -35,10 +36,22 @@ class EnterpriseApiClient(BaseOAuthClient):
             f"{enterprise_customer_uuid}/",
         )
 
+    def enterprise_fulfillment_url(self, enterprise_fulfillment_uuid):
+        return os.path.join(
+            self.enterprise_subsidy_fulfillment_endpoint,
+            f"{enterprise_fulfillment_uuid}/"
+        )
+
     def enterprise_customer_bulk_enrollment_url(self, enterprise_customer_uuid):
         return os.path.join(
             self.enterprise_customer_url(enterprise_customer_uuid),
             "enroll_learners_in_courses/",
+        )
+
+    def enterprise_fulfillment_cancel_url(self, enterprise_fulfillment_uuid):
+        return os.path.join(
+            self.enterprise_fulfillment_url(enterprise_fulfillment_uuid),
+            "cancel-fulfillment",
         )
 
     def get_enterprise_customer_data(self, enterprise_customer_uuid):
@@ -138,5 +151,30 @@ class EnterpriseApiClient(BaseOAuthClient):
             logger.error(
                 f'Failed to generate enterprise enrollments for enterprise: {enterprise_customer_uuid} '
                 f'with options: {options}. Failed with error: {exc}'
+            )
+            raise exc
+
+    def cancel_fulfillment(self, enterprise_fulfillment_uuid):
+        """
+        Calls the Platform Enterprise Subsidy Enrollment API to cancel an enrollment.
+        Arguments:
+            enterprise_fulfillment_uuid (UUID): UUID representation of the subsidy enrollment to be cancelled
+        Returns:
+            response (dict): JSON response data
+        Raises:
+            requests.exceptions.HTTPError: if service is down/unavailable or status code comes back >= 300,
+            the method will log and throw an HTTPError exception.
+        """
+        logger.info(
+            f'Cancelling enterprise enrollment for enterprise_fulfillment_uuid: {enterprise_fulfillment_uuid}'
+        )
+        cancel_enrollment_url = self.enterprise_fulfillment_cancel_url(enterprise_fulfillment_uuid)
+        try:
+            response = self.client.post(cancel_enrollment_url)
+            response.raise_for_status()
+        except requests.exceptions.HTTPError as exc:
+            logger.error(
+                f'Failed to cancel enterprise enrollment for enterprise_fulfillment_uuid: '
+                f'{enterprise_fulfillment_uuid}. Failed with error: {exc}'
             )
             raise exc

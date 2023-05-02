@@ -1,0 +1,25 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static admin_urls %}
+<!-- {% load l10n %} -->
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+    <h1>
+        Unenrollment via Subsidy Transaction
+    </h1>
+    <h3>
+        This action will unenroll the learner WITHOUT issuing a credit refund to the learner's enterprise account. Do you wish to
+        continue?
+    </h3>
+    <div style="display:flex";>
+        <div style="vertical-align:top">
+            <input type="hidden" name="post" value="submit" />
+            <input type="hidden" name="action" value="submit" />
+            <input type="submit" value="Confirm unenrollment without refund" />
+        </div>
+        <div style="margin-left:0.5rem">
+            <input type="button" value="Cancel" onclick="history.go(-1)"/>
+        </div>
+    </div>
+</form>
+{% endblock %}
+
