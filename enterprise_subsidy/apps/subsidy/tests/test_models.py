@@ -6,8 +6,9 @@ from unittest import mock
 from uuid import uuid4
 
 import ddt
+import pytest
 from django.test import TestCase
-from openedx_ledger.models import TransactionStateChoices
+from openedx_ledger.models import Transaction, TransactionStateChoices
 from openedx_ledger.test_utils.factories import (
     ExternalFulfillmentProviderFactory,
     ExternalTransactionReferenceFactory,
@@ -16,6 +17,7 @@ from openedx_ledger.test_utils.factories import (
 from requests.exceptions import HTTPError
 from rest_framework import status
 
+from enterprise_subsidy.apps.fulfillment.api import InvalidFulfillmentMetadataException
 from test_utils.utils import MockResponse
 
 from ..models import ContentNotFoundForCustomerException
@@ -228,3 +230,39 @@ class SubsidyModelRedemptionTestCase(TestCase):
         assert new_transaction.state == TransactionStateChoices.COMMITTED
         assert new_transaction.quantity == -mock_content_price
         assert new_transaction.metadata == tx_metadata
+
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_redeem_with_geag_exception(self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content):
+        """
+        Test Subsidy.redeem() rollback upon geag validation exception
+        """
+        lms_user_id = 1
+        content_key = "course-v1:edX+test+course"
+        subsidy_access_policy_uuid = str(uuid4())
+        mock_enterprise_fulfillment_uuid = str(uuid4())
+        mock_content_price = 1000
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'course-v1:edX+test+course',
+            'content_key': 'course-v1:edX+test+course',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': str(uuid4()),
+        }
+        mock_price_for_content.return_value = mock_content_price
+        mock_enterprise_client.enroll.return_value = mock_enterprise_fulfillment_uuid
+        tx_metadata = {
+            'geag_first_name': 'Donny',
+            'geag_last_name': 'Kerabatsos',
+        }
+        with pytest.raises(InvalidFulfillmentMetadataException):
+            self.subsidy.redeem(
+                lms_user_id,
+                content_key,
+                subsidy_access_policy_uuid,
+                metadata=tx_metadata
+            )
+        created_transaction = Transaction.objects.latest('created')
+        assert created_transaction.state == TransactionStateChoices.FAILED
