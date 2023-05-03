@@ -528,7 +528,13 @@ class TransactionAdminCreateViewTests(APITestBase):
 
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
-    def test_operator_creation_happy_path_201(self, mock_price_for_content, mock_enterprise_client):
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_operator_creation_happy_path_201(
+        self,
+        mock_get_content_summary,
+        mock_price_for_content,
+        mock_enterprise_client
+    ):
         """
         Tests that the admin transaction creation endpoint responds with a 201
         when creating a transaction, and no matching transaction already exists.
@@ -537,7 +543,14 @@ class TransactionAdminCreateViewTests(APITestBase):
 
         mock_enterprise_client.enroll.return_value = 'my-fulfillment-id'
         mock_price_for_content.return_value = 1000
-
+        mock_get_content_summary.return_value = {
+            'content_uuid': self.content_key_1,
+            'content_key': self.content_key_1,
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
         url = reverse("api:v2:transaction-admin-list-create", args=[self.subsidy_1.uuid])
         # use the same inputs as existing_transaction
         request_data = {

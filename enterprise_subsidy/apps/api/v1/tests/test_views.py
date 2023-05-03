@@ -842,7 +842,8 @@ class TransactionViewSetTests(APITestBase):
     # @mock.patch('enterprise_subsidy.apps.api.v1.event_utils.track_event')
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
-    def test_create(self, mock_price_for_content, mock_enterprise_client):
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_create(self, mock_get_content_summary, mock_price_for_content, mock_enterprise_client):
         """
         Test create Transaction, happy case.
         """
@@ -850,6 +851,15 @@ class TransactionViewSetTests(APITestBase):
         test_enroll_enterprise_fulfillment_uuid = "test-enroll-reference-id"
         mock_enterprise_client.enroll.return_value = test_enroll_enterprise_fulfillment_uuid
         mock_price_for_content.return_value = 10000
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'course-v1:edX-test-course',
+            'content_key': 'course-v1:edX-test-course',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
+
         # Create privileged staff user that should be able to create Transactions.
         self.set_up_operator()
         post_data = {
@@ -899,7 +909,8 @@ class TransactionViewSetTests(APITestBase):
     # @mock.patch('enterprise_subsidy.apps.api.v1.event_utils.track_event')
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
-    def test_create_with_metadata(self, mock_price_for_content, mock_enterprise_client):
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_create_with_metadata(self, mock_get_content_summary, mock_price_for_content, mock_enterprise_client):
         """
         Test create Transaction, happy case.
         """
@@ -907,12 +918,20 @@ class TransactionViewSetTests(APITestBase):
         test_enroll_enterprise_fulfillment_uuid = "test-enroll-reference-id"
         mock_enterprise_client.enroll.return_value = test_enroll_enterprise_fulfillment_uuid
         mock_price_for_content.return_value = 10000
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'course-v1:edX-test-course',
+            'content_key': 'course-v1:edX-test-course',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
         # Create privileged staff user that should be able to create Transactions.
         self.set_up_operator()
         tx_metadata = {
                 "geag_first_name": "Donny",
                 "geag_last_name": "Kerabatsos",
-            }
+        }
         post_data = {
             "subsidy_uuid": str(self.subsidy_1.uuid),
             "lms_user_id": 1234,
@@ -1031,11 +1050,25 @@ class TransactionViewSetTests(APITestBase):
 
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.content_metadata_api")
-    def test_create_external_enroll_failed(self, mock_content_metadata_api, mock_enterprise_client):
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_create_external_enroll_failed(
+        self,
+        mock_get_content_summary,
+        mock_content_metadata_api,
+        mock_enterprise_client
+    ):
         """
         Test create Transaction, 5xx response due to the external enrollment failing. Check that a transaction is
         created, then rolled back to "failed" state.
         """
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'course-v1:edX+test+course.enroll.failed',
+            'content_key': 'course-v1:edX+test+course.enroll.failed',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
         # Create privileged staff user that should be able to create Transactions.
         self.set_up_operator()
         url = reverse("api:v1:transaction-list")

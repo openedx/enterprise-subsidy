@@ -150,3 +150,9 @@ class ContentMetadataApi:
             content_identifier
         )
         return self.product_source_for_content(course_details)
+
+    def get_geag_variant_id(self, enterprise_customer_uuid, content_identifier):
+        """
+        Returns the GetSmarter product variant id or None
+        """
+        return self.get_content_summary(enterprise_customer_uuid, content_identifier).get('geag_variant_id')

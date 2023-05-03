@@ -28,6 +28,7 @@ from simple_history.models import HistoricalRecords
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
+from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
 
 MOCK_CATALOG_CLIENT = mock.MagicMock()
 MOCK_ENROLLMENT_CLIENT = mock.MagicMock()
@@ -199,6 +200,12 @@ class Subsidy(TimeStampedModel):
         API layer for interacting with enterprise catalog content metadata
         """
         return ContentMetadataApi()
+
+    def geag_fulfillment_handler(self):
+        """
+        API layer for interacting with GEAG Fulfillment logic
+        """
+        return GEAGFulfillmentHandler()
 
     @lru_cache(maxsize=64)
     def price_for_content(self, content_key):
@@ -381,8 +388,14 @@ class Subsidy(TimeStampedModel):
         ledger_transaction.save()
 
         try:
+            if self.geag_fulfillment_handler().can_fulfill(ledger_transaction):
+                self.geag_fulfillment_handler().fulfill(ledger_transaction)
+        except Exception as exc:
+            self.rollback_transaction(ledger_transaction)
+            raise exc
+
+        try:
             enterprise_fulfillment_uuid = self.enterprise_client.enroll(lms_user_id, content_key, ledger_transaction)
-            # TODO: once GEAG support is implemented we should pass external_reference (obj) to `commit_transactions`
             self.commit_transaction(
                 ledger_transaction,
                 fulfillment_identifier=enterprise_fulfillment_uuid,
