@@ -9,6 +9,7 @@ from openedx_ledger.models import ExternalFulfillmentProvider, ExternalTransacti
 # pylint: disable=unused-import
 from enterprise_subsidy.apps.content_metadata import api as content_metadata_api
 from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
+from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 
 from .constants import EXEC_ED_2U_COURSE_TYPES, OPEN_COURSES_COURSE_TYPES
 
@@ -51,7 +52,6 @@ class GEAGFulfillmentHandler():
     """
     A class for fulfilling a GEAG transaction.
     """
-    CENTS_PER_DOLLAR = 100.0
     EXTERNAL_FULFILLMENT_PROVIDER_SLUG = 'geag'
 
     def get_smarter_client(self):
@@ -63,7 +63,7 @@ class GEAGFulfillmentHandler():
         )
 
     def _get_geag_transaction_price(self, transaction):
-        return float(transaction.quantity) / self.CENTS_PER_DOLLAR
+        return float(transaction.quantity) / CENTS_PER_DOLLAR
 
     def _get_enterprise_customer_uuid(self, transaction):
         return transaction.ledger.subsidy.enterprise_customer_uuid
@@ -125,7 +125,7 @@ class GEAGFulfillmentHandler():
 
     def _fulfill_in_geag(self, allocation_payload):
         geag_response = self.get_smarter_client.create_enterprise_allocation(**allocation_payload)
-        return geag_response.json().get('orderUuid')
+        return geag_response.json()
 
     def fulfill(self, transaction):
         """
@@ -133,7 +133,8 @@ class GEAGFulfillmentHandler():
         """
         self._validate(transaction)
         allocation_payload = self._create_allocation_payload(transaction)
-        external_reference_id = self._fulfill_in_geag(allocation_payload)
+        geag_response = self._fulfill_in_geag(allocation_payload)
+        external_reference_id = geag_response.get('orderUuid')
         if not external_reference_id:
             raise FulfillmentException('missing orderUuid / external_reference_id from geag')
         return self._save_fulfillment_reference(transaction, external_reference_id)

@@ -184,7 +184,9 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
             'geag_variant_id': str(uuid4()),
         }
         mock_get_content_summary.return_value = content_summary
-        mock_fulfill_in_geag.return_value = str(uuid4())
+        mock_fulfill_in_geag.return_value = {
+            'orderUuid': str(uuid4()),
+        }
         tx_metadata = {
             'geag_first_name': 'Donny',
             'geag_last_name': 'Kerabatsos',
