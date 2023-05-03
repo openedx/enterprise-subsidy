@@ -88,12 +88,14 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
         )
         external_reference_id = uuid4()
         # pylint: disable=protected-access
-        external_ransaction_reference = self.geag_fulfillment_handler._save_fulfillment_reference(
+        external_transaction_reference = self.geag_fulfillment_handler._save_fulfillment_reference(
             transaction,
             external_reference_id
         )
-        assert external_ransaction_reference
-        assert external_ransaction_reference.external_reference_id == external_reference_id
+        assert external_transaction_reference
+        assert external_transaction_reference.external_reference_id == external_reference_id
+        this_slug = external_transaction_reference.external_fulfillment_provider.slug
+        assert this_slug == self.geag_fulfillment_handler.EXTERNAL_FULFILLMENT_PROVIDER_SLUG
 
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
     def test_create_allocation_payload(self, mock_get_content_summary):
@@ -125,7 +127,11 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
         )
         # pylint: disable=protected-access
         geag_payload = self.geag_fulfillment_handler._create_allocation_payload(transaction)
+        assert geag_payload.get('payment_reference') == transaction.uuid
         assert geag_payload.get('order_items')[0].get('productId') == content_summary.get('geag_variant_id')
+        for payload_field in self.geag_fulfillment_handler.REQUIRED_METADATA_FIELDS:
+            geag_field = payload_field[len('geag_'):]
+            assert geag_payload.get(geag_field) == tx_metadata.get(payload_field)
 
     def test_validate_pass(self):
         """
@@ -156,6 +162,7 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
             'geag_first_name': 'Donny',
             'geag_last_name': 'Kerabatsos',
             'geag_date_of_birth': '1900-01-01',
+            'geag_terms_accepted_at': '2021-05-21T17:32:28Z',
         }
         transaction = TransactionFactory.create(
             state=TransactionStateChoices.PENDING,
@@ -165,15 +172,18 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
             content_key=self.content_key,
             metadata=tx_metadata,
         )
-        with pytest.raises(InvalidFulfillmentMetadataException):
-            # pylint: disable=protected-access
-            self.geag_fulfillment_handler._validate(transaction)
+        # validate that removing any of the required fields results in an exception
+        for field in self.geag_fulfillment_handler.REQUIRED_METADATA_FIELDS:
+            transaction.metadata = {k: v for k, v in tx_metadata.items() if k != field}
+            with pytest.raises(InvalidFulfillmentMetadataException):
+                # pylint: disable=protected-access
+                self.geag_fulfillment_handler._validate(transaction)
 
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
     @mock.patch("enterprise_subsidy.apps.fulfillment.api.GEAGFulfillmentHandler._fulfill_in_geag")
     def test_fulfill(self, mock_fulfill_in_geag, mock_get_content_summary):
         """
-        Ensure basic happy path of `_create_allocation_payload`
+        Ensure basic happy path of `fulfill`
         """
         content_summary = {
             'content_uuid': 'course-v1:edX-test-course',
@@ -184,9 +194,10 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
             'geag_variant_id': str(uuid4()),
         }
         mock_get_content_summary.return_value = content_summary
-        mock_fulfill_in_geag.return_value = {
+        geag_response = {
             'orderUuid': str(uuid4()),
         }
+        mock_fulfill_in_geag.return_value = geag_response
         tx_metadata = {
             'geag_first_name': 'Donny',
             'geag_last_name': 'Kerabatsos',
@@ -201,4 +212,9 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
             content_key=self.content_key,
             metadata=tx_metadata,
         )
-        assert self.geag_fulfillment_handler.fulfill(transaction)
+        external_transaction_reference = self.geag_fulfillment_handler.fulfill(transaction)
+        assert external_transaction_reference
+        assert external_transaction_reference.transaction == transaction
+        this_slug = external_transaction_reference.external_fulfillment_provider.slug
+        assert this_slug == self.geag_fulfillment_handler.EXTERNAL_FULFILLMENT_PROVIDER_SLUG
+        assert external_transaction_reference.external_reference_id == geag_response.get('orderUuid')

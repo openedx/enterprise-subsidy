@@ -53,6 +53,12 @@ class GEAGFulfillmentHandler():
     A class for fulfilling a GEAG transaction.
     """
     EXTERNAL_FULFILLMENT_PROVIDER_SLUG = 'geag'
+    REQUIRED_METADATA_FIELDS = [
+        'geag_first_name',
+        'geag_last_name',
+        'geag_date_of_birth',
+        'geag_terms_accepted_at'
+    ]
 
     def get_smarter_client(self):
         return GetSmarterEnterpriseApiClient(
@@ -101,7 +107,7 @@ class GEAGFulfillmentHandler():
 
         Raises an exception when the transaction is missing required information
         """
-        for field in ['geag_first_name', 'geag_last_name', 'geag_date_of_birth', 'geag_terms_accepted_at']:
+        for field in self.REQUIRED_METADATA_FIELDS:
             if not transaction.metadata.get(field):
                 raise InvalidFulfillmentMetadataException(f'missing {field} transaction metadata')
         return True
@@ -121,7 +127,7 @@ class GEAGFulfillmentHandler():
         A helper to let callers know if the transaction at hand can be fulfilled
         with this fulfillment handler.
         """
-        return self._get_geag_variant_id(transaction)
+        return bool(self._get_geag_variant_id(transaction))
 
     def _fulfill_in_geag(self, allocation_payload):
         geag_response = self.get_smarter_client.create_enterprise_allocation(**allocation_payload)
