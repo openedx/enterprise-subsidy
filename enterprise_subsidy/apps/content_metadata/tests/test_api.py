@@ -165,7 +165,6 @@ class ContentMetadataApiTests(TestCase):
         assert summary.get('course_run_key') == self.courserun_key
         assert summary.get('content_price') == 14900
 
-
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
     def test_summary_data_for_exec_ed_content(self, mock_oauth_client):
         executive_education_course_metadata = {
@@ -193,7 +192,10 @@ class ContentMetadataApiTests(TestCase):
         }
         mode = self.content_metadata_api.mode_for_content(executive_education_course_metadata)
         assert mode == 'paid-executive-education'
-        summary = self.content_metadata_api.summary_data_for_content(self.course_key, executive_education_course_metadata)
+        summary = self.content_metadata_api.summary_data_for_content(
+            self.course_key,
+            executive_education_course_metadata
+        )
         assert summary.get('content_key') == self.course_key
-        assert summary.get('course_run_key') == None
+        assert summary.get('course_run_key') is None
         assert summary.get('content_price') == 59949
