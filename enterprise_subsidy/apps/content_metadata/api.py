@@ -32,7 +32,7 @@ class ContentMetadataApi:
         """
         return EnterpriseCatalogApiClient()
 
-    def price_for_content(self, content_data):
+    def price_for_content(self, content_data, course_run_data):
         """
         Helper to return the "official" price for content.
         The endpoint at ``self.content_metadata_url`` will always return price fields
@@ -40,8 +40,8 @@ class ContentMetadataApi:
         those values to USD cents as an integer.
         """
         content_price = None
-        if content_data.get('first_enrollable_paid_seat_price'):
-            content_price = content_data['first_enrollable_paid_seat_price']
+        if course_run_data.get('first_enrollable_paid_seat_price'):
+            content_price = course_run_data['first_enrollable_paid_seat_price']
 
         if not content_price:
             enrollment_mode_for_content = self.mode_for_content(content_data)
@@ -80,19 +80,37 @@ class ContentMetadataApi:
             variant_id = additional_metadata.get('variant_id')
         return variant_id
 
-    def summary_data_for_content(self, content_data):
+    def summary_data_for_content(self, content_identifier, content_data):
         """
         Returns a summary dict specifying the content_uuid, content_key, source, and content_price
         for a dict of content metadata.
         """
+        course_run_content = self.get_course_run(content_identifier, content_data)
         return {
             'content_uuid': content_data.get('uuid'),
             'content_key': content_data.get('key'),
+            'course_run_uuid': course_run_content.get('uuid'),
+            'course_run_key': course_run_content.get('key'),
             'source': self.product_source_for_content(content_data),
             'mode': self.mode_for_content(content_data),
-            'content_price': self.price_for_content(content_data),
+            'content_price': self.price_for_content(content_data, course_run_content),
             'geag_variant_id': self.get_geag_variant_id_for_content(content_data),
         }
+
+    def get_course_run(self, content_identifier, content_data):
+        """
+        Given a content_identify (key, run key, uuid) extract the appropriate course_run.
+        When given a run key or uuid for a run, extract that. When given a course key or
+        course uuid, extract the advertized course_run.
+        """
+        course_run_identifier = content_identifier
+        # if the suppliec content_identifer refers to the course, look for an advertized run
+        if content_identifier == content_data.get('key') or content_identifier == content_data.get('uuid'):
+            course_run_identifier = content_data.get('advertised_course_run_uuid')
+        for course_run in content_data.get('course_runs', []):
+            if course_run_identifier == course_run.get('key') or course_run_identifier == course_run.get('uuid'):
+                return course_run
+        return {}
 
     def get_content_summary(self, enterprise_customer_uuid, content_identifier):
         """
@@ -102,7 +120,7 @@ class ContentMetadataApi:
             enterprise_customer_uuid,
             content_identifier
         )
-        return self.summary_data_for_content(course_details)
+        return self.summary_data_for_content(content_identifier, course_details)
 
     def get_course_price(self, enterprise_customer_uuid, content_identifier):
         """
@@ -126,7 +144,8 @@ class ContentMetadataApi:
             enterprise_customer_uuid,
             content_identifier
         )
-        return self.price_for_content(course_details)
+        course_run_data = self.get_course_run(content_identifier, course_details)
+        return self.price_for_content(course_details, course_run_data)
 
     def get_product_source(self, enterprise_customer_uuid, content_identifier):
         """

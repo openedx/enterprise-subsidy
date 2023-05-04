@@ -157,3 +157,43 @@ class ContentMetadataApiTests(TestCase):
         source_name = product_source.get('name') if product_source else 'edX'
         expected_source = source_name if product_source else ProductSources.EDX.value
         assert expected_source == response
+
+    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
+    def test_summary_data_for_content(self, mock_oauth_client):
+        summary = self.content_metadata_api.summary_data_for_content(self.courserun_key, self.course_metadata)
+        assert summary.get('content_key') == self.course_key
+        assert summary.get('course_run_key') == self.courserun_key
+        assert summary.get('content_price') == 14900
+
+
+    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
+    def test_summary_data_for_exec_ed_content(self, mock_oauth_client):
+        executive_education_course_metadata = {
+            "key": self.course_key,
+            "content_type": "course",
+            "uuid": str(uuid4()),
+            "title": "Demonstration Course",
+            "entitlements": [
+                {
+                    "mode": "paid-executive-education",
+                    "price": "599.49",
+                    "currency": "USD",
+                    "sku": "B98DE21",
+                    "expires": "null"
+                }
+            ],
+            "product_source": {
+                "name": "2u",
+                "slug": "2u",
+                "description": "2U, Trilogy, Getsmarter -- external source for 2u courses and programs"
+            },
+            "additional_metadata": {
+                "variant_id": "79a95406-a9ac-49b3-a27c-44f3fd06092e"
+            }
+        }
+        mode = self.content_metadata_api.mode_for_content(executive_education_course_metadata)
+        assert mode == 'paid-executive-education'
+        summary = self.content_metadata_api.summary_data_for_content(self.course_key, executive_education_course_metadata)
+        assert summary.get('content_key') == self.course_key
+        assert summary.get('course_run_key') == None
+        assert summary.get('content_price') == 59949

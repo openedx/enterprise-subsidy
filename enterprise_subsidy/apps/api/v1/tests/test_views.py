@@ -1178,6 +1178,10 @@ class ContentMetadataViewSetTests(APITestBase):
     content_key_1 = "edX+DemoX"
     content_uuid_2 = str(uuid.uuid4())
     content_key_2 = "edX+DemoX2"
+    content_uuid_3 = str(uuid.uuid4())
+    content_key_3 = "edX+DemoX3"
+    course_run_uuid = str(uuid.uuid4())
+    course_run_key = "edX+DemoX3+20230101"
     edx_course_metadata = {
         "key": content_key_1,
         "content_type": "course",
@@ -1192,6 +1196,30 @@ class ContentMetadataViewSetTests(APITestBase):
                 "expires": "null"
             }
         ],
+        "product_source": None,
+    }
+    edx_course_metadata_with_runs = {
+        "key": content_key_3,
+        "content_type": "course",
+        "uuid": content_uuid_3,
+        "title": "Demonstration Course",
+        "entitlements": [
+            {
+                "mode": "verified",
+                "price": "149.00",
+                "currency": "USD",
+                "sku": "8A47F9E",
+                "expires": "null"
+            }
+        ],
+        "course_runs": [
+            {
+                "key": course_run_key,
+                "uuid": course_run_uuid,
+                "first_enrollable_paid_seat_price": 100,
+            }
+        ],
+        "advertised_course_run_uuid": course_run_uuid,
         "product_source": None,
     }
     executive_education_course_metadata = {
@@ -1224,6 +1252,8 @@ class ContentMetadataViewSetTests(APITestBase):
         {
             'expected_content_uuid': content_uuid_1,
             'expected_content_key': content_key_1,
+            'expected_course_run_uuid': None,
+            'expected_course_run_key': None,
             'expected_content_price': 14900.0,
             'mock_metadata': edx_course_metadata,
             'expected_source': 'edX',
@@ -1231,8 +1261,21 @@ class ContentMetadataViewSetTests(APITestBase):
             'expected_geag_variant_id': None,
         },
         {
+            'expected_content_uuid': content_uuid_3,
+            'expected_content_key': content_key_3,
+            'expected_course_run_uuid': str(course_run_uuid),
+            'expected_course_run_key': course_run_key,
+            'expected_content_price': 10000.0,
+            'mock_metadata': edx_course_metadata_with_runs,
+            'expected_source': 'edX',
+            'expected_mode': 'verified',
+            'expected_geag_variant_id': None,
+        },
+        {
             'expected_content_uuid': content_uuid_2,
             'expected_content_key': content_key_2,
+            'expected_course_run_uuid': None,
+            'expected_course_run_key': None,
             'expected_content_price': 59949,
             'mock_metadata': executive_education_course_metadata,
             'expected_source': '2u',
@@ -1246,6 +1289,8 @@ class ContentMetadataViewSetTests(APITestBase):
         self,
         expected_content_uuid,
         expected_content_key,
+        expected_course_run_uuid,
+        expected_course_run_key,
         expected_content_price,
         mock_metadata,
         expected_source,
@@ -1265,6 +1310,8 @@ class ContentMetadataViewSetTests(APITestBase):
             assert response.json() == {
                 'content_uuid': str(expected_content_uuid),
                 'content_key': expected_content_key,
+                'course_run_key': expected_course_run_key,
+                'course_run_uuid': expected_course_run_uuid,
                 'source': expected_source,
                 'content_price': expected_content_price,
                 'mode': expected_mode,
@@ -1279,6 +1326,8 @@ class ContentMetadataViewSetTests(APITestBase):
             assert response.json() == {
                 'content_uuid': str(expected_content_uuid),
                 'content_key': expected_content_key,
+                'course_run_key': expected_course_run_key,
+                'course_run_uuid': expected_course_run_uuid,
                 'source': expected_source,
                 'content_price': expected_content_price,
                 'mode': expected_mode,
