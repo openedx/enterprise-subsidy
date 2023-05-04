@@ -99,12 +99,12 @@ class ContentMetadataApi:
 
     def get_course_run(self, content_identifier, content_data):
         """
-        Given a content_identify (key, run key, uuid) extract the appropriate course_run.
+        Given a content_identifier (key, run key, uuid) extract the appropriate course_run.
         When given a run key or uuid for a run, extract that. When given a course key or
-        course uuid, extract the advertized course_run.
+        course uuid, extract the advertised course_run.
         """
         course_run_identifier = content_identifier
-        # if the suppliec content_identifer refers to the course, look for an advertized run
+        # if the supplied content_identifer refers to the course, look for an advertised run
         if content_identifier == content_data.get('key') or content_identifier == content_data.get('uuid'):
             course_run_identifier = content_data.get('advertised_course_run_uuid')
         for course_run in content_data.get('course_runs', []):
