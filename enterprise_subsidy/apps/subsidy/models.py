@@ -9,7 +9,6 @@ Some defintions:
 * `redemption`: The act of redeeming stored value for content.
 """
 from datetime import datetime, timezone
-from functools import lru_cache
 from unittest import mock
 from uuid import uuid4
 
@@ -207,7 +206,6 @@ class Subsidy(TimeStampedModel):
         """
         return GEAGFulfillmentHandler()
 
-    @lru_cache(maxsize=64)
     def price_for_content(self, content_key):
         """
         Return the price of the given content in USD Cents.

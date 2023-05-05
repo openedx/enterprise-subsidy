@@ -135,6 +135,11 @@ class TransactionCreationRequestSerializer(serializers.ModelSerializer):
     """
     Serializer for creating instances of the `Transaction` model.
     """
+    metadata = serializers.JSONField(
+        help_text="Any additional metadata that a client may want to associate with this Transaction instance.",
+        required=False,
+        allow_null=True,
+    )
 
     class Meta:
         """
@@ -146,6 +151,7 @@ class TransactionCreationRequestSerializer(serializers.ModelSerializer):
             'lms_user_id',
             'content_key',
             'subsidy_access_policy_uuid',
+            'metadata',
         ]
         # Override lms_user_id, content_key, and subsidy_access_policy_uuid to each be required;
         # their model field definitions have `required=False`.
@@ -185,6 +191,7 @@ class TransactionCreationRequestSerializer(serializers.ModelSerializer):
                 validated_data['content_key'],
                 validated_data['subsidy_access_policy_uuid'],
                 idempotency_key=validated_data.get('idempotency_key'),
+                metadata=validated_data.get('metadata'),
             )
         except LedgerLockAttemptFailed as exc:
             logger.exception(

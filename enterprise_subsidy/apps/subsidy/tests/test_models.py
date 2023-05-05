@@ -44,11 +44,6 @@ class SubsidyModelReadTestCase(TestCase):
         cls.subsidy.content_metadata_api = mock.MagicMock()
         super().setUpTestData()
 
-    def setUp(self):
-        super().setUp()
-        # Clear the method cache between tests to help make tests deterministic.
-        self.subsidy.price_for_content.cache_clear()
-
     def test_price_for_content(self):
         """
         Tests that Subsidy.price_for_content returns the price of a piece
