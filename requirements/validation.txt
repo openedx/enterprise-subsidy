@@ -107,7 +107,7 @@ distlib==0.3.6
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   virtualenv
-django==3.2.18
+django==3.2.19
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -254,12 +254,12 @@ factory-boy==3.2.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-faker==18.6.0
+faker==18.6.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   factory-boy
-fastavro==1.7.3
+fastavro==1.7.4
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -275,7 +275,7 @@ future==0.18.3
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pyjwkest
-getsmarter-api-clients==0.5.0
+getsmarter-api-clients==0.5.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -393,7 +393,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==7.0.0
+openedx-events==7.1.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -577,7 +577,7 @@ redis==4.5.4
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-requests==2.29.0
+requests==2.30.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -608,7 +608,7 @@ rich==13.3.5
     # via
     #   -r requirements/quality.txt
     #   twine
-ruamel-yaml==0.17.21
+ruamel-yaml==0.17.23
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -716,7 +716,7 @@ uritemplate==4.1.1
     #   coreapi
     #   drf-spectacular
     #   drf-yasg
-urllib3==1.26.15
+urllib3==2.0.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt

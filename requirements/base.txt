@@ -36,7 +36,7 @@ defusedxml==0.7.1
     # via
     #   python3-openid
     #   social-auth-core
-django==3.2.18
+django==3.2.19
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/base.in
@@ -132,11 +132,11 @@ edx-rbac==1.7.0
     #   openedx-ledger
 edx-rest-api-client==5.5.0
     # via -r requirements/base.in
-fastavro==1.7.3
+fastavro==1.7.4
     # via openedx-events
 future==0.18.3
     # via pyjwkest
-getsmarter-api-clients==0.5.0
+getsmarter-api-clients==0.5.1
     # via -r requirements/base.in
 idna==3.4
     # via requests
@@ -169,7 +169,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==7.0.0
+openedx-events==7.1.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
@@ -222,7 +222,7 @@ pyyaml==6.0
     #   edx-django-release-util
 redis==4.5.4
     # via openedx-ledger
-requests==2.29.0
+requests==2.30.0
     # via
     #   coreapi
     #   edx-drf-extensions
@@ -235,7 +235,7 @@ requests-oauthlib==1.3.1
     # via
     #   getsmarter-api-clients
     #   social-auth-core
-ruamel-yaml==0.17.21
+ruamel-yaml==0.17.23
     # via drf-yasg
 ruamel-yaml-clib==0.2.7
     # via ruamel-yaml
@@ -272,7 +272,7 @@ uritemplate==4.1.1
     #   coreapi
     #   drf-spectacular
     #   drf-yasg
-urllib3==1.26.15
+urllib3==2.0.2
     # via requests
 zipp==3.15.0
     # via importlib-resources
