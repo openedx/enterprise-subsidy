@@ -114,8 +114,10 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
         tx_metadata = {
             'geag_first_name': 'Donny',
             'geag_last_name': 'Kerabatsos',
+            'geag_email': 'donny@example.com',
             'geag_date_of_birth': '1900-01-01',
             'geag_terms_accepted_at': '2021-05-21T17:32:28Z',
+            'geag_data_share_consent': True,
         }
         transaction = TransactionFactory.create(
             state=TransactionStateChoices.PENDING,
@@ -140,8 +142,10 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
         tx_metadata = {
             'geag_first_name': 'Donny',
             'geag_last_name': 'Kerabatsos',
+            'geag_email': 'donny@example.com',
             'geag_date_of_birth': '1900-01-01',
             'geag_terms_accepted_at': '2021-05-21T17:32:28Z',
+            'geag_data_share_consent': True,
         }
         transaction = TransactionFactory.create(
             state=TransactionStateChoices.PENDING,
@@ -161,8 +165,10 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
         tx_metadata = {
             'geag_first_name': 'Donny',
             'geag_last_name': 'Kerabatsos',
+            'geag_email': 'donny@example.com',
             'geag_date_of_birth': '1900-01-01',
             'geag_terms_accepted_at': '2021-05-21T17:32:28Z',
+            'geag_data_share_consent': True,
         }
         transaction = TransactionFactory.create(
             state=TransactionStateChoices.PENDING,
@@ -201,8 +207,10 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
         tx_metadata = {
             'geag_first_name': 'Donny',
             'geag_last_name': 'Kerabatsos',
+            'geag_email': 'donny@example.com',
             'geag_date_of_birth': '1900-01-01',
             'geag_terms_accepted_at': '2021-05-21T17:32:28Z',
+            'geag_data_share_consent': True,
         }
         transaction = TransactionFactory.create(
             state=TransactionStateChoices.PENDING,
