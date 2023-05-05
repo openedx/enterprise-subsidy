@@ -419,7 +419,7 @@ class Subsidy(TimeStampedModel):
         """
         content_price = self.price_for_content(content_key)
         redeemable = False
-        if content_price:
+        if content_price is not None:
             redeemable = self.current_balance() >= content_price
         return redeemable, content_price
 
