@@ -83,8 +83,8 @@ class GEAGFulfillmentHandler():
     def _create_allocation_payload(self, transaction, currency='USD'):
         transaction_price = self._get_geag_transaction_price(transaction)
         return {
-            'payment_reference': transaction.uuid,
-            'enterprise_customer_uuid': self._get_enterprise_customer_uuid(transaction),
+            'payment_reference': str(transaction.uuid),
+            'enterprise_customer_uuid': str(self._get_enterprise_customer_uuid(transaction)),
             'currency': currency,
             'order_items': [
                 {
