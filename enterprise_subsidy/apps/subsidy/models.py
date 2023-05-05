@@ -418,7 +418,9 @@ class Subsidy(TimeStampedModel):
             2-tuple of (bool: True if redeemable, int: price of content)
         """
         content_price = self.price_for_content(content_key)
-        redeemable = self.current_balance() >= content_price
+        redeemable = False
+        if content_price:
+            redeemable = self.current_balance() >= content_price
         return redeemable, content_price
 
     def get_redemption(self, lms_user_id, content_key):

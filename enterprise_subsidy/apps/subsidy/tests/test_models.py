@@ -60,6 +60,24 @@ class SubsidyModelReadTestCase(TestCase):
             'some-content-key',
         )
 
+    def test_is_redeemable_no_price(self):
+        """
+        When no price is available, a course is NOT redeemable
+        """
+        content_price_cents = None
+        self.subsidy.content_metadata_api().get_course_price.return_value = content_price_cents
+        redeemable, _ = self.subsidy.is_redeemable('some-content-key')
+        assert not redeemable
+
+    def test_is_redeemable_with_price(self):
+        """
+        Given a valid price, a course IS redeemable
+        """
+        content_price_cents = 1000
+        self.subsidy.content_metadata_api().get_course_price.return_value = content_price_cents
+        redeemable, _ = self.subsidy.is_redeemable('some-content-key')
+        assert redeemable
+
     def test_price_for_content_not_in_catalog(self):
         """
         Tests that Subsidy.price_for_content raises ContentNotFoundForCustomerException

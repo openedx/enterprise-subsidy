@@ -130,7 +130,7 @@ class GEAGFulfillmentHandler():
         return bool(self._get_geag_variant_id(transaction))
 
     def _fulfill_in_geag(self, allocation_payload):
-        geag_response = self.get_smarter_client.create_enterprise_allocation(**allocation_payload)
+        geag_response = self.get_smarter_client().create_enterprise_allocation(**allocation_payload)
         return geag_response.json()
 
     def fulfill(self, transaction):
