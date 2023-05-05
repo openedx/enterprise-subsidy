@@ -81,9 +81,11 @@ class GEAGFulfillmentHandler():
         return ContentMetadataApi().get_geag_variant_id(ent_uuid, transaction.content_key)
 
     def _create_allocation_payload(self, transaction, currency='USD'):
+        # TODO: come back an un-hack this once GEAG validation is
+        # more fully understood.
         transaction_price = self._get_geag_transaction_price(transaction)
         return {
-            'payment_reference': str(transaction.uuid),
+            'payment_reference': str(transaction.uuid).replace('-', '')[:20],
             'enterprise_customer_uuid': str(self._get_enterprise_customer_uuid(transaction)),
             'currency': currency,
             'order_items': [
@@ -91,9 +93,9 @@ class GEAGFulfillmentHandler():
                     # productId will be the variant id from product details
                     'productId': self._get_geag_variant_id(transaction),
                     'quantity': 1,
-                    'normalPrice': transaction_price,
+                    'normalPrice': int(transaction_price),
                     'discount': 0.0,
-                    'finalPrice': transaction_price,
+                    'finalPrice': int(transaction_price),
                 }
             ],
             'first_name': transaction.metadata.get('geag_first_name'),
@@ -101,7 +103,7 @@ class GEAGFulfillmentHandler():
             'email': transaction.metadata.get('geag_email'),
             'date_of_birth': transaction.metadata.get('geag_date_of_birth'),
             'terms_accepted_at': transaction.metadata.get('geag_terms_accepted_at'),
-            'data_share_consent': transaction.metadata.get('geag_data_share_consent'),
+            'data_share_consent': str(transaction.metadata.get('geag_data_share_consent', 'true')).lower(),
         }
 
     def _validate(self, transaction):
