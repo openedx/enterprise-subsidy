@@ -457,6 +457,7 @@ class TransactionAdminCreateViewTests(APITestBase):
             self.content_key_2,
             uuid.UUID(self.subsidy_access_policy_1_uuid),
             idempotency_key='my-idempotency-key',
+            metadata=None,
         )
         assert response.json() == {'detail': 'Attempt to lock the Ledger failed, please try again.'}
 
@@ -558,6 +559,9 @@ class TransactionAdminCreateViewTests(APITestBase):
             'content_key': self.content_key_1,
             'subsidy_access_policy_uuid': self.subsidy_access_policy_1_uuid,
             'idempotency_key': 'my-idempotency-key',
+            'metadata': {
+                'foo': 'bar',
+            },
         }
 
         response = self.client.post(url, request_data)
@@ -578,7 +582,7 @@ class TransactionAdminCreateViewTests(APITestBase):
         assert response_data["content_key"] == request_data["content_key"]
         assert response_data["lms_user_id"] == request_data["lms_user_id"]
         assert response_data["subsidy_access_policy_uuid"] == request_data["subsidy_access_policy_uuid"]
-        assert response_data["metadata"] == {}
+        assert response_data["metadata"] == {'foo': 'bar'}
         assert response_data["unit"] == self.subsidy_1.ledger.unit
         assert response_data["quantity"] == -1000
         assert response_data["fulfillment_identifier"] == 'my-fulfillment-id'
