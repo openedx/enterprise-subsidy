@@ -7,7 +7,7 @@ from drf_spectacular.utils import extend_schema_field
 from openedx_ledger.models import LedgerLockAttemptFailed, Reversal, Transaction, UnitChoices
 from rest_framework import serializers
 
-from enterprise_subsidy.apps.subsidy.models import Subsidy
+from enterprise_subsidy.apps.subsidy.models import RevenueCategoryChoices, Subsidy
 
 logger = getLogger(__name__)
 
@@ -256,23 +256,38 @@ class SubsidyCreationRequestSerializer(serializers.Serializer):
     """
     reference_id = serializers.CharField(
         required=True,
-        help_text="Reference id",
+        help_text=(
+            "Identifier of the upstream Salesforce object that represents the deal that led to the creation of this "
+            "Subsidy."
+        ),
     )
     default_title = serializers.CharField(
         required=True,
+        help_text="A human-readable title decided by the staff that is provisioning this Subisdy for the customer.",
     )
     default_enterprise_customer_uuid = serializers.UUIDField(
         required=True,
+        help_text="UUID of the enterprise customer assigned this Subsidy.",
     )
-    default_unit = serializers.CharField(
+    default_unit = serializers.ChoiceField(
+        UnitChoices.CHOICES,
         required=True,
+        help_text="Unit of currency used for all values of quantity for this Subsidy and associated transactions.",
     )
     default_starting_balance = serializers.IntegerField(
         required=True,
+        help_text="The positive balance this Subidy will be initially provisioned to start with.",
     )
-    default_revenue_category = serializers.CharField(
+    default_revenue_category = serializers.ChoiceField(
+        RevenueCategoryChoices.CHOICES,
         required=True,
+        help_text=(
+            'Control how revenue is recognized for subsidized enrollments.  In spirit, this is equivalent to the '
+            '"Cataloge Category" for Coupons.  This field is only used downstream analytics and does not change any '
+            'business logic.'
+        ),
     )
     default_internal_only = serializers.BooleanField(
         required=True,
+        help_text="If set, this subsidy will not be customer facing, nor have any influence on enterprise customers.",
     )
