@@ -56,8 +56,10 @@ class GEAGFulfillmentHandler():
     REQUIRED_METADATA_FIELDS = [
         'geag_first_name',
         'geag_last_name',
+        'geag_email',
         'geag_date_of_birth',
-        'geag_terms_accepted_at'
+        'geag_terms_accepted_at',
+        'geag_data_share_consent',
     ]
 
     def get_smarter_client(self):
@@ -96,8 +98,10 @@ class GEAGFulfillmentHandler():
             ],
             'first_name': transaction.metadata.get('geag_first_name'),
             'last_name': transaction.metadata.get('geag_last_name'),
+            'email': transaction.metadata.get('geag_email'),
             'date_of_birth': transaction.metadata.get('geag_date_of_birth'),
             'terms_accepted_at': transaction.metadata.get('geag_terms_accepted_at'),
+            'data_share_consent': transaction.metadata.get('geag_data_share_consent'),
         }
 
     def _validate(self, transaction):
