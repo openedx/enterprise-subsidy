@@ -2,6 +2,8 @@
 Views for the enterprise-subsidy service relating to the Subsidy model
  service.
 """
+from http.client import responses
+
 from django.core.exceptions import MultipleObjectsReturned
 from django.utils.functional import cached_property
 from drf_spectacular.utils import extend_schema
@@ -17,7 +19,8 @@ from enterprise_subsidy.apps.api.v1.exceptions import ServerError
 from enterprise_subsidy.apps.api.v1.serializers import (
     CanRedeemResponseSerializer,
     SubsidyCreationRequestSerializer,
-    SubsidySerializer
+    SubsidySerializer,
+    SubsidyUpdateRequestSerializer
 )
 from enterprise_subsidy.apps.subsidy.api import can_redeem, get_or_create_learner_credit_subsidy
 from enterprise_subsidy.apps.subsidy.constants import (
@@ -53,6 +56,7 @@ class SubsidyViewSet(
     mixins.DestroyModelMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
     viewsets.GenericViewSet,
 ):
     """
@@ -74,6 +78,32 @@ class SubsidyViewSet(
     allowed_roles = [ENTERPRISE_SUBSIDY_ADMIN_ROLE, ENTERPRISE_SUBSIDY_OPERATOR_ROLE]
     role_assignment_class = EnterpriseSubsidyRoleAssignment
 
+    def handle_exception(self, exc):
+        response = super().handle_exception(exc)
+
+        if isinstance(exc, ServerError):
+            response.data = exc.get_full_details()
+        elif response is not None and "detail" in response.data:
+            response.data["error_code"] = responses.get(response.status_code, "unknown_error")
+            response.data["developer_message"] = response.data["detail"]
+            response.data["user_message"] = response.data["detail"]
+            del response.data["detail"]
+        return response
+
+    def get_serializer_class(self, *args, **kwargs):
+        """
+        Return the serializer class to use for the current request.
+
+        We override the function here instead of just setting the ``serializer_class`` class attribute because that
+        attribute only supports using a single serializer for the entire viewset.  This override logic allows for the
+        serializer class to be based conditionally on the type of action.
+        """
+        if self.request.method.lower() in ('put', 'patch'):
+            return SubsidyUpdateRequestSerializer
+        if self.request.method.lower() == 'post':
+            return SubsidyCreationRequestSerializer
+        return super().get_serializer_class(*args, **kwargs)
+
     def get_permission_required(self):
         """
         Return permissions required for the current requested action.
@@ -91,6 +121,7 @@ class SubsidyViewSet(
             "create": PERMISSION_CAN_WRITE_SUBSIDIES,
             "update": PERMISSION_CAN_WRITE_SUBSIDIES,
             "destroy": PERMISSION_CAN_WRITE_SUBSIDIES,
+            "partial_update": PERMISSION_CAN_WRITE_SUBSIDIES,
         }
         permission_required = permission_for_action.get(self.request_action, PERMISSION_NOT_GRANTED)
         return [permission_required]
@@ -215,6 +246,8 @@ class SubsidyViewSet(
 
         Endpoint Location: POST /api/v1/subsidies/
         """
+        if not request.data:
+            return Response("Request body is required", status=status.HTTP_400_BAD_REQUEST)
         create_serializer = SubsidyCreationRequestSerializer(data=request.data)
         if create_serializer.is_valid(raise_exception=True):
             try:
@@ -222,6 +255,8 @@ class SubsidyViewSet(
                     create_serializer.data['reference_id'],
                     create_serializer.data['default_title'],
                     create_serializer.data['default_enterprise_customer_uuid'],
+                    create_serializer.data['default_active_datetime'],
+                    create_serializer.data['default_expiration_datetime'],
                     create_serializer.data['default_unit'],
                     create_serializer.data['default_starting_balance'],
                     create_serializer.data['default_revenue_category'],
@@ -235,19 +270,19 @@ class SubsidyViewSet(
                 else:
                     raise ServerError(
                         code="could_not_create_subsidy",
-                        detail="Could not create subsidy",
+                        developer_message="Could not create subsidy",
                         user_message="Could not create subsidy",
                     )
             except MultipleObjectsReturned as exc:
                 raise ServerError(
                         code="multiple_subsidies_found",
-                        detail="Multiple subsidies with given reference_id found.",
+                        developer_message="Multiple subsidies with given reference_id found.",
                         user_message="Multiple subsidies with given reference_id found.",
                     ) from exc
             except Exception as exc:
                 raise ServerError(
                     code="could_not_create_subsidy",
-                    detail=f"Subsidy could not be created: {exc}",
+                    developer_message=f"Subsidy could not be created: {exc}",
                     user_message="Subsidy could not be created.",
                 ) from exc
         else:
@@ -272,3 +307,41 @@ class SubsidyViewSet(
         """
         response = super().destroy(request, kwargs['uuid'])
         return response
+
+    @extend_schema(
+        tags=['subsidy'],
+        request=SubsidyUpdateRequestSerializer,
+        responses={
+            200: SubsidySerializer,
+            403: exceptions.PermissionDenied,
+            400: exceptions.ValidationError,
+            500: exceptions.APIException,
+        },
+    )
+    def update(self, request, *args, **kwargs):
+        """
+        Update a subsidy
+
+        Endpoint Location: PUT /api/v1/subsidies/{uuid}/
+        """
+        response = super().update(request, *args, **kwargs)
+        return response
+
+    @extend_schema(
+            tags=['subsidy'],
+            request=SubsidyUpdateRequestSerializer,
+            responses={
+                200: SubsidySerializer,
+                403: exceptions.PermissionDenied,
+                400: exceptions.ValidationError,
+                500: exceptions.APIException,
+            },
+        )
+    def partial_update(self, request, *args, **kwargs):
+        """
+        Partially update a subsidy
+
+        Endpoint Location: PATCH /api/v1/subsidies/{uuid}/
+        """
+        kwargs['partial'] = True
+        return self.update(request, *args, **kwargs)
