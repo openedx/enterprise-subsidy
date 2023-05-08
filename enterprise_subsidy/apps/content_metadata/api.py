@@ -51,7 +51,12 @@ class ContentMetadataApi:
 
         if content_price:
             return int(Decimal(content_price) * CENTS_PER_DOLLAR)
-        return None
+        else:
+            logger.info(
+                f"Could not determine price for content key {content_data.get('key')} "
+                f"and course run key {course_run_data.get('key')}"
+            )
+            return None
 
     def mode_for_content(self, content_data):
         """

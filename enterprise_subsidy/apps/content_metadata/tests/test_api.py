@@ -1,3 +1,6 @@
+"""
+Tests for the ContentMetadataApi class.
+"""
 from unittest import mock
 from uuid import uuid4
 
@@ -8,6 +11,8 @@ from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
 from enterprise_subsidy.apps.content_metadata.constants import ProductSources
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 from test_utils.utils import MockResponse
+
+from ..constants import CourseModes, ProductSources
 
 
 @ddt.ddt
@@ -158,15 +163,13 @@ class ContentMetadataApiTests(TestCase):
         expected_source = source_name if product_source else ProductSources.EDX.value
         assert expected_source == response
 
-    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
-    def test_summary_data_for_content(self, mock_oauth_client):
+    def test_summary_data_for_content(self):
         summary = self.content_metadata_api.summary_data_for_content(self.courserun_key, self.course_metadata)
         assert summary.get('content_key') == self.course_key
         assert summary.get('course_run_key') == self.courserun_key
         assert summary.get('content_price') == 14900
 
-    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
-    def test_summary_data_for_exec_ed_content(self, mock_oauth_client):
+    def test_summary_data_for_exec_ed_content(self):
         executive_education_course_metadata = {
             "key": self.course_key,
             "content_type": "course",
@@ -199,3 +202,36 @@ class ContentMetadataApiTests(TestCase):
         assert summary.get('content_key') == self.course_key
         assert summary.get('course_run_key') is None
         assert summary.get('content_price') == 59949
+
+    @ddt.data(
+        {
+            'content_data': {},
+            'course_run_data': {'first_enrollable_paid_seat_price': '100.00'},
+            'expected_price': 10000,
+        },
+        {
+            'content_data': {
+                'product_source': {'name': ProductSources.EDX.value},
+                'entitlements': [{'mode': CourseModes.EDX_VERIFIED.value, 'price': '3.50'}],
+            },
+            'course_run_data': {},
+            'expected_price': 350,
+        },
+        {
+            'content_data': {
+                'product_source': {'name': ProductSources.TWOU.value},
+                'entitlements': [{'mode': CourseModes.EXECUTIVE_EDUCATION.value, 'price': '4.20'}],
+            },
+            'course_run_data': {},
+            'expected_price': 420,
+        },
+        {
+            'content_data': {},
+            'course_run_data': {},
+            'expected_price': None,
+        },
+    )
+    @ddt.unpack
+    def test_price_for_content(self, content_data, course_run_data, expected_price):
+        actual_price = self.content_metadata_api.price_for_content(content_data, course_run_data)
+        self.assertEqual(expected_price, actual_price)
