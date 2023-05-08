@@ -4,6 +4,7 @@ Views for the enterprise-subsidy service relating to content metadata.
 import logging
 
 import requests
+from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
 from edx_rbac.mixins import PermissionRequiredMixin
@@ -27,6 +28,9 @@ from enterprise_subsidy.apps.subsidy.constants import (
 from enterprise_subsidy.apps.subsidy.models import EnterpriseSubsidyRoleAssignment
 
 logger = logging.getLogger(__name__)
+
+
+CONTENT_METADATA_VIEW_CACHE_TIMEOUT_SECONDS = getattr(settings, 'CONTENT_METADATA_VIEW_CACHE_TIMEOUT_SECONDS', 60)
 
 
 class ContentMetadataViewSet(
@@ -75,7 +79,7 @@ class ContentMetadataViewSet(
         """
         return utils.get_enterprise_uuid_from_request_query_params(self.request)
 
-    @method_decorator(cache_page(60))
+    @method_decorator(cache_page(CONTENT_METADATA_VIEW_CACHE_TIMEOUT_SECONDS))
     @method_decorator(require_at_least_one_query_parameter('enterprise_customer_uuid'))
     @action(detail=True)
     def get(self, request, content_identifier, enterprise_customer_uuid):

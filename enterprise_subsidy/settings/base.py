@@ -340,3 +340,7 @@ LOGGING = get_logger_config(debug=DEBUG)
 
 # Application settings
 ALLOW_LEDGER_MODIFICATION = False
+
+# per-view cache timeout settings
+# We can disable caching on this view by setting the value below to 0.
+CONTENT_METADATA_VIEW_CACHE_TIMEOUT_SECONDS = 60
