@@ -71,7 +71,11 @@ class GEAGFulfillmentHandler():
         )
 
     def _get_geag_transaction_price(self, transaction):
-        return float(transaction.quantity) / CENTS_PER_DOLLAR
+        """
+        Get the price in dollars to sent to GEAG from transaction quantities,
+        which are decrements (thus negative) and in cents
+        """
+        return -1.0 * (float(transaction.quantity) / CENTS_PER_DOLLAR)
 
     def _get_enterprise_customer_uuid(self, transaction):
         return transaction.ledger.subsidy.enterprise_customer_uuid
@@ -93,9 +97,9 @@ class GEAGFulfillmentHandler():
                     # productId will be the variant id from product details
                     'productId': self._get_geag_variant_id(transaction),
                     'quantity': 1,
-                    'normalPrice': int(transaction_price),
+                    'normalPrice': transaction_price,
                     'discount': 0.0,
-                    'finalPrice': int(transaction_price),
+                    'finalPrice': transaction_price,
                 }
             ],
             'first_name': transaction.metadata.get('geag_first_name'),
