@@ -275,7 +275,7 @@ future==0.18.3
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pyjwkest
-getsmarter-api-clients==0.5.2
+getsmarter-api-clients==0.5.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
