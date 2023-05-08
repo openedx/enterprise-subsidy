@@ -72,7 +72,7 @@ class GEAGFulfillmentHandler():
 
     def _get_geag_transaction_price(self, transaction):
         """
-        Get the price in dollars to sent to GEAG from transaction quantities,
+        Get the price in dollars to send to GEAG from transaction quantities,
         which are decrements (thus negative) and in cents
         """
         return -1.0 * (float(transaction.quantity) / CENTS_PER_DOLLAR)
