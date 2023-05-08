@@ -136,7 +136,7 @@ fastavro==1.7.4
     # via openedx-events
 future==0.18.3
     # via pyjwkest
-getsmarter-api-clients==0.5.1
+getsmarter-api-clients==0.5.2
     # via -r requirements/base.in
 idna==3.4
     # via requests
