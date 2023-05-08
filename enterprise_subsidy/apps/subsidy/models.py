@@ -8,6 +8,7 @@ Some defintions:
       USD or "seats"), stored in a ledger, which may be applied toward the cost of some content.
 * `redemption`: The act of redeeming stored value for content.
 """
+import logging
 from datetime import datetime, timezone
 from unittest import mock
 from uuid import uuid4
@@ -36,6 +37,9 @@ MOCK_SUBSCRIPTION_CLIENT = mock.MagicMock()
 # TODO: hammer this out.  Do we want this to be the name of a joinable table name?  Do we want it to reflect the field
 # name of the response from the enrollment API?
 OCM_ENROLLMENT_REFERENCE_TYPE = "enterprise_fufillment_source_uuid"
+
+
+logger = logging.getLogger(__name__)
 
 
 class ContentNotFoundForCustomerException(Exception):
@@ -265,6 +269,11 @@ class Subsidy(TimeStampedModel):
         TODO: Shouldn't we require a fulfillment_identifier in some cases?  Maybe when the transaction
         doesn't have an "initial" key in the metadata?
         """
+        logger.info(
+            f'Committing transaction {ledger_transaction.uuid} with '
+            f'fulfillment identifier {fulfillment_identifier} '
+            f'and external_reference {external_reference}'
+        )
         if fulfillment_identifier:
             ledger_transaction.fulfillment_identifier = fulfillment_identifier
         if external_reference:
@@ -277,6 +286,7 @@ class Subsidy(TimeStampedModel):
         """
         Progress the transaction to a failed state.
         """
+        logger.info(f'Setting transaction {ledger_transaction.uuid} state to failed.')
         ledger_transaction.state = TransactionStateChoices.FAILED
         ledger_transaction.save()
 
@@ -303,8 +313,12 @@ class Subsidy(TimeStampedModel):
         if existing_transaction := self.get_redemption(lms_user_id, content_key):
             return (existing_transaction, False)
 
-        is_redeemable, _ = self.is_redeemable(content_key)
+        is_redeemable, content_price = self.is_redeemable(content_key)
         if not is_redeemable:
+            logger.info(
+                f'{self} cannot redeem {content_key} with price {content_price} '
+                f'for user {lms_user_id} in policy {subsidy_access_policy_uuid}'
+            )
             return (None, False)
         try:
             transaction = self._create_redemption(
@@ -315,10 +329,21 @@ class Subsidy(TimeStampedModel):
                 metadata=metadata,
             )
         except ledger_api.LedgerBalanceExceeded:
+            logger.info(
+                f'{self} cannot redeem {content_key} with price {content_price} '
+                f'for user {lms_user_id} in policy {subsidy_access_policy_uuid}. '
+                f'This would have exceeded the ledger balance.'
+            )
             return (None, False)
         if transaction:
             return (transaction, True)
-        return (None, False)
+        else:
+            logger.info(
+                f'{self} could not redeem {content_key} with price {content_price} '
+                f'for user {lms_user_id} in policy {subsidy_access_policy_uuid}'
+                f'Reached end of redeem attempt and the transaction object was falsey.'
+            )
+            return (None, False)
 
     def _create_redemption(
             self,
@@ -389,6 +414,9 @@ class Subsidy(TimeStampedModel):
             if self.geag_fulfillment_handler().can_fulfill(ledger_transaction):
                 self.geag_fulfillment_handler().fulfill(ledger_transaction)
         except Exception as exc:
+            logger.exception(
+                f'Failed to fulfill transaction {ledger_transaction.uuid} with the GEAG handler.'
+            )
             self.rollback_transaction(ledger_transaction)
             raise exc
 
@@ -399,6 +427,9 @@ class Subsidy(TimeStampedModel):
                 fulfillment_identifier=enterprise_fulfillment_uuid,
             )
         except Exception as exc:
+            logger.exception(
+                f'Failed to enroll for transaction {ledger_transaction.uuid} via the enterprise client.'
+            )
             self.rollback_transaction(ledger_transaction)
             raise exc
 
