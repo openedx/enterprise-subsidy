@@ -161,7 +161,7 @@ future==0.18.3
     # via
     #   -r requirements/base.txt
     #   pyjwkest
-getsmarter-api-clients==0.5.1
+getsmarter-api-clients==0.5.2
     # via -r requirements/base.txt
 gevent==22.10.2
     # via -r requirements/production.in
