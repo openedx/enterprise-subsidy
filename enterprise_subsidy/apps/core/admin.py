@@ -1,10 +1,10 @@
 """ Admin configuration for core models. """
-
+from config_models.admin import ConfigurationModelAdmin
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
 from django.utils.translation import gettext_lazy as _
 
-from enterprise_subsidy.apps.core.models import User
+from enterprise_subsidy.apps.core.models import AppConfiguration, User
 
 
 class CustomUserAdmin(UserAdmin):
@@ -20,3 +20,4 @@ class CustomUserAdmin(UserAdmin):
 
 
 admin.site.register(User, CustomUserAdmin)
+admin.site.register(AppConfiguration, ConfigurationModelAdmin)

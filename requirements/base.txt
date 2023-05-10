@@ -12,7 +12,7 @@ attrs==23.1.0
     # via
     #   jsonschema
     #   openedx-events
-certifi==2022.12.7
+certifi==2023.5.7
     # via requests
 cffi==1.15.1
     # via
@@ -40,6 +40,7 @@ django==3.2.19
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/base.in
+    #   django-config-models
     #   django-cors-headers
     #   django-crum
     #   django-extensions
@@ -58,6 +59,8 @@ django==3.2.19
     #   openedx-events
     #   openedx-ledger
     #   social-auth-app-django
+django-config-models==2.3.0
+    # via -r requirements/base.in
 django-cors-headers==3.14.0
     # via -r requirements/base.in
 django-crum==0.7.9
@@ -95,6 +98,7 @@ djangoql==0.17.1
 djangorestframework==3.14.0
     # via
     #   -r requirements/base.in
+    #   django-config-models
     #   drf-jwt
     #   drf-spectacular
     #   drf-yasg
@@ -114,6 +118,7 @@ edx-django-release-util==1.2.0
 edx-django-utils==5.4.0
     # via
     #   -r requirements/base.in
+    #   django-config-models
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   getsmarter-api-clients
@@ -137,6 +142,10 @@ fastavro==1.7.4
 future==0.18.3
     # via pyjwkest
 getsmarter-api-clients==0.5.4
+    # via -r requirements/base.in
+gitdb==4.0.10
+    # via gitpython
+gitpython==3.1.31
     # via -r requirements/base.in
 idna==3.4
     # via requests
@@ -169,7 +178,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==7.1.0
+openedx-events==7.2.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
@@ -191,7 +200,7 @@ pycryptodomex==3.17
     # via pyjwkest
 pyjwkest==1.4.2
     # via edx-drf-extensions
-pyjwt[crypto]==2.6.0
+pyjwt[crypto]==2.7.0
     # via
     #   drf-jwt
     #   edx-auth-backends
@@ -220,7 +229,7 @@ pyyaml==6.0
     # via
     #   drf-spectacular
     #   edx-django-release-util
-redis==4.5.4
+redis==4.5.5
     # via openedx-ledger
 requests==2.30.0
     # via
@@ -235,7 +244,7 @@ requests-oauthlib==1.3.1
     # via
     #   getsmarter-api-clients
     #   social-auth-core
-ruamel-yaml==0.17.23
+ruamel-yaml==0.17.26
     # via drf-yasg
 ruamel-yaml-clib==0.2.7
     # via ruamel-yaml
@@ -255,6 +264,8 @@ six==1.16.0
     #   python-dateutil
 slumber==0.7.1
     # via edx-rest-api-client
+smmap==5.0.0
+    # via gitdb
 social-auth-app-django==5.2.0
     # via edx-auth-backends
 social-auth-core==4.4.2

@@ -47,6 +47,7 @@ INSTALLED_APPS = (
 )
 
 THIRD_PARTY_APPS = (
+    'config_models',
     'corsheaders',
     'csrf.apps.CsrfAppConfig',  # Enables frontend apps to retrieve CSRF tokens
     'django_filters',

@@ -55,6 +55,7 @@ EXPOSE 18280
 RUN useradd -m --shell /bin/false app
 
 WORKDIR /edx/app/enterprise-subsidy
+RUN git config --global --add safe.directory /edx/app/enterprise-subsidy
 
 # Copy the requirements explicitly even though we copy everything below
 # this prevents the image cache from busting unless the dependencies have changed.

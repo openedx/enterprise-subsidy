@@ -6,7 +6,7 @@ from django.apps import AppConfig
 
 class SubsidyConfig(AppConfig):
     """
-    The app config for the ``subsidy`` app.  Notable, connects
+    The app config for the ``subsidy`` app.  Notably, connects
     the signals defined in ``signals.py``.
     """
     name = 'enterprise_subsidy.apps.subsidy'

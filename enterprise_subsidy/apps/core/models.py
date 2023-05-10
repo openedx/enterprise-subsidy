@@ -1,5 +1,5 @@
 """ Core models. """
-
+from config_models.models import ConfigurationModel
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 from django.utils.translation import gettext_lazy as _
@@ -40,3 +40,17 @@ class User(AbstractUser):
 
     def __str__(self):
         return str(self.get_full_name() or self.username)
+
+
+class AppConfiguration(ConfigurationModel):
+    """
+    Persists metadata about the configuration of this application,
+    including e.g. the current commit hash.
+    """
+    KEY_FIELDS = ('commit_hash',)
+
+    commit_hash = models.TextField(
+        null=True,
+        db_index=True,
+        help_text='The current commit hash of the enterprise-subsidy github repo.',
+    )

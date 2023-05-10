@@ -3,6 +3,7 @@
 
 Django         # Web application framework
 djangoql
+django-config-models
 django-cors-headers
 django-extensions
 django-filter
@@ -18,6 +19,7 @@ edx-django-release-util
 edx-drf-extensions
 edx-rbac
 edx-rest-api-client
+gitpython
 jsonfield2
 mysqlclient
 openedx-events
