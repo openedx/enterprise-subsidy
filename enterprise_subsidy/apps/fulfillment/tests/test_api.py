@@ -98,7 +98,8 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
         assert this_slug == self.geag_fulfillment_handler.EXTERNAL_FULFILLMENT_PROVIDER_SLUG
 
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
-    def test_create_allocation_payload(self, mock_get_content_summary):
+    @mock.patch("enterprise_subsidy.apps.api_client.enterprise.EnterpriseApiClient.get_enterprise_customer_data")
+    def test_create_allocation_payload(self, mock_get_enterprise_customer_data, mock_get_content_summary):
         """
         Ensure basic happy path of `_create_allocation_payload`
         """
@@ -111,6 +112,10 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
             'geag_variant_id': str(uuid4()),
         }
         mock_get_content_summary.return_value = content_summary
+        expected_enterprise_customer_data = {
+            'auth_org_id': 'asde23eas',
+        }
+        mock_get_enterprise_customer_data.return_value = expected_enterprise_customer_data
         tx_metadata = {
             'geag_first_name': 'Donny',
             'geag_last_name': 'Kerabatsos',
@@ -131,6 +136,7 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
         geag_payload = self.geag_fulfillment_handler._create_allocation_payload(transaction)
         assert geag_payload.get('payment_reference') == str(transaction.uuid).replace('-', '')[:20]
         assert geag_payload.get('order_items')[0].get('productId') == content_summary.get('geag_variant_id')
+        assert geag_payload.get('org_id') == expected_enterprise_customer_data.get('auth_org_id')
         for payload_field in self.geag_fulfillment_handler.REQUIRED_METADATA_FIELDS:
             geag_field = payload_field[len('geag_'):]
             if payload_field == 'geag_data_share_consent':
@@ -190,7 +196,8 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
 
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
     @mock.patch("enterprise_subsidy.apps.fulfillment.api.GEAGFulfillmentHandler._fulfill_in_geag")
-    def test_fulfill(self, mock_fulfill_in_geag, mock_get_content_summary):
+    @mock.patch("enterprise_subsidy.apps.api_client.enterprise.EnterpriseApiClient.get_enterprise_customer_data")
+    def test_fulfill(self, mock_get_enterprise_customer_data, mock_fulfill_in_geag, mock_get_content_summary):
         """
         Ensure basic happy path of `fulfill`
         """
@@ -203,6 +210,10 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
             'geag_variant_id': str(uuid4()),
         }
         mock_get_content_summary.return_value = content_summary
+        expected_enterprise_customer_data = {
+            'auth_org_id': 'asde23eas',
+        }
+        mock_get_enterprise_customer_data.return_value = expected_enterprise_customer_data
         geag_response = {
             'orderUuid': str(uuid4()),
         }
