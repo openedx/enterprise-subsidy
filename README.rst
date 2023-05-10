@@ -35,9 +35,7 @@ One Time Setup
   # Clone the repository
   git clone git@github.com:openedx/enterprise-subsidy.git
   cd enterprise-subsidy
-  make upgrade
-  make docker_build
-  docker-compose up
+  make dev.up.build-no-cache
   ./provision-enterprise-subsidy.sh
 
 Go visit http://localhost:18280/admin/ and login with the standard edx/edx credentials to confirm
