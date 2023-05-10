@@ -70,6 +70,9 @@ class GEAGFulfillmentHandler():
             api_url=settings.GET_SMARTER_API_URL
         )
 
+    def get_enterprise_client(self, transaction):
+        return transaction.ledger.subsidy.enterprise_client
+
     def _get_geag_transaction_price(self, transaction):
         """
         Get the price in dollars to send to GEAG from transaction quantities,
@@ -83,6 +86,12 @@ class GEAGFulfillmentHandler():
     def _get_geag_variant_id(self, transaction):
         ent_uuid = self._get_enterprise_customer_uuid(transaction)
         return ContentMetadataApi().get_geag_variant_id(ent_uuid, transaction.content_key)
+
+    def _get_auth_org_id(self, transaction):
+        enterprise_customer_uuid = str(self._get_enterprise_customer_uuid(transaction))
+        ent_client = self.get_enterprise_client(transaction)
+        ent_data = ent_client.get_enterprise_customer_data(enterprise_customer_uuid)
+        return ent_data.get('auth_org_id')
 
     def _create_allocation_payload(self, transaction, currency='USD'):
         # TODO: come back an un-hack this once GEAG validation is
@@ -108,6 +117,7 @@ class GEAGFulfillmentHandler():
             'date_of_birth': transaction.metadata.get('geag_date_of_birth'),
             'terms_accepted_at': transaction.metadata.get('geag_terms_accepted_at'),
             'data_share_consent': str(transaction.metadata.get('geag_data_share_consent', 'true')).lower(),
+            'org_id': self._get_auth_org_id(transaction),
         }
 
     def _validate(self, transaction):
