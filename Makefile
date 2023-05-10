@@ -168,11 +168,13 @@ dev.up: dev.up.redis
 
 dev.up.build: dev.up.redis
 	docker-compose up -d --build
+	docker exec -u 0 -it enterprise-subsidy.app pip install -r requirements/pip-tools.txt
 	docker exec -u 0 -it enterprise-subsidy.app pip-sync -q requirements/dev.txt requirements/private.* requirements/test.txt
 
 dev.up.build-no-cache: dev.up.redis
 	docker-compose build --no-cache
 	docker-compose up -d
+	docker exec -u 0 -it enterprise-subsidy.app pip install -r requirements/pip-tools.txt
 	docker exec -u 0 -it enterprise-subsidy.app pip-sync -q requirements/dev.txt requirements/private.* requirements/test.txt
 
 dev.up.redis: # This has the nice side effect of starting the devstack_default network
