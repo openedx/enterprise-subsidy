@@ -1,5 +1,9 @@
 from enterprise_subsidy.settings.local import *
 
+CORS_ORIGIN_WHITELIST = (
+    'http://localhost:18450',  # frontend-app-support-tools
+)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
