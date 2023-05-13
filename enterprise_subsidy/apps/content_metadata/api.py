@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 
 CONTENT_MODES_BY_PRODUCT_SOURCE = {
     ProductSources.EDX.value: CourseModes.EDX_VERIFIED.value,
+    # TODO: additionally support other course modes/types beyond Executive Education for the 2U product source
     ProductSources.TWOU.value: CourseModes.EXECUTIVE_EDUCATION.value,
 }
 
