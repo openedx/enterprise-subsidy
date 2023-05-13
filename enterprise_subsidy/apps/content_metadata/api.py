@@ -70,7 +70,7 @@ class ContentMetadataApi:
         Helps get the product source string, given a dict of ``content_data``.
         """
         if product_source := content_data.get('product_source'):
-            source_name = product_source.get('name')
+            source_name = product_source.get('slug')
             if source_name in CONTENT_MODES_BY_PRODUCT_SOURCE:
                 return source_name
         return ProductSources.EDX.value
