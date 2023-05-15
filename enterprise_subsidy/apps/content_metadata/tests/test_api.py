@@ -211,7 +211,7 @@ class ContentMetadataApiTests(TestCase):
         },
         {
             'content_data': {
-                'product_source': {'name': ProductSources.EDX.value},
+                'product_source': {'name': ProductSources.EDX.value, 'slug': ProductSources.EDX.value},
                 'entitlements': [{'mode': CourseModes.EDX_VERIFIED.value, 'price': '3.50'}],
             },
             'course_run_data': {},
@@ -219,7 +219,7 @@ class ContentMetadataApiTests(TestCase):
         },
         {
             'content_data': {
-                'product_source': {'name': ProductSources.TWOU.value},
+                'product_source': {'name': ProductSources.TWOU.value, 'slug': ProductSources.TWOU.value},
                 'entitlements': [{'mode': CourseModes.EXECUTIVE_EDUCATION.value, 'price': '4.20'}],
             },
             'course_run_data': {},
