@@ -28,17 +28,24 @@ class APITestBase(APITestMixin):
 
     enterprise_1_uuid = STATIC_ENTERPRISE_UUID
     enterprise_2_uuid = str(uuid.uuid4())
+
     subsidy_1_uuid = str(uuid.uuid4())
     subsidy_2_uuid = str(uuid.uuid4())
     subsidy_3_uuid = str(uuid.uuid4())
+
     subsidy_1_transaction_1_uuid = str(uuid.uuid4())
     subsidy_1_transaction_2_uuid = str(uuid.uuid4())
     subsidy_2_transaction_1_uuid = str(uuid.uuid4())
     subsidy_2_transaction_2_uuid = str(uuid.uuid4())
     subsidy_3_transaction_1_uuid = str(uuid.uuid4())
     subsidy_3_transaction_2_uuid = str(uuid.uuid4())
+    # Add an extra UUID for any failed transaction that
+    # a subclass may need to use
+    failed_transaction_uuid = str(uuid.uuid4())
+
     subsidy_access_policy_1_uuid = str(uuid.uuid4())
     subsidy_access_policy_2_uuid = str(uuid.uuid4())
+
     content_key_1 = "course-v1:edX+test+course.1"
     content_key_2 = "course-v1:edX+test+course.2"
 
@@ -211,6 +218,21 @@ class TransactionAdminListViewTests(APITestBase):
     """
     Test list operations on transactions via the transaction-admin-list-create view.
     """
+    @classmethod
+    def setUpClass(cls):
+        super().setUpClass()
+
+        # setup a failed transaction to test our state filtering
+        cls.subsidy_1_transaction_1 = TransactionFactory(
+            uuid=cls.failed_transaction_uuid,
+            state=TransactionStateChoices.FAILED,
+            quantity=0,
+            ledger=cls.subsidy_1.ledger,
+            lms_user_id=STATIC_LMS_USER_ID,  # This is the only transaction belonging to the requester.
+            subsidy_access_policy_uuid=cls.subsidy_access_policy_1_uuid,
+            content_key=cls.content_key_1,
+        )
+
     @ddt.data(
         # Test that an admin can list all transactions in a subsidy within their enterprise.
         {
@@ -220,6 +242,7 @@ class TransactionAdminListViewTests(APITestBase):
             "expected_response_uuids": [
                 APITestBase.subsidy_1_transaction_1_uuid,
                 APITestBase.subsidy_1_transaction_2_uuid,
+                APITestBase.failed_transaction_uuid,
             ],
         },
         # Test that an admin can list transactions in a different subsidy, but part of the same
@@ -284,24 +307,25 @@ class TransactionAdminListViewTests(APITestBase):
             'lms_user_id': STATIC_LMS_USER_ID,
             'content_key': self.content_key_1,
             'subsidy_access_policy_uuid': self.subsidy_access_policy_1_uuid,
+            'state': [TransactionStateChoices.COMMITTED, TransactionStateChoices.FAILED],
             'include_aggregates': 'true',
         }
-        query_string = urllib.parse.urlencode(query_params)
+        query_string = urllib.parse.urlencode(query_params, doseq=True)
         url = reverse("api:v2:transaction-admin-list-create", args=[self.subsidy_1_uuid])
         url += '?' + query_string
 
         response = self.client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
-
         response_json = response.json()
         list_response_data = response_json["results"]
         response_aggregates = response_json['aggregates']
         response_uuids = [tx["uuid"] for tx in list_response_data]
         expected_response_uuids = [
             self.subsidy_1_transaction_1_uuid,
+            self.failed_transaction_uuid,
         ]
-        self.assertEqual(response_uuids, expected_response_uuids)
+        self.assertEqual(sorted(response_uuids), sorted(expected_response_uuids))
         self.assertEqual(response_aggregates, {
             'total_quantity': -1000,
             'unit': UnitChoices.USD_CENTS,
@@ -331,9 +355,15 @@ class TransactionAdminListViewTests(APITestBase):
             (SYSTEM_ENTERPRISE_LEARNER_ROLE, self.enterprise_1_uuid),
         ])
 
+        query_params = {
+            'state': TransactionStateChoices.COMMITTED,
+        }
+        query_string = urllib.parse.urlencode(query_params)
         # The all-access admin role assignment should let the admin
         # user read the transactions for subsidy_1
         url = reverse("api:v2:transaction-admin-list-create", args=[self.subsidy_1_uuid])
+        url += '?' + query_string
+
         response = self.client.get(url)
 
         assert response.status_code == status.HTTP_200_OK
