@@ -70,29 +70,6 @@ class TransactionBaseViewMixin:
         )
 
 
-# https://drf-spectacular.readthedocs.io/en/latest/faq.html#using-extend-schema-on-apiview-has-no-effect
-# @extend_schema needs to be applied to the entrypoint method of the view.
-# For APIView based views, these are get, post, create, etc.
-@extend_schema_view(
-    get=extend_schema(
-        tags=['transactions'],
-        responses={
-            status.HTTP_200_OK: TransactionSerializer,
-            status.HTTP_403_FORBIDDEN: PermissionDenied,
-        },
-    ),
-    post=extend_schema(
-        tags=['transactions'],
-        request=TransactionCreationRequestSerializer,
-        responses={
-            status.HTTP_200_OK: TransactionSerializer,
-            status.HTTP_201_CREATED: TransactionSerializer,
-            status.HTTP_403_FORBIDDEN: PermissionDenied,
-            status.HTTP_429_TOO_MANY_REQUESTS: Throttled,
-            status.HTTP_422_UNPROCESSABLE_ENTITY: APIException,
-        },
-    )
-)
 class TransactionAdminListCreate(TransactionBaseViewMixin, generics.ListCreateAPIView):
     """
     A list view that is accessible only to admins
@@ -119,21 +96,59 @@ class TransactionAdminListCreate(TransactionBaseViewMixin, generics.ListCreateAP
     def did_transaction_already_exist(self):
         return self.extra_context.get('created', True) is False
 
-    @permission_required(PERMISSION_CAN_READ_ALL_TRANSACTIONS, fn=get_subsidy_customer_uuid_from_view)
-    def list(self, request, subsidy_uuid):
+    # https://drf-spectacular.readthedocs.io/en/latest/faq.html#using-extend-schema-on-apiview-has-no-effect
+    # @extend_schema needs to be applied to the entrypoint method of the view.
+    # For APIView based views, these are get, post, create, etc.
+    @extend_schema(
+        tags=['transactions'],
+        responses={
+            status.HTTP_200_OK: TransactionSerializer,
+            status.HTTP_403_FORBIDDEN: PermissionDenied,
+        },
+    )
+    def get(self, *args, **kwargs):
         """
         A list view that is accessible only to admins
         of the related subsidy's enterprise customer.  It lists all transactions
         for the requested subsidy, or a subset thereof, depending on the query parameters.
+
+        Note that `TransactionListPaginator`, the pagination_class for this view,
+        allows for the inclusion of an `include_aggregates` query parameter,
+        which if set to `true`, will include an `aggregates` key in the response
+        describing the total quantity of transactions returned in the response `results`.
+        """
+        return super().get(*args, **kwargs)
+
+    @permission_required(PERMISSION_CAN_READ_ALL_TRANSACTIONS, fn=get_subsidy_customer_uuid_from_view)
+    def list(self, request, subsidy_uuid):
+        """
+        See docstring for get() above.
         """
         return super().list(request, subsidy_uuid)
 
-    @permission_required(PERMISSION_CAN_CREATE_TRANSACTIONS, fn=get_subsidy_customer_uuid_from_view)
-    def create(self, request, subsidy_uuid):
+    @extend_schema(
+        tags=['transactions'],
+        request=TransactionCreationRequestSerializer,
+        responses={
+            status.HTTP_200_OK: TransactionSerializer,
+            status.HTTP_201_CREATED: TransactionSerializer,
+            status.HTTP_403_FORBIDDEN: PermissionDenied,
+            status.HTTP_429_TOO_MANY_REQUESTS: Throttled,
+            status.HTTP_422_UNPROCESSABLE_ENTITY: APIException,
+        },
+    )
+    def post(self, *args, **kwargs):
         """
         A create view that is accessible only to operators of the system.
         It creates (or just gets, if a matching Transaction already exists) a transaction
         via the `Subsidy.redeem()` method.
+        """
+        return super().post(*args, **kwargs)
+
+    @permission_required(PERMISSION_CAN_CREATE_TRANSACTIONS, fn=get_subsidy_customer_uuid_from_view)
+    def create(self, request, subsidy_uuid):
+        """
+        See docstring for post() above.
         """
         try:
             response = super().create(request, subsidy_uuid)

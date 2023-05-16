@@ -2,8 +2,9 @@
 Defines django-filter/DRF FilterSets
 for our API views.
 """
+from django_filters import filters
 from django_filters import rest_framework as drf_filters
-from openedx_ledger.models import Transaction
+from openedx_ledger.models import Transaction, TransactionStateChoices
 
 
 class HelpfulFilterSet(drf_filters.FilterSet):
@@ -27,7 +28,21 @@ class TransactionAdminFilterSet(HelpfulFilterSet):
     """
     Filters for admin transaction list action.
     """
+    # It's important that this is filtered as a `MultipleChoiceFilter`,
+    # which allows us to specify multiple matching state values
+    # in the request query params - this filter type performs an OR
+    # by default.
+    # https://django-filter.readthedocs.io/en/main/ref/filters.html?highlight=MultipleChoiceFilter#multiplechoicefilter
+    state = filters.MultipleChoiceFilter(
+        field_name='state',
+        choices=TransactionStateChoices.CHOICES,
+    )
 
     class Meta:
         model = Transaction
-        fields = ['lms_user_id', 'content_key', 'subsidy_access_policy_uuid']
+        fields = [
+            'lms_user_id',
+            'content_key',
+            'subsidy_access_policy_uuid',
+            'state',
+        ]
