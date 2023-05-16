@@ -109,7 +109,7 @@ class ContentMetadataViewSet(
                 content_identifier
             )
             if not content_summary.get('content_price'):
-                logger.warning("Could not find course price in metadata for {content_identifier}")
+                logger.warning(f"Could not find course price in metadata for {content_identifier}")
         except requests.exceptions.HTTPError as exc:
             if exc.response.status_code == 404:
                 return Response("Content not found", HTTP_404_NOT_FOUND)
