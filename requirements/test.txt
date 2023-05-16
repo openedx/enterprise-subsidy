@@ -182,7 +182,7 @@ edx-rbac==1.7.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-edx-rest-api-client==5.5.0
+edx-rest-api-client==5.5.1
     # via -r requirements/base.txt
 exceptiongroup==1.1.1
     # via pytest

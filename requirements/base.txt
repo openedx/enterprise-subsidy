@@ -133,7 +133,7 @@ edx-rbac==1.7.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-edx-rest-api-client==5.5.0
+edx-rest-api-client==5.5.1
     # via -r requirements/base.in
 fastavro==1.7.4
     # via openedx-events
