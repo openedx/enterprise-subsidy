@@ -109,6 +109,9 @@ class ContentMetadataApi:
         When given a run key or uuid for a run, extract that. When given a course key or
         course uuid, extract the advertised course_run.
         """
+        if content_data.get('content_type') == 'courserun':
+            return content_data
+
         course_run_identifier = content_identifier
         # if the supplied content_identifer refers to the course, look for an advertised run
         if content_identifier == content_data.get('key') or content_identifier == content_data.get('uuid'):
