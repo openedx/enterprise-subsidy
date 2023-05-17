@@ -285,7 +285,6 @@ class Subsidy(TimeStampedModel):
             ledger_transaction.fulfillment_identifier = fulfillment_identifier
         if external_reference:
             ledger_transaction.external_reference.set([external_reference])
-        ledger_transaction.state = "committed"
         ledger_transaction.state = TransactionStateChoices.COMMITTED
         ledger_transaction.save()
 
