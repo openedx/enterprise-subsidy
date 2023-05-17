@@ -5,7 +5,10 @@ during subsidy redemption and fulfillment.
 import logging
 from decimal import Decimal
 
+from edx_django_utils.cache import RequestCache
+
 from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
+from enterprise_subsidy.apps.core.utils import versioned_cache_key
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 
 from .constants import CourseModes, ProductSources
@@ -18,6 +21,22 @@ CONTENT_MODES_BY_PRODUCT_SOURCE = {
     # TODO: additionally support other course modes/types beyond Executive Education for the 2U product source
     ProductSources.TWOU.value: CourseModes.EXECUTIVE_EDUCATION.value,
 }
+
+CACHE_NAMESPACE = 'content_metadata'
+
+
+def content_metadata_cache_key(enterprise_customer_uuid, content_key):
+    """
+    Returns a versioned cache key that includes the customer uuid and content_key.
+    """
+    return versioned_cache_key(enterprise_customer_uuid, content_key)
+
+
+def request_cache():
+    """
+    Helper that returns a namespaced RequestCache instance.
+    """
+    return RequestCache(namespace=CACHE_NAMESPACE)
 
 
 class ContentMetadataApi:
@@ -125,7 +144,7 @@ class ContentMetadataApi:
         """
         Returns a summary dict some content metadata, makes the client call
         """
-        course_details = self.catalog_client().get_content_metadata_for_customer(
+        course_details = self.get_content_metadata(
             enterprise_customer_uuid,
             content_identifier
         )
@@ -149,7 +168,7 @@ class ContentMetadataApi:
             the method will log and throw an HTTPError exception. A 404 exception will be thrown if the content
             does not exist, or is not present in a catalog associated with the customer.
         """
-        course_details = self.catalog_client().get_content_metadata_for_customer(
+        course_details = self.get_content_metadata(
             enterprise_customer_uuid,
             content_identifier
         )
@@ -173,7 +192,7 @@ class ContentMetadataApi:
             the method will log and throw an HTTPError exception. A 404 exception will be thrown if the content
             does not exist, or is not present in a catalog associated with the customer.
         """
-        course_details = self.catalog_client().get_content_metadata_for_customer(
+        course_details = self.get_content_metadata(
             enterprise_customer_uuid,
             content_identifier
         )
@@ -184,3 +203,22 @@ class ContentMetadataApi:
         Returns the GetSmarter product variant id or None
         """
         return self.get_content_summary(enterprise_customer_uuid, content_identifier).get('geag_variant_id')
+
+    @staticmethod
+    def get_content_metadata(enterprise_customer_uuid, content_identifier):
+        """
+        Fetches details about the given content from the request cache; or it fetches from the enterprise-catalog
+        API if not present in the request cache, and then request-caches that result.
+        """
+        cache_key = content_metadata_cache_key(enterprise_customer_uuid, content_identifier)
+        cached_response = request_cache().get_cached_response(cache_key)
+        if cached_response.is_found:
+            return cached_response.value
+
+        course_details = EnterpriseCatalogApiClient().get_content_metadata_for_customer(
+            enterprise_customer_uuid,
+            content_identifier
+        )
+        if course_details:
+            request_cache().set(cache_key, course_details)
+        return course_details
