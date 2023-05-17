@@ -25,4 +25,3 @@ openedx-ledger
 pytz
 rules
 getsmarter-api-clients
-django-log-request-id

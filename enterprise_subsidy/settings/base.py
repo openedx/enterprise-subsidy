@@ -77,9 +77,6 @@ INSTALLED_APPS += THIRD_PARTY_APPS
 INSTALLED_APPS += PROJECT_APPS
 
 MIDDLEWARE = (
-    # log X-Request-ID headers
-    'log_request_id.middleware.RequestIDMiddleware',
-
     # Resets RequestCache utility for added safety.
     'edx_django_utils.cache.middleware.RequestCacheMiddleware',
 
@@ -111,12 +108,6 @@ MIDDLEWARE = (
     # Used by custom django-rules predicates.
     'crum.CurrentRequestUserMiddleware',
 )
-
-# Enable x-request-id logging/responding
-# https://github.com/dabapps/django-log-request-id
-LOG_REQUEST_ID_HEADER = "HTTP_X_REQUEST_ID"
-GENERATE_REQUEST_ID_IF_NOT_IN_HEADER = True
-REQUEST_ID_RESPONSE_HEADER = "X-Request-ID"
 
 # Enable CORS
 CORS_ALLOW_CREDENTIALS = True
