@@ -393,7 +393,7 @@ openedx-events==8.0.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-openedx-ledger==0.3.3
+openedx-ledger==0.4.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
