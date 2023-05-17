@@ -7,11 +7,9 @@ from uuid import uuid4
 import ddt
 from django.test import TestCase
 
-from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
-from enterprise_subsidy.apps.content_metadata.constants import ProductSources
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
-from test_utils.utils import MockResponse
 
+from ..api import ContentMetadataApi, content_metadata_cache_key, request_cache
 from ..constants import CourseModes, ProductSources
 
 
@@ -119,10 +117,10 @@ class ContentMetadataApiTests(TestCase):
         },
     )
     @ddt.unpack
-    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
+    @mock.patch('enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_metadata')
     def test_client_can_fetch_mode_specific_prices(
         self,
-        mock_oauth_client,
+        mock_get_content_metadata,
         entitlements,
         product_source,
     ):
@@ -133,7 +131,7 @@ class ContentMetadataApiTests(TestCase):
         mocked_data = self.course_metadata.copy()
         mocked_data['product_source'] = product_source
         mocked_data['entitlements'] = entitlements
-        mock_oauth_client.return_value.get.return_value = MockResponse(mocked_data, 200)
+        mock_get_content_metadata.return_value = mocked_data
         price_in_cents = self.content_metadata_api.get_course_price(
             self.enterprise_customer_uuid, self.course_key
         )
@@ -147,15 +145,15 @@ class ContentMetadataApiTests(TestCase):
         },
         None
     )
-    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
-    def test_client_discern_product_source(self, product_source, mock_oauth_client):
+    @mock.patch('enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_metadata')
+    def test_client_discern_product_source(self, product_source, mock_get_content_metadata):
         """
         Test that the catalog client has the ability to smartly return the product source value from the content
         metadata payload
         """
         mocked_data = self.course_metadata.copy()
         mocked_data['product_source'] = product_source
-        mock_oauth_client.return_value.get.return_value = MockResponse(mocked_data, 200)
+        mock_get_content_metadata.return_value = mocked_data
         response = self.content_metadata_api.get_product_source(
             self.enterprise_customer_uuid, self.course_key
         )
@@ -235,3 +233,25 @@ class ContentMetadataApiTests(TestCase):
     def test_price_for_content(self, content_data, course_run_data, expected_price):
         actual_price = self.content_metadata_api.price_for_content(content_data, course_run_data)
         self.assertEqual(expected_price, actual_price)
+
+    @mock.patch('enterprise_subsidy.apps.content_metadata.api.EnterpriseCatalogApiClient')
+    def test_request_caching_works(self, mock_catalog_client):
+        """
+        Tests that consecutive calls for the same content metadata
+        within the same request utilize the cache.
+        """
+        cache_key = content_metadata_cache_key(self.enterprise_customer_uuid, self.course_key)
+        self.assertFalse(request_cache().get_cached_response(cache_key).is_found)
+        client_instance = mock_catalog_client.return_value
+
+        _ = ContentMetadataApi.get_content_metadata(self.enterprise_customer_uuid, self.course_key)
+
+        self.assertTrue(request_cache().get_cached_response(cache_key).is_found)
+        self.assertEqual(
+            request_cache().get_cached_response(cache_key).value,
+            client_instance.get_content_metadata_for_customer.return_value
+        )
+        self.assertEqual(
+            ContentMetadataApi.get_content_metadata(self.enterprise_customer_uuid, self.course_key),
+            client_instance.get_content_metadata_for_customer.return_value
+        )
