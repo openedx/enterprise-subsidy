@@ -11,6 +11,4 @@
 # Common constraints for edx repos
 -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
 
-# TODO: edx-drf-extensions 8.8.0 introduced some JWT unpleasantness
-# https://github.com/openedx/edx-drf-extensions/issues/346
-edx-drf-extensions<8.8
+
