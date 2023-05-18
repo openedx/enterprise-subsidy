@@ -196,8 +196,9 @@ edx-django-utils==5.4.0
     #   edx-rest-api-client
     #   getsmarter-api-clients
     #   openedx-ledger
-edx-drf-extensions==8.8.0
+edx-drf-extensions==8.7.0
     # via
+    #   -c requirements/constraints.txt
     #   -r requirements/test.txt
     #   edx-rbac
 edx-lint==5.3.4
@@ -232,6 +233,10 @@ filelock==3.12.0
     #   -r requirements/test.txt
     #   tox
     #   virtualenv
+future==0.18.3
+    # via
+    #   -r requirements/test.txt
+    #   pyjwkest
 getsmarter-api-clients==0.5.4
     # via -r requirements/test.txt
 idna==3.4
@@ -374,6 +379,10 @@ pycparser==2.21
     # via
     #   -r requirements/test.txt
     #   cffi
+pycryptodomex==3.17
+    # via
+    #   -r requirements/test.txt
+    #   pyjwkest
 pydata-sphinx-theme==0.13.3
     # via sphinx-book-theme
 pygments==2.15.1
@@ -384,6 +393,10 @@ pygments==2.15.1
     #   readme-renderer
     #   rich
     #   sphinx
+pyjwkest==1.4.2
+    # via
+    #   -r requirements/test.txt
+    #   edx-drf-extensions
 pyjwt[crypto]==2.7.0
     # via
     #   -r requirements/test.txt
@@ -475,6 +488,7 @@ requests==2.30.0
     #   coreapi
     #   edx-drf-extensions
     #   edx-rest-api-client
+    #   pyjwkest
     #   requests-oauthlib
     #   requests-toolbelt
     #   slumber
@@ -522,6 +536,7 @@ six==1.16.0
     #   edx-drf-extensions
     #   edx-lint
     #   edx-rbac
+    #   pyjwkest
     #   python-dateutil
     #   tox
 slumber==0.7.1
