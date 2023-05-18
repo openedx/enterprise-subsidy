@@ -138,7 +138,7 @@ edx-django-utils==5.4.0
     #   edx-rest-api-client
     #   getsmarter-api-clients
     #   openedx-ledger
-edx-drf-extensions==8.7.0
+edx-drf-extensions==8.8.0
     # via
     #   -r requirements/base.txt
     #   edx-rbac
@@ -157,10 +157,6 @@ fastavro==1.7.4
     # via
     #   -r requirements/base.txt
     #   openedx-events
-future==0.18.3
-    # via
-    #   -r requirements/base.txt
-    #   pyjwkest
 getsmarter-api-clients==0.5.4
     # via -r requirements/base.txt
 gevent==22.10.2
@@ -247,14 +243,6 @@ pycparser==2.21
     # via
     #   -r requirements/base.txt
     #   cffi
-pycryptodomex==3.17
-    # via
-    #   -r requirements/base.txt
-    #   pyjwkest
-pyjwkest==1.4.2
-    # via
-    #   -r requirements/base.txt
-    #   edx-drf-extensions
 pyjwt[crypto]==2.7.0
     # via
     #   -r requirements/base.txt
@@ -309,7 +297,6 @@ requests==2.30.0
     #   coreapi
     #   edx-drf-extensions
     #   edx-rest-api-client
-    #   pyjwkest
     #   requests-oauthlib
     #   slumber
     #   social-auth-core
@@ -341,7 +328,6 @@ six==1.16.0
     #   edx-django-release-util
     #   edx-drf-extensions
     #   edx-rbac
-    #   pyjwkest
     #   python-dateutil
     #   python-memcached
 slumber==0.7.1
