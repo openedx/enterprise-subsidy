@@ -9,11 +9,15 @@ import ddt
 from edx_rbac.utils import ALL_ACCESS_CONTEXT
 from openedx_ledger.models import LedgerLockAttemptFailed, Transaction, TransactionStateChoices, UnitChoices
 from openedx_ledger.test_utils.factories import TransactionFactory
+from requests.exceptions import HTTPError
 from rest_framework import status
 from rest_framework.reverse import reverse
 
+from enterprise_subsidy.apps.api.exceptions import ErrorCodes
+from enterprise_subsidy.apps.api.v1.serializers import TransactionCreationError
 from enterprise_subsidy.apps.api.v1.tests.mixins import STATIC_ENTERPRISE_UUID, STATIC_LMS_USER_ID, APITestMixin
 from enterprise_subsidy.apps.subsidy.constants import SYSTEM_ENTERPRISE_ADMIN_ROLE, SYSTEM_ENTERPRISE_LEARNER_ROLE
+from enterprise_subsidy.apps.subsidy.models import ContentNotFoundForCustomerException
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
 
 SERIALIZED_DATE_PATTERN = '%Y-%m-%dT%H:%M:%S.%fZ'
@@ -490,6 +494,56 @@ class TransactionAdminCreateViewTests(APITestBase):
             metadata=None,
         )
         assert response.json() == {'detail': 'Attempt to lock the Ledger failed, please try again.'}
+
+    @ddt.data(
+        {
+            'exception_to_raise': HTTPError('Error from the enrollment API'),
+            'expected_error_code': ErrorCodes.ENROLLMENT_ERROR,
+        },
+        {
+            'exception_to_raise': ContentNotFoundForCustomerException('No ticket'),
+            'expected_error_code': ErrorCodes.CONTENT_NOT_FOUND,
+        },
+        {
+            'exception_to_raise': Exception('Other error'),
+            'expected_error_code': ErrorCodes.TRANSACTION_CREATION_ERROR,
+        },
+    )
+    @ddt.unpack
+    def test_operator_creation_expected_422_errors(self, exception_to_raise, expected_error_code):
+        """
+        Test the cases where we catch expected exceptions and raise a custom 422 APIException.
+        """
+        self.set_up_operator()
+
+        url = reverse("api:v2:transaction-admin-list-create", args=[self.subsidy_1.uuid])
+        creation_request_payload = {
+            'lms_user_id': STATIC_LMS_USER_ID,
+            'content_key': self.content_key_2,
+            'subsidy_access_policy_uuid': self.subsidy_access_policy_1_uuid,
+            'idempotency_key': 'my-idempotency-key',
+        }
+
+        with mock.patch(
+            'enterprise_subsidy.apps.subsidy.models.Subsidy.redeem',
+            side_effect=exception_to_raise,
+            autospec=True,
+        ) as mocked_redeem:
+            response = self.client.post(url, creation_request_payload)
+
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        mocked_redeem.assert_called_once_with(
+            self.subsidy_1,  # redeem is a bound method, but we have to patch via the module.
+            STATIC_LMS_USER_ID,
+            self.content_key_2,
+            uuid.UUID(self.subsidy_access_policy_1_uuid),
+            idempotency_key='my-idempotency-key',
+            metadata=None,
+        )
+        assert response.json() == {
+            'detail': str(exception_to_raise),
+            'code': expected_error_code,
+        }
 
     def test_operator_creation_required_fields_validation_eror(self):
         """

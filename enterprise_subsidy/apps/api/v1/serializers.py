@@ -5,9 +5,10 @@ from logging import getLogger
 
 from drf_spectacular.utils import extend_schema_field
 from openedx_ledger.models import LedgerLockAttemptFailed, Reversal, Transaction, UnitChoices
+from requests.exceptions import HTTPError
 from rest_framework import serializers
 
-from enterprise_subsidy.apps.subsidy.models import RevenueCategoryChoices, Subsidy
+from enterprise_subsidy.apps.subsidy.models import ContentNotFoundForCustomerException, RevenueCategoryChoices, Subsidy
 
 logger = getLogger(__name__)
 
@@ -205,12 +206,20 @@ class TransactionCreationRequestSerializer(serializers.ModelSerializer):
                 f'in subsidy {subsidy.uuid}'
             )
             raise exc
+        except HTTPError as exc:
+            raise exc
+        except ContentNotFoundForCustomerException as exc:
+            logger.exception(
+                f'Could not find content while creating transaction for {validated_data}'
+                f'in subsidy {subsidy.uuid}'
+            )
+            raise exc
         except Exception as exc:
             logger.exception(
                 f'Encountered an exception while creating transaction for {validated_data}'
                 f'in subsidy {subsidy.uuid}'
             )
-            raise TransactionCreationError('Encountered an exception while creating transaction') from exc
+            raise TransactionCreationError(str(exc)) from exc
         if not transaction:
             logger.error(
                 f'Transaction was None after attempting to redeem for {validated_data}'

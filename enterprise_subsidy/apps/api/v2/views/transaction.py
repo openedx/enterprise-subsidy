@@ -9,10 +9,12 @@ from drf_spectacular.utils import extend_schema, extend_schema_view
 from edx_rbac.decorators import permission_required
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
 from openedx_ledger.models import LedgerLockAttemptFailed, Transaction
+from requests.exceptions import HTTPError
 from rest_framework import generics, permissions, status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import APIException, NotFound, PermissionDenied, Throttled
 
+from enterprise_subsidy.apps.api.exceptions import ErrorCodes, TransactionCreationAPIException
 from enterprise_subsidy.apps.api.filters import TransactionAdminFilterSet
 from enterprise_subsidy.apps.api.paginators import TransactionListPaginator
 from enterprise_subsidy.apps.api.utils import get_subsidy_customer_uuid_from_view
@@ -156,12 +158,22 @@ class TransactionAdminListCreate(TransactionBaseViewMixin, generics.ListCreateAP
                 response.status_code = status.HTTP_200_OK
             return response
         except LedgerLockAttemptFailed:
-            raise Throttled(detail='Attempt to lock the Ledger failed, please try again.')
-        except (ContentNotFoundForCustomerException, TransactionCreationError) as exc:
-            raise APIException(
-                detail=str(exc),
-                code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            raise Throttled(
+                detail='Attempt to lock the Ledger failed, please try again.',
+                code=ErrorCodes.LEDGER_LOCK_ERROR,
             )
+        except HTTPError as exc:
+            raise TransactionCreationAPIException(
+                detail=str(exc),
+                code=ErrorCodes.ENROLLMENT_ERROR,
+            )
+        except ContentNotFoundForCustomerException as exc:
+            raise TransactionCreationAPIException(
+                detail=str(exc),
+                code=ErrorCodes.CONTENT_NOT_FOUND,
+            )
+        except TransactionCreationError as exc:
+            raise TransactionCreationAPIException(detail=str(exc))
 
 
 @extend_schema(
