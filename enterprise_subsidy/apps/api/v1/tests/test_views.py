@@ -8,6 +8,7 @@ from functools import partial
 from unittest import mock
 
 import ddt
+from django.conf import settings
 from django.core.exceptions import MultipleObjectsReturned
 from edx_rbac.utils import ALL_ACCESS_CONTEXT
 from openedx_ledger.models import Transaction, TransactionStateChoices
@@ -132,6 +133,7 @@ class APITestBase(APITestMixin):
             str(self.subsidy_2_transaction_initial.uuid),
             str(self.subsidy_3_transaction_initial.uuid),
         ])
+        self.transaction_status_api_url = f"{settings.ENTERPRISE_SUBSIDY_URL}/api/v1/transactions"
 
 
 @ddt.ddt
@@ -235,6 +237,7 @@ class SubsidyViewSetTests(APITestBase):
                 'subsidy_access_policy_uuid': str(self.subsidy_access_policy_1_uuid),
                 'content_key': self.content_key_1,
                 'external_reference': [],
+                'transaction_status_api_url': f"{self.transaction_status_api_url}/{self.subsidy_1_transaction_1_uuid}/"
             }
 
         expected_response_data = {
@@ -923,6 +926,9 @@ class TransactionViewSetTests(APITestBase):
         assert len(create_response_data["uuid"]) == 36
         # TODO: make this assertion more specific once we hookup the idempotency_key to the request body.
         assert create_response_data["idempotency_key"]
+        assert create_response_data["transaction_status_api_url"] == (
+            f"{self.transaction_status_api_url}/{create_response_data['uuid']}/"
+        )
         assert create_response_data["content_key"] == post_data["content_key"]
         assert create_response_data["lms_user_id"] == post_data["lms_user_id"]
         assert create_response_data["subsidy_access_policy_uuid"] == post_data["subsidy_access_policy_uuid"]
