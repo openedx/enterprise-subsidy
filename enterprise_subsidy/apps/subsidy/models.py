@@ -320,11 +320,14 @@ class Subsidy(TimeStampedModel):
             return (existing_transaction, False)
 
         is_redeemable, content_price = self.is_redeemable(content_key)
+
+        base_exception_msg = (
+            f'{self} cannot redeem {content_key} with price {content_price} '
+            f'for user {lms_user_id} in policy {subsidy_access_policy_uuid}. %s'
+        )
+
         if not is_redeemable:
-            logger.info(
-                f'{self} cannot redeem {content_key} with price {content_price} '
-                f'for user {lms_user_id} in policy {subsidy_access_policy_uuid}'
-            )
+            logger.info(base_exception_msg, 'Not enough balance in the subsidy')
             return (None, False)
         try:
             transaction = self._create_redemption(
@@ -335,12 +338,14 @@ class Subsidy(TimeStampedModel):
                 metadata=metadata,
             )
         except ledger_api.LedgerBalanceExceeded:
-            logger.info(
-                f'{self} cannot redeem {content_key} with price {content_price} '
-                f'for user {lms_user_id} in policy {subsidy_access_policy_uuid}. '
-                f'This would have exceeded the ledger balance.'
-            )
+            logger.exception(base_exception_msg, 'This would have exceeded the ledger balance.')
             return (None, False)
+        except HTTPError as exc:
+            logger.exception(base_exception_msg, 'HTTPError during enrollment.')
+            # Because this error occurred when requesting an enrollment action in another service,
+            # we raise instead of return, so that the subsidy API layer can pass more exception
+            # info back to the caller.
+            raise exc
         if transaction:
             return (transaction, True)
         else:
