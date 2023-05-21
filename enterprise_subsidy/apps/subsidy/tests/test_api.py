@@ -103,11 +103,11 @@ class CanRedeemTestCase(TestCase):
             lms_user_id=self.lms_user_id,
             content_key=self.content_key
         )
-        reversal = Reversal.objects.create(
+        Reversal.objects.create(
             transaction=existing_transaction,
             idempotency_key=str(existing_transaction.idempotency_key) + '-reversed',
             quantity=19998,
-            state=TransactionStateChoices.COMMITTED,
+            state=TransactionStateChoices.CREATED,
         )
         expected_redeemable = True
         expected_price = 19998
@@ -117,8 +117,7 @@ class CanRedeemTestCase(TestCase):
         )
         self.assertEqual(expected_redeemable, actual_redeemable)
         self.assertEqual(expected_price, actual_price)
-        self.assertEqual(existing_transaction, actual_transaction)
-        self.assertEqual(actual_transaction.reversal, reversal)
+        self.assertEqual(None, actual_transaction)
 
     def test_existing_transaction_no_reversal(self):
         """

@@ -467,7 +467,7 @@ class Subsidy(TimeStampedModel):
 
     def get_redemption(self, lms_user_id, content_key):
         """
-        Return the committed transaction representing this redemption,
+        Return the committed transaction without a reversal representing this redemption,
         or None if no such transaction exists.
 
         Args:
@@ -479,6 +479,7 @@ class Subsidy(TimeStampedModel):
         """
         return self.transactions_for_learner_and_content(lms_user_id, content_key).filter(
             state=TransactionStateChoices.COMMITTED,
+            reversal__isnull=True,
         ).first()
 
     def all_transactions(self):
