@@ -131,7 +131,7 @@ class SubsidyModelRedemptionTestCase(TestCase):
         )
         super().setUp()
 
-    def test_get_redemption(self):
+    def test_get_committed_transaction_no_reversal(self):
         """
         Tests that get_redemption appropriately filters by learner and content identifiers.
         """
@@ -150,7 +150,7 @@ class SubsidyModelRedemptionTestCase(TestCase):
             )
 
         for lms_user_id, content_key in learner_content_pairs:
-            transaction = self.subsidy.get_redemption(lms_user_id, content_key)
+            transaction = self.subsidy.get_committed_transaction_no_reversal(lms_user_id, content_key)
             self.assertEqual(transaction.lms_user_id, lms_user_id)
             self.assertEqual(transaction.content_key, content_key)
             self.assertEqual(transaction.quantity, -1000)

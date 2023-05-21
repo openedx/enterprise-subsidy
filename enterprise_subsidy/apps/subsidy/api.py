@@ -90,7 +90,7 @@ def can_redeem(subsidy, lms_user_id, content_key):
         Transaction: existing redemption/transaction
       )
     """
-    existing_transaction = subsidy.get_redemption(lms_user_id, content_key)
+    existing_transaction = subsidy.get_committed_transaction_no_reversal(lms_user_id, content_key)
     if existing_transaction:
         is_redeemable = False
         price_for_content = subsidy.price_for_content(content_key)
