@@ -1,7 +1,6 @@
 """
 The python API.
 """
-from openedx_ledger.models import Transaction
 
 from enterprise_subsidy.apps.subsidy.models import RevenueCategoryChoices, Subsidy
 
