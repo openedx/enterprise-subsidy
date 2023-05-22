@@ -14,3 +14,5 @@ DATABASES = {
     },
 }
 # END IN-MEMORY TEST DATABASE
+
+FRONTEND_APP_LEARNING_URL = 'http://localhost:2000'

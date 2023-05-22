@@ -24,6 +24,7 @@ def root(*path_fragments):
 
 LMS_URL = os.environ.get('LMS_URL', 'localhost:18000')
 ENTERPRISE_CATALOG_URL = os.environ.get('ENTERPRISE_CATALOG_URL', 'localhost:18160')
+FRONTEND_APP_LEARNING_URL = os.environ.get('FRONTEND_APP_LEARNING_URL', 'localhost:2000')
 
 BULK_ENROLL_REQUEST_TIMEOUT_SECONDS = os.environ.get('BULK_ENROLL_REQUEST_TIMEOUT_SECONDS', 20)
 

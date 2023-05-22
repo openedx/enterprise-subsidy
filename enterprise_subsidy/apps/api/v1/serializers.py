@@ -2,7 +2,9 @@
 Serializers for the enterprise-subsidy API.
 """
 from logging import getLogger
+from urllib.parse import urljoin
 
+from django.conf import settings
 from drf_spectacular.utils import extend_schema_field
 from openedx_ledger.models import LedgerLockAttemptFailed, Reversal, Transaction, UnitChoices
 from requests.exceptions import HTTPError
@@ -85,6 +87,9 @@ class TransactionSerializer(serializers.ModelSerializer):
     unit = serializers.SerializerMethodField(
         help_text="The unit in which this transaction's quantity is denominated."
     )
+    courseware_url = serializers.SerializerMethodField(
+       help_text="The URL to the courseware page for this transaction's content_key."
+    )
     reversal = ReversalSerializer(read_only=True)
     # http://web.archive.org/web/20230427144910/https://romansorin.com/blog/using-djangos-jsonfield-you-probably-dont-need-it-heres-why
     metadata = serializers.SerializerMethodField(
@@ -111,7 +116,17 @@ class TransactionSerializer(serializers.ModelSerializer):
             "modified",
             "reversal",  # Note that the `reversal` field is found via reverse relationship.
             "external_reference",  # Note that the `external_reference` field is found via reverse relationship.
+            "courseware_url",
         ]
+
+    @extend_schema_field(serializers.URLField)
+    def get_courseware_url(self, obj) -> str:
+        """
+        Helper method to get the courseware URL for this transaction's content_key.
+        The courseware_url today only supports OCM courses, and should not be used for external, non-OCM course types.
+        """
+        path = f'course/{obj.content_key}/home'
+        return urljoin(settings.FRONTEND_APP_LEARNING_URL, path)
 
     @extend_schema_field(serializers.JSONField)
     def get_metadata(self, obj) -> dict:
