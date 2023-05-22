@@ -237,7 +237,8 @@ class SubsidyViewSetTests(APITestBase):
                 'subsidy_access_policy_uuid': str(self.subsidy_access_policy_1_uuid),
                 'content_key': self.content_key_1,
                 'external_reference': [],
-                'transaction_status_api_url': f"{self.transaction_status_api_url}/{self.subsidy_1_transaction_1_uuid}/"
+                'transaction_status_api_url': f"{self.transaction_status_api_url}/{self.subsidy_1_transaction_1_uuid}/",
+                'courseware_url': f"http://localhost:2000/course/{self.content_key_1}/home",
             }
 
         expected_response_data = {
@@ -932,6 +933,7 @@ class TransactionViewSetTests(APITestBase):
         assert create_response_data["content_key"] == post_data["content_key"]
         assert create_response_data["lms_user_id"] == post_data["lms_user_id"]
         assert create_response_data["subsidy_access_policy_uuid"] == post_data["subsidy_access_policy_uuid"]
+        assert create_response_data["courseware_url"] == f"http://localhost:2000/course/{post_data['content_key']}/home"
         self.assertDictEqual(create_response_data["metadata"], {})
         assert create_response_data["unit"] == self.subsidy_1.ledger.unit
         assert create_response_data["quantity"] < 0  # No need to be exact at this time, I'm just testing create works.
