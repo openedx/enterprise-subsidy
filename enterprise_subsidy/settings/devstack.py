@@ -59,6 +59,7 @@ JWT_AUTH.update({
 
 LMS_URL = 'http://edx.devstack.lms:18000'
 ENTERPRISE_CATALOG_URL = 'http://enterprise.catalog.app:18160'
+ENTERPRISE_SUBSIDY_URL = 'http://localhost:18280'
 
 # Application settings
 ALLOW_LEDGER_MODIFICATION = True

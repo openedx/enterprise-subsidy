@@ -2,7 +2,10 @@
 Serializers for the enterprise-subsidy API.
 """
 from logging import getLogger
+from urllib.parse import urljoin
 
+from django.conf import settings
+from django.urls import reverse
 from drf_spectacular.utils import extend_schema_field
 from openedx_ledger.models import LedgerLockAttemptFailed, Reversal, Transaction, UnitChoices
 from requests.exceptions import HTTPError
@@ -85,6 +88,10 @@ class TransactionSerializer(serializers.ModelSerializer):
     unit = serializers.SerializerMethodField(
         help_text="The unit in which this transaction's quantity is denominated."
     )
+    transaction_status_api_url = serializers.SerializerMethodField(
+        help_text="The URL to the transaction status API endpoint for this transaction."
+    )
+
     reversal = ReversalSerializer(read_only=True)
     # http://web.archive.org/web/20230427144910/https://romansorin.com/blog/using-djangos-jsonfield-you-probably-dont-need-it-heres-why
     metadata = serializers.SerializerMethodField(
@@ -111,7 +118,15 @@ class TransactionSerializer(serializers.ModelSerializer):
             "modified",
             "reversal",  # Note that the `reversal` field is found via reverse relationship.
             "external_reference",  # Note that the `external_reference` field is found via reverse relationship.
+            "transaction_status_api_url",
         ]
+
+    @extend_schema_field(serializers.URLField)
+    def get_transaction_status_api_url(self, obj) -> str:
+        """
+        Helper to get the transaction status API URL from context
+        """
+        return urljoin(settings.ENTERPRISE_SUBSIDY_URL, reverse('api:v1:transaction-detail', args=[obj.uuid]))
 
     @extend_schema_field(serializers.JSONField)
     def get_metadata(self, obj) -> dict:
