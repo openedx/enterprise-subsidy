@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-asgiref==3.6.0
+asgiref==3.7.1
     # via
     #   -r requirements/validation.txt
     #   django
@@ -71,7 +71,7 @@ coreschema==0.0.4
     #   -r requirements/validation.txt
     #   coreapi
     #   drf-yasg
-coverage[toml]==7.2.5
+coverage[toml]==7.2.6
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
@@ -108,6 +108,7 @@ django==3.2.19
     #   django-debug-toolbar
     #   django-extensions
     #   django-filter
+    #   django-log-request-id
     #   django-model-utils
     #   djangorestframework
     #   drf-jwt
@@ -143,6 +144,8 @@ django-filter==23.2
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
+django-log-request-id==2.1.0
+    # via -r requirements/validation.txt
 django-model-utils==4.3.1
     # via
     #   -r requirements/validation.txt
@@ -427,7 +430,7 @@ pylint-django==2.5.3
     # via
     #   -r requirements/validation.txt
     #   edx-lint
-pylint-plugin-utils==0.8.1
+pylint-plugin-utils==0.8.2
     # via
     #   -r requirements/validation.txt
     #   pylint-celery
@@ -493,7 +496,7 @@ redis==4.5.5
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-requests==2.30.0
+requests==2.31.0
     # via
     #   -r requirements/validation.txt
     #   coreapi
@@ -603,9 +606,10 @@ tox==3.28.0
     # via -r requirements/validation.txt
 twine==4.0.2
     # via -r requirements/validation.txt
-typing-extensions==4.5.0
+typing-extensions==4.6.1
     # via
     #   -r requirements/validation.txt
+    #   asgiref
     #   astroid
     #   pylint
     #   rich

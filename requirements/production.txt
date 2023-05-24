@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-asgiref==3.6.0
+asgiref==3.7.1
     # via
     #   -r requirements/base.txt
     #   django
@@ -60,6 +60,7 @@ django==3.2.19
     #   django-crum
     #   django-extensions
     #   django-filter
+    #   django-log-request-id
     #   django-model-utils
     #   djangorestframework
     #   drf-jwt
@@ -89,6 +90,8 @@ django-filter==23.2
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
+django-log-request-id==2.1.0
+    # via -r requirements/base.txt
 django-model-utils==4.3.1
     # via
     #   -r requirements/base.txt
@@ -291,7 +294,7 @@ redis==4.5.5
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-requests==2.30.0
+requests==2.31.0
     # via
     #   -r requirements/base.txt
     #   coreapi
@@ -352,6 +355,10 @@ stevedore==5.1.0
     #   -r requirements/base.txt
     #   edx-django-utils
     #   edx-opaque-keys
+typing-extensions==4.6.1
+    # via
+    #   -r requirements/base.txt
+    #   asgiref
 uritemplate==4.1.1
     # via
     #   -r requirements/base.txt
