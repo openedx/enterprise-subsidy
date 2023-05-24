@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-asgiref==3.6.0
+asgiref==3.7.1
     # via
     #   -r requirements/base.txt
     #   django
@@ -56,7 +56,7 @@ coreschema==0.0.4
     #   -r requirements/base.txt
     #   coreapi
     #   drf-yasg
-coverage[toml]==7.2.5
+coverage[toml]==7.2.6
     # via
     #   -r requirements/test.in
     #   pytest-cov
@@ -83,6 +83,7 @@ distlib==0.3.6
     #   django-crum
     #   django-extensions
     #   django-filter
+    #   django-log-request-id
     #   django-model-utils
     #   djangorestframework
     #   drf-jwt
@@ -114,6 +115,8 @@ django-filter==23.2
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
+django-log-request-id==2.1.0
+    # via -r requirements/base.txt
 django-model-utils==4.3.1
     # via
     #   -r requirements/base.txt
@@ -315,7 +318,7 @@ pylint-celery==0.3
     # via edx-lint
 pylint-django==2.5.3
     # via edx-lint
-pylint-plugin-utils==0.8.1
+pylint-plugin-utils==0.8.2
     # via
     #   pylint-celery
     #   pylint-django
@@ -368,7 +371,7 @@ redis==4.5.5
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-requests==2.30.0
+requests==2.31.0
     # via
     #   -r requirements/base.txt
     #   coreapi
@@ -446,8 +449,10 @@ tox==3.28.0
     # via
     #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/test.in
-typing-extensions==4.5.0
+typing-extensions==4.6.1
     # via
+    #   -r requirements/base.txt
+    #   asgiref
     #   astroid
     #   pylint
 uritemplate==4.1.1

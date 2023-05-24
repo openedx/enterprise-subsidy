@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-asgiref==3.6.0
+asgiref==3.7.1
     # via django
 async-timeout==4.0.2
     # via redis
@@ -44,6 +44,7 @@ django==3.2.19
     #   django-crum
     #   django-extensions
     #   django-filter
+    #   django-log-request-id
     #   django-model-utils
     #   djangorestframework
     #   drf-jwt
@@ -72,6 +73,8 @@ django-filter==23.2
     # via
     #   -r requirements/base.in
     #   openedx-ledger
+django-log-request-id==2.1.0
+    # via -r requirements/base.in
 django-model-utils==4.3.1
     # via edx-rbac
 django-object-actions==4.1.0
@@ -216,7 +219,7 @@ pyyaml==6.0
     #   edx-django-release-util
 redis==4.5.5
     # via openedx-ledger
-requests==2.30.0
+requests==2.31.0
     # via
     #   coreapi
     #   edx-drf-extensions
@@ -259,6 +262,8 @@ stevedore==5.1.0
     # via
     #   edx-django-utils
     #   edx-opaque-keys
+typing-extensions==4.6.1
+    # via asgiref
 uritemplate==4.1.1
     # via
     #   coreapi
