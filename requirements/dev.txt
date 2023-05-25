@@ -342,7 +342,7 @@ openedx-events==8.0.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-openedx-ledger==0.4.0
+openedx-ledger==0.4.1
     # via -r requirements/validation.txt
 packaging==23.1
     # via
@@ -435,6 +435,8 @@ pylint-plugin-utils==0.8.2
     #   -r requirements/validation.txt
     #   pylint-celery
     #   pylint-django
+pymemcache==4.0.0
+    # via -r requirements/validation.txt
 pymongo==3.13.0
     # via
     #   -r requirements/validation.txt
@@ -456,7 +458,7 @@ pytest==7.3.1
     #   -r requirements/validation.txt
     #   pytest-cov
     #   pytest-django
-pytest-cov==4.0.0
+pytest-cov==4.1.0
     # via -r requirements/validation.txt
 pytest-django==4.5.2
     # via -r requirements/validation.txt
@@ -524,7 +526,7 @@ rich==13.3.5
     # via
     #   -r requirements/validation.txt
     #   twine
-ruamel-yaml==0.17.26
+ruamel-yaml==0.17.27
     # via
     #   -r requirements/validation.txt
     #   drf-yasg
@@ -606,7 +608,7 @@ tox==3.28.0
     # via -r requirements/validation.txt
 twine==4.0.2
     # via -r requirements/validation.txt
-typing-extensions==4.6.1
+typing-extensions==4.6.2
     # via
     #   -r requirements/validation.txt
     #   asgiref

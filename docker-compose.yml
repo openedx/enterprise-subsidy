@@ -14,6 +14,9 @@ services:
   memcache:
     image: memcached:1.4.24
     container_name: enterprise-subsidy.memcache
+    networks:
+      - devstack_default
+    command: memcached -vv
 
   app:
     image: openedx/enterprise-subsidy
