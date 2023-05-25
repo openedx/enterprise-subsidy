@@ -22,6 +22,7 @@ jsonfield2
 mysqlclient
 openedx-events
 openedx-ledger
+pymemcache
 pytz
 rules
 getsmarter-api-clients
