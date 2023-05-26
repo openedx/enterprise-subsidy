@@ -134,7 +134,7 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
         )
         # pylint: disable=protected-access
         geag_payload = self.geag_fulfillment_handler._create_allocation_payload(transaction)
-        assert geag_payload.get('payment_reference') == str(transaction.uuid).replace('-', '')[:20]
+        assert geag_payload.get('payment_reference') == str(transaction.uuid)
         assert geag_payload.get('order_items')[0].get('productId') == content_summary.get('geag_variant_id')
         assert geag_payload.get('org_id') == expected_enterprise_customer_data.get('auth_org_id')
         for payload_field in self.geag_fulfillment_handler.REQUIRED_METADATA_FIELDS:
