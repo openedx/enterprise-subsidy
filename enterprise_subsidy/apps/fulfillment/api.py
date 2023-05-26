@@ -98,7 +98,7 @@ class GEAGFulfillmentHandler():
         # more fully understood.
         transaction_price = self._get_geag_transaction_price(transaction)
         return {
-            'payment_reference': str(transaction.uuid).replace('-', '')[:20],
+            'payment_reference': str(transaction.uuid),
             'enterprise_customer_uuid': str(self._get_enterprise_customer_uuid(transaction)),
             'currency': currency,
             'order_items': [
