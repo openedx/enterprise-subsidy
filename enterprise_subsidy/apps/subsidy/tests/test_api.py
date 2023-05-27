@@ -107,7 +107,6 @@ class CanRedeemTestCase(TestCase):
             transaction=existing_transaction,
             idempotency_key=str(existing_transaction.idempotency_key) + '-reversed',
             quantity=19998,
-            state=TransactionStateChoices.CREATED,
         )
         expected_redeemable = True
         expected_price = 19998
