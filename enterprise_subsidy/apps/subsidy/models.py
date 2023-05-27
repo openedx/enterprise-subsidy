@@ -316,7 +316,7 @@ class Subsidy(TimeStampedModel):
                 All other exceptions raised during the creation of an enrollment.  This should have already triggered
                 the rollback of a pending transaction.
         """
-        if existing_transaction := self.get_redemption(lms_user_id, content_key):
+        if existing_transaction := self.get_committed_transaction_no_reversal(lms_user_id, content_key):
             return (existing_transaction, False)
 
         is_redeemable, content_price = self.is_redeemable(content_key)
@@ -465,9 +465,9 @@ class Subsidy(TimeStampedModel):
             redeemable = self.current_balance() >= content_price
         return redeemable, content_price
 
-    def get_redemption(self, lms_user_id, content_key):
+    def get_committed_transaction_no_reversal(self, lms_user_id, content_key):
         """
-        Return the committed transaction representing this redemption,
+        Return the committed transaction without a reversal representing this redemption,
         or None if no such transaction exists.
 
         Args:
@@ -479,6 +479,7 @@ class Subsidy(TimeStampedModel):
         """
         return self.transactions_for_learner_and_content(lms_user_id, content_key).filter(
             state=TransactionStateChoices.COMMITTED,
+            reversal__isnull=True,
         ).first()
 
     def all_transactions(self):

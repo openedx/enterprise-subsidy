@@ -1,7 +1,6 @@
 """
 The python API.
 """
-from openedx_ledger.models import Transaction
 
 from enterprise_subsidy.apps.subsidy.models import RevenueCategoryChoices, Subsidy
 
@@ -90,22 +89,11 @@ def can_redeem(subsidy, lms_user_id, content_key):
         Transaction: existing redemption/transaction
       )
     """
-    existing_transaction = subsidy.get_redemption(lms_user_id, content_key)
-    if existing_transaction and not _existing_reversal(existing_transaction):
+    existing_transaction = subsidy.get_committed_transaction_no_reversal(lms_user_id, content_key)
+    if existing_transaction:
         is_redeemable = False
         price_for_content = subsidy.price_for_content(content_key)
     else:
         is_redeemable, price_for_content = subsidy.is_redeemable(content_key)
 
     return (is_redeemable, price_for_content, existing_transaction)
-
-
-def _existing_reversal(transaction):
-    """
-    Helper that returns a ``Reversal`` record for a given transaction,
-    or None if no reversal exists.
-    """
-    try:
-        return transaction.reversal
-    except Transaction.reversal.RelatedObjectDoesNotExist:  # pylint: disable=no-member
-        return None
