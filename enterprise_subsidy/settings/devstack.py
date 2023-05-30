@@ -3,6 +3,7 @@ from enterprise_subsidy.settings.local import *
 CORS_ORIGIN_WHITELIST = (
     'http://localhost:18450',  # frontend-app-support-tools
     'http://localhost:8734',  # frontend-app-learner-portal-enterprise
+    'http://localhost:1991',  # frontend-app-admin-portal
 )
 
 DATABASES = {
