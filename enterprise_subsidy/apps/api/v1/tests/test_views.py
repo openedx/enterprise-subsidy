@@ -207,10 +207,10 @@ class SubsidyViewSetTests(APITestBase):
         self.set_up_admin(enterprise_uuids=[self.subsidy_1.enterprise_customer_uuid])
         expected_redeemable = True
         expected_price = 350
-        existing_transaction = None
+        existing_transactions = []
         if has_existing_transaction:
-            existing_transaction = self.subsidy_1_transaction_1
-        mock_can_redeem.return_value = (expected_redeemable, expected_price, existing_transaction)
+            existing_transactions.append(self.subsidy_1_transaction_1)
+        mock_can_redeem.return_value = (expected_redeemable, expected_price, existing_transactions)
         query_params = {'lms_user_id': 32, 'content_key': 'some-content-key'}
 
         response = self.client.get(
@@ -220,9 +220,9 @@ class SubsidyViewSetTests(APITestBase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-        expected_existing_transaction = None
+        expected_existing_transactions = []
         if has_existing_transaction:
-            expected_existing_transaction = {
+            expected_existing_transactions.append({
                 'created': self.subsidy_1_transaction_1.created.strftime(SERIALIZED_DATE_PATTERN),
                 'idempotency_key': str(self.subsidy_1_transaction_1.idempotency_key),
                 'metadata': None,
@@ -239,13 +239,13 @@ class SubsidyViewSetTests(APITestBase):
                 'external_reference': [],
                 'transaction_status_api_url': f"{self.transaction_status_api_url}/{self.subsidy_1_transaction_1_uuid}/",
                 'courseware_url': f"http://localhost:2000/course/{self.content_key_1}/home",
-            }
+            })
 
         expected_response_data = {
             'can_redeem': expected_redeemable,
             'content_price': expected_price,
             'unit': self.subsidy_1.unit,
-            'existing_transaction': expected_existing_transaction,
+            'all_transactions': expected_existing_transactions,
         }
         self.assertEqual(response.json(), expected_response_data)
 

@@ -42,12 +42,12 @@ class CanRedeemResult:
     DRF Serializers really prefer to operate on objects, not dictionaries,
     when they define a field that is itself a Serializer.
     """
-    def __init__(self, can_redeem, content_price, unit, existing_transaction):  # pylint: disable=redefined-outer-name
+    def __init__(self, can_redeem, content_price, unit, all_transactions):  # pylint: disable=redefined-outer-name
         """ initialize this object """
         self.can_redeem = can_redeem
         self.content_price = content_price
         self.unit = unit
-        self.existing_transaction = existing_transaction
+        self.all_transactions = all_transactions
 
 
 class SubsidyViewSet(
@@ -214,7 +214,7 @@ class SubsidyViewSet(
                 detail='A lms_user_id and content_key are required',
             )
 
-        redeemable, content_price, existing_transaction = can_redeem(
+        redeemable, content_price, existing_transactions = can_redeem(
             self.requested_subsidy,
             lms_user_id,
             content_key,
@@ -224,7 +224,7 @@ class SubsidyViewSet(
                 redeemable,
                 content_price,
                 self.requested_subsidy.unit,
-                existing_transaction,
+                existing_transactions,
             )
         )
         return Response(serializer.data, status=status.HTTP_200_OK)

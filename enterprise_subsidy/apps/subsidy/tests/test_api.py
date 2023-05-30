@@ -84,12 +84,12 @@ class CanRedeemTestCase(TestCase):
         expected_redeemable = True
         expected_price = 19998
 
-        actual_redeemable, actual_price, actual_transaction = subsidy_api.can_redeem(
+        actual_redeemable, actual_price, actual_transactions = subsidy_api.can_redeem(
             self.subsidy, self.lms_user_id, self.content_key
         )
         self.assertEqual(expected_redeemable, actual_redeemable)
         self.assertEqual(expected_price, actual_price)
-        self.assertIsNone(actual_transaction)
+        self.assertEqual([], actual_transactions)
 
     def test_existing_transaction_with_reversal(self):
         """
@@ -111,12 +111,12 @@ class CanRedeemTestCase(TestCase):
         expected_redeemable = True
         expected_price = 19998
 
-        actual_redeemable, actual_price, actual_transaction = subsidy_api.can_redeem(
+        actual_redeemable, actual_price, actual_transactions = subsidy_api.can_redeem(
             self.subsidy, self.lms_user_id, self.content_key
         )
         self.assertEqual(expected_redeemable, actual_redeemable)
         self.assertEqual(expected_price, actual_price)
-        self.assertEqual(None, actual_transaction)
+        self.assertEqual([existing_transaction], actual_transactions)
 
     def test_existing_transaction_no_reversal(self):
         """
@@ -133,9 +133,9 @@ class CanRedeemTestCase(TestCase):
         expected_redeemable = False
         expected_price = 19998
 
-        actual_redeemable, actual_price, actual_transaction = subsidy_api.can_redeem(
+        actual_redeemable, actual_price, actual_transactions = subsidy_api.can_redeem(
             self.subsidy, self.lms_user_id, self.content_key
         )
         self.assertEqual(expected_redeemable, actual_redeemable)
         self.assertEqual(expected_price, actual_price)
-        self.assertEqual(existing_transaction, actual_transaction)
+        self.assertEqual([existing_transaction], actual_transactions)

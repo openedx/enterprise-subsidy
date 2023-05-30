@@ -470,6 +470,10 @@ class Subsidy(TimeStampedModel):
         Return the committed transaction without a reversal representing this redemption,
         or None if no such transaction exists.
 
+        TODO: Also include transactions with non-committed reversals (reversal.state != "committed").  Right now, this
+        defect has no real-world impact because we don't currently allow reversals to enter any non-committed state, but
+        this defect is probably worth fixing if reversals can become non-committed.
+
         Args:
             lms_user_id (str): The learner of the redemption to check.
             content_key (str): The content of the redemption to check.
@@ -494,6 +498,10 @@ class Subsidy(TimeStampedModel):
         return self.all_transactions().filter(content_key=content_key)
 
     def transactions_for_learner_and_content(self, lms_user_id, content_key):
+        """
+        Return all current and/or historical transactions representing the given user redeeming content.  Output may
+        contain reversed transactions.
+        """
         return self.all_transactions().filter(
             lms_user_id=lms_user_id,
             content_key=content_key,
