@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-asgiref==3.7.1
+asgiref==3.7.2
     # via
     #   -r requirements/base.txt
     #   django
@@ -56,11 +56,11 @@ coreschema==0.0.4
     #   -r requirements/base.txt
     #   coreapi
     #   drf-yasg
-coverage[toml]==7.2.6
+coverage[toml]==7.2.7
     # via
     #   -r requirements/test.in
     #   pytest-cov
-cryptography==40.0.2
+cryptography==41.0.0
     # via
     #   -r requirements/base.txt
     #   pyjwt
@@ -262,7 +262,7 @@ openedx-events==8.0.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-openedx-ledger==0.4.1
+openedx-ledger==1.0.0
     # via -r requirements/base.txt
 packaging==23.1
     # via
@@ -387,7 +387,7 @@ requests-oauthlib==1.3.1
     #   -r requirements/base.txt
     #   getsmarter-api-clients
     #   social-auth-core
-ruamel-yaml==0.17.27
+ruamel-yaml==0.17.31
     # via
     #   -r requirements/base.txt
     #   drf-yasg
