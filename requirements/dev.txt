@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-asgiref==3.7.1
+asgiref==3.7.2
     # via
     #   -r requirements/validation.txt
     #   django
@@ -71,11 +71,11 @@ coreschema==0.0.4
     #   -r requirements/validation.txt
     #   coreapi
     #   drf-yasg
-coverage[toml]==7.2.6
+coverage[toml]==7.2.7
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
-cryptography==40.0.2
+cryptography==41.0.0
     # via
     #   -r requirements/validation.txt
     #   pyjwt
@@ -342,7 +342,7 @@ openedx-events==8.0.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-openedx-ledger==0.4.1
+openedx-ledger==1.0.0
     # via -r requirements/validation.txt
 packaging==23.1
     # via
@@ -526,7 +526,7 @@ rich==13.3.5
     # via
     #   -r requirements/validation.txt
     #   twine
-ruamel-yaml==0.17.27
+ruamel-yaml==0.17.31
     # via
     #   -r requirements/validation.txt
     #   drf-yasg
