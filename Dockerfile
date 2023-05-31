@@ -77,3 +77,14 @@ CMD gunicorn --workers=2 --name enterprise-subsidy -c /edx/app/enterprise-subsid
 # This line is after the requirements so that changes to the code will not
 # bust the image cache
 COPY . /edx/app/enterprise-subsidy
+
+FROM app as newrelic
+RUN pip install newrelic
+CMD gunicorn --workers=2 --name enterprise-subsidy -c /edx/app/enterprise-subsidy/enterprise_subsidy/docker_gunicorn_configuration.py --log-file - --max-requests=1000 enterprise_subsidy.wsgi:application
+
+FROM app as devstack
+USER root
+COPY requirements/dev.txt /edx/app/enterprise-subsidy/requirements/dev.txt
+RUN pip install -r requirements/dev.txt
+USER app
+CMD gunicorn --workers=2 --name enterprise-subsidy -c /edx/app/enterprise-subsidy/enterprise_subsidy/docker_gunicorn_configuration.py --log-file - --max-requests=1000 enterprise_subsidy.wsgi:application
