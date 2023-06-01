@@ -3,6 +3,7 @@ Tests for the v2 transaction views.
 """
 import urllib
 import uuid
+from datetime import timedelta
 from unittest import mock
 
 import ddt
@@ -16,6 +17,7 @@ from rest_framework.reverse import reverse
 from enterprise_subsidy.apps.api.exceptions import ErrorCodes
 from enterprise_subsidy.apps.api.v1.serializers import TransactionCreationError
 from enterprise_subsidy.apps.api.v1.tests.mixins import STATIC_ENTERPRISE_UUID, STATIC_LMS_USER_ID, APITestMixin
+from enterprise_subsidy.apps.core.utils import localized_utcnow
 from enterprise_subsidy.apps.subsidy.constants import SYSTEM_ENTERPRISE_ADMIN_ROLE, SYSTEM_ENTERPRISE_LEARNER_ROLE
 from enterprise_subsidy.apps.subsidy.models import ContentNotFoundForCustomerException
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
@@ -461,6 +463,48 @@ class TransactionAdminCreateViewTests(APITestBase):
 
         response = self.client.post(url, creation_request_payload)
         assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    @ddt.data(
+        # check case where subsidy is only active in future
+        {
+            'active_datetime': localized_utcnow() + timedelta(days=1),
+            'expiration_datetime': localized_utcnow() + timedelta(days=10),
+        },
+        # check case where subsidy has expired
+        {
+            'active_datetime': localized_utcnow() - timedelta(days=10),
+            'expiration_datetime': localized_utcnow() - timedelta(days=1),
+        },
+    )
+    @ddt.unpack
+    def test_operator_creation_with_inactive_subsidy_gets_422(self, active_datetime, expiration_datetime):
+        """
+        Tests that an authenticated operator receives a 422 response
+        when attempting to create a transaction in an inactive subsidy uuid.
+        """
+        self.set_up_operator()
+        inactive_subsidy = SubsidyFactory.create(
+            uuid=uuid.uuid4(),
+            enterprise_customer_uuid=uuid.UUID(self.enterprise_1_uuid),
+            starting_balance=15000,
+            active_datetime=active_datetime,
+            expiration_datetime=expiration_datetime,
+        )
+
+        url = reverse("api:v2:transaction-admin-list-create", args=[inactive_subsidy.uuid])
+        creation_request_payload = {
+            'lms_user_id': STATIC_LMS_USER_ID,
+            'content_key': self.content_key_2,
+            'subsidy_access_policy_uuid': self.subsidy_access_policy_1_uuid,
+            'idempotency_key': 'my-idempotency-key',
+        }
+
+        response = self.client.post(url, creation_request_payload)
+        assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
+        assert response.json() == {
+            'detail': 'Cannot create a transaction in an inactive subsidy',
+            'code': ErrorCodes.INACTIVE_SUBSIDY_CREATION_ERROR,
+        }
 
     def test_operator_creation_with_lock_failure_gets_429(self):
         """

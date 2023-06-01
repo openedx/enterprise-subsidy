@@ -28,6 +28,7 @@ from simple_history.models import HistoricalRecords
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
+from enterprise_subsidy.apps.core.utils import localized_utcnow
 from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
 
 MOCK_CATALOG_CLIENT = mock.MagicMock()
@@ -196,6 +197,14 @@ class Subsidy(TimeStampedModel):
         help_text="The datetime when this Subsidy is considered expired.  If null, this Subsidy is considered active."
         )
     history = HistoricalRecords()
+
+    @property
+    def is_active(self):
+        """
+        Returns true if the localized current time is
+        between ``active_datetime`` and ``expiration_datetime``.
+        """
+        return self.active_datetime <= localized_utcnow() <= self.expiration_datetime
 
     @cached_property
     def enterprise_client(self):
