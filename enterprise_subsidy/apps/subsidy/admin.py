@@ -11,11 +11,21 @@ from simple_history.admin import SimpleHistoryAdmin
 from enterprise_subsidy.apps.subsidy.forms import EnterpriseSubsidyRoleAssignmentAdminForm
 from enterprise_subsidy.apps.subsidy.models import EnterpriseSubsidyRoleAssignment, Subsidy
 
+from .constants import CENTS_PER_DOLLAR
+
 log = logging.getLogger(__name__)
 
 
+def cents_to_usd_string(balance_in_cents):
+    """
+    Helper to convert cents as an int to dollars as a
+    nicely formatted string.
+    """
+    return "${:,.2f}".format(float(balance_in_cents) / CENTS_PER_DOLLAR)
+
+
 def can_modify():
-    getattr(settings, 'ALLOW_LEDGER_MODIFICATION', False)
+    return getattr(settings, 'ALLOW_LEDGER_MODIFICATION', False)
 
 
 @admin.register(Subsidy)
@@ -28,14 +38,48 @@ class SubsidyAdmin(SimpleHistoryAdmin):
         fields = '__all__'
 
     _all_fields = [field.name for field in Subsidy._meta.get_fields()]
-    # TODO: make this reasonable, see https://2u-internal.atlassian.net/browse/ENT-6622
-    # TODO: make the revenue_category field readonly to enterprise_admins.
-    # readonly_fields = list(_all_fields)
-    # if can_modify():
-    #     readonly_fields = []
-    readonly_fields = []
 
-    list_display = ('title', 'uuid', 'enterprise_customer_uuid')
+    if can_modify():
+        readonly_fields = ['get_balance_usd', 'starting_balance_usd']
+    else:
+        readonly_fields = [
+            'get_balance_usd',
+            'starting_balance_usd',
+            'starting_balance',
+            'ledger',
+            'unit',
+            'enterprise_customer_uuid',
+        ]
+
+    list_display = (
+        'title',
+        'uuid',
+        'enterprise_customer_uuid',
+        'active_datetime',
+        'internal_only',
+        'modified',
+    )
+    list_filter = (
+        'internal_only',
+    )
+    search_fields = (
+        'uuid',
+        'enterprise_customer_uuid',
+    )
+
+    def get_queryset(self, request):
+        queryset = super().get_queryset(request)
+        return queryset.select_related('ledger')
+
+    @admin.display(description='Current balance (dollars)')
+    def get_balance_usd(self, obj):
+        """Returns this subsidy's ledger current balance as a US Dollar string."""
+        return cents_to_usd_string(obj.current_balance())
+
+    @admin.display(description='Starting balance (dollars)')
+    def starting_balance_usd(self, obj):
+        """Returns this subsidy's starting balance as a US Dollar string."""
+        return cents_to_usd_string(obj.starting_balance)
 
     def get_readonly_fields(self, request, obj=None):
         """
