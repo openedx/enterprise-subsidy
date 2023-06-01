@@ -72,4 +72,3 @@ ENTERPRISE_SUBSIDY_URL = 'http://localhost:18280'
 FRONTEND_APP_LEARNING_URL = 'http://localhost:2000'
 
 # Application settings
-ALLOW_LEDGER_MODIFICATION = True
