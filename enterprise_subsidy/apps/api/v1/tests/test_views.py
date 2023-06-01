@@ -166,6 +166,7 @@ class SubsidyViewSetTests(APITestBase):
             "starting_balance": self.subsidy_1.starting_balance,
             "internal_only": False,
             "revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
+            "is_active": True,
         }
         self.assertEqual(expected_result, response.json())
 
@@ -265,7 +266,6 @@ class SubsidyViewSetTests(APITestBase):
         url = self.get_list_url
         data = SubsidyFactory.to_default_fields_dict()
         response = self.client.post(url, data, format='json')
-
         self.assertEqual(response.status_code, status_code)
 
     def test_create_subsidy_when_request_body_is_incomplete(self):

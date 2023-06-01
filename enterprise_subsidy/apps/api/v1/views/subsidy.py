@@ -251,18 +251,18 @@ class SubsidyViewSet(
         create_serializer = SubsidyCreationRequestSerializer(data=request.data)
         if create_serializer.is_valid(raise_exception=True):
             try:
+                validated_data = create_serializer.validated_data
                 subsidy, created = get_or_create_learner_credit_subsidy(
-                    create_serializer.data['reference_id'],
-                    create_serializer.data['default_title'],
-                    create_serializer.data['default_enterprise_customer_uuid'],
-                    create_serializer.data['default_active_datetime'],
-                    create_serializer.data['default_expiration_datetime'],
-                    create_serializer.data['default_unit'],
-                    create_serializer.data['default_starting_balance'],
-                    create_serializer.data['default_revenue_category'],
-                    create_serializer.data['default_internal_only'],
+                    validated_data['reference_id'],
+                    validated_data['default_title'],
+                    validated_data['default_enterprise_customer_uuid'],
+                    validated_data['default_active_datetime'],
+                    validated_data['default_expiration_datetime'],
+                    validated_data['default_unit'],
+                    validated_data['default_starting_balance'],
+                    validated_data['default_revenue_category'],
+                    validated_data['default_internal_only'],
                 )
-
                 if created:
                     return Response(SubsidySerializer(subsidy).data, status=status.HTTP_201_CREATED)
                 if subsidy:
