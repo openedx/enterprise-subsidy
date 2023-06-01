@@ -152,6 +152,11 @@ class TransactionAdminListCreate(TransactionBaseViewMixin, generics.ListCreateAP
         """
         See docstring for post() above.
         """
+        if not self.subsidy.is_active:
+            raise TransactionCreationAPIException(
+                detail='Cannot create a transaction in an inactive subsidy',
+                code=ErrorCodes.INACTIVE_SUBSIDY_CREATION_ERROR,
+            )
         try:
             response = super().create(request, subsidy_uuid)
             if self.did_transaction_already_exist:
