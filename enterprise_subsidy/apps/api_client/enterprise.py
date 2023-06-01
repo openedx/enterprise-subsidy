@@ -13,7 +13,7 @@ logger = logging.getLogger(__name__)
 
 # Name of field in JSON response from bulk enrollment API that contains the value to be used as the reference to the
 # newly created enrollment.
-ENROLLMENT_REF_ID_FIELD_NAME = "enterprise_fufillment_source_uuid"
+ENROLLMENT_REF_ID_FIELD_NAME = "enterprise_fulfillment_source_uuid"
 
 
 class EnrollmentException(Exception):
