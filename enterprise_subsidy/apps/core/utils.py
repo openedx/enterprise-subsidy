@@ -24,7 +24,6 @@ def versioned_cache_key(*args):
     return CACHE_KEY_SEP.join(components)
 
 
-# pylint: disable=no-value-for-parameter
 def localized_utcnow():
     """Helper function to return localized utcnow()."""
     return UTC.localize(datetime.utcnow())  # pylint: disable=no-value-for-parameter
