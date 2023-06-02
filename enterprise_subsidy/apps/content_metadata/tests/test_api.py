@@ -6,10 +6,11 @@ from uuid import uuid4
 
 import ddt
 from django.test import TestCase
+from edx_django_utils.cache import TieredCache
 
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 
-from ..api import ContentMetadataApi, content_metadata_cache_key, request_cache
+from ..api import ContentMetadataApi, content_metadata_cache_key
 from ..constants import CourseModes, ProductSources
 
 
@@ -235,23 +236,25 @@ class ContentMetadataApiTests(TestCase):
         self.assertEqual(expected_price, actual_price)
 
     @mock.patch('enterprise_subsidy.apps.content_metadata.api.EnterpriseCatalogApiClient')
-    def test_request_caching_works(self, mock_catalog_client):
+    def test_tiered_caching_works(self, mock_catalog_client):
         """
         Tests that consecutive calls for the same content metadata
         within the same request utilize the cache.
         """
         cache_key = content_metadata_cache_key(self.enterprise_customer_uuid, self.course_key)
-        self.assertFalse(request_cache().get_cached_response(cache_key).is_found)
+        self.assertFalse(TieredCache.get_cached_response(cache_key).is_found)
         client_instance = mock_catalog_client.return_value
+        client_instance.get_content_metadata_for_customer.return_value = {'the': 'metadata'}
 
         _ = ContentMetadataApi.get_content_metadata(self.enterprise_customer_uuid, self.course_key)
 
-        self.assertTrue(request_cache().get_cached_response(cache_key).is_found)
+        self.assertTrue(TieredCache.get_cached_response(cache_key).is_found)
         self.assertEqual(
-            request_cache().get_cached_response(cache_key).value,
-            client_instance.get_content_metadata_for_customer.return_value
+            TieredCache.get_cached_response(cache_key).value,
+            {'the': 'metadata'},
         )
         self.assertEqual(
             ContentMetadataApi.get_content_metadata(self.enterprise_customer_uuid, self.course_key),
-            client_instance.get_content_metadata_for_customer.return_value
+            {'the': 'metadata'},
         )
+        TieredCache.delete_all_tiers(cache_key)
