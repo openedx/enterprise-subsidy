@@ -21,6 +21,7 @@ class SubsidySerializer(serializers.ModelSerializer):
     Serializer for the `Subsidy` model.
     """
     current_balance = serializers.SerializerMethodField(help_text="The current (remaining) balance of this subsidy.")
+    is_active = serializers.BooleanField(read_only=True, help_text="Whether this subsidy is currently active.")
 
     class Meta:
         """
@@ -40,6 +41,7 @@ class SubsidySerializer(serializers.ModelSerializer):
             "starting_balance",
             "internal_only",
             "revenue_category",
+            "is_active",
             # In the MVP implementation, there are only learner_credit subsidies.  Uncomment after subscription
             # subsidies are introduced.
             # "subsidy_type",
