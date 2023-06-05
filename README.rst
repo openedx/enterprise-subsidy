@@ -1,26 +1,12 @@
 enterprise_subsidy
-#############################
+##################
 
-.. note::
-
-  This README was auto-generated. Maintainer: please review its contents and
-  update all relevant sections. Instructions to you are marked with
-  "PLACEHOLDER" or "TODO". Update or remove those sections, and remove this
-  note when you are done.
-
-|pypi-badge| |ci-badge| |codecov-badge| |doc-badge| |pyversions-badge|
-|license-badge| |status-badge|
+|ci-badge| |codecov-badge| |license-badge| |status-badge|
 
 Purpose
 *******
 
 Captures and balances enterprise-subsidized transactions.
-
-TODO: The ``README.rst`` file should start with a brief description of the repository and its purpose.
-It should be described in the context of other repositories under the ``openedx``
-organization. It should make clear where this fits in to the overall Open edX
-codebase and should be oriented towards people who are new to the Open edX
-project.
 
 Getting Started
 ***************
@@ -67,7 +53,7 @@ Every time you develop something in this repo
   git checkout -b <your_github_username>/<short_description>
 
   # Using your favorite editor, edit the code to make your change.
-  vim ...
+  # vim ...
 
   # Run your new tests
   make app-shell
@@ -85,13 +71,13 @@ Every time you develop something in this repo
 
 Deploying
 =========
+Merging a pull request will cause a GoCD `build` pipeline to start automatically.
+When the build pipeline is completed, the built image will be deployed to our staging
+environment automatically.
 
-TODO: How can a new user go about deploying this component? Is it just a few
-commands? Is there a larger how-to that should be linked here?
-
-PLACEHOLDER: For details on how to deploy this component, see the `deployment how-to`_
-
-.. _deployment how-to: https://docs.openedx.org/projects/enterprise-subsidy/how-tos/how-to-deploy-this-component.html
+To deploy your change to the production environment, you must manually trigger
+the production `enterprise-subsidy-prod` pipeline, which will use the latest
+commit in the ``main`` branch by default.
 
 Getting Help
 ************
@@ -99,11 +85,10 @@ Getting Help
 Documentation
 =============
 
-PLACEHOLDER: Start by going through `the documentation`_.  If you need more help see below.
-
-.. _the documentation: https://docs.openedx.org/projects/enterprise-subsidy
-
-(TODO: `Set up documentation <https://openedx.atlassian.net/wiki/spaces/DOC/pages/21627535/Publish+Documentation+on+Read+the+Docs>`_)
+* https://github.com/openedx/enterprise-subsidy/tree/main/docs/decisions documents
+  various architectural decisions the maintainers have made.
+* https://github.com/openedx/enterprise-subsidy/tree/main/docs/caching.rst describes the design and use of
+  caching layers in this service.
 
 More Help
 =========
@@ -169,10 +154,6 @@ Reporting Security Issues
 
 Please do not report security issues in public. Please email security@tcril.org.
 
-.. |pypi-badge| image:: https://img.shields.io/pypi/v/enterprise-subsidy.svg
-    :target: https://pypi.python.org/pypi/enterprise-subsidy/
-    :alt: PyPI
-
 .. |ci-badge| image:: https://github.com/openedx/enterprise-subsidy/workflows/Python%20CI/badge.svg?branch=main
     :target: https://github.com/openedx/enterprise-subsidy/actions
     :alt: CI
@@ -181,20 +162,8 @@ Please do not report security issues in public. Please email security@tcril.org.
     :target: https://codecov.io/github/openedx/enterprise-subsidy?branch=main
     :alt: Codecov
 
-.. |doc-badge| image:: https://readthedocs.org/projects/enterprise-subsidy/badge/?version=latest
-    :target: https://enterprise-subsidy.readthedocs.io/en/latest/
-    :alt: Documentation
-
-.. |pyversions-badge| image:: https://img.shields.io/pypi/pyversions/enterprise-subsidy.svg
-    :target: https://pypi.python.org/pypi/enterprise-subsidy/
-    :alt: Supported Python versions
-
 .. |license-badge| image:: https://img.shields.io/github/license/openedx/enterprise-subsidy.svg
     :target: https://github.com/openedx/enterprise-subsidy/blob/main/LICENSE.txt
     :alt: License
 
-.. TODO: Choose one of the statuses below and remove the other status-badge lines.
-.. |status-badge| image:: https://img.shields.io/badge/Status-Experimental-yellow
-.. .. |status-badge| image:: https://img.shields.io/badge/Status-Maintained-brightgreen
-.. .. |status-badge| image:: https://img.shields.io/badge/Status-Deprecated-orange
-.. .. |status-badge| image:: https://img.shields.io/badge/Status-Unsupported-red
+.. |status-badge| image:: https://img.shields.io/badge/Status-Maintained-brightgreen
