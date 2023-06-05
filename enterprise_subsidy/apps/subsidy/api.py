@@ -84,9 +84,9 @@ def can_redeem(subsidy, lms_user_id, content_key):
 
     Returns:
       3-tuple of (
-        boolean: whether the user can redeem,
-        int: price of content,
-        Transaction: existing redemption/transaction
+        boolean: whether the user can redeem.
+        int: price of content.
+        list of Transaction: all current and historical redemptions/transactions for user+content.
       )
     """
     existing_transaction = subsidy.get_committed_transaction_no_reversal(lms_user_id, content_key)
@@ -95,5 +95,7 @@ def can_redeem(subsidy, lms_user_id, content_key):
         price_for_content = subsidy.price_for_content(content_key)
     else:
         is_redeemable, price_for_content = subsidy.is_redeemable(content_key)
-
-    return (is_redeemable, price_for_content, existing_transaction)
+    all_transactions_for_learner_and_content = list(
+        subsidy.transactions_for_learner_and_content(lms_user_id, content_key)
+    )
+    return (is_redeemable, price_for_content, all_transactions_for_learner_and_content)

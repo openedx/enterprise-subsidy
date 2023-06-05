@@ -217,7 +217,9 @@ class TransactionCreationRequestSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         """
-        Creates a new Transaction record via the `Subsidy.redeem()` method.
+        Gets or creates a Transaction record via the `Subsidy.redeem()` method.
+
+        If an existing transaction is found with the same ledger and idempotency_key, that transaction is returned.
         """
         # subsidy() is a convenience property on the instance of the Transaction view class that uses
         # this serializer.
@@ -280,9 +282,15 @@ class CanRedeemResponseSerializer(serializers.Serializer):
         default='usd_cents',
         help_text='The unit in which price is denominated.'
     )
-    existing_transaction = TransactionSerializer(
+    all_transactions = TransactionSerializer(
         required=False,
         allow_null=True,
+        many=True,
+        help_text=(
+            'All existing transactions for the requested combination of (subsidy, access policy, lms_user_id, '
+            'content_key).  This includes active (committed without reversal), reversed, failed, pending, or created '
+            'transactions.'
+        ),
     )
 
 

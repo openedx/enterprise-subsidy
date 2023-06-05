@@ -142,8 +142,8 @@ class TransactionAdminListCreate(TransactionBaseViewMixin, generics.ListCreateAP
     def post(self, *args, **kwargs):
         """
         A create view that is accessible only to operators of the system.
-        It creates (or just gets, if a matching Transaction already exists) a transaction
-        via the `Subsidy.redeem()` method.
+        It creates (or just gets, if a matching Transaction is found with same ledger and idempotency_key) a
+        transaction via the `Subsidy.redeem()` method.
         """
         return super().post(*args, **kwargs)
 
