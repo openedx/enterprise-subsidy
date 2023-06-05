@@ -53,6 +53,7 @@ THIRD_PARTY_APPS = (
     'csrf.apps.CsrfAppConfig',  # Enables frontend apps to retrieve CSRF tokens
     'django_filters',
     'django_object_actions',
+    'djangoql',
     'drf_spectacular',
     'drf_yasg',
     # "App Permissions" compatiblity: this provides the manage_user and manage_group management commands.

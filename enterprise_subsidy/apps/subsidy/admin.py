@@ -5,6 +5,7 @@ import logging
 
 from django.conf import settings
 from django.contrib import admin
+from djangoql.admin import DjangoQLSearchMixin
 from edx_rbac.admin import UserRoleAssignmentAdmin
 from simple_history.admin import SimpleHistoryAdmin
 
@@ -29,7 +30,7 @@ def can_modify():
 
 
 @admin.register(Subsidy)
-class SubsidyAdmin(SimpleHistoryAdmin):
+class SubsidyAdmin(DjangoQLSearchMixin, SimpleHistoryAdmin):
     """
     Admin for the Subsidy model.
     """
@@ -92,7 +93,7 @@ class SubsidyAdmin(SimpleHistoryAdmin):
 
 
 @admin.register(EnterpriseSubsidyRoleAssignment)
-class EnterpriseSubsidyRoleAssignmentAdmin(UserRoleAssignmentAdmin):
+class EnterpriseSubsidyRoleAssignmentAdmin(DjangoQLSearchMixin, UserRoleAssignmentAdmin):
     """
     Django admin for EnterpriseSubsidyRoleAssignment Model.
     """
