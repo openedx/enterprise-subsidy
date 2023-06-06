@@ -1,6 +1,8 @@
 """
 Test for utilities module.
 """
+import hashlib
+
 from django.test import TestCase
 
 from enterprise_subsidy import __version__ as code_version
@@ -16,5 +18,5 @@ class TestUtils(TestCase):
         with self.settings(CACHE_KEY_VERSION_STAMP='flapjacks'):
             self.assertEqual(
                 versioned_cache_key('foo', 'bar'),
-                f'foo:bar:{code_version}:flapjacks',
+                hashlib.sha512(f'foo:bar:{code_version}:flapjacks'.encode()).hexdigest(),
             )
