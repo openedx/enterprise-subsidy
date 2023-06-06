@@ -152,7 +152,7 @@ file in this repo.
 Reporting Security Issues
 *************************
 
-Please do not report security issues in public. Please email security@tcril.org.
+Please do not report security issues in public. Please email security@openedx.org.
 
 .. |ci-badge| image:: https://github.com/openedx/enterprise-subsidy/workflows/Python%20CI/badge.svg?branch=main
     :target: https://github.com/openedx/enterprise-subsidy/actions
