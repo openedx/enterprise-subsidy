@@ -62,6 +62,9 @@ class ReversalSerializer(serializers.ModelSerializer):
     """
     Serializer for the `Reversal` model.
     """
+    metadata = serializers.SerializerMethodField(
+        help_text="Any additional metadata that a client may want to associate with this Reversal instance."
+    )
 
     class Meta:
         """
@@ -77,6 +80,14 @@ class ReversalSerializer(serializers.ModelSerializer):
             "created",
             "modified",
         ]
+
+    @extend_schema_field(serializers.JSONField)
+    def get_metadata(self, obj) -> dict:
+        """
+        Properly serialize this json/dict
+        http://web.archive.org/web/20230427144910/https://romansorin.com/blog/using-djangos-jsonfield-you-probably-dont-need-it-heres-why
+        """
+        return obj.metadata
 
 
 class TransactionSerializer(serializers.ModelSerializer):
