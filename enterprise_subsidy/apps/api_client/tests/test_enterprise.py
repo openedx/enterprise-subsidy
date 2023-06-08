@@ -163,6 +163,49 @@ class EnterpriseApiClientTests(TestCase):
             enterprise_client.enroll(self.user_id, self.courserun_key, transaction)
 
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
+    def test_successful_fetching_of_recent_unenrollments(self, mock_oauth_client):
+        """
+        Test the enterprise client's expected successful behavior when fetching recent unenrollments
+        """
+        transaction_id = str(uuid4())
+        fulfillment_uuid = str(uuid4())
+        mock_oauth_client.return_value.get.return_value = MockResponse(
+            [{
+                'enterprise_course_enrollment': {
+                    'enterprise_customer_user': 10,
+                    'course_id': self.courserun_key,
+                    'created': '2023-05-25T19:27:29Z',
+                    'unenrolled_at': '2023-06-1T19:27:29Z',
+                },
+                'transaction_id': transaction_id,
+                'uuid': fulfillment_uuid,
+            }],
+            200
+        )
+        enterprise_client = EnterpriseApiClient()
+        response = enterprise_client.fetch_recent_unenrollments()
+        assert response == [{
+            'enterprise_course_enrollment': {
+                'enterprise_customer_user': 10,
+                'course_id': self.courserun_key,
+                'created': '2023-05-25T19:27:29Z',
+                'unenrolled_at': '2023-06-1T19:27:29Z',
+            },
+            'transaction_id': transaction_id,
+            'uuid': fulfillment_uuid,
+        }]
+
+    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
+    def test_failed_fetching_of_recent_unenrollments(self, mock_oauth_client):
+        """
+        Test the enterprise client's expected behavior when fetching recent unenrollments fails
+        """
+        mock_oauth_client.return_value.get.return_value = MockResponse(None, 400)
+        enterprise_client = EnterpriseApiClient()
+        with self.assertRaises(HTTPError):
+            enterprise_client.fetch_recent_unenrollments()
+
+    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
     def test_successful_fetch_enterprise_data(self, mock_oauth_client):
         """
         Test the enterprise client's ability to handle successful api requests to fetch information on an enterprise

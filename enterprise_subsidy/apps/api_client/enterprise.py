@@ -3,11 +3,13 @@ Enterprise api client for the subsidy service.
 """
 import logging
 import os
+from datetime import timedelta
 
 import requests
 from django.conf import settings
 
 from enterprise_subsidy.apps.api_client.base_oauth import BaseOAuthClient
+from enterprise_subsidy.apps.core.utils import localized_utcnow
 
 logger = logging.getLogger(__name__)
 
@@ -52,6 +54,12 @@ class EnterpriseApiClient(BaseOAuthClient):
         return os.path.join(
             self.enterprise_fulfillment_url(enterprise_fulfillment_uuid),
             "cancel-fulfillment",
+        )
+
+    def enterprise_fulfillment_unenrollments_url(self):
+        return os.path.join(
+            self.api_base_url,
+            "operator/enterprise-subsidy-fulfillment/unenrolled/",
         )
 
     def get_enterprise_customer_data(self, enterprise_customer_uuid):
@@ -114,13 +122,13 @@ class EnterpriseApiClient(BaseOAuthClient):
         """
         Calls the Enterprise Bulk Enrollment API to enroll learners in courses.
 
-        Arguemnts:
+        Arguments:
             enterprise_customer_uuid (UUID): UUID representation of the customer that the enrollment will be linked to
             enrollment_info (list[dicts]): List of enrollment information required to enroll.
                 Each index must contain key/value pairs:
                     user_id: ID of the learner to be enrolled
                     course_run_key: the course run key to be enrolled in by the user
-                    transaction_id: uuid represenation of the transaction for the enrollment
+                    transaction_id: uuid representation of the transaction for the enrollment
 
                 Example::
                     [
@@ -176,5 +184,24 @@ class EnterpriseApiClient(BaseOAuthClient):
             logger.error(
                 f'Failed to cancel enterprise enrollment for enterprise_fulfillment_uuid: '
                 f'{enterprise_fulfillment_uuid}. Failed with error: {exc}'
+            )
+            raise exc
+
+    def fetch_recent_unenrollments(self):
+        """
+        Fetches enterprise enrollment objects that have been unenrolled within the last 24 hours.
+        """
+        unenrolled_subsidies_url = self.enterprise_fulfillment_unenrollments_url()
+        unenrolled_cutoff = (localized_utcnow() - timedelta(hours=24 * 7)).isoformat()
+        try:
+            response = self.client.get(
+                unenrolled_subsidies_url,
+                params={"unenrolled_after": unenrolled_cutoff}
+            )
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.RequestException as exc:
+            logger.error(
+                f'Failed to fetch recently unenrolled enterprise subsidies. Failed with error: {exc}'
             )
             raise exc
