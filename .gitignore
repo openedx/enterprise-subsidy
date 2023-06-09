@@ -98,3 +98,9 @@ tx
 
 # pyenv
 .python-version
+
+# doc spew
+docs/enterprise_subsidy.apps.*
+docs/enterprise_subsidy.rst
+docs/enterprise_subsidy.settings.rst
+docs/modules.rst

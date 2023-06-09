@@ -18,6 +18,7 @@ from enterprise_subsidy.apps.api.exceptions import ErrorCodes
 from enterprise_subsidy.apps.api.v1.serializers import TransactionCreationError
 from enterprise_subsidy.apps.api.v1.tests.mixins import STATIC_ENTERPRISE_UUID, STATIC_LMS_USER_ID, APITestMixin
 from enterprise_subsidy.apps.core.utils import localized_utcnow
+from enterprise_subsidy.apps.fulfillment.api import FulfillmentException
 from enterprise_subsidy.apps.subsidy.constants import SYSTEM_ENTERPRISE_ADMIN_ROLE, SYSTEM_ENTERPRISE_LEARNER_ROLE
 from enterprise_subsidy.apps.subsidy.models import ContentNotFoundForCustomerException
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
@@ -551,6 +552,10 @@ class TransactionAdminCreateViewTests(APITestBase):
         {
             'exception_to_raise': Exception('Other error'),
             'expected_error_code': ErrorCodes.TRANSACTION_CREATION_ERROR,
+        },
+        {
+            'exception_to_raise': FulfillmentException('Fulfillment failure'),
+            'expected_error_code': ErrorCodes.FULFILLMENT_ERROR,
         },
     )
     @ddt.unpack

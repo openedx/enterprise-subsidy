@@ -14,6 +14,7 @@ class ErrorCodes:
     TRANSACTION_CREATION_ERROR = 'transaction_creation_error'
     LEDGER_LOCK_ERROR = 'ledger_lock_error'
     INACTIVE_SUBSIDY_CREATION_ERROR = 'inactive_subsidy_creation_error'
+    FULFILLMENT_ERROR = 'fulfillment_error'
 
 
 class TransactionCreationAPIException(APIException):

@@ -11,6 +11,7 @@ from openedx_ledger.models import LedgerLockAttemptFailed, Reversal, Transaction
 from requests.exceptions import HTTPError
 from rest_framework import serializers
 
+from enterprise_subsidy.apps.fulfillment.api import FulfillmentException
 from enterprise_subsidy.apps.subsidy.models import ContentNotFoundForCustomerException, RevenueCategoryChoices, Subsidy
 
 logger = getLogger(__name__)
@@ -247,6 +248,11 @@ class TransactionCreationRequestSerializer(serializers.ModelSerializer):
             logger.exception(
                 f'Could not find content while creating transaction for {validated_data}'
                 f'in subsidy {subsidy.uuid}'
+            )
+            raise exc
+        except FulfillmentException as exc:
+            logger.error(
+                f'Error fulfilling transactions for {validated_data} in subsidy {subsidy.uuid}'
             )
             raise exc
         except Exception as exc:

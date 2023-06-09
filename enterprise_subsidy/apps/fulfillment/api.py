@@ -5,6 +5,7 @@ related to subsidy redemptions.
 from django.conf import settings
 from getsmarter_api_clients.geag import GetSmarterEnterpriseApiClient
 from openedx_ledger.models import ExternalFulfillmentProvider, ExternalTransactionReference
+from requests.exceptions import HTTPError
 
 # pylint: disable=unused-import
 from enterprise_subsidy.apps.content_metadata import api as content_metadata_api
@@ -150,8 +151,14 @@ class GEAGFulfillmentHandler():
         return bool(self._get_geag_variant_id(transaction))
 
     def _fulfill_in_geag(self, allocation_payload):
-        geag_response = self.get_smarter_client().create_enterprise_allocation(**allocation_payload)
-        return geag_response.json()
+        """
+        Calls the `create_enterprise_allocation` endpoint via the GEAG client.
+        """
+        geag_response = self.get_smarter_client().create_enterprise_allocation(
+            **allocation_payload,
+            should_raise=False,
+        )
+        return geag_response
 
     def fulfill(self, transaction):
         """
@@ -160,7 +167,13 @@ class GEAGFulfillmentHandler():
         self._validate(transaction)
         allocation_payload = self._create_allocation_payload(transaction)
         geag_response = self._fulfill_in_geag(allocation_payload)
-        external_reference_id = geag_response.get('orderUuid')
-        if not external_reference_id:
-            raise FulfillmentException('missing orderUuid / external_reference_id from geag')
-        return self._save_fulfillment_reference(transaction, external_reference_id)
+        response_payload = geag_response.json()
+
+        try:
+            geag_response.raise_for_status()
+            external_reference_id = response_payload.get('orderUuid')
+            if not external_reference_id:
+                raise FulfillmentException('missing orderUuid / external_reference_id from geag')
+            return self._save_fulfillment_reference(transaction, external_reference_id)
+        except HTTPError as exc:
+            raise FulfillmentException(response_payload.get('errors') or geag_response.text) from exc
