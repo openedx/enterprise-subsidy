@@ -23,6 +23,7 @@ from enterprise_subsidy.apps.api.v1.serializers import (
     TransactionCreationRequestSerializer,
     TransactionSerializer
 )
+from enterprise_subsidy.apps.fulfillment.api import FulfillmentException
 from enterprise_subsidy.apps.subsidy.api import get_subsidy_by_uuid
 from enterprise_subsidy.apps.subsidy.constants import (
     PERMISSION_CAN_CREATE_TRANSACTIONS,
@@ -176,6 +177,11 @@ class TransactionAdminListCreate(TransactionBaseViewMixin, generics.ListCreateAP
             raise TransactionCreationAPIException(
                 detail=str(exc),
                 code=ErrorCodes.CONTENT_NOT_FOUND,
+            )
+        except FulfillmentException as exc:
+            raise TransactionCreationAPIException(
+                detail=str(exc),
+                code=ErrorCodes.FULFILLMENT_ERROR,
             )
         except TransactionCreationError as exc:
             raise TransactionCreationAPIException(detail=str(exc))

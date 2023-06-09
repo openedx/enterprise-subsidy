@@ -65,7 +65,7 @@ django-crum==0.7.9
     # via
     #   edx-django-utils
     #   edx-rbac
-django-extensions==3.2.1
+django-extensions==3.2.3
     # via
     #   -r requirements/base.in
     #   openedx-ledger
@@ -114,7 +114,7 @@ edx-django-release-util==1.2.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-edx-django-utils==5.4.0
+edx-django-utils==5.5.0
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
@@ -137,7 +137,7 @@ edx-rest-api-client==5.5.2
     # via -r requirements/base.in
 fastavro==1.7.4
     # via openedx-events
-getsmarter-api-clients==0.5.4
+getsmarter-api-clients==0.6.0
     # via -r requirements/base.in
 idna==3.4
     # via requests
@@ -157,7 +157,7 @@ jsonfield2==4.0.0.post0
     #   openedx-ledger
 jsonschema==4.17.3
     # via drf-spectacular
-markupsafe==2.1.2
+markupsafe==2.1.3
     # via jinja2
 mysqlclient==2.1.1
     # via
@@ -170,7 +170,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==8.0.0
+openedx-events==8.0.1
     # via
     #   -r requirements/base.in
     #   openedx-ledger
@@ -264,14 +264,14 @@ stevedore==5.1.0
     # via
     #   edx-django-utils
     #   edx-opaque-keys
-typing-extensions==4.6.2
+typing-extensions==4.6.3
     # via asgiref
 uritemplate==4.1.1
     # via
     #   coreapi
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.0.2
+urllib3==2.0.3
     # via requests
 zipp==3.15.0
     # via importlib-resources
