@@ -56,6 +56,7 @@ defusedxml==0.7.1
 django==3.2.19
     # via
     #   -r requirements/base.txt
+    #   django-clearcache
     #   django-cors-headers
     #   django-crum
     #   django-extensions
@@ -75,6 +76,8 @@ django==3.2.19
     #   openedx-events
     #   openedx-ledger
     #   social-auth-app-django
+django-clearcache==1.2.1
+    # via -r requirements/base.txt
 django-cors-headers==4.0.0
     # via -r requirements/base.txt
 django-crum==0.7.9

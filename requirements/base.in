@@ -27,3 +27,4 @@ pytz
 rules
 getsmarter-api-clients
 django-log-request-id
+django-clearcache
