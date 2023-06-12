@@ -9,7 +9,7 @@ from unittest import mock
 import ddt
 from edx_rbac.utils import ALL_ACCESS_CONTEXT
 from openedx_ledger.models import LedgerLockAttemptFailed, Transaction, TransactionStateChoices, UnitChoices
-from openedx_ledger.test_utils.factories import TransactionFactory
+from openedx_ledger.test_utils.factories import ReversalFactory, TransactionFactory
 from requests.exceptions import HTTPError
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -42,6 +42,7 @@ class APITestBase(APITestMixin):
 
     subsidy_1_transaction_1_uuid = str(uuid.uuid4())
     subsidy_1_transaction_2_uuid = str(uuid.uuid4())
+    subsidy_1_transaction_3_uuid = str(uuid.uuid4())
     subsidy_2_transaction_1_uuid = str(uuid.uuid4())
     subsidy_2_transaction_2_uuid = str(uuid.uuid4())
     subsidy_3_transaction_1_uuid = str(uuid.uuid4())
@@ -110,6 +111,23 @@ class APITestBase(APITestMixin):
             subsidy_access_policy_uuid=cls.subsidy_access_policy_2_uuid,
             content_key=cls.content_key_2,
         )
+        # Also create a reversed transaction, and also include metadata on both the transaction and reversal.
+        cls.subsidy_1_transaction_3 = TransactionFactory(
+            uuid=cls.subsidy_1_transaction_3_uuid,
+            state=TransactionStateChoices.COMMITTED,
+            quantity=-1000,
+            ledger=cls.subsidy_1.ledger,
+            lms_user_id=STATIC_LMS_USER_ID,
+            subsidy_access_policy_uuid=cls.subsidy_access_policy_2_uuid,
+            content_key=cls.content_key_2,
+            metadata={"bin": "baz"},
+        )
+        cls.subsidy_1_transaction_3_reversal = ReversalFactory(
+            transaction=cls.subsidy_1_transaction_3,
+            state=TransactionStateChoices.COMMITTED,
+            quantity=1000,
+            metadata={"foo": "bar"},
+        )
 
         # In the extra subsidy with the same enterprise_customer_uuid,
         # the static learner does not have any transactions in this one.
@@ -161,6 +179,7 @@ class TransactionUserListViewTests(APITestBase):
     """
     Test list operations on transactions via the transaction-user-list view.
     """
+
     @ddt.data(
         # Test that a learner can only list their own transaction.
         {
@@ -168,6 +187,7 @@ class TransactionUserListViewTests(APITestBase):
             "expected_response_status": status.HTTP_200_OK,
             "expected_response_uuids": [
                 APITestBase.subsidy_1_transaction_1_uuid,
+                APITestBase.subsidy_1_transaction_3_uuid,
             ],
         },
         # Test that a learner can't list other learners' transactions in a different subsidy, but part of the same
@@ -240,6 +260,26 @@ class TransactionAdminListViewTests(APITestBase):
             content_key=cls.content_key_1,
         )
 
+    def test_list_transactions_metadata_format(self):
+        """
+        Test that the serialized metadata in the response body is well formed.
+        """
+        self.set_up_operator()
+        url = reverse("api:v2:transaction-admin-list-create", args=[APITestBase.subsidy_1_uuid])
+
+        # These query params are designed to return self.subsidy_1_transaction_3
+        query_params = {
+            'lms_user_id': STATIC_LMS_USER_ID,
+            'content_key': self.content_key_2,
+            'subsidy_access_policy_uuid': self.subsidy_access_policy_2_uuid,
+        }
+        response = self.client.get(url, data=query_params)
+
+        assert response.status_code == status.HTTP_200_OK
+        list_response_data = response.json()["results"]
+        assert type(list_response_data[0]["metadata"]) == dict
+        assert type(list_response_data[0]["reversal"]["metadata"]) == dict
+
     @ddt.data(
         # Test that an admin can list all transactions in a subsidy within their enterprise.
         {
@@ -249,6 +289,7 @@ class TransactionAdminListViewTests(APITestBase):
             "expected_response_uuids": [
                 APITestBase.subsidy_1_transaction_1_uuid,
                 APITestBase.subsidy_1_transaction_2_uuid,
+                APITestBase.subsidy_1_transaction_3_uuid,
                 APITestBase.failed_transaction_uuid,
             ],
         },
@@ -379,6 +420,7 @@ class TransactionAdminListViewTests(APITestBase):
         expected_response_uuids = [
             APITestBase.subsidy_1_transaction_1_uuid,
             APITestBase.subsidy_1_transaction_2_uuid,
+            APITestBase.subsidy_1_transaction_3_uuid,
         ]
         self._prepend_initial_transaction_uuid(self.subsidy_1_uuid, expected_response_uuids)
         self.assertEqual(sorted(response_uuids), sorted(expected_response_uuids))
