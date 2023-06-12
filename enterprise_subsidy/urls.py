@@ -54,6 +54,7 @@ spec_redoc_view = SpectacularRedocView(
 )
 
 urlpatterns = oauth2_urlpatterns + [
+    re_path(r'^admin/clearcache/', include('clearcache.urls')),
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^api/', include(api_urls)),
     re_path(r'^api-docs(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
