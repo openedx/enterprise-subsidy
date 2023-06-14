@@ -46,6 +46,16 @@ class Command(BaseCommand):
             ),
         )
 
+    def convert_unenrollment_datetime_string(self, datetime_str):
+        """
+        Helper method to strip microseconds from a datetime object
+        """
+        try:
+            formatted_datetime = datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M:%SZ")
+        except ValueError:
+            formatted_datetime = datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M:%S.%fZ")
+        return formatted_datetime
+
     def unenrollment_can_be_refunded(
         self,
         content_metadata,
@@ -75,15 +85,10 @@ class Command(BaseCommand):
         # ie MAX(enterprise enrollment created at, course start date) + 14 days > unenrolled_at date
         enrollment_created_at = enterprise_course_enrollment.get("created")
         enrollment_unenrolled_at = enterprise_course_enrollment.get("unenrolled_at")
-        enrollment_created_datetime = datetime.strptime(
-            enrollment_created_at, "%Y-%m-%dT%H:%M:%SZ"
-        )
-        course_start_datetime = datetime.strptime(
-            course_start_date, "%Y-%m-%dT%H:%M:%SZ"
-        )
-        enrollment_unenrolled_at_datetime = datetime.strptime(
-            enrollment_unenrolled_at, "%Y-%m-%dT%H:%M:%SZ"
-        )
+
+        enrollment_created_datetime = self.convert_unenrollment_datetime_string(enrollment_created_at)
+        course_start_datetime = self.convert_unenrollment_datetime_string(course_start_date)
+        enrollment_unenrolled_at_datetime = self.convert_unenrollment_datetime_string(enrollment_unenrolled_at)
         refund_cutoff_date = max(course_start_datetime, enrollment_created_datetime) + timedelta(days=14)
 
         if refund_cutoff_date > enrollment_unenrolled_at_datetime:

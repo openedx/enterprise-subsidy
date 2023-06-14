@@ -80,6 +80,106 @@ class TestTransactionManagementCommand(TestCase):
     @mock.patch(
         'enterprise_subsidy.apps.transaction.signals.handlers.EnterpriseApiClient'
     )
+    def test_write_reversals_from_enterprise_unenrollments_with_microsecond_datetime_strings(
+        self,
+        mock_signal_client,
+        mock_fetch_course_metadata_client,
+        mock_fetch_recent_unenrollments_client,
+    ):
+        mock_signal_client.return_value = mock.MagicMock()
+        transaction_uuid_2 = uuid.uuid4()
+        TransactionFactory(
+            ledger=self.ledger,
+            quantity=100,
+            uuid=transaction_uuid_2,
+            fulfillment_identifier=str(uuid.uuid4()),
+        )
+        mock_fetch_recent_unenrollments_client.return_value.fetch_recent_unenrollments.return_value = [
+            {
+                'enterprise_course_enrollment': {
+                    'enterprise_customer_user': 10,
+                    'course_id': self.transaction.content_key,
+                    # Created at and unenrolled_at both have microseconds as part of the datetime string
+                    'created': '2023-05-25T19:27:29.182347Z',
+                    'unenrolled_at': '2023-06-1T19:27:29.12939Z',
+                },
+                'transaction_id': self.transaction.uuid,
+                'uuid': str(self.transaction.fulfillment_identifier),
+            },
+        ]
+
+        mock_fetch_course_metadata_client.get_content_metadata.return_value = {
+            'key': self.course_key,
+            'content_type': 'course',
+            'uuid': self.course_uuid,
+            'title': 'Demonstration Course',
+            'course_runs': [{
+                'key': self.transaction.content_key,
+                'uuid': '00f8945b-bb50-4c7a-98f4-2f2f6178ff2f',
+                'title': 'Demonstration Course',
+                'external_key': None,
+                'seats': [{
+                    'type': 'verified',
+                    'price': '149.00',
+                    'currency': 'USD',
+                    'upgrade_deadline': '2023-05-26T15:45:32.494051Z',
+                    'upgrade_deadline_override': None,
+                    'credit_provider': None,
+                    'credit_hours': None,
+                    'sku': '8CF08E5',
+                    'bulk_sku': 'A5B6DBE'
+                }, {
+                    'type': 'audit',
+                    'price': '0.00',
+                    'currency': 'USD',
+                    'upgrade_deadline': None,
+                    'upgrade_deadline_override': None,
+                    'credit_provider': None,
+                    'credit_hours': None,
+                    'sku': '68EFFFF',
+                    'bulk_sku': None
+                }],
+                # Courserun start date has microseconds as part of the datetime string
+                'start': '2013-02-05T05:00:00.355321Z',
+                'end': None,
+                'go_live_date': None,
+                'enrollment_start': None,
+                'enrollment_end': None,
+                'is_enrollable': True,
+                'availability': 'Current',
+                'course': 'edX+DemoX',
+                'first_enrollable_paid_seat_price': 149,
+                'enrollment_count': 0,
+                'recent_enrollment_count': 0,
+                'course_uuid': self.course_uuid,
+            }],
+            'entitlements': self.course_entitlements,
+            'modified': '2022-05-26T15:46:24.355321Z',
+            'additional_metadata': None,
+            'enrollment_count': 0,
+            'recent_enrollment_count': 0,
+            'course_run_keys': [self.courserun_key],
+            'content_last_modified': '2023-03-06T20:56:46Z',
+            'enrollment_url': 'https://foobar.com',
+            'active': False
+        }
+
+        call_command('write_reversals_from_enterprise_unenrollments')
+        # Really all we need to assert here is that the command does not raise an exception while parsing the datetime
+        # strings
+        assert mock_fetch_course_metadata_client.get_content_metadata.call_count == 1
+
+    @mock.patch(
+        'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
+        'EnterpriseApiClient'
+    )
+    @mock.patch(
+        'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
+        'ContentMetadataApi'
+    )
+    @mock.patch(
+        'enterprise_subsidy.apps.transaction.signals.handlers.EnterpriseApiClient'
+    )
     def test_write_reversals_from_enterprise_unenrollment_does_not_rerequest_metadata(
         self,
         mock_signal_client,
