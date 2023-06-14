@@ -147,18 +147,18 @@ class EnterpriseApiClient(BaseOAuthClient):
         """
         bulk_enrollment_url = self.enterprise_customer_bulk_enrollment_url(enterprise_customer_uuid)
         options = {'enrollments_info': enrollments_info}
+        response = self.client.post(
+            bulk_enrollment_url,
+            json=options,
+            timeout=settings.BULK_ENROLL_REQUEST_TIMEOUT_SECONDS,
+        )
         try:
-            response = self.client.post(
-                bulk_enrollment_url,
-                json=options,
-                timeout=settings.BULK_ENROLL_REQUEST_TIMEOUT_SECONDS
-            )
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError as exc:
             logger.error(
                 f'Failed to generate enterprise enrollments for enterprise: {enterprise_customer_uuid} '
-                f'with options: {options}. Failed with error: {exc}'
+                f'with options: {options}. Failed with error: {exc} and payload {response.json()}'
             )
             raise exc
 
