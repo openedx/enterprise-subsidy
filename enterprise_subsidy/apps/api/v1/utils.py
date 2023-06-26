@@ -33,3 +33,22 @@ def get_enterprise_uuid_from_request_query_params(request):
         return uuid.UUID(enterprise_customer_uuid)
     except ValueError as exc:
         raise ParseError(f'{enterprise_customer_uuid} is not a valid uuid.') from exc
+
+
+def get_subsidy_uuid_from_request_query_params(request):
+    """
+    Returns the subsidy UUID from the ``uuid`` query parameter.
+
+    Returns:
+        uuid.UUID: The UUID of the subsidy, or None if the query parameter is not present.
+
+    Raises:
+        rest_framework.exceptions.ParseError: If the requested UUID string is not parseable.
+    """
+    subsidy_uuid = request.query_params.get('uuid')
+    if not subsidy_uuid:
+        return None
+    try:
+        return uuid.UUID(subsidy_uuid)
+    except ValueError as exc:
+        raise ParseError(f'{subsidy_uuid} is not a valid uuid.') from exc

@@ -14,6 +14,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
+from enterprise_subsidy.apps.api.paginators import SubsidyListPaginator
 from enterprise_subsidy.apps.api.v1 import utils
 from enterprise_subsidy.apps.api.v1.exceptions import ServerError
 from enterprise_subsidy.apps.api.v1.serializers import (
@@ -72,7 +73,7 @@ class SubsidyViewSet(
     permission_classes = [permissions.IsAuthenticated]
     lookup_field = "uuid"
     serializer_class = SubsidySerializer
-
+    pagination_class = SubsidyListPaginator
     # Fields that control permissions for 'list' actions, required by PermissionRequiredForListingMixin.
     list_lookup_field = "enterprise_customer_uuid"
     allowed_roles = [ENTERPRISE_SUBSIDY_ADMIN_ROLE, ENTERPRISE_SUBSIDY_OPERATOR_ROLE]
@@ -162,6 +163,20 @@ class SubsidyViewSet(
         """
         return self.kwargs.get("uuid")
 
+    @property
+    def requested_subsidy_uuid_param(self):
+        """
+        Fetch the subsidy UUID from the query params.
+        """
+        return utils.get_subsidy_uuid_from_request_query_params(self.request)
+
+    @property
+    def requested_subsidy_title_param(self):
+        """
+        Fetch the subsidy title from the query params.
+        """
+        return self.request.query_params.get('title', None)
+
     @cached_property
     def requested_subsidy(self):
         """
@@ -180,16 +195,22 @@ class SubsidyViewSet(
         For list actions, some non-strict subset of this is what's returned by ``get_queryset()``.
         """
         kwargs = {}
+        sort_order = self.request.query_params.get("sort_by") or "uuid"
+
         if self.requested_enterprise_customer_uuid:
             kwargs.update({"enterprise_customer_uuid": self.requested_enterprise_customer_uuid})
         if self.requested_subsidy_uuid:
             kwargs.update({"uuid": self.requested_subsidy_uuid})
+        if self.requested_subsidy_uuid_param:
+            kwargs.update({"uuid": self.requested_subsidy_uuid_param})
+        if self.requested_subsidy_title_param:
+            kwargs.update({"title": self.requested_subsidy_title_param})
 
         return Subsidy.objects.filter(**kwargs).prefetch_related(
             # Related objects used for calculating the ledger balance.
             "ledger__transactions",
             "ledger__transactions__reversal",
-        ).order_by("uuid")
+        ).order_by(sort_order)
 
     @extend_schema(
         tags=['subsidy'],

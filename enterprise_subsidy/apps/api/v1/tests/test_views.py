@@ -170,6 +170,62 @@ class SubsidyViewSetTests(APITestBase):
         }
         self.assertEqual(expected_result, response.json())
 
+    def test_get_subsidy_list_as_admin(self):
+        """"
+        Test that a subsidy list call returns the expected
+        serialized response.
+        """
+        self.set_up_admin(enterprise_uuids=[self.subsidy_1.enterprise_customer_uuid])
+        response = self.client.get(self.get_list_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['count'], 2)
+        self.assertEqual(len(response.json()['results']), response.json()['count'])
+
+    def test_get_subsidy_list_as_operator(self):
+        """"
+        Test that a subsidy list call returns the expected
+        serialized response.
+        """
+        self.set_up_operator()
+        response = self.client.get(self.get_list_url)
+        print(response.json()['results'][0]['uuid'].find(str(self.subsidy_1.uuid)))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['count'], 3)
+        self.assertEqual(len(response.json()['results']), response.json()['count'])
+
+    def test_get_subsidy_list_with_query_parameter_enterprise_customer_uuid(self):
+        """"
+        Test that a subsidy list call returns the expected
+        serialized response filtering by the enterprise customer uuid.
+        """
+        self.set_up_admin(enterprise_uuids=[self.subsidy_1.enterprise_customer_uuid])
+        response = self.client.get(self.get_list_url, data={'enterprise_customer_uuid': self.enterprise_1_uuid})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['count'], 2)
+        self.assertEqual(len(response.json()['results']), response.json()['count'])
+
+    def test_get_subsidy_list_with_query_parameter_subsidy_uuid(self):
+        """"
+        Test that a subsidy list call returns the expected
+        serialized response filtering by the subsidy uuid.
+        """
+        self.set_up_admin(enterprise_uuids=[self.subsidy_1.enterprise_customer_uuid])
+        response = self.client.get(self.get_list_url, data={'uuid': self.subsidy_1_uuid})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(len(response.json()['results']), response.json()['count'])
+
+    def test_get_subsidy_list_with_query_parameter_subsidy_title(self):
+        """"
+        Test that a subsidy list call returns the expected
+        serialized response filtering by the subsidy uuid.
+        """
+        self.set_up_admin(enterprise_uuids=[self.subsidy_1.enterprise_customer_uuid])
+        response = self.client.get(self.get_list_url, data={'title': self.subsidy_1.title})
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.json()['count'], 1)
+        self.assertEqual(len(response.json()['results']), response.json()['count'])
+
     def test_get_one_subsidy_learner_not_allowed(self):
         """
         Test that learner roles do not allow access to read subsidies.
