@@ -57,13 +57,10 @@ urlpatterns = oauth2_urlpatterns + [
     re_path(r'^admin/clearcache/', include('clearcache.urls')),
     re_path(r'^admin/', admin.site.urls),
     re_path(r'^api/', include(api_urls)),
-    re_path(r'^api-docs(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
-    re_path(r'^api-docs/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     re_path(r'^auto_auth/$', core_views.AutoAuth.as_view(), name='auto_auth'),
     re_path(r'', include('csrf.urls')),  # Include csrf urls from edx-drf-extensions
     re_path(r'^health/$', core_views.health, name='health'),
     # DRF-spectacular routes below
-    # TODO: deprecate the `/api-docs/` route in favor of the routes below.
     path('api/schema/', spectacular_view.as_view(), name='schema'),
     path('api/schema/swagger-ui/', spec_swagger_view.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', spec_redoc_view.as_view(url_name='schema'), name='redoc'),
