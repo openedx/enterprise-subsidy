@@ -7,7 +7,7 @@ from unittest import TestCase, mock
 
 import ddt
 from django.core.management import call_command
-from openedx_ledger.models import Reversal
+from openedx_ledger.models import Reversal, TransactionStateChoices
 from openedx_ledger.test_utils.factories import LedgerFactory, ReversalFactory, TransactionFactory
 from pytest import mark
 
@@ -303,6 +303,31 @@ class TestTransactionManagementCommand(TestCase):
             }],
             200
         )
+        assert Reversal.objects.count() == 0
+        call_command('write_reversals_from_enterprise_unenrollments')
+        assert Reversal.objects.count() == 0
+
+    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
+    def test_write_reversals_from_enterprise_unenrollment_with_uncommitted_transaction(self, mock_oauth_client):
+        """
+        Test that the write_reversals_from_enterprise_unenrollments management command does not create a reversal if
+        the transaction is not committed.
+        """
+        mock_oauth_client.return_value.get.return_value = MockResponse(
+            [{
+                'enterprise_course_enrollment': {
+                    'enterprise_customer_user': 10,
+                    'course_id': self.courserun_key,
+                    'created': '2023-05-25T19:27:29Z',
+                    'unenrolled_at': '2023-06-1T19:27:29Z',
+                },
+                'transaction_id': self.transaction.uuid,
+                'uuid': self.fulfillment_identifier,
+            }],
+            200
+        )
+        self.transaction.state = TransactionStateChoices.CREATED
+        self.transaction.save()
         assert Reversal.objects.count() == 0
         call_command('write_reversals_from_enterprise_unenrollments')
         assert Reversal.objects.count() == 0

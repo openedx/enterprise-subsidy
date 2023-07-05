@@ -8,7 +8,7 @@ from django.http import HttpResponseBadRequest, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 from django.views.generic import View
-from openedx_ledger.models import Transaction
+from openedx_ledger.models import Transaction, TransactionStateChoices
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 
@@ -38,6 +38,9 @@ class UnenrollLearnersView(View):
         if not transaction:
             logger.info(f"UnenrollLearnersView: transaction {transaction_id} not found, skipping")
             return HttpResponseBadRequest("Transaction not found")
+        if transaction.state != TransactionStateChoices.COMMITTED:
+            logger.info(f"transaction {transaction_id} is not committed, skipping")
+            return HttpResponseBadRequest("Transaction is not committed")
         if not transaction.fulfillment_identifier:
             logger.info(f"UnenrollLearnersView: transaction {transaction_id} has no fulfillment uuid, skipping")
             return HttpResponseBadRequest("Transaction has no associated platform fulfillment identifier")
@@ -60,6 +63,9 @@ class UnenrollLearnersView(View):
         if not transaction:
             logger.info(f"transaction {transaction_id} not found, skipping")
             return HttpResponseBadRequest("Transaction not found")
+        if transaction.state != TransactionStateChoices.COMMITTED:
+            logger.info(f"transaction {transaction_id} is not committed, skipping")
+            return HttpResponseBadRequest("Transaction is not committed")
         if not transaction.fulfillment_identifier:
             logger.info(f"transaction {transaction_id} has no fulfillment uuid, skipping")
             return HttpResponseBadRequest("Transaction has no associated platform fulfillment identifier")

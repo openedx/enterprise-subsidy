@@ -313,7 +313,7 @@ openedx-events==8.0.1
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-openedx-ledger==1.0.1
+openedx-ledger==1.0.2
     # via -r requirements/test.txt
 packaging==23.1
     # via
