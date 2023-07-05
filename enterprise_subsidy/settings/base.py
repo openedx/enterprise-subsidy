@@ -328,7 +328,7 @@ JWT_AUTH = {
 # Request the user's permissions in the ID token
 EXTRA_SCOPE = ['permissions']
 
-LOGIN_REDIRECT_URL = '/api-docs/'
+LOGIN_REDIRECT_URL = '/api/schema/swagger-ui/'
 # END AUTHENTICATION CONFIGURATION
 
 # Set up system-to-feature roles mapping for edx-rbac.
