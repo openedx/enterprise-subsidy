@@ -55,12 +55,15 @@ class SubsidyListPaginator(pagination.PageNumberPagination):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.page_count = 0
-        self.page_size_query_param = None
+        self.page_count = None
+        self.pagination_page_size = None
 
     def paginate_queryset(self, queryset, request, view=None):
-        self.page_count = Subsidy.objects.count()
-        self.page_size_query_param = request.query_params.get('page_size') or self.page_size
+        """
+        Assigns 'pagination_page_size' the page size from the request parameter
+        or the default paginator value
+        """
+        self.pagination_page_size = int(request.query_params.get('page_size', self.page_size))
         return super().paginate_queryset(queryset, request, view)
 
     def get_paginated_response(self, data):
@@ -68,5 +71,5 @@ class SubsidyListPaginator(pagination.PageNumberPagination):
         Adds an attribute of page_count to be used for the support-tools subsidy table
         """
         paginated_response = super().get_paginated_response(data)
-        paginated_response.data['page_count'] = ceil(self.page_count / int(self.page_size_query_param))
+        paginated_response.data['page_count'] = ceil(paginated_response.data['count'] / self.pagination_page_size)
         return paginated_response
