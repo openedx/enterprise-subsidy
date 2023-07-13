@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 from django.contrib import auth
 from django.core.management.base import BaseCommand
 from openedx_ledger.api import reverse_full_transaction
-from openedx_ledger.models import Transaction
+from openedx_ledger.models import Transaction, TransactionStateChoices
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
@@ -123,6 +123,14 @@ class Command(BaseCommand):
         if not related_transaction:
             logger.info(
                 f"{self.dry_run_prefix}No Subsidy Transaction found for enterprise fulfillment: {fulfillment_uuid}"
+            )
+            return 0
+        # Fail early if the transaction is not committed, even though reverse_full_transaction()
+        # would throw an exception later anyway.
+        if related_transaction.state != TransactionStateChoices.COMMITTED:
+            logger.info(
+                f"{self.dry_run_prefix}Transaction: {related_transaction} is not in a committed state. "
+                f"Skipping Reversal creation."
             )
             return 0
 
