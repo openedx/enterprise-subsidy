@@ -238,7 +238,7 @@ filelock==3.12.1
     #   -r requirements/test.txt
     #   tox
     #   virtualenv
-getsmarter-api-clients==0.6.0
+getsmarter-api-clients==0.6.1
     # via -r requirements/test.txt
 idna==3.4
     # via

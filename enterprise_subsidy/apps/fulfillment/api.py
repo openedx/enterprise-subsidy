@@ -13,6 +13,7 @@ from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 
 from .constants import EXEC_ED_2U_COURSE_TYPES, OPEN_COURSES_COURSE_TYPES
+from .exceptions import FulfillmentException, InvalidFulfillmentMetadataException
 
 
 def create_fulfillment(subsidy_uuid, lms_user_id, content_key, **metadata):
@@ -39,14 +40,6 @@ def determine_fulfillment_client(subsidy_uuid, content_key):
     return None
     """
     raise NotImplementedError
-
-
-class FulfillmentException(Exception):
-    pass
-
-
-class InvalidFulfillmentMetadataException(FulfillmentException):
-    pass
 
 
 class GEAGFulfillmentHandler():
