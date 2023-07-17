@@ -163,7 +163,7 @@ fastavro==1.7.4
     # via
     #   -r requirements/base.txt
     #   openedx-events
-getsmarter-api-clients==0.6.0
+getsmarter-api-clients==0.6.1
     # via -r requirements/base.txt
 gevent==22.10.2
     # via -r requirements/production.in

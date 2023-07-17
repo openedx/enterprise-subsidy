@@ -140,7 +140,7 @@ edx-rest-api-client==5.5.2
     # via -r requirements/base.in
 fastavro==1.7.4
     # via openedx-events
-getsmarter-api-clients==0.6.0
+getsmarter-api-clients==0.6.1
     # via -r requirements/base.in
 idna==3.4
     # via requests

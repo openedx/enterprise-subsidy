@@ -5,13 +5,17 @@ Transaction Reversals where appropriate.
 import logging
 from datetime import datetime, timedelta
 
+from django.conf import settings
 from django.contrib import auth
 from django.core.management.base import BaseCommand
+from getsmarter_api_clients.geag import GetSmarterEnterpriseApiClient
 from openedx_ledger.api import reverse_full_transaction
 from openedx_ledger.models import Transaction, TransactionStateChoices
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
+from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
+from enterprise_subsidy.apps.fulfillment.exceptions import FulfillmentException
 from enterprise_subsidy.apps.subsidy.models import Subsidy
 from enterprise_subsidy.apps.transaction.utils import generate_transaction_reversal_idempotency_key
 
@@ -31,6 +35,17 @@ class Command(BaseCommand):
         self.dry_run_prefix = ""
         self.dry_run = False
         self.fetched_content_metadata = {}
+        self.geag_client = GetSmarterEnterpriseApiClient(
+            client_id=settings.GET_SMARTER_OAUTH2_KEY,
+            client_secret=settings.GET_SMARTER_OAUTH2_SECRET,
+            provider_url=settings.GET_SMARTER_OAUTH2_PROVIDER_URL,
+            api_url=settings.GET_SMARTER_API_URL
+        )
+        self.automatic_external_cancellation = getattr(
+            settings,
+            "ENTERPRISE_SUBSIDY_AUTOMATIC_EXTERNAL_CANCELLATION",
+            False
+        )
 
     def add_arguments(self, parser):
         """
@@ -153,11 +168,11 @@ class Command(BaseCommand):
         # OCM courses are identified by the lack of an external_reference on the Transaction object.
         # Externally referenced transactions can be unenrolled through the Django admin actions related to the
         # Transaction model.
-        if related_transaction.external_reference.exists():
+        if related_transaction.external_reference.exists() and not self.automatic_external_cancellation:
             logger.info(
                 f"{self.dry_run_prefix}Found unenrolled enterprise fulfillment: {fulfillment_uuid} related to "
                 f"an externally referenced transaction: {related_transaction.external_reference.first()}. "
-                "Skipping."
+                f"Skipping ENTERPRISE_SUBSIDY_AUTOMATIC_EXTERNAL_CANCELLATION={self.automatic_external_cancellation}."
             )
             return 0
 
@@ -199,6 +214,16 @@ class Command(BaseCommand):
                 fulfillment_uuid,
                 enrollment_unenrolled_at
             )
+
+            for external_reference in related_transaction.external_reference.all():
+                provider_slug = external_reference.external_fulfillment_provider.slug
+                if provider_slug == GEAGFulfillmentHandler.EXTERNAL_FULFILLMENT_PROVIDER_SLUG:
+                    # this will raise if there is a problem before we reverse the ledger transaction
+                    # allowing us to try again later
+                    self.geag_client.cancel_enterprise_allocation(external_reference.external_reference_id)
+                else:
+                    raise FulfillmentException(f'dont know how to cancel {provider_slug}')
+
             # Do we need to write any additional metadata to the Reversal?
             reverse_full_transaction(
                 transaction=related_transaction,
