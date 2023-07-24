@@ -82,12 +82,14 @@ class CanRedeemTestCase(TestCase):
         we return the result of ``Subsidy.can_redeem()``.
         """
         expected_redeemable = True
+        expected_active = True
         expected_price = 19998
 
-        actual_redeemable, actual_price, actual_transactions = subsidy_api.can_redeem(
+        actual_redeemable, actual_active, actual_price, actual_transactions = subsidy_api.can_redeem(
             self.subsidy, self.lms_user_id, self.content_key
         )
         self.assertEqual(expected_redeemable, actual_redeemable)
+        self.assertEqual(expected_active, actual_active)
         self.assertEqual(expected_price, actual_price)
         self.assertEqual([], actual_transactions)
 
@@ -109,12 +111,14 @@ class CanRedeemTestCase(TestCase):
             quantity=19998,
         )
         expected_redeemable = True
+        expected_active = True
         expected_price = 19998
 
-        actual_redeemable, actual_price, actual_transactions = subsidy_api.can_redeem(
+        actual_redeemable, actual_active, actual_price, actual_transactions = subsidy_api.can_redeem(
             self.subsidy, self.lms_user_id, self.content_key
         )
         self.assertEqual(expected_redeemable, actual_redeemable)
+        self.assertEqual(expected_active, actual_active)
         self.assertEqual(expected_price, actual_price)
         self.assertEqual([existing_transaction], actual_transactions)
 
@@ -131,11 +135,13 @@ class CanRedeemTestCase(TestCase):
             content_key=self.content_key
         )
         expected_redeemable = False
+        expected_active = True
         expected_price = 19998
 
-        actual_redeemable, actual_price, actual_transactions = subsidy_api.can_redeem(
+        actual_redeemable, actual_active, actual_price, actual_transactions = subsidy_api.can_redeem(
             self.subsidy, self.lms_user_id, self.content_key
         )
         self.assertEqual(expected_redeemable, actual_redeemable)
+        self.assertEqual(expected_active, actual_active)
         self.assertEqual(expected_price, actual_price)
         self.assertEqual([existing_transaction], actual_transactions)

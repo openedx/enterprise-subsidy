@@ -43,12 +43,15 @@ class CanRedeemResult:
     DRF Serializers really prefer to operate on objects, not dictionaries,
     when they define a field that is itself a Serializer.
     """
-    def __init__(self, can_redeem, content_price, unit, all_transactions):  # pylint: disable=redefined-outer-name
+
+    def __init__(self, can_redeem, content_price,  # pylint: disable=redefined-outer-name
+                 unit, all_transactions, active):
         """ initialize this object """
         self.can_redeem = can_redeem
         self.content_price = content_price
         self.unit = unit
         self.all_transactions = all_transactions
+        self.active = active
 
 
 class SubsidyViewSet(
@@ -235,7 +238,7 @@ class SubsidyViewSet(
                 detail='A lms_user_id and content_key are required',
             )
 
-        redeemable, content_price, existing_transactions = can_redeem(
+        redeemable, active, content_price, existing_transactions = can_redeem(
             self.requested_subsidy,
             lms_user_id,
             content_key,
@@ -246,6 +249,7 @@ class SubsidyViewSet(
                 content_price,
                 self.requested_subsidy.unit,
                 existing_transactions,
+                active,
             )
         )
         return Response(serializer.data, status=status.HTTP_200_OK)
@@ -296,10 +300,10 @@ class SubsidyViewSet(
                     )
             except MultipleObjectsReturned as exc:
                 raise ServerError(
-                        code="multiple_subsidies_found",
-                        developer_message="Multiple subsidies with given reference_id found.",
-                        user_message="Multiple subsidies with given reference_id found.",
-                    ) from exc
+                    code="multiple_subsidies_found",
+                    developer_message="Multiple subsidies with given reference_id found.",
+                    user_message="Multiple subsidies with given reference_id found.",
+                ) from exc
             except Exception as exc:
                 raise ServerError(
                     code="could_not_create_subsidy",
@@ -349,15 +353,15 @@ class SubsidyViewSet(
         return response
 
     @extend_schema(
-            tags=['subsidy'],
-            request=SubsidyUpdateRequestSerializer,
-            responses={
-                200: SubsidySerializer,
-                403: exceptions.PermissionDenied,
-                400: exceptions.ValidationError,
-                500: exceptions.APIException,
-            },
-        )
+        tags=['subsidy'],
+        request=SubsidyUpdateRequestSerializer,
+        responses={
+            200: SubsidySerializer,
+            403: exceptions.PermissionDenied,
+            400: exceptions.ValidationError,
+            500: exceptions.APIException,
+        },
+    )
     def partial_update(self, request, *args, **kwargs):
         """
         Partially update a subsidy

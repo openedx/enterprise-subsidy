@@ -311,6 +311,10 @@ class CanRedeemResponseSerializer(serializers.Serializer):
             'transactions.'
         ),
     )
+    active = serializers.BooleanField(
+        default=False,
+        help_text='Whether the subsidy is considered `is_active` and not expired.'
+    )
 
 
 class ExceptionSerializer(serializers.Serializer):
