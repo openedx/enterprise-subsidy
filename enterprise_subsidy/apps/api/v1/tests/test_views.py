@@ -263,11 +263,12 @@ class SubsidyViewSetTests(APITestBase):
         """
         self.set_up_admin(enterprise_uuids=[self.subsidy_1.enterprise_customer_uuid])
         expected_redeemable = True
+        expected_active = True
         expected_price = 350
         existing_transactions = []
         if has_existing_transaction:
             existing_transactions.append(self.subsidy_1_transaction_1)
-        mock_can_redeem.return_value = (expected_redeemable, expected_price, existing_transactions)
+        mock_can_redeem.return_value = (expected_redeemable, expected_active, expected_price, existing_transactions)
         query_params = {'lms_user_id': 32, 'content_key': 'some-content-key'}
 
         response = self.client.get(
@@ -303,6 +304,7 @@ class SubsidyViewSetTests(APITestBase):
             'content_price': expected_price,
             'unit': self.subsidy_1.unit,
             'all_transactions': expected_existing_transactions,
+            'active': expected_active,
         }
         self.assertEqual(response.json(), expected_response_data)
 
