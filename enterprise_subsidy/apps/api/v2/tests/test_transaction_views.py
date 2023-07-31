@@ -277,8 +277,8 @@ class TransactionAdminListViewTests(APITestBase):
 
         assert response.status_code == status.HTTP_200_OK
         list_response_data = response.json()["results"]
-        assert type(list_response_data[0]["metadata"]) == dict
-        assert type(list_response_data[0]["reversal"]["metadata"]) == dict
+        assert isinstance(list_response_data[0]["metadata"], dict)
+        assert isinstance(list_response_data[0]["reversal"]["metadata"], dict)
 
     @ddt.data(
         # Test that an admin can list all transactions in a subsidy within their enterprise.
