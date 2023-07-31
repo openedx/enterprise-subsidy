@@ -11,6 +11,22 @@ services:
     volumes:
       - enterprise_subsidy_mysql57:/var/lib/mysql
 
+  mysql80:
+    command: mysqld --character-set-server=utf8 --collation-server=utf8_general_ci
+    container_name: enterprise-subsidy.mysql80
+    environment:
+      MYSQL_ROOT_PASSWORD: ""
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    # Oracle-packaged version includes a `linux/arm64/v8` version, needed for
+    # machines with Apple Silicon CPUs (Mac M1, M2)
+    image: mysql:8.0.33-oracle
+    networks:
+      - devstack_default
+    ports:
+      - "3406:3306"
+    volumes:
+      - enterprise_subsidy_mysql80:/var/lib/mysql
+
   memcache:
     image: memcached:1.4.24
     container_name: enterprise-subsidy.memcache
@@ -47,3 +63,4 @@ networks:
 
 volumes:
   enterprise_subsidy_mysql57:
+  enterprise_subsidy_mysql80:
