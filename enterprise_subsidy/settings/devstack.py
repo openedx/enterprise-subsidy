@@ -12,7 +12,7 @@ DATABASES = {
         'NAME': os.environ.get('DB_NAME', 'enterprise_subsidy'),
         'USER': os.environ.get('DB_USER', 'root'),
         'PASSWORD': os.environ.get('DB_PASSWORD', ''),
-        'HOST': os.environ.get('DB_HOST', 'enterprise-subsidy.db'),
+        'HOST': os.environ.get('DB_HOST', 'enterprise-subsidy.mysql80'),
         'PORT': os.environ.get('DB_PORT', 3306),
         'ATOMIC_REQUESTS': False,
         'CONN_MAX_AGE': 60,
