@@ -209,19 +209,22 @@ class ContentMetadataApi:
         cache_key = content_metadata_cache_key(enterprise_customer_uuid, content_identifier)
         cached_response = TieredCache.get_cached_response(cache_key)
         if cached_response.is_found:
-            logger.info('[CONTENT METADATA CACHE HIT] for key %s', cache_key)
             return cached_response.value
 
-        logger.info('[CONTENT METADATA CACHE MISS] for key %s', cache_key)
         course_details = EnterpriseCatalogApiClient().get_content_metadata_for_customer(
             enterprise_customer_uuid,
             content_identifier
         )
         if course_details:
-            logger.info('[CONTENT METADATA CACHE SET] for key %s', cache_key)
             TieredCache.set_all_tiers(
                 cache_key,
                 course_details,
                 django_cache_timeout=CONTENT_METADATA_CACHE_TIMEOUT,
             )
+        logger.info(
+            'Fetched course details %s for customer %s and content_identifier %s',
+            course_details,
+            enterprise_customer_uuid,
+            content_identifier,
+        )
         return course_details
