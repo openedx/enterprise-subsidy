@@ -100,6 +100,7 @@ class Subsidy(TimeStampedModel):
                 name="unique_reference_id_non_internal",
             )
         ]
+        ordering = ['-created']
 
     # Please reserve the "subsidy_type" field name for the future when we use it to distinguish between
     # LearnerCreditSubsidy vs. SubscriptionSubsidy.
