@@ -22,8 +22,6 @@ services:
     image: mysql:8.0.33-oracle
     networks:
       - devstack_default
-    ports:
-      - "3406:3306"
     volumes:
       - enterprise_subsidy_mysql80:/var/lib/mysql
 
