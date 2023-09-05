@@ -20,7 +20,7 @@ from rest_framework import status
 from enterprise_subsidy.apps.fulfillment.api import InvalidFulfillmentMetadataException
 from test_utils.utils import MockResponse
 
-from ..models import ContentNotFoundForCustomerException
+from ..models import ContentNotFoundForCustomerException, Subsidy
 from .factories import SubsidyFactory
 
 
@@ -288,3 +288,20 @@ class SubsidyModelRedemptionTestCase(TestCase):
             )
         created_transaction = Transaction.objects.latest('created')
         assert created_transaction.state == TransactionStateChoices.FAILED
+
+
+class SubsidyManagerTestCase(TestCase):
+    """
+    Tests for the custom managers on the Subsidy model
+    """
+    def setUp(self):
+        Subsidy.objects.all().delete()
+
+    def test_active_subsidy_manager(self):
+        """
+        Test that the ActiveSubsidyManager only retrieves non-soft-deleted subsidies
+        """
+        SubsidyFactory.create(is_soft_deleted=True)
+        SubsidyFactory.create(is_soft_deleted=False)
+        self.assertEqual(Subsidy.objects.count(), 1)
+        self.assertEqual(Subsidy.all_objects.count(), 2)

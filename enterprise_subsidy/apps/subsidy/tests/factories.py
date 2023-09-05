@@ -51,6 +51,7 @@ class SubsidyFactory(factory.django.DjangoModelFactory):
     revenue_category = RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY
     internal_only = False
     title = factory.Faker("sentence")
+    is_soft_deleted = False
 
     @classmethod
     def to_dict(cls):

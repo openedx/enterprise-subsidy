@@ -57,7 +57,6 @@ class CanRedeemResult:
 class SubsidyViewSet(
     PermissionRequiredForListingMixin,
     mixins.CreateModelMixin,
-    mixins.DestroyModelMixin,
     mixins.ListModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
@@ -326,12 +325,14 @@ class SubsidyViewSet(
     )
     def destroy(self, request, *args, **kwargs):
         """
-        Delete a subsidy
+        Soft delete a subsidy by setting its is_soft_deleted field to True
 
         Endpoint Location: DELETE /api/v1/subsidies/{uuid}/
         """
-        response = super().destroy(request, kwargs['uuid'])
-        return response
+        instance = self.get_object()
+        instance.is_soft_deleted = True
+        instance.save()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
     @extend_schema(
         tags=['subsidy'],

@@ -58,15 +58,20 @@ class SubsidyAdmin(DjangoQLSearchMixin, SimpleHistoryAdmin):
         'enterprise_customer_uuid',
         'active_datetime',
         'internal_only',
+        'is_soft_deleted',
         'modified',
     )
     list_filter = (
         'internal_only',
+        'is_soft_deleted',
     )
     search_fields = (
         'uuid',
         'enterprise_customer_uuid',
     )
+
+    def has_delete_permission(self, request, obj=None):
+        return False
 
     def get_queryset(self, request):
         queryset = super().get_queryset(request)
