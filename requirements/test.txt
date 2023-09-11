@@ -12,7 +12,7 @@ astroid==2.15.6
     # via
     #   pylint
     #   pylint-celery
-async-timeout==4.0.2
+async-timeout==4.0.3
     # via
     #   -r requirements/base.txt
     #   redis
@@ -35,7 +35,7 @@ charset-normalizer==3.2.0
     # via
     #   -r requirements/base.txt
     #   requests
-click==8.1.6
+click==8.1.7
     # via
     #   -r requirements/base.txt
     #   click-log
@@ -48,11 +48,11 @@ code-annotations==1.5.0
     # via
     #   -r requirements/test.in
     #   edx-lint
-coverage[toml]==7.2.7
+coverage[toml]==7.3.1
     # via
     #   -r requirements/test.in
     #   pytest-cov
-cryptography==41.0.2
+cryptography==41.0.3
     # via
     #   -r requirements/base.txt
     #   pyjwt
@@ -101,7 +101,7 @@ django-crum==0.7.9
     #   -r requirements/base.txt
     #   edx-django-utils
     #   edx-rbac
-django-dynamic-fixture==3.1.2
+django-dynamic-fixture==4.0.0
     # via -r requirements/test.in
 django-extensions==3.2.3
     # via
@@ -117,7 +117,7 @@ django-model-utils==4.3.1
     # via
     #   -r requirements/base.txt
     #   edx-rbac
-django-object-actions==4.1.0
+django-object-actions==4.2.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -150,26 +150,26 @@ drf-spectacular==0.26.4
     # via -r requirements/base.txt
 drf-yasg==1.21.7
     # via -r requirements/base.txt
-edx-auth-backends==4.1.0
+edx-auth-backends==4.2.0
     # via -r requirements/base.txt
 edx-django-release-util==1.3.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-edx-django-utils==5.6.0
+edx-django-utils==5.7.0
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   getsmarter-api-clients
     #   openedx-ledger
-edx-drf-extensions==8.8.0
+edx-drf-extensions==8.9.2
     # via
     #   -r requirements/base.txt
     #   edx-rbac
 edx-lint==5.3.4
     # via -r requirements/test.in
-edx-opaque-keys[django]==2.3.0
+edx-opaque-keys[django]==2.5.0
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
@@ -180,17 +180,17 @@ edx-rbac==1.8.0
     #   openedx-ledger
 edx-rest-api-client==5.6.0
     # via -r requirements/base.txt
-exceptiongroup==1.1.2
+exceptiongroup==1.1.3
     # via pytest
 factory-boy==3.3.0
     # via -r requirements/test.in
-faker==19.2.0
+faker==19.6.1
     # via factory-boy
-fastavro==1.8.2
+fastavro==1.8.3
     # via
     #   -r requirements/base.txt
     #   openedx-events
-filelock==3.12.2
+filelock==3.12.3
     # via
     #   tox
     #   virtualenv
@@ -200,7 +200,7 @@ idna==3.4
     # via
     #   -r requirements/base.txt
     #   requests
-importlib-resources==6.0.0
+importlib-resources==6.0.1
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -220,7 +220,7 @@ jsonfield2==4.0.0.post0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-jsonschema==4.18.4
+jsonschema==4.19.0
     # via
     #   -r requirements/base.txt
     #   drf-spectacular
@@ -240,7 +240,7 @@ mysqlclient==2.2.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-newrelic==8.9.0
+newrelic==9.0.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -250,7 +250,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==8.3.0
+openedx-events==8.6.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -274,7 +274,7 @@ platformdirs==3.10.0
     # via
     #   pylint
     #   virtualenv
-pluggy==1.2.0
+pluggy==1.3.0
     # via
     #   pytest
     #   tox
@@ -324,7 +324,7 @@ pynacl==1.5.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
-pytest==7.4.0
+pytest==7.4.2
     # via
     #   pytest-cov
     #   pytest-django
@@ -343,7 +343,7 @@ python3-openid==3.2.0
     # via
     #   -r requirements/base.txt
     #   social-auth-core
-pytz==2023.3
+pytz==2023.3.post1
     # via
     #   -r requirements/base.txt
     #   django
@@ -359,11 +359,11 @@ pyyaml==6.0.1
     #   drf-yasg
     #   edx-django-release-util
     #   responses
-redis==4.6.0
+redis==5.0.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-referencing==0.30.0
+referencing==0.30.2
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -382,9 +382,9 @@ requests-oauthlib==1.3.1
     #   -r requirements/base.txt
     #   getsmarter-api-clients
     #   social-auth-core
-responses==0.23.2
+responses==0.23.3
     # via -r requirements/test.in
-rpds-py==0.9.2
+rpds-py==0.10.2
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -400,7 +400,6 @@ semantic-version==2.10.0
 six==1.16.0
     # via
     #   -r requirements/base.txt
-    #   django-dynamic-fixture
     #   edx-auth-backends
     #   edx-django-release-util
     #   edx-drf-extensions
@@ -412,7 +411,7 @@ slumber==0.7.1
     # via
     #   -r requirements/base.txt
     #   edx-rest-api-client
-social-auth-app-django==5.2.0
+social-auth-app-django==5.3.0
     # via
     #   -r requirements/base.txt
     #   edx-auth-backends
@@ -452,7 +451,9 @@ typing-extensions==4.7.1
     #   -r requirements/base.txt
     #   asgiref
     #   astroid
+    #   edx-opaque-keys
     #   faker
+    #   filelock
     #   pylint
 uritemplate==4.1.1
     # via
@@ -464,7 +465,7 @@ urllib3==2.0.4
     #   -r requirements/base.txt
     #   requests
     #   responses
-virtualenv==20.24.2
+virtualenv==20.24.5
     # via tox
 wrapt==1.15.0
     # via astroid
