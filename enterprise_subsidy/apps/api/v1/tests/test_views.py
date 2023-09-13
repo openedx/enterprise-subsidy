@@ -23,7 +23,7 @@ from rest_framework.reverse import reverse
 
 from enterprise_subsidy.apps.api.v1.tests.mixins import STATIC_ENTERPRISE_UUID, STATIC_LMS_USER_ID, APITestMixin
 from enterprise_subsidy.apps.subsidy.constants import SYSTEM_ENTERPRISE_ADMIN_ROLE, SYSTEM_ENTERPRISE_LEARNER_ROLE
-from enterprise_subsidy.apps.subsidy.models import RevenueCategoryChoices
+from enterprise_subsidy.apps.subsidy.models import RevenueCategoryChoices, Subsidy
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
 from test_utils.utils import MockResponse
 
@@ -365,7 +365,7 @@ class SubsidyViewSetTests(APITestBase):
             ('admin', status.HTTP_403_FORBIDDEN),
     )
     @ddt.unpack
-    def test_valid_delete_subsidy_by_role(self, role, status_code):
+    def test_valid_soft_delete_subsidy_by_role(self, role, status_code):
         if role == "admin":
             self.set_up_admin()
         elif role == "learner":
@@ -374,7 +374,12 @@ class SubsidyViewSetTests(APITestBase):
             self.set_up_operator()
         response = self.client.delete(self.get_details_url([self.subsidy_1.uuid]))
 
+        subsidy = Subsidy.all_objects.get(uuid=self.subsidy_1.uuid)
         self.assertEqual(response.status_code, status_code)
+        if role == "operator":
+            self.assertTrue(subsidy.is_soft_deleted)
+        else:
+            self.assertFalse(subsidy.is_soft_deleted)
 
     def test_delete_subsidy_with_invalid_uuid(self):
         self.set_up_operator()

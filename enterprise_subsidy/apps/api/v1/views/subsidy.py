@@ -326,7 +326,7 @@ class SubsidyViewSet(
     )
     def destroy(self, request, *args, **kwargs):
         """
-        Delete a subsidy
+        Soft delete a subsidy by setting its is_soft_deleted field to True
 
         Endpoint Location: DELETE /api/v1/subsidies/{uuid}/
         """

@@ -78,6 +78,17 @@ def now():
     return datetime.now(timezone.utc)
 
 
+class ActiveSubsidyManager(models.Manager):
+    """
+    Custom manager for the Subsidy model that filters out soft-deleted subsidies.
+    """
+    def get_queryset(self):
+        """
+        Override the default queryset to filter out soft-deleted subsidies.
+        """
+        return super().get_queryset().filter(is_soft_deleted=False)
+
+
 class Subsidy(TimeStampedModel):
     """
     Subsidy model, specifically supporting Learner Credit type of subsidies.
@@ -190,14 +201,22 @@ class Subsidy(TimeStampedModel):
     active_datetime = models.DateTimeField(
         null=True,
         default=None,
-        help_text="The datetime when this Subsidy is considered active.  If null, this Subsidy is considered active."
+        help_text="The datetime when this Subsidy is considered active.  If null, this Subsidy is considered inactive."
     )
     expiration_datetime = models.DateTimeField(
         null=True,
         default=None,
         help_text="The datetime when this Subsidy is considered expired.  If null, this Subsidy is considered active."
         )
+    is_soft_deleted = models.BooleanField(
+        default=False,
+        help_text="If set, this subsidy will be considered as soft-deleted or deactivated.",
+        db_index=True,
+    )
     history = HistoricalRecords()
+
+    objects = ActiveSubsidyManager()
+    all_objects = models.Manager()
 
     @property
     def is_active(self):
@@ -214,6 +233,13 @@ class Subsidy(TimeStampedModel):
         funcitons used for enrolling learners in OCM courses.  Cached to reduce the chance of repeated calls to auth.
         """
         return EnterpriseApiClient()
+
+    def delete(self, *args, **kwargs):
+        """
+        Soft-delete this Subsidy by setting the `is_soft_deleted` flag to True.
+        """
+        self.is_soft_deleted = True
+        self.save()
 
     def content_metadata_api(self):
         """

@@ -58,10 +58,12 @@ class SubsidyAdmin(DjangoQLSearchMixin, SimpleHistoryAdmin):
         'enterprise_customer_uuid',
         'active_datetime',
         'internal_only',
+        'is_soft_deleted',
         'modified',
     )
     list_filter = (
         'internal_only',
+        'is_soft_deleted',
     )
     search_fields = (
         'uuid',
@@ -69,7 +71,7 @@ class SubsidyAdmin(DjangoQLSearchMixin, SimpleHistoryAdmin):
     )
 
     def get_queryset(self, request):
-        queryset = super().get_queryset(request)
+        queryset = Subsidy.all_objects.all()
         return queryset.select_related('ledger')
 
     @admin.display(description='Current balance (dollars)')
