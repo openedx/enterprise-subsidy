@@ -70,9 +70,6 @@ class SubsidyAdmin(DjangoQLSearchMixin, SimpleHistoryAdmin):
         'enterprise_customer_uuid',
     )
 
-    def has_delete_permission(self, request, obj=None):
-        return False
-
     def get_queryset(self, request):
         queryset = Subsidy.all_objects.all()
         return queryset.select_related('ledger')

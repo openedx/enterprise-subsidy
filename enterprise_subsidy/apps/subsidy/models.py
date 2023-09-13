@@ -234,6 +234,13 @@ class Subsidy(TimeStampedModel):
         """
         return EnterpriseApiClient()
 
+    def delete(self, *args, **kwargs):
+        """
+        Soft-delete this Subsidy by setting the `is_soft_deleted` flag to True.
+        """
+        self.is_soft_deleted = True
+        self.save()
+
     def content_metadata_api(self):
         """
         API layer for interacting with enterprise catalog content metadata

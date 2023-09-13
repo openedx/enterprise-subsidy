@@ -381,6 +381,17 @@ class SubsidyViewSetTests(APITestBase):
         else:
             self.assertFalse(subsidy.is_soft_deleted)
 
+    def test_delete_subsidy_with_invalid_uuid(self):
+        self.set_up_operator()
+        response = self.client.delete(self.get_details_url([str(uuid.uuid4())]))
+
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        self.assertDictEqual(response.json(), {
+            "error_code": "Forbidden",
+            "developer_message": "MISSING: subsidy.can_write_subsidies",
+            "user_message": "MISSING: subsidy.can_write_subsidies",
+        })
+
     @mock.patch('enterprise_subsidy.apps.api.v1.views.subsidy.get_or_create_learner_credit_subsidy')
     def test_create_new_subsidy_unexpected_error(self, mock_get_or_create):
         self.set_up_operator()
