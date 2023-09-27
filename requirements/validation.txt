@@ -160,7 +160,7 @@ django-object-actions==4.2.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-django-simple-history==3.0.0
+django-simple-history==3.4.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
