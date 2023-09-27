@@ -54,12 +54,12 @@ spec_redoc_view = SpectacularRedocView(
 )
 
 urlpatterns = oauth2_urlpatterns + [
-    re_path(r'^admin/clearcache/', include('clearcache.urls')),
+    path('admin/clearcache/', include('clearcache.urls')),
     re_path(r'^admin/', admin.site.urls),
-    re_path(r'^api/', include(api_urls)),
-    re_path(r'^auto_auth/$', core_views.AutoAuth.as_view(), name='auto_auth'),
-    re_path(r'', include('csrf.urls')),  # Include csrf urls from edx-drf-extensions
-    re_path(r'^health/$', core_views.health, name='health'),
+    path('api/', include(api_urls)),
+    path('auto_auth/', core_views.AutoAuth.as_view(), name='auto_auth'),
+    path('', include('csrf.urls')),  # Include csrf urls from edx-drf-extensions
+    path('health/', core_views.health, name='health'),
     # DRF-spectacular routes below
     path('api/schema/', spectacular_view.as_view(), name='schema'),
     path('api/schema/swagger-ui/', spec_swagger_view.as_view(url_name='schema'), name='swagger-ui'),
@@ -70,4 +70,4 @@ if settings.DEBUG and os.environ.get('ENABLE_DJANGO_TOOLBAR', False):  # pragma:
     # Disable pylint import error because we don't install django-debug-toolbar
     # for CI build
     import debug_toolbar  # pylint: disable=import-error,useless-suppression
-    urlpatterns.append(re_path(r'^__debug__/', include(debug_toolbar.urls)))
+    urlpatterns.append(path('__debug__/', include(debug_toolbar.urls)))
