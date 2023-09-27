@@ -90,7 +90,7 @@ distlib==0.3.7
     #   virtualenv
 django==3.2.21
     # via
-    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
+    #   -c requirements/common_constraints.txt
     #   -r requirements/test.txt
     #   django-clearcache
     #   django-cors-headers
@@ -144,7 +144,6 @@ django-object-actions==4.2.0
     #   openedx-ledger
 django-simple-history==3.0.0
     # via
-    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/test.txt
     #   openedx-ledger
 django-waffle==4.0.0
@@ -593,7 +592,7 @@ tomlkit==0.12.1
     #   pylint
 tox==3.28.0
     # via
-    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
+    #   -c requirements/common_constraints.txt
     #   -r requirements/test.txt
 twine==4.0.2
     # via -r requirements/doc.in
