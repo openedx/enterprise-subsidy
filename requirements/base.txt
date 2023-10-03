@@ -33,7 +33,7 @@ defusedxml==0.7.1
     #   social-auth-core
 django==3.2.21
     # via
-    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
+    #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
     #   django-clearcache
     #   django-cors-headers
@@ -80,9 +80,8 @@ django-object-actions==4.2.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-django-simple-history==3.0.0
+django-simple-history==3.4.0
     # via
-    #   -c https://raw.githubusercontent.com/edx/edx-lint/master/edx_lint/files/common_constraints.txt
     #   -r requirements/base.in
     #   openedx-ledger
 django-waffle==4.0.0

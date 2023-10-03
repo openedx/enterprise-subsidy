@@ -357,3 +357,6 @@ ALLOW_LEDGER_MODIFICATION = False
 # per-view cache timeout settings
 # We can disable caching on this view by setting the value below to 0.
 CONTENT_METADATA_VIEW_CACHE_TIMEOUT_SECONDS = 60
+
+# disable indexing on history_date
+SIMPLE_HISTORY_DATE_INDEX = False
