@@ -267,7 +267,8 @@ class SubsidyViewSet(
     )
     def create(self, request, *args, **kwargs):
         """
-        Get or create a new subsidy
+        Get or create a new subsidy.  See request payload serialization notes
+        around ``default_internal_only`` and the get-or-create operation.
 
         Endpoint Location: POST /api/v1/subsidies/
         """

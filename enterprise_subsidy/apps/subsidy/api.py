@@ -20,7 +20,13 @@ def get_or_create_learner_credit_subsidy(
     Get or create a new learner credit subsidy and ledger with the given defaults.
 
     Notes:
-        * If an existing subsidy is found with the given `reference_id`, all `default_*` arguments are ignored.
+        * If ``default_internal_only`` is False and an existing subsidy is
+          found with the given ``reference_id``, all `default_*` arguments are ignored
+          and this function returns that existing record.
+          However, when ``default_internal_only`` is True, this function will
+          simply create a new record, regardless of any existing records
+          with the same ``reference_id`` (we assume that the reference_id is
+          essentially meaningless for test subsidy records).
 
     Args:
         reference_id (str): ID of the originating salesforce opportunity product.
@@ -47,10 +53,18 @@ def get_or_create_learner_credit_subsidy(
         'revenue_category': default_revenue_category,
         'internal_only': default_internal_only,
     }
-    subsidy, created = Subsidy.objects.get_or_create(
-        reference_id=reference_id,
-        defaults=subsidy_defaults,
-    )
+    if not default_internal_only:
+        subsidy, created = Subsidy.objects.get_or_create(
+            reference_id=reference_id,
+            defaults=subsidy_defaults,
+        )
+    else:
+        # The record to create is for testing, do a plain ole create()
+        created = True
+        subsidy = Subsidy.objects.create(
+            reference_id=reference_id,
+            **subsidy_defaults,
+        )
     return (subsidy, created)
 
 

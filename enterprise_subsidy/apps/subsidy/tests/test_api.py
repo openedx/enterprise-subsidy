@@ -59,6 +59,31 @@ def test_get_learner_credit_subsidy(learner_credit_fixture):  # pylint: disable=
     assert learner_credit_fixture.current_balance() == 1000000
 
 
+@pytest.mark.django_db
+def test_create_internal_only_subsidy_record(learner_credit_fixture):  # pylint: disable=redefined-outer-name
+    """
+    Test that an internal-only Subsidy record can be created
+    even if one with the same reference_id already exists.
+    """
+    other_customer_uuid = uuid4()
+    new_subsidy, created = subsidy_api.get_or_create_learner_credit_subsidy(
+        reference_id=learner_credit_fixture.reference_id,
+        default_title="Default Title",
+        default_enterprise_customer_uuid=other_customer_uuid,
+        default_unit=UnitChoices.USD_CENTS,
+        default_starting_balance=42,
+        default_active_datetime=None,
+        default_expiration_datetime=None,
+        default_internal_only=True
+    )
+    assert created
+    assert new_subsidy.current_balance() == 42
+    assert new_subsidy.reference_id == learner_credit_fixture.reference_id
+    assert new_subsidy.title == 'Default Title'
+    assert new_subsidy.enterprise_customer_uuid == other_customer_uuid
+    assert learner_credit_fixture.current_balance() == 1000000
+
+
 class CanRedeemTestCase(TestCase):
     """
     Test the can_redeem() function.
