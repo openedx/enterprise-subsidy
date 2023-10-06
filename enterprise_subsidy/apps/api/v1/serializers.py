@@ -335,7 +335,7 @@ class SubsidyCreationRequestSerializer(serializers.Serializer):
         required=True,
         help_text=(
             "Identifier of the upstream Salesforce object that represents the deal that led to the creation of this "
-            "Subsidy."
+            "Subsidy. For test subsidy records, see the note below about ``default_internal_only``."
         ),
     )
     default_title = serializers.CharField(
@@ -373,7 +373,16 @@ class SubsidyCreationRequestSerializer(serializers.Serializer):
     )
     default_internal_only = serializers.BooleanField(
         required=True,
-        help_text="If set, this subsidy will not be customer facing, nor have any influence on enterprise customers.",
+        help_text=(
+            "If set, this subsidy will not be customer facing, nor have any influence on enterprise customers."
+            "If ``default_internal_only`` is False and an existing subsidy is "
+            "found with the given ``reference_id``, all `default_*` arguments are ignored "
+            "and this view returns that existing record. "
+            "However, when ``default_internal_only`` is True, this view will "
+            "simply create a new record, regardless of any existing records "
+            "with the same ``reference_id`` (we assume that the reference_id is "
+            "essentially meaningless for test subsidy records)."
+        ),
     )
 
 
