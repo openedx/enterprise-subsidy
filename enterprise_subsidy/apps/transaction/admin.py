@@ -40,6 +40,9 @@ class TransactionAdmin(DjangoQLSearchMixin, BaseTransactionAdmin):
         'subsidy_access_policy_uuid',
     )
 
+    @admin.action(
+        description="Unenroll the learner from the platform representation of the course."
+    )
     def unenroll(self, request, obj):
         """
         Redirect to the unenroll view.
@@ -49,9 +52,6 @@ class TransactionAdmin(DjangoQLSearchMixin, BaseTransactionAdmin):
         return HttpResponseRedirect(unenroll_url)
 
     unenroll.label = "Unenroll"
-    unenroll.short_description = (
-        "Unenroll the learner from the platform representation of the course."
-    )
 
     def get_urls(self):
         """

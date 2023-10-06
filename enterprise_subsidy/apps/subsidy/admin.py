@@ -105,6 +105,9 @@ class EnterpriseSubsidyRoleAssignmentAdmin(DjangoQLSearchMixin, UserRoleAssignme
         'enterprise_id',
     )
 
+    @admin.display(
+        description='User'
+    )
     def get_username(self, obj):
         return obj.user.username
 
@@ -117,5 +120,3 @@ class EnterpriseSubsidyRoleAssignmentAdmin(DjangoQLSearchMixin, UserRoleAssignme
 
     fields = ('user', 'role', 'enterprise_id')
     form = EnterpriseSubsidyRoleAssignmentAdminForm
-
-    get_username.short_description = 'User'
