@@ -173,7 +173,7 @@ openedx-events==8.6.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-openedx-ledger==1.0.2
+openedx-ledger==1.2.0
     # via -r requirements/base.in
 packaging==23.2
     # via drf-yasg
