@@ -149,7 +149,7 @@ DATABASES = {
 }
 
 # New DB primary keys default to an IntegerField.
-DEFAULT_AUTO_FIELD = 'django.db.models.AutoField'
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Django Rest Framework
 REST_FRAMEWORK = {
