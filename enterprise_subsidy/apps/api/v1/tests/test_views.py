@@ -1302,11 +1302,12 @@ class ContentMetadataViewSetTests(APITestBase):
     content_key_3 = "edX+DemoX3"
     course_run_uuid = str(uuid.uuid4())
     course_run_key = "edX+DemoX3+20230101"
+    content_title = "Demonstration Course"
     edx_course_metadata = {
         "key": content_key_1,
         "content_type": "course",
         "uuid": content_uuid_1,
-        "title": "Demonstration Course",
+        "title": content_title,
         "entitlements": [
             {
                 "mode": "verified",
@@ -1322,7 +1323,7 @@ class ContentMetadataViewSetTests(APITestBase):
         "key": content_key_3,
         "content_type": "course",
         "uuid": content_uuid_3,
-        "title": "Demonstration Course",
+        "title": content_title,
         "entitlements": [
             {
                 "mode": "verified",
@@ -1346,7 +1347,7 @@ class ContentMetadataViewSetTests(APITestBase):
         "key": content_key_2,
         "content_type": "course",
         "uuid": content_uuid_2,
-        "title": "Demonstration Course",
+        "title": content_title,
         "entitlements": [
             {
                 "mode": "paid-executive-education",
@@ -1370,6 +1371,7 @@ class ContentMetadataViewSetTests(APITestBase):
 
     @ddt.data(
         {
+            'expected_content_title': content_title,
             'expected_content_uuid': content_uuid_1,
             'expected_content_key': content_key_1,
             'expected_course_run_uuid': None,
@@ -1381,6 +1383,7 @@ class ContentMetadataViewSetTests(APITestBase):
             'expected_geag_variant_id': None,
         },
         {
+            'expected_content_title': content_title,
             'expected_content_uuid': content_uuid_3,
             'expected_content_key': content_key_3,
             'expected_course_run_uuid': str(course_run_uuid),
@@ -1392,6 +1395,7 @@ class ContentMetadataViewSetTests(APITestBase):
             'expected_geag_variant_id': None,
         },
         {
+            'expected_content_title': content_title,
             'expected_content_uuid': content_uuid_2,
             'expected_content_key': content_key_2,
             'expected_course_run_uuid': None,
@@ -1407,6 +1411,7 @@ class ContentMetadataViewSetTests(APITestBase):
     @ddt.unpack
     def test_successful_get(
         self,
+        expected_content_title,
         expected_content_uuid,
         expected_content_key,
         expected_course_run_uuid,
@@ -1428,6 +1433,7 @@ class ContentMetadataViewSetTests(APITestBase):
             response = self.client.get(url + f'?enterprise_customer_uuid={str(customer_uuid)}')
             assert response.status_code == 200
             assert response.json() == {
+                'content_title': expected_content_title,
                 'content_uuid': str(expected_content_uuid),
                 'content_key': expected_content_key,
                 'course_run_key': expected_course_run_key,
@@ -1444,6 +1450,7 @@ class ContentMetadataViewSetTests(APITestBase):
             response = self.client.get(url + f'?enterprise_customer_uuid={str(customer_uuid)}')
             assert response.status_code == 200
             assert response.json() == {
+                'content_title': expected_content_title,
                 'content_uuid': str(expected_content_uuid),
                 'content_key': expected_content_key,
                 'course_run_key': expected_course_run_key,

@@ -107,6 +107,7 @@ class ContentMetadataApi:
         """
         course_run_content = self.get_course_run(content_identifier, content_data)
         return {
+            'content_title': content_data.get('title'),
             'content_uuid': content_data.get('uuid'),
             'content_key': content_data.get('key'),
             'course_run_uuid': course_run_content.get('uuid'),
