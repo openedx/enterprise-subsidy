@@ -63,11 +63,15 @@ class TransactionBaseViewMixin:
     def get_queryset(self):
         """
         A base queryset that selects all transaction records (along with their
-        associated ledger and subsidy) for the requested ``subsidy_uuid``.
+        associated ledger, subsidy, reversals, and external references) for the requested ``subsidy_uuid``.
         """
         return Transaction.objects.select_related(
             'ledger',
             'ledger__subsidy',
+            'reversal',
+        ).prefetch_related(
+            'external_reference',
+            'external_reference__external_fulfillment_provider',
         ).filter(
             ledger__subsidy=self.subsidy
         )
