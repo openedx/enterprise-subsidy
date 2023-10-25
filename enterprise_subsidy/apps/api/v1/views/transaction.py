@@ -254,7 +254,18 @@ class TransactionViewSet(
         #
         # Finally, overlay both `user_id`-based and request-parameter-based filters in to one big happy queryset.
         #
-        return queryset.filter(**request_based_kwargs).order_by("uuid")
+        return queryset.filter(
+            **request_based_kwargs,
+        ).select_related(
+            "ledger",
+            "ledger__subsidy",
+            "reversal",
+        ).prefetch_related(
+            "external_reference",
+            "external_reference__external_fulfillment_provider",
+        ).order_by(
+            "uuid",
+        )
 
     def retrieve(self, request, *args, **kwargs):  # pylint: disable=useless-parent-delegation
         """
