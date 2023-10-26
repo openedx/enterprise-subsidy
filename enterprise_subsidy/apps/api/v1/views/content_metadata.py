@@ -7,6 +7,7 @@ import requests
 from django.conf import settings
 from django.utils.decorators import method_decorator
 from django.views.decorators.cache import cache_page
+from drf_spectacular.utils import extend_schema
 from edx_rbac.mixins import PermissionRequiredMixin
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
 from rest_framework import permissions
@@ -26,6 +27,8 @@ from enterprise_subsidy.apps.subsidy.constants import (
     PERMISSION_CAN_READ_CONTENT_METADATA
 )
 from enterprise_subsidy.apps.subsidy.models import EnterpriseSubsidyRoleAssignment
+
+from ...schema import Parameters
 
 logger = logging.getLogger(__name__)
 
@@ -79,6 +82,7 @@ class ContentMetadataViewSet(
         """
         return utils.get_enterprise_uuid_from_request_query_params(self.request)
 
+    @extend_schema(parameters=[Parameters.ENTERPRISE_CUSTOMER_UUID])
     @method_decorator(cache_page(CONTENT_METADATA_VIEW_CACHE_TIMEOUT_SECONDS))
     @method_decorator(require_at_least_one_query_parameter('enterprise_customer_uuid'))
     @action(detail=True)
