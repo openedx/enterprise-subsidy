@@ -1,3 +1,7 @@
+set -euf -o pipefail
+
+. "$DEVSTACK_WORKSPACE/devstack/scripts/colors.sh"
+
 name="enterprise-subsidy"
 port="18280"
 
@@ -9,7 +13,7 @@ make dev.up
 
 # Wait for MySQL
 echo "Waiting for MySQL"
-until docker exec -i enterprise-subsidy.db mysql -u root -se "SELECT EXISTS(SELECT 1 FROM mysql.user WHERE user = 'root')" &> /dev/null
+until docker exec -i enterprise-subsidy.mysql80 mysql -u root -se "SELECT EXISTS(SELECT 1 FROM mysql.user WHERE user = 'root')" &> /dev/null
 do
   printf "."
   sleep 1
@@ -17,7 +21,7 @@ done
 sleep 5
 
 # Create the database
-docker exec -i enterprise-subsidy.db mysql -u root -se "CREATE DATABASE enterprise_subsidy;"
+docker exec -i enterprise-subsidy.mysql80 mysql -u root -se "CREATE DATABASE IF NOT EXISTS enterprise_subsidy;"
 
 # Run migrations
 echo -e "${GREEN}Running migrations for ${name}...${NC}"
