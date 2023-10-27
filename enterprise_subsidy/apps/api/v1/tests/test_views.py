@@ -1430,7 +1430,11 @@ class ContentMetadataViewSetTests(APITestBase):
             self.set_up_admin(enterprise_uuids=[str(customer_uuid)])
             mock_oauth_client.return_value.get.return_value = MockResponse(mock_metadata, 200)
             url = reverse('api:v1:content-metadata', kwargs={'content_identifier': expected_content_key})
+
+            # Make a first call that should not run into a cached response
+            # from the cached EnterpriseCustomerViewSet.get view.
             response = self.client.get(url + f'?enterprise_customer_uuid={str(customer_uuid)}')
+
             assert response.status_code == 200
             assert response.json() == {
                 'content_title': expected_content_title,
@@ -1444,10 +1448,14 @@ class ContentMetadataViewSetTests(APITestBase):
                 'geag_variant_id': expected_geag_variant_id,
             }
 
-            # Everything after this line is testing the view's cache
-            # If this mock response is ever hit, the test will fail, caching prevents it.
+            # Now make a second call to validate that the view-level cache is utilized.
+            # This means we won't make a second request via the enterprise catalog API client.
+            # Adding an exception side effect proves that we don't actually make
+            # the call with the client.
             mock_oauth_client.return_value.get.side_effect = Exception("Does not reach this")
+
             response = self.client.get(url + f'?enterprise_customer_uuid={str(customer_uuid)}')
+
             assert response.status_code == 200
             assert response.json() == {
                 'content_title': expected_content_title,
@@ -1460,6 +1468,15 @@ class ContentMetadataViewSetTests(APITestBase):
                 'mode': expected_mode,
                 'geag_variant_id': expected_geag_variant_id,
             }
+            # Validate that, in the first, non-cached request, we call
+            # the enterprise catalog endpoint via the client, and that
+            # a `skip_customer_fetch` parameter is included in the request.
+            mock_oauth_client.return_value.get.assert_called_once_with(
+                f'api/v1/enterprise-customer/{customer_uuid}/content-metadata/{expected_content_key}/',
+                params={
+                    'skip_customer_fetch': True,
+                },
+            )
 
     def test_failure_no_permission(self):
         self.set_up_admin(enterprise_uuids=[str(uuid.uuid4())])
@@ -1494,6 +1511,14 @@ class ContentMetadataViewSetTests(APITestBase):
                 url=self.mock_http_error_url
             )
             url = reverse('api:v1:content-metadata', kwargs={'content_identifier': 'content_key'})
+
             response = self.client.get(url + f'?enterprise_customer_uuid={str(customer_uuid)}')
+
             assert response.status_code == catalog_status_code
             assert response.json() == expected_response
+            mock_oauth_client.return_value.get.assert_called_once_with(
+                f'api/v1/enterprise-customer/{customer_uuid}/content-metadata/content_key/',
+                params={
+                    'skip_customer_fetch': True,
+                },
+            )

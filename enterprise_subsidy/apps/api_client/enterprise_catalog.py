@@ -31,7 +31,9 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
             f'content-metadata/{content_identifier}/'
         )
 
-    def get_content_metadata_for_customer(self, enterprise_customer_uuid, content_identifier):
+    def get_content_metadata_for_customer(
+        self, enterprise_customer_uuid, content_identifier, skip_customer_fetch=False, **kwargs
+    ):
         """
         Returns Enterprise Customer related data for a specified piece on content.
 
@@ -40,6 +42,12 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
             content_identifier (str): **Either** the content UUID or content key identifier for a content record.
                 Note: the content needs to be owned by a catalog associated with the provided customer else this
                 method will throw an HTTPError.
+            skip_customer_fetch (bool): Forces enterprise-catalog to skip a sub-call to an edx-enterprise
+                API endpoint running in the edx-platform runtime. This sub-call helps the catalog service
+                understand the last time a catalog's customer record was modified, and also helps
+                to construct course and course run enrollment URLs that are usually not needed
+                in the context of enterprise-subsidy or callers of the EnterpriseCustomerViewSet.
+                Defaults to False.
         Returns:
             response (dict): JSON response object associated with a content metadata record
         Raises:
@@ -48,8 +56,11 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
             does not exist, or is not present in a catalog associated with the customer.
         """
         content_metadata_url = self.content_metadata_url(enterprise_customer_uuid, content_identifier)
+        query_params = {}
+        if skip_customer_fetch:
+            query_params['skip_customer_fetch'] = skip_customer_fetch
         try:
-            response = self.client.get(content_metadata_url)
+            response = self.client.get(content_metadata_url, params=query_params)
             response.raise_for_status()
             return response.json()
         except requests.exceptions.HTTPError as exc:

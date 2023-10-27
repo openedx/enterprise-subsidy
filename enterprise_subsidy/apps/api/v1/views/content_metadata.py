@@ -106,7 +106,8 @@ class ContentMetadataViewSet(
         try:
             content_summary = self.content_metadata_api().get_content_summary(
                 enterprise_customer_uuid[0],
-                content_identifier
+                content_identifier,
+                skip_customer_fetch=True,
             )
             if not content_summary.get('content_price'):
                 logger.warning(f"Could not find course price in metadata for {content_identifier}")
