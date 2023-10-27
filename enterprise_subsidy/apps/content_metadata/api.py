@@ -136,13 +136,14 @@ class ContentMetadataApi:
                 return course_run
         return {}
 
-    def get_content_summary(self, enterprise_customer_uuid, content_identifier):
+    def get_content_summary(self, enterprise_customer_uuid, content_identifier, **kwargs):
         """
         Returns a summary dict some content metadata, makes the client call
         """
         course_details = self.get_content_metadata(
             enterprise_customer_uuid,
-            content_identifier
+            content_identifier,
+            **kwargs,
         )
         return self.summary_data_for_content(content_identifier, course_details)
 
@@ -201,7 +202,7 @@ class ContentMetadataApi:
         return self.get_content_summary(enterprise_customer_uuid, content_identifier).get('geag_variant_id')
 
     @staticmethod
-    def get_content_metadata(enterprise_customer_uuid, content_identifier):
+    def get_content_metadata(enterprise_customer_uuid, content_identifier, **kwargs):
         """
         Fetches details about the given content from a tiered (request + django) cache;
         or it fetches from the enterprise-catalog API if not present in the cache,
@@ -214,7 +215,8 @@ class ContentMetadataApi:
 
         course_details = EnterpriseCatalogApiClient().get_content_metadata_for_customer(
             enterprise_customer_uuid,
-            content_identifier
+            content_identifier,
+            **kwargs,
         )
         if course_details:
             TieredCache.set_all_tiers(
