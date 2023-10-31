@@ -217,7 +217,10 @@ class TransactionViewSet(
         for learner_only_context in learner_only_contexts:
             # For each context (enterprise_customer_uuid) that the requester only has learner access to, filter
             # transactions related to that context to only include their own transactions.
-            # pylint: disable=unsupported-binary-operation
+            # AED 2023-10-31: locally, pylint complains of the binary operation.
+            # In github actions, pylint complains of a useless-suppression.
+            # Suppressing both and letting the code gods sort it out.
+            # pylint: disable=unsupported-binary-operation,useless-suppression
             if request_jwt.get('user_id'):
                 queryset = queryset.filter(
                     (

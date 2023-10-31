@@ -14,7 +14,6 @@ from unittest import mock
 from uuid import uuid4
 
 from django.db import models
-from django.db.models import Q
 from django.utils.functional import cached_property
 from edx_rbac.models import UserRole, UserRoleAssignment
 from edx_rbac.utils import ALL_ACCESS_CONTEXT
@@ -104,13 +103,6 @@ class Subsidy(TimeStampedModel):
         """
         Metaclass for Subsidy.
         """
-        constraints = [
-            models.UniqueConstraint(
-                condition=Q(internal_only=False),  # Allow more flexibility for internal/test subsidies.
-                fields=["reference_id", "reference_type"],
-                name="unique_reference_id_non_internal",
-            )
-        ]
         ordering = ['-created']
 
     # Please reserve the "subsidy_type" field name for the future when we use it to distinguish between
