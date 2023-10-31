@@ -1,12 +1,14 @@
 """
 Tests for functionality provided in the ``models.py`` module.
 """
+import random
 from itertools import product
 from unittest import mock
 from uuid import uuid4
 
 import ddt
 import pytest
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from openedx_ledger.models import Transaction, TransactionStateChoices
 from openedx_ledger.test_utils.factories import (
@@ -98,6 +100,73 @@ class SubsidyModelReadTestCase(TestCase):
 
         with self.assertRaises(ContentNotFoundForCustomerException):
             self.subsidy.price_for_content('some-content-key')
+
+    def test_reference_uniqueness(self):
+        """
+        Tests that not soft-deleted, non-internal-only subsidies
+        are validated to be unique on (reference_id, reference_type).
+        """
+        reference_id = random.randint(1, 10000000)
+        existing_record = SubsidyFactory.create(
+            enterprise_customer_uuid=self.enterprise_customer_uuid,
+            reference_id=reference_id,
+            internal_only=False,
+        )
+        existing_record.save()
+
+        with self.assertRaisesRegex(ValidationError, 'already exists with the same reference_id'):
+            new_record = SubsidyFactory.create(
+                enterprise_customer_uuid=self.enterprise_customer_uuid,
+                reference_id=reference_id,
+                internal_only=False,
+            )
+            new_record.save()
+
+    def test_reference_uniqueness_not_constrained_on_internal_only(self):
+        """
+        Tests that not soft-deleted, internal-only subsidies
+        are allowed to not be unique on (reference_id, reference_type).
+        """
+        reference_id = random.randint(1, 100000000)
+        existing_record = SubsidyFactory.create(
+            enterprise_customer_uuid=self.enterprise_customer_uuid,
+            reference_id=reference_id,
+            internal_only=True,
+        )
+        existing_record.save()
+
+        new_record = SubsidyFactory.create(
+            enterprise_customer_uuid=self.enterprise_customer_uuid,
+            reference_id=reference_id,
+            internal_only=True,
+        )
+        new_record.save()
+        self.assertEqual(existing_record.reference_id, new_record.reference_id)
+        self.assertEqual(existing_record.reference_type, new_record.reference_type)
+
+    def test_reference_uniqueness_not_constrained_when_soft_deleted(self):
+        """
+        Tests that soft-deleted, non-internal-only subsidies
+        are allowed to not be unique on (reference_id, reference_type).
+        """
+        reference_id = random.randint(1, 100000000)
+        existing_record = SubsidyFactory.create(
+            enterprise_customer_uuid=self.enterprise_customer_uuid,
+            reference_id=reference_id,
+            internal_only=False,
+            is_soft_deleted=True,
+        )
+        existing_record.save()
+
+        new_record = SubsidyFactory.create(
+            enterprise_customer_uuid=self.enterprise_customer_uuid,
+            reference_id=reference_id,
+            internal_only=False,
+            is_soft_deleted=False,
+        )
+        new_record.save()
+        self.assertEqual(existing_record.reference_id, new_record.reference_id)
+        self.assertEqual(existing_record.reference_type, new_record.reference_type)
 
     @ddt.data(True, False)
     def test_is_redeemable(self, expected_to_be_redeemable):

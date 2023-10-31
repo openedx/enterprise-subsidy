@@ -1,11 +1,13 @@
 """
 Tests for functions defined in the ``api.py`` module.
 """
+from datetime import timedelta
 from unittest import mock
 from uuid import uuid4
 
 import pytest
 from django.test import TestCase
+from django.utils import timezone
 from openedx_ledger.models import Reversal, TransactionStateChoices, UnitChoices
 from openedx_ledger.test_utils.factories import TransactionFactory
 
@@ -25,8 +27,8 @@ def learner_credit_fixture():
         default_enterprise_customer_uuid=uuid4(),
         default_unit=UnitChoices.USD_CENTS,
         default_starting_balance=1000000,
-        default_active_datetime=None,
-        default_expiration_datetime=None,
+        default_active_datetime=timezone.now() - timedelta(days=365),
+        default_expiration_datetime=timezone.now() + timedelta(days=365),
     )
     return subsidy
 
@@ -72,8 +74,8 @@ def test_create_internal_only_subsidy_record(learner_credit_fixture):  # pylint:
         default_enterprise_customer_uuid=other_customer_uuid,
         default_unit=UnitChoices.USD_CENTS,
         default_starting_balance=42,
-        default_active_datetime=None,
-        default_expiration_datetime=None,
+        default_active_datetime=timezone.now() - timedelta(days=365),
+        default_expiration_datetime=timezone.now() + timedelta(days=365),
         default_internal_only=True
     )
     assert created

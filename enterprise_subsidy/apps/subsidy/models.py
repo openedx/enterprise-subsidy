@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from unittest import mock
 from uuid import uuid4
 
+from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.functional import cached_property
 from edx_rbac.models import UserRole, UserRoleAssignment
@@ -209,6 +210,30 @@ class Subsidy(TimeStampedModel):
 
     objects = ActiveSubsidyManager()
     all_objects = models.Manager()
+
+    def clean(self):
+        """
+        Ensures that non-internal-only subsidies are unique
+        on (reference_id, reference_type).  This is necessary
+        because MySQL does not support conditional unique constraints.
+        """
+        if not self.internal_only:
+            other_record = Subsidy.objects.filter(
+                reference_id=self.reference_id,
+                reference_type=self.reference_type,
+            ).exclude(uuid=self.uuid).first()
+            if other_record:
+                raise ValidationError(
+                    f'Subsidy {other_record.uuid} already exists with the same '
+                    f'reference_id {self.reference_id} and reference_type {self.reference_type}'
+                )
+
+    def save(self, *args, **kwargs):
+        """
+        Overrides default save() method to run full_clean.
+        """
+        self.full_clean()
+        super().save(*args, **kwargs)
 
     @property
     def is_active(self):
