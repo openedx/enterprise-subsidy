@@ -8,7 +8,7 @@ asgiref==3.7.2
     # via
     #   -r requirements/base.txt
     #   django
-astroid==3.0.1
+astroid==2.15.8
     # via
     #   pylint
     #   pylint-celery
@@ -35,7 +35,7 @@ cffi==1.16.0
     #   -r requirements/base.txt
     #   cryptography
     #   pynacl
-charset-normalizer==3.3.1
+charset-normalizer==3.3.0
     # via
     #   -r requirements/base.txt
     #   requests
@@ -52,7 +52,7 @@ code-annotations==1.5.0
     # via
     #   -r requirements/test.in
     #   edx-lint
-coverage[toml]==7.3.2
+coverage[toml]==7.3.1
     # via
     #   -r requirements/test.in
     #   pytest-cov
@@ -98,7 +98,7 @@ distlib==0.3.7
     #   social-auth-app-django
 django-clearcache==1.2.1
     # via -r requirements/base.txt
-django-cors-headers==4.3.0
+django-cors-headers==4.2.0
     # via -r requirements/base.txt
 django-crum==0.7.9
     # via
@@ -125,7 +125,7 @@ django-object-actions==4.2.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-django-simple-history==3.0.0
+django-simple-history==3.4.0
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.txt
@@ -167,7 +167,7 @@ edx-django-utils==5.7.0
     #   edx-rest-api-client
     #   getsmarter-api-clients
     #   openedx-ledger
-edx-drf-extensions==8.12.0
+edx-drf-extensions==8.10.0
     # via
     #   -r requirements/base.txt
     #   edx-rbac
@@ -177,21 +177,20 @@ edx-opaque-keys[django]==2.5.1
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
-    #   edx-opaque-keys
     #   openedx-events
 edx-rbac==1.8.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-edx-rest-api-client==5.6.1
+edx-rest-api-client==5.6.0
     # via -r requirements/base.txt
 exceptiongroup==1.1.3
     # via pytest
 factory-boy==3.3.0
     # via -r requirements/test.in
-faker==19.11.0
+faker==19.6.2
     # via factory-boy
-fastavro==1.8.4
+fastavro==1.8.3
     # via
     #   -r requirements/base.txt
     #   openedx-events
@@ -233,6 +232,8 @@ jsonschema-specifications==2023.7.1
     # via
     #   -r requirements/base.txt
     #   jsonschema
+lazy-object-proxy==1.9.0
+    # via astroid
 markupsafe==2.1.3
     # via jinja2
 mccabe==0.7.0
@@ -243,7 +244,7 @@ mysqlclient==2.2.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-newrelic==9.1.1
+newrelic==9.1.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -253,7 +254,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.0.0
+openedx-events==8.6.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -273,7 +274,7 @@ pkgutil-resolve-name==1.3.10
     # via
     #   -r requirements/base.txt
     #   jsonschema
-platformdirs==3.11.0
+platformdirs==3.10.0
     # via
     #   pylint
     #   virtualenv
@@ -285,7 +286,7 @@ ply==3.11
     # via
     #   -r requirements/base.txt
     #   djangoql
-psutil==5.9.6
+psutil==5.9.5
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -302,9 +303,8 @@ pyjwt[crypto]==2.8.0
     #   edx-auth-backends
     #   edx-drf-extensions
     #   edx-rest-api-client
-    #   pyjwt
     #   social-auth-core
-pylint==3.0.2
+pylint==2.17.7
     # via
     #   edx-lint
     #   pylint-celery
@@ -312,7 +312,7 @@ pylint==3.0.2
     #   pylint-plugin-utils
 pylint-celery==0.3
     # via edx-lint
-pylint-django==2.5.4
+pylint-django==2.5.3
     # via edx-lint
 pylint-plugin-utils==0.8.2
     # via
@@ -384,7 +384,7 @@ requests-oauthlib==1.3.1
     #   social-auth-core
 responses==0.23.3
     # via -r requirements/test.in
-rpds-py==0.10.6
+rpds-py==0.10.3
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -410,7 +410,7 @@ slumber==0.7.1
     # via
     #   -r requirements/base.txt
     #   edx-rest-api-client
-social-auth-app-django==5.4.0
+social-auth-app-django==5.3.0
     # via
     #   -r requirements/base.txt
     #   edx-auth-backends
@@ -458,13 +458,15 @@ uritemplate==4.1.1
     #   -r requirements/base.txt
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.0.7
+urllib3==2.0.5
     # via
     #   -r requirements/base.txt
     #   requests
     #   responses
 virtualenv==20.24.5
     # via tox
+wrapt==1.15.0
+    # via astroid
 zipp==3.17.0
     # via
     #   -r requirements/base.txt
