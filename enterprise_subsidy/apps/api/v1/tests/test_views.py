@@ -156,7 +156,7 @@ class SubsidyViewSetTests(APITestBase):
         expected_result = {
             "uuid": str(self.subsidy_1.uuid),
             "title": self.subsidy_1.title,
-            "enterprise_customer_uuid": self.subsidy_1.enterprise_customer_uuid,
+            "enterprise_customer_uuid": str(self.subsidy_1.enterprise_customer_uuid),
             "active_datetime": self.subsidy_1.active_datetime.strftime(SERIALIZED_DATE_PATTERN),
             "expiration_datetime": self.subsidy_1.expiration_datetime.strftime(SERIALIZED_DATE_PATTERN),
             "unit": self.subsidy_1.unit,
