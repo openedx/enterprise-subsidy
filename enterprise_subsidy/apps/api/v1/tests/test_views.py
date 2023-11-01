@@ -51,7 +51,10 @@ class APITestBase(APITestMixin):
     subsidy_access_policy_1_uuid = str(uuid.uuid4())
     subsidy_access_policy_2_uuid = str(uuid.uuid4())
     content_key_1 = "course-v1:edX+test+course.1"
+    content_title_1 = "edx: Test Course 1"
     content_key_2 = "course-v1:edX+test+course.2"
+    content_title_2 = "edx: Test Course 2"
+    lms_user_email = 'edx@example.com'
 
     def setUp(self):
         super().setUp()
@@ -69,8 +72,10 @@ class APITestBase(APITestMixin):
             quantity=-1000,
             ledger=self.subsidy_1.ledger,
             lms_user_id=STATIC_LMS_USER_ID,  # This is the only transaction belonging to the requester.
+            lms_user_email=self.lms_user_email,
             subsidy_access_policy_uuid=self.subsidy_access_policy_1_uuid,
             content_key=self.content_key_1,
+            content_title=self.content_title_1,
         )
         self.subsidy_1_transaction_2 = TransactionFactory(
             uuid=self.subsidy_1_transaction_2_uuid,
@@ -78,8 +83,10 @@ class APITestBase(APITestMixin):
             quantity=-1000,
             ledger=self.subsidy_1.ledger,
             lms_user_id=STATIC_LMS_USER_ID+1000,
+            lms_user_email=self.lms_user_email,
             subsidy_access_policy_uuid=self.subsidy_access_policy_2_uuid,
             content_key=self.content_key_2,
+            content_title=self.content_title_2,
         )
 
         # Create an extra subsidy with the same enterprise_customer_uuid, but the learner does not have any transactions
@@ -96,6 +103,7 @@ class APITestBase(APITestMixin):
             quantity=-1000,
             ledger=self.subsidy_2.ledger,
             lms_user_id=STATIC_LMS_USER_ID+1000,
+            lms_user_email=self.lms_user_email,
         )
         TransactionFactory(
             uuid=self.subsidy_2_transaction_2_uuid,
@@ -103,6 +111,7 @@ class APITestBase(APITestMixin):
             quantity=-1000,
             ledger=self.subsidy_2.ledger,
             lms_user_id=STATIC_LMS_USER_ID+1000,
+            lms_user_email=self.lms_user_email,
         )
 
         # Create third subsidy with a different enterprise_customer_uuid.  Neither test learner nor the test admin
@@ -119,6 +128,7 @@ class APITestBase(APITestMixin):
             quantity=-1000,
             ledger=self.subsidy_3.ledger,
             lms_user_id=STATIC_LMS_USER_ID+1000,
+            lms_user_email=self.lms_user_email,
         )
         TransactionFactory(
             uuid=self.subsidy_3_transaction_2_uuid,
@@ -126,6 +136,7 @@ class APITestBase(APITestMixin):
             quantity=-1000,
             ledger=self.subsidy_3.ledger,
             lms_user_id=STATIC_LMS_USER_ID+1000,
+            lms_user_email=self.lms_user_email,
         )
 
         self.all_initial_transactions = set([
@@ -254,14 +265,18 @@ class SubsidyViewSetTests(APITestBase):
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @mock.patch('enterprise_subsidy.apps.api.v1.views.subsidy.can_redeem')
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.lms_user_client")
     @ddt.data(False, True)
-    def test_can_redeem_happy_path(self, has_existing_transaction, mock_can_redeem):
+    def test_can_redeem_happy_path(self, has_existing_transaction, mock_lms_user_client, mock_can_redeem):
         """
         Tests that the result of ``api.can_redeem()`` is returned as the response
         payload for a POST to the can_redeem action, including any relevant
         existing transaction.
         """
         self.set_up_admin(enterprise_uuids=[self.subsidy_1.enterprise_customer_uuid])
+        mock_lms_user_client.return_value.best_effort_user_data.return_value = {
+            'email': self.lms_user_email,
+        }
         expected_redeemable = True
         expected_active = True
         expected_price = 350
@@ -292,8 +307,10 @@ class SubsidyViewSetTests(APITestBase):
                 'state': TransactionStateChoices.COMMITTED,
                 'quantity': -1000,
                 'lms_user_id': STATIC_LMS_USER_ID,
+                'lms_user_email': self.lms_user_email,
                 'subsidy_access_policy_uuid': str(self.subsidy_access_policy_1_uuid),
                 'content_key': self.content_key_1,
+                'content_title': self.content_title_1,
                 'external_reference': [],
                 'transaction_status_api_url': f"{self.transaction_status_api_url}/{self.subsidy_1_transaction_1_uuid}/",
                 'courseware_url': f"http://localhost:2000/course/{self.content_key_1}/home",
@@ -959,10 +976,18 @@ class TransactionViewSetTests(APITestBase):
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
-    def test_create(self, mock_get_content_summary, mock_price_for_content, mock_enterprise_client):
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.lms_user_client")
+    def test_create(
+        self,
+        mock_lms_user_client,
+        mock_get_content_summary,
+        mock_price_for_content,
+        mock_enterprise_client,
+    ):
         """
         Test create Transaction, happy case.
         """
+        mock_lms_user_client.return_value.best_effort_user_data.return_value = {'email': 'edx@example.com'}
         url = reverse("api:v1:transaction-list")
         test_enroll_enterprise_fulfillment_uuid = "test-enroll-reference-id"
         mock_enterprise_client.enroll.return_value = test_enroll_enterprise_fulfillment_uuid
@@ -970,6 +995,7 @@ class TransactionViewSetTests(APITestBase):
         mock_get_content_summary.return_value = {
             'content_uuid': 'course-v1:edX-test-course',
             'content_key': 'course-v1:edX-test-course',
+            'content_title': 'edX: Test Course',
             'source': 'edX',
             'mode': 'verified',
             'content_price': 10000,
@@ -994,7 +1020,9 @@ class TransactionViewSetTests(APITestBase):
             f"{self.transaction_status_api_url}/{create_response_data['uuid']}/"
         )
         assert create_response_data["content_key"] == post_data["content_key"]
+        assert create_response_data["content_title"] == 'edX: Test Course'
         assert create_response_data["lms_user_id"] == post_data["lms_user_id"]
+        assert create_response_data["lms_user_email"] == 'edx@example.com'
         assert create_response_data["subsidy_access_policy_uuid"] == post_data["subsidy_access_policy_uuid"]
         assert create_response_data["courseware_url"] == f"http://localhost:2000/course/{post_data['content_key']}/home"
         self.assertDictEqual(create_response_data["metadata"], {})
@@ -1011,6 +1039,7 @@ class TransactionViewSetTests(APITestBase):
         retrieve_response_data = retrieve_response.json()
         assert retrieve_response_data["uuid"] == create_response_data["uuid"]
         assert retrieve_response_data["idempotency_key"] == create_response_data["idempotency_key"]
+        # assert retrieve_response_data["content_title"] == 'edX: Test Course'
 
         # Uncomment after Segment events are setup:
         #
@@ -1030,10 +1059,18 @@ class TransactionViewSetTests(APITestBase):
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
-    def test_create_with_metadata(self, mock_get_content_summary, mock_price_for_content, mock_enterprise_client):
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.lms_user_client")
+    def test_create_with_metadata(
+        self,
+        mock_lms_user_client,
+        mock_get_content_summary,
+        mock_price_for_content,
+        mock_enterprise_client
+    ):
         """
         Test create Transaction, happy case.
         """
+        mock_lms_user_client.return_value.best_effort_user_data.return_value = {'email': 'edx@example.com'}
         url = reverse("api:v1:transaction-list")
         test_enroll_enterprise_fulfillment_uuid = "test-enroll-reference-id"
         mock_enterprise_client.enroll.return_value = test_enroll_enterprise_fulfillment_uuid
@@ -1085,10 +1122,27 @@ class TransactionViewSetTests(APITestBase):
 
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
-    def test_create_ledger_locked(self, mock_price_for_content, mock_enterprise_client):
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.lms_user_client")
+    def test_create_ledger_locked(
+        self,
+        mock_lms_user_client,
+        mock_get_content_summary,
+        mock_price_for_content,
+        mock_enterprise_client,
+    ):
         """
         Test create Transaction, 429 response due to the ledger being locked.
         """
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'course-v1:edX-test-course',
+            'content_key': 'course-v1:edX-test-course',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
+        mock_lms_user_client.return_value.best_effort_user_data.return_value = {'email': 'edx@example.com'}
         url = reverse("api:v1:transaction-list")
         test_enroll_enterprise_fulfillment_uuid = "test-enroll-reference-id"
         mock_enterprise_client.enroll.return_value = test_enroll_enterprise_fulfillment_uuid
@@ -1171,29 +1225,40 @@ class TransactionViewSetTests(APITestBase):
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.content_metadata_api")
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.lms_user_client")
     def test_create_external_enroll_failed(
         self,
+        mock_lms_user_client,
         mock_get_content_summary,
-        mock_content_metadata_api,
-        mock_enterprise_client
+        mock_subsidy_content_metadata_api,
+        mock_enterprise_client,
     ):
         """
         Test create Transaction, 5xx response due to the external enrollment failing. Check that a transaction is
         created, then rolled back to "failed" state.
         """
         mock_get_content_summary.return_value = {
-            'content_uuid': 'course-v1:edX+test+course.enroll.failed',
-            'content_key': 'course-v1:edX+test+course.enroll.failed',
+            'content_uuid': 'course-v1:edX-test-course',
+            'content_key': 'course-v1:edX-test-course',
             'source': 'edX',
             'mode': 'verified',
-            'content_price': 10000,
+            'content_price': 100,
+            'geag_variant_id': None,
+         }
+        mock_subsidy_content_metadata_api().get_content_summary.return_value = {
+            'content_uuid': 'course-v1:edX-test-course',
+            'content_key': 'course-v1:edX-test-course',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 100,
             'geag_variant_id': None,
         }
+        mock_subsidy_content_metadata_api().get_course_price.return_value = 100
+        mock_lms_user_client.return_value.best_effort_user_data.return_value = {'email': 'edx@example.com'}
         # Create privileged staff user that should be able to create Transactions.
         self.set_up_operator()
         url = reverse("api:v1:transaction-list")
         mock_enterprise_client.enroll.side_effect = HTTPError()
-        mock_content_metadata_api().get_course_price.return_value = 100
         test_content_key = "course-v1:edX+test+course.enroll.failed"
         test_lms_user_id = 1234
         post_data = {

@@ -33,6 +33,7 @@ class APITestBase(APITestMixin):
     Contains boilerplate to create a couple of subsidies with related ledgers and starting transactions.
     """
 
+    lms_user_email = 'edx@example.com'
     enterprise_1_uuid = STATIC_ENTERPRISE_UUID
     enterprise_2_uuid = str(uuid.uuid4())
 
@@ -56,6 +57,8 @@ class APITestBase(APITestMixin):
 
     content_key_1 = "course-v1:edX+test+course.1"
     content_key_2 = "course-v1:edX+test+course.2"
+    content_title_1 = "edX: Test Course 1"
+    content_title_2 = "edx: Test Course 2"
 
     @classmethod
     def setUpClass(cls):
@@ -108,8 +111,10 @@ class APITestBase(APITestMixin):
             quantity=-1000,
             ledger=cls.subsidy_1.ledger,
             lms_user_id=STATIC_LMS_USER_ID+1000,
+            lms_user_email=cls.lms_user_email,
             subsidy_access_policy_uuid=cls.subsidy_access_policy_2_uuid,
             content_key=cls.content_key_2,
+            content_title=cls.content_title_2,
         )
         # Also create a reversed transaction, and also include metadata on both the transaction and reversal.
         cls.subsidy_1_transaction_3 = TransactionFactory(
@@ -118,8 +123,10 @@ class APITestBase(APITestMixin):
             quantity=-1000,
             ledger=cls.subsidy_1.ledger,
             lms_user_id=STATIC_LMS_USER_ID,
+            lms_user_email=cls.lms_user_email,
             subsidy_access_policy_uuid=cls.subsidy_access_policy_2_uuid,
             content_key=cls.content_key_2,
+            content_title=cls.content_title_2,
             metadata={"bin": "baz"},
         )
         cls.subsidy_1_transaction_3_reversal = ReversalFactory(
@@ -256,8 +263,10 @@ class TransactionAdminListViewTests(APITestBase):
             quantity=0,
             ledger=cls.subsidy_1.ledger,
             lms_user_id=STATIC_LMS_USER_ID,  # This is the only transaction belonging to the requester.
+            lms_user_email=cls.lms_user_email,
             subsidy_access_policy_uuid=cls.subsidy_access_policy_1_uuid,
             content_key=cls.content_key_1,
+            content_title=cls.content_title_1,
         )
 
     def test_list_transactions_metadata_format(self):
@@ -705,8 +714,10 @@ class TransactionAdminCreateViewTests(APITestBase):
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.lms_user_client")
     def test_operator_creation_happy_path_201(
         self,
+        mock_lms_user_client,
         mock_get_content_summary,
         mock_price_for_content,
         mock_enterprise_client
@@ -717,11 +728,15 @@ class TransactionAdminCreateViewTests(APITestBase):
         """
         self.set_up_operator()
 
+        mock_lms_user_client.return_value.best_effort_user_data.return_value = {
+            'email': self.lms_user_email,
+        }
         mock_enterprise_client.enroll.return_value = 'my-fulfillment-id'
         mock_price_for_content.return_value = 1000
         mock_get_content_summary.return_value = {
             'content_uuid': self.content_key_1,
             'content_key': self.content_key_1,
+            'content_title': self.content_title_1,
             'source': 'edX',
             'mode': 'verified',
             'content_price': 10000,

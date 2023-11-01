@@ -198,6 +198,8 @@ class SubsidyModelRedemptionTestCase(TestCase):
         self.subsidy = SubsidyFactory.create(
             enterprise_customer_uuid=self.enterprise_customer_uuid,
         )
+        self.subsidy.lms_user_client = mock.MagicMock()
+        self.subsidy.lms_user_client.return_value.best_effort_user_data.return_value = {'email': 'edx@example.com'}
         super().setUp()
 
     def test_get_committed_transaction_no_reversal(self):
@@ -300,6 +302,7 @@ class SubsidyModelRedemptionTestCase(TestCase):
         mock_get_content_summary.return_value = {
             'content_uuid': 'course-v1:edX+test+course',
             'content_key': 'course-v1:edX+test+course',
+            'content_title': 'edx: Test Course',
             'source': 'edX',
             'mode': 'verified',
             'content_price': 10000,
