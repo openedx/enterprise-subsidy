@@ -364,3 +364,8 @@ CONTENT_METADATA_VIEW_CACHE_TIMEOUT_SECONDS = 60 * 15
 
 # disable indexing on history_date
 SIMPLE_HISTORY_DATE_INDEX = False
+
+
+# How long we keep API Client data in cache. (seconds)
+ONE_HOUR = 60 * 60
+LMS_USER_DATA_CACHE_TIMEOUT = ONE_HOUR

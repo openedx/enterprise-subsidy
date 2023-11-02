@@ -128,7 +128,9 @@ class TransactionSerializer(serializers.ModelSerializer):
             "state",
             "idempotency_key",
             "lms_user_id",
+            "lms_user_email",
             "content_key",
+            "content_title",
             "quantity",
             "unit",  # Manually fetch from parent ledger via get_unit().
             "fulfillment_identifier",

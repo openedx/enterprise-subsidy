@@ -27,6 +27,7 @@ from rest_framework import status
 from simple_history.models import HistoricalRecords
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
+from enterprise_subsidy.apps.api_client.lms_user import LmsUserApiClient
 from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
 from enterprise_subsidy.apps.core.utils import localized_utcnow
 from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
@@ -270,6 +271,43 @@ class Subsidy(TimeStampedModel):
         """
         return GEAGFulfillmentHandler()
 
+    def lms_user_client(self):
+        """
+        API layer for interacting with the LMS Account API
+        """
+        return LmsUserApiClient()
+
+    def email_for_learner(self, lms_user_id):
+        """
+        Return the email associated with an LMS learner
+        """
+        user_data = self.lms_user_client().best_effort_user_data(lms_user_id)
+        if isinstance(user_data, dict):
+            return user_data.get('email')
+        return None
+
+    def title_for_content(self, content_key):
+        """
+        Best effort return the title of the given content.
+
+        Returns:
+            string: Title of content or None.
+        """
+        content_title = None
+        try:
+            content_summary = self.content_metadata_api().get_content_summary(
+                self.enterprise_customer_uuid,
+                content_key
+            )
+            if content_summary:
+                content_title = content_summary.get('content_title')
+        except HTTPError as exc:
+            if exc.response.status_code == status.HTTP_404_NOT_FOUND:
+                raise ContentNotFoundForCustomerException(
+                    'The given content_key is not in any catalog for this customer.'
+                ) from exc
+        return content_title
+
     def price_for_content(self, content_key):
         """
         Return the price of the given content in USD Cents.
@@ -298,7 +336,9 @@ class Subsidy(TimeStampedModel):
         idempotency_key,
         quantity,
         lms_user_id=None,
+        lms_user_email=None,
         content_key=None,
+        content_title=None,
         subsidy_access_policy_uuid=None,
         **transaction_metadata
     ):
@@ -316,7 +356,9 @@ class Subsidy(TimeStampedModel):
             quantity=quantity,
             idempotency_key=idempotency_key,
             lms_user_id=lms_user_id,
+            lms_user_email=lms_user_email,
             content_key=content_key,
+            content_title=content_title,
             subsidy_access_policy_uuid=subsidy_access_policy_uuid,
             **transaction_metadata,
         )
@@ -383,10 +425,14 @@ class Subsidy(TimeStampedModel):
             logger.info(base_exception_msg, 'Not enough balance in the subsidy')
             return (None, False)
         try:
+            lms_user_email = self.email_for_learner(lms_user_id)
+            content_title = self.title_for_content(content_key)
             transaction = self._create_redemption(
                 lms_user_id,
                 content_key,
                 subsidy_access_policy_uuid,
+                lms_user_email=lms_user_email,
+                content_title=content_title,
                 idempotency_key=idempotency_key,
                 metadata=metadata,
             )
@@ -414,6 +460,8 @@ class Subsidy(TimeStampedModel):
             lms_user_id,
             content_key,
             subsidy_access_policy_uuid,
+            content_title=None,
+            lms_user_email=None,
             idempotency_key=None,
             metadata=None
     ):
@@ -465,7 +513,9 @@ class Subsidy(TimeStampedModel):
             idempotency_key,
             quantity,
             content_key=content_key,
+            content_title=content_title,
             lms_user_id=lms_user_id,
+            lms_user_email=lms_user_email,
             subsidy_access_policy_uuid=subsidy_access_policy_uuid,
             **tx_metadata,
         )
