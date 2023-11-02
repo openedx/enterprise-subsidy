@@ -11,5 +11,8 @@
 # Common constraints for edx repos
 -c common_constraints.txt
 
-Django<4.3
+# using LTS django version
+Django>=4.2,<4.3
 
+# django-simple-history>3.4.0 for this repo... we were not concerned about migration issues
+django-simple-history>=3.4.0,<3.5.0
