@@ -21,11 +21,11 @@ cffi==1.16.0
     # via
     #   cryptography
     #   pynacl
-charset-normalizer==3.3.0
+charset-normalizer==3.3.2
     # via requests
 click==8.1.7
     # via edx-django-utils
-cryptography==41.0.4
+cryptography==41.0.5
     # via
     #   pyjwt
     #   social-auth-core
@@ -33,7 +33,7 @@ defusedxml==0.8.0rc2
     # via
     #   python3-openid
     #   social-auth-core
-django==4.2.5
+django==4.2.7
     # via
     #   -c requirements/constraints.txt
     #   -r requirements/base.in
@@ -60,7 +60,7 @@ django==4.2.5
     #   social-auth-app-django
 django-clearcache==1.2.1
     # via -r requirements/base.in
-django-cors-headers==4.2.0
+django-cors-headers==4.3.0
     # via -r requirements/base.in
 django-crum==0.7.9
     # via
@@ -84,7 +84,7 @@ django-object-actions==4.2.0
     #   openedx-ledger
 django-simple-history==3.4.0
     # via
-    #   -c requirements/common_constraints.txt
+    #   -c requirements/constraints.txt
     #   -r requirements/base.in
     #   openedx-ledger
 django-waffle==4.0.0
@@ -122,7 +122,7 @@ edx-django-utils==5.7.0
     #   edx-rest-api-client
     #   getsmarter-api-clients
     #   openedx-ledger
-edx-drf-extensions==8.10.0
+edx-drf-extensions==8.13.0
     # via
     #   -r requirements/base.in
     #   edx-rbac
@@ -134,9 +134,9 @@ edx-rbac==1.8.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-edx-rest-api-client==5.6.0
+edx-rest-api-client==5.6.1
     # via -r requirements/base.in
-fastavro==1.8.3
+fastavro==1.9.0
     # via openedx-events
 getsmarter-api-clients==0.6.1
     # via -r requirements/base.in
@@ -154,7 +154,7 @@ jsonfield2==4.0.0.post0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-jsonschema==4.19.1
+jsonschema==4.19.2
     # via drf-spectacular
 jsonschema-specifications==2023.7.1
     # via jsonschema
@@ -162,14 +162,14 @@ mysqlclient==2.2.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-newrelic==9.1.0
+newrelic==9.1.1
     # via edx-django-utils
 oauthlib==3.2.2
     # via
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==8.6.0
+openedx-events==9.0.1
     # via
     #   -r requirements/base.in
     #   openedx-ledger
@@ -183,7 +183,7 @@ pkgutil-resolve-name==1.3.10
     # via jsonschema
 ply==3.11
     # via djangoql
-psutil==5.9.5
+psutil==5.9.6
     # via edx-django-utils
 pycparser==2.21
     # via cffi
@@ -193,6 +193,7 @@ pyjwt[crypto]==2.8.0
     #   edx-auth-backends
     #   edx-drf-extensions
     #   edx-rest-api-client
+    #   pyjwt
     #   social-auth-core
 pymemcache==4.0.0
     # via -r requirements/base.in
@@ -231,7 +232,7 @@ requests-oauthlib==1.3.1
     # via
     #   getsmarter-api-clients
     #   social-auth-core
-rpds-py==0.10.3
+rpds-py==0.10.6
     # via
     #   jsonschema
     #   referencing
@@ -248,9 +249,9 @@ six==1.16.0
     #   edx-rbac
 slumber==0.7.1
     # via edx-rest-api-client
-social-auth-app-django==5.3.0
+social-auth-app-django==5.4.0
     # via edx-auth-backends
-social-auth-core==4.4.2
+social-auth-core==4.5.0
     # via
     #   edx-auth-backends
     #   social-auth-app-django
@@ -268,7 +269,7 @@ uritemplate==4.1.1
     # via
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.0.5
+urllib3==2.0.7
     # via requests
 zipp==3.17.0
     # via importlib-resources
