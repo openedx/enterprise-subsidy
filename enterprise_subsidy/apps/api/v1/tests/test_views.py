@@ -1478,12 +1478,24 @@ class ContentMetadataViewSetTests(APITestBase):
                 },
             )
 
-    def test_failure_no_permission(self):
+    def test_retrieve_failure_no_permission(self):
         self.set_up_admin(enterprise_uuids=[str(uuid.uuid4())])
         url = reverse('api:v1:content-metadata', kwargs={'content_identifier': self.content_key_1})
         response = self.client.get(url + f'?enterprise_customer_uuid={str(uuid.uuid4())}')
         assert response.status_code == 403
         assert response.json() == {'detail': 'MISSING: subsidy.can_read_metadata'}
+
+    def test_retrieve_failure_no_query_param(self):
+        """
+        When no `enterprise_customer_uuid` query param is supplied by the requesting operator, test response is 400.
+        """
+        self.set_up_operator()
+        url = reverse('api:v1:content-metadata', kwargs={'content_identifier': self.content_key_1})
+        response = self.client.get(url)
+        assert response.status_code == 400
+        assert response.json() == [
+            'You must provide at least one of the following query parameters: enterprise_customer_uuid.'
+        ]
 
     @ddt.data(
         {

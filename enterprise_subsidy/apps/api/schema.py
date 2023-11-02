@@ -32,6 +32,16 @@ class Parameters:
             "The content key/identifier to which the query pertains."
         ),
     )
+    ENTERPRISE_CUSTOMER_UUID = OpenApiParameter(
+        'enterprise_customer_uuid',
+        type=OpenApiTypes.UUID,
+        location=OpenApiParameter.QUERY,
+        required=True,
+        allow_blank=False,
+        description=(
+            "The UUID associated with the requesting user's enterprise customer."
+        ),
+    )
 
 
 def _open_api_error_response(exception_class, detail_str, example_name):
