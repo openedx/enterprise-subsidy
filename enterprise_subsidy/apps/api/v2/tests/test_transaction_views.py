@@ -59,6 +59,7 @@ class APITestBase(APITestMixin):
     content_key_2 = "course-v1:edX+test+course.2"
     content_title_1 = "edX: Test Course 1"
     content_title_2 = "edx: Test Course 2"
+    failed_content_title = "Studebaker"
 
     @classmethod
     def setUpClass(cls):
@@ -266,7 +267,7 @@ class TransactionAdminListViewTests(APITestBase):
             lms_user_email=cls.lms_user_email,
             subsidy_access_policy_uuid=cls.subsidy_access_policy_1_uuid,
             content_key=cls.content_key_1,
-            content_title=cls.content_title_1,
+            content_title=cls.failed_content_title,
         )
 
     def test_list_transactions_metadata_format(self):
@@ -461,6 +462,49 @@ class TransactionAdminListViewTests(APITestBase):
 
         response = self.client.get(url)
         assert response.status_code == status.HTTP_403_FORBIDDEN
+
+    @ddt.data(
+        {
+            "request_subsidy_uuid": APITestBase.subsidy_1_uuid,
+            "request_search_query": "edx@example.com",
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.failed_transaction_uuid,
+                APITestBase.subsidy_1_transaction_2_uuid,
+                APITestBase.subsidy_1_transaction_3_uuid,
+            ],
+        },
+        {
+            "request_subsidy_uuid": APITestBase.subsidy_1_uuid,
+            "request_search_query": APITestBase.failed_content_title,
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.failed_transaction_uuid,
+            ],
+        },
+    )
+    @ddt.unpack
+    def test_list_search(
+        self,
+        request_subsidy_uuid,
+        request_search_query,
+        expected_response_status,
+        expected_response_uuids,
+    ):
+        """
+        Test list Transactions search.
+        """
+        self.set_up_admin()
+        url = reverse("api:v2:transaction-admin-list-create", args=[request_subsidy_uuid])
+        query_string = urllib.parse.urlencode({"search": request_search_query})
+        if query_string:
+            query_string = "?" + query_string
+        response = self.client.get(url + query_string)
+        assert response.status_code == expected_response_status
+        if response.status_code < 300:
+            list_response_data = response.json()["results"]
+            response_uuids = [tx["uuid"] for tx in list_response_data]
+            self.assertEqual(sorted(response_uuids), sorted(expected_response_uuids))
 
 
 @ddt.ddt

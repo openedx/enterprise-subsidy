@@ -10,7 +10,7 @@ from edx_rbac.decorators import permission_required
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
 from openedx_ledger.models import LedgerLockAttemptFailed, Transaction
 from requests.exceptions import HTTPError
-from rest_framework import generics, permissions, status
+from rest_framework import filters, generics, permissions, status
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import APIException, NotFound, PermissionDenied, Throttled
 
@@ -83,8 +83,11 @@ class TransactionAdminListCreate(TransactionBaseViewMixin, generics.ListCreateAP
     of the related subsidy's enterprise customer.  It lists all transactions
     for the requested subsidy, or a subset thereof, depending on the query parameters.
     """
-    filter_backends = [drf_filters.DjangoFilterBackend]
+    filter_backends = [drf_filters.DjangoFilterBackend, filters.SearchFilter]
     filterset_class = TransactionAdminFilterSet
+
+    # fields that are queried for search
+    search_fields = ['lms_user_email', 'content_title']
 
     def __init__(self, *args, **kwargs):
         self.extra_context = {}
