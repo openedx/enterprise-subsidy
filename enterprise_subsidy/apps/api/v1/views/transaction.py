@@ -12,7 +12,7 @@ from edx_rbac.mixins import PermissionRequiredForListingMixin
 from edx_rbac.utils import ALL_ACCESS_CONTEXT, contexts_accessible_from_jwt
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
 from openedx_ledger.models import LedgerLockAttemptFailed, Transaction
-from rest_framework import mixins, permissions, status, viewsets
+from rest_framework import filters, mixins, permissions, status, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.exceptions import ParseError
 from rest_framework.response import Response
@@ -65,6 +65,10 @@ class TransactionViewSet(
     lookup_field = "uuid"
     serializer_class = TransactionSerializer
     pagination_class = TransactionListPaginator
+    filter_backends = [filters.SearchFilter]
+
+    # fields that are queried for search
+    search_fields = ['lms_user_email', 'content_title']
 
     # Fields that control permissions for 'list' actions, required by PermissionRequiredForListingMixin.
     list_lookup_field = "ledger__subsidy__enterprise_customer_uuid"

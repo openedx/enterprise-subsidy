@@ -97,7 +97,7 @@ class APITestBase(APITestMixin):
             starting_balance=15000
         )
         self.subsidy_2_transaction_initial = self.subsidy_2.ledger.transactions.first()
-        TransactionFactory(
+        self.subsidy_2_transaction_1 = TransactionFactory(
             uuid=self.subsidy_2_transaction_1_uuid,
             state=TransactionStateChoices.COMMITTED,
             quantity=-1000,
@@ -105,13 +105,15 @@ class APITestBase(APITestMixin):
             lms_user_id=STATIC_LMS_USER_ID+1000,
             lms_user_email=self.lms_user_email,
         )
-        TransactionFactory(
+        self.subsidy_2_transaction_2 = TransactionFactory(
             uuid=self.subsidy_2_transaction_2_uuid,
             state=TransactionStateChoices.COMMITTED,
             quantity=-1000,
             ledger=self.subsidy_2.ledger,
             lms_user_id=STATIC_LMS_USER_ID+1000,
             lms_user_email=self.lms_user_email,
+            content_key=self.content_key_2,
+            content_title=self.content_title_2,
         )
 
         # Create third subsidy with a different enterprise_customer_uuid.  Neither test learner nor the test admin
@@ -122,7 +124,7 @@ class APITestBase(APITestMixin):
             starting_balance=15000
         )
         self.subsidy_3_transaction_initial = self.subsidy_3.ledger.transactions.first()
-        TransactionFactory(
+        self.subsidy_3_transaction_1 = TransactionFactory(
             uuid=self.subsidy_3_transaction_1_uuid,
             state=TransactionStateChoices.COMMITTED,
             quantity=-1000,
@@ -130,7 +132,7 @@ class APITestBase(APITestMixin):
             lms_user_id=STATIC_LMS_USER_ID+1000,
             lms_user_email=self.lms_user_email,
         )
-        TransactionFactory(
+        self.subsidy_3_transaction_2 = TransactionFactory(
             uuid=self.subsidy_3_transaction_2_uuid,
             state=TransactionStateChoices.COMMITTED,
             quantity=-1000,
@@ -1352,6 +1354,49 @@ class TransactionViewSetTests(APITestBase):
         url = reverse("api:v1:transaction-list")
         response = self.client.get(os.path.join(url, str(transaction_with_external_reference.uuid) + "/"))
         assert response.json().get('external_reference') == [external_reference_id]
+
+    @ddt.data(
+        {
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_2_uuid,
+                "search": "edx@example.com"
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_2_transaction_1_uuid,
+                APITestBase.subsidy_2_transaction_2_uuid,
+            ],
+        },
+        {
+            "request_query_params": {
+                "subsidy_uuid": APITestBase.subsidy_2_uuid,
+                "search": "Test Course"
+            },
+            "expected_response_status": 200,
+            "expected_response_uuids": [
+                APITestBase.subsidy_2_transaction_2_uuid,
+            ],
+        },
+    )
+    @ddt.unpack
+    def test_list_search(self, request_query_params, expected_response_status, expected_response_uuids):
+        """
+        Test list Transactions permissions.
+        """
+        self.set_up_admin()
+        url = reverse("api:v1:transaction-list")
+        query_string = urllib.parse.urlencode(request_query_params)
+        if query_string:
+            query_string = "?" + query_string
+        response = self.client.get(url + query_string)
+        assert response.status_code == expected_response_status
+        if response.status_code < 300:
+            list_response_data = response.json()["results"]
+            response_uuids = [tx["uuid"] for tx in list_response_data]
+            assert (
+                set(response_uuids) - self.all_initial_transactions ==
+                set(expected_response_uuids) - self.all_initial_transactions
+            )
 
 
 @ddt.ddt
