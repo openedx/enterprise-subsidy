@@ -65,10 +65,16 @@ class TransactionViewSet(
     lookup_field = "uuid"
     serializer_class = TransactionSerializer
     pagination_class = TransactionListPaginator
-    filter_backends = [filters.SearchFilter]
+    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
 
     # fields that are queried for search
     search_fields = ['lms_user_email', 'content_title']
+
+    # Settings that control list ordering, powered by OrderingFilter.
+    # Fields in `ordering_fields` are what we allow to be passed to the "?ordering=" query param.
+    ordering_fields = ['created', 'quantity']
+    # `ordering` defines the default order.
+    ordering = ['-created']
 
     # Fields that control permissions for 'list' actions, required by PermissionRequiredForListingMixin.
     list_lookup_field = "ledger__subsidy__enterprise_customer_uuid"
