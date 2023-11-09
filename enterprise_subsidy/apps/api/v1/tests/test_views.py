@@ -39,9 +39,11 @@ class APITestBase(APITestMixin):
 
     enterprise_1_uuid = STATIC_ENTERPRISE_UUID
     enterprise_2_uuid = str(uuid.uuid4())
+    enterprise_3_uuid = str(uuid.uuid4())
     subsidy_1_uuid = str(uuid.uuid4())
     subsidy_2_uuid = str(uuid.uuid4())
     subsidy_3_uuid = str(uuid.uuid4())
+    subsidy_4_uuid = str(uuid.uuid4())
     subsidy_1_transaction_1_uuid = str(uuid.uuid4())
     subsidy_1_transaction_2_uuid = str(uuid.uuid4())
     subsidy_2_transaction_1_uuid = str(uuid.uuid4())
@@ -50,11 +52,16 @@ class APITestBase(APITestMixin):
     subsidy_3_transaction_2_uuid = str(uuid.uuid4())
     subsidy_access_policy_1_uuid = str(uuid.uuid4())
     subsidy_access_policy_2_uuid = str(uuid.uuid4())
+    subsidy_access_policy_3_uuid = str(uuid.uuid4())
+    subsidy_4_transaction_1_uuid = str(uuid.uuid4())
+    subsidy_4_transaction_2_uuid = str(uuid.uuid4())
     content_key_1 = "course-v1:edX+test+course.1"
     content_title_1 = "edx: Test Course 1"
     content_key_2 = "course-v1:edX+test+course.2"
     content_title_2 = "edx: Test Course 2"
     lms_user_email = 'edx@example.com'
+    transaction_quantity_1 = -1
+    transaction_quantity_2 = -2
 
     def setUp(self):
         super().setUp()
@@ -141,6 +148,28 @@ class APITestBase(APITestMixin):
             lms_user_email=self.lms_user_email,
         )
 
+        self.subsidy_4 = SubsidyFactory(
+            uuid=self.subsidy_4_uuid,
+            enterprise_customer_uuid=self.enterprise_3_uuid,
+            starting_balance=15000
+        )
+        self.subsidy_4_transaction_initial = self.subsidy_4.ledger.transactions.first()
+
+        self.subsidy_4_transaction_1 = TransactionFactory(
+            uuid=self.subsidy_4_transaction_1_uuid,
+            state=TransactionStateChoices.COMMITTED,
+            quantity=self.transaction_quantity_1,
+            ledger=self.subsidy_4.ledger,
+            lms_user_id=STATIC_LMS_USER_ID+1000,
+        )
+        self.subsidy_4_transaction_2 = TransactionFactory(
+            uuid=self.subsidy_4_transaction_2_uuid,
+            state=TransactionStateChoices.COMMITTED,
+            quantity=self.transaction_quantity_2,
+            ledger=self.subsidy_4.ledger,
+            lms_user_id=STATIC_LMS_USER_ID+1000,
+        )
+
         self.all_initial_transactions = set([
             str(self.subsidy_1_transaction_initial.uuid),
             str(self.subsidy_2_transaction_initial.uuid),
@@ -203,7 +232,7 @@ class SubsidyViewSetTests(APITestBase):
         response = self.client.get(self.get_list_url)
         print(response.json()['results'][0]['uuid'].find(str(self.subsidy_1.uuid)))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()['count'], 3)
+        self.assertEqual(response.json()['count'], 4)
         self.assertEqual(len(response.json()['results']), response.json()['count'])
 
     def test_get_subsidy_list_with_query_parameter_enterprise_customer_uuid(self):
@@ -1397,6 +1426,50 @@ class TransactionViewSetTests(APITestBase):
                 set(response_uuids) - self.all_initial_transactions ==
                 set(expected_response_uuids) - self.all_initial_transactions
             )
+
+    @ddt.data(
+        {
+            "request_subsidy_uuid": APITestBase.subsidy_4_uuid,
+            "request_ordering_query": "created",
+            "expected_response_status": 200,
+            "expected_response_uuid_order": [
+                APITestBase.subsidy_4_transaction_1_uuid,
+                APITestBase.subsidy_4_transaction_2_uuid,
+            ],
+        },
+        {
+            "request_subsidy_uuid": APITestBase.subsidy_4_uuid,
+            "request_ordering_query": "quantity",
+            "expected_response_status": 200,
+            "expected_response_uuid_order": [
+                APITestBase.subsidy_4_transaction_2_uuid,
+                APITestBase.subsidy_4_transaction_1_uuid,
+            ],
+        },
+    )
+    @ddt.unpack
+    def test_list_ordering(
+        self,
+        request_subsidy_uuid,
+        request_ordering_query,
+        expected_response_status,
+        expected_response_uuid_order,
+    ):
+        """
+        Test list Transactions search.
+        """
+        self.set_up_admin(enterprise_uuids=[self.enterprise_3_uuid])
+        url = reverse("api:v2:transaction-admin-list-create", args=[request_subsidy_uuid])
+        query_string = urllib.parse.urlencode({"ordering": request_ordering_query})
+        if query_string:
+            query_string = "?" + query_string
+        response = self.client.get(url + query_string)
+        assert response.status_code == expected_response_status
+        if response.status_code < 300:
+            list_response_data = response.json()["results"]
+            response_uuids = [tx["uuid"] for tx in list_response_data]
+            response_uuids.remove(str(self.subsidy_4_transaction_initial.uuid))
+            self.assertEqual(response_uuids, expected_response_uuid_order)
 
 
 @ddt.ddt

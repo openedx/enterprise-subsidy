@@ -83,11 +83,17 @@ class TransactionAdminListCreate(TransactionBaseViewMixin, generics.ListCreateAP
     of the related subsidy's enterprise customer.  It lists all transactions
     for the requested subsidy, or a subset thereof, depending on the query parameters.
     """
-    filter_backends = [drf_filters.DjangoFilterBackend, filters.SearchFilter]
+    filter_backends = [drf_filters.DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
     filterset_class = TransactionAdminFilterSet
 
     # fields that are queried for search
     search_fields = ['lms_user_email', 'content_title']
+
+    # Settings that control list ordering, powered by OrderingFilter.
+    # Fields in `ordering_fields` are what we allow to be passed to the "?ordering=" query param.
+    ordering_fields = ['created', 'quantity']
+    # `ordering` defines the default order.
+    ordering = ['-created']
 
     def __init__(self, *args, **kwargs):
         self.extra_context = {}
