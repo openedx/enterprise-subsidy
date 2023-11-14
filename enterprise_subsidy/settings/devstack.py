@@ -6,6 +6,12 @@ CORS_ORIGIN_WHITELIST = (
     'http://localhost:1991',  # frontend-app-admin-portal
 )
 
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost:18450',
+    'http://localhost:8734',
+    'http://localhost:1991',
+]
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
