@@ -75,6 +75,22 @@ class TestTransactionManagementCommand(TestCase):
             external_fulfillment_provider=self.unknown_provider,
             transaction=self.unknown_transaction,
         )
+        self.transaction_to_backpopulate = TransactionFactory(
+            ledger=self.ledger,
+            lms_user_email=None,
+            content_title=None,
+            quantity=100,
+            fulfillment_identifier=self.fulfillment_identifier
+        )
+        self.internal_ledger = LedgerFactory()
+        self.internal_subsidy = SubsidyFactory(ledger=self.internal_ledger, internal_only=True)
+        self.internal_transaction_to_backpopulate = TransactionFactory(
+            ledger=self.internal_ledger,
+            lms_user_email=None,
+            content_title=None,
+            quantity=100,
+            fulfillment_identifier=self.fulfillment_identifier
+        )
 
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
     def test_write_reversals_from_enterprise_unenrollment_with_existing_reversal(self, mock_oauth_client):
@@ -889,3 +905,67 @@ class TestTransactionManagementCommand(TestCase):
         with self.assertRaises(FulfillmentException):
             call_command('write_reversals_from_enterprise_unenrollments')
         assert Reversal.objects.count() == 0
+
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.lms_user_client")
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_backpopulate_transaction_email_and_title(
+        self,
+        mock_get_content_summary,
+        mock_lms_user_client,
+    ):
+        """
+        Test that the backpopulate_transaction_email_and_title management command backpopulates the email and title
+        """
+        expected_email_address = 'edx@example.com'
+        mock_lms_user_client.return_value.best_effort_user_data.return_value = {
+            'email': expected_email_address,
+        }
+        expected_content_title = 'a content title'
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'a content uuid',
+            'content_key': 'a content key',
+            'content_title': expected_content_title,
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
+        call_command('backpopulate_transaction_email_and_title')
+        self.transaction_to_backpopulate.refresh_from_db()
+        self.internal_transaction_to_backpopulate.refresh_from_db()
+        assert self.transaction_to_backpopulate.lms_user_email == expected_email_address
+        assert self.transaction_to_backpopulate.content_title == expected_content_title
+        assert self.internal_transaction_to_backpopulate.lms_user_email is None
+        assert self.internal_transaction_to_backpopulate.content_title is None
+
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.lms_user_client")
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_backpopulate_transaction_email_and_title_include_internal(
+        self,
+        mock_get_content_summary,
+        mock_lms_user_client,
+    ):
+        """
+        Test that the backpopulate_transaction_email_and_title while including internal subsidies
+        """
+        expected_email_address = 'edx@example.com'
+        mock_lms_user_client.return_value.best_effort_user_data.return_value = {
+            'email': expected_email_address,
+        }
+        expected_content_title = 'a content title'
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'a content uuid',
+            'content_key': 'a content key',
+            'content_title': expected_content_title,
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
+        call_command('backpopulate_transaction_email_and_title', include_internal_subsidies=True)
+        self.transaction_to_backpopulate.refresh_from_db()
+        self.internal_transaction_to_backpopulate.refresh_from_db()
+        assert self.transaction_to_backpopulate.lms_user_email == expected_email_address
+        assert self.transaction_to_backpopulate.content_title == expected_content_title
+        assert self.internal_transaction_to_backpopulate.lms_user_email == expected_email_address
+        assert self.internal_transaction_to_backpopulate.content_title == expected_content_title
