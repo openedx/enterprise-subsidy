@@ -88,8 +88,13 @@ class TestTransactionManagementCommand(TestCase):
             ledger=self.internal_ledger,
             lms_user_email=None,
             content_title=None,
-            quantity=100,
-            fulfillment_identifier=self.fulfillment_identifier
+        )
+        self.transaction_not_to_backpopulate = TransactionFactory(
+            ledger=self.ledger,
+            lms_user_id=None,
+            lms_user_email=None,
+            content_key=None,
+            content_title=None,
         )
 
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
@@ -933,10 +938,13 @@ class TestTransactionManagementCommand(TestCase):
         call_command('backpopulate_transaction_email_and_title')
         self.transaction_to_backpopulate.refresh_from_db()
         self.internal_transaction_to_backpopulate.refresh_from_db()
+        self.transaction_not_to_backpopulate.refresh_from_db()
         assert self.transaction_to_backpopulate.lms_user_email == expected_email_address
         assert self.transaction_to_backpopulate.content_title == expected_content_title
         assert self.internal_transaction_to_backpopulate.lms_user_email is None
         assert self.internal_transaction_to_backpopulate.content_title is None
+        assert self.transaction_not_to_backpopulate.lms_user_email is None
+        assert self.transaction_not_to_backpopulate.content_title is None
 
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.lms_user_client")
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
@@ -965,7 +973,10 @@ class TestTransactionManagementCommand(TestCase):
         call_command('backpopulate_transaction_email_and_title', include_internal_subsidies=True)
         self.transaction_to_backpopulate.refresh_from_db()
         self.internal_transaction_to_backpopulate.refresh_from_db()
+        self.transaction_not_to_backpopulate.refresh_from_db()
         assert self.transaction_to_backpopulate.lms_user_email == expected_email_address
         assert self.transaction_to_backpopulate.content_title == expected_content_title
         assert self.internal_transaction_to_backpopulate.lms_user_email == expected_email_address
         assert self.internal_transaction_to_backpopulate.content_title == expected_content_title
+        assert self.transaction_not_to_backpopulate.lms_user_email is None
+        assert self.transaction_not_to_backpopulate.content_title is None

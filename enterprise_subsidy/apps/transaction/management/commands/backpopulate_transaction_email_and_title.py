@@ -53,11 +53,11 @@ class Command(BaseCommand):
         """
         logger.info(f"Processing {subsidy.uuid} transaction {txn.uuid}")
 
-        if txn.lms_user_email is None:
+        if txn.lms_user_email is None and txn.lms_user_id is not None:
             lms_user_email = subsidy.email_for_learner(txn.lms_user_id)
             txn.lms_user_email = lms_user_email
             logger.info(f"Found {lms_user_email} for {subsidy.uuid} transaction {txn.uuid}")
-        if txn.content_title is None:
+        if txn.content_title is None and txn.content_key is not None:
             content_title = subsidy.title_for_content(txn.content_key)
             txn.content_title = content_title
             logger.info(f"Found {content_title} for {subsidy.uuid} transaction {txn.uuid}")
@@ -85,9 +85,13 @@ class Command(BaseCommand):
         for subsidies in batch_by_pk(Subsidy, extra_filter=subsidy_filter):
             for subsidy in subsidies:
                 logger.info(f"Processing subsidy {subsidy.uuid}")
+
                 subsidy_filter = Q(ledger=subsidy.ledger)
-                incomplete_only_filter = Q(lms_user_email__isnull=True) | Q(content_title__isnull=True)
+                incomplete_email = Q(lms_user_email__isnull=True) & Q(lms_user_id__isnull=False)
+                incomplete_title = Q(content_title__isnull=True) & Q(content_key__isnull=False)
+                incomplete_only_filter = incomplete_email | incomplete_title
                 txn_filter = subsidy_filter & incomplete_only_filter
+
                 for txns in batch_by_pk(Transaction, extra_filter=txn_filter):
                     for txn in txns:
                         self.process_transaction(subsidy, txn)
