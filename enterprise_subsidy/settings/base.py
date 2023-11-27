@@ -369,3 +369,11 @@ SIMPLE_HISTORY_DATE_INDEX = False
 # How long we keep API Client data in cache. (seconds)
 ONE_HOUR = 60 * 60
 LMS_USER_DATA_CACHE_TIMEOUT = ONE_HOUR
+
+# Defines error bounds for requested redemption price validation
+# See https://github.com/openedx/enterprise-access/blob/main/docs/decisions/0014-assignment-price-validation.rst
+# We use a wider default allowed interval in this service, because
+# generally only operators are allowed to make calls to redeem, and there may
+# be more drift between the time of allocation and the time of redemption.
+ALLOCATION_PRICE_VALIDATION_LOWER_BOUND_RATIO = .80
+ALLOCATION_PRICE_VALIDATION_UPPER_BOUND_RATIO = 1.20

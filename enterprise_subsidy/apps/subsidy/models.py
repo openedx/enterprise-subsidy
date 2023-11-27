@@ -13,6 +13,7 @@ from datetime import datetime, timezone
 from unittest import mock
 from uuid import uuid4
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import models
 from django.utils.functional import cached_property
@@ -47,6 +48,13 @@ logger = logging.getLogger(__name__)
 class ContentNotFoundForCustomerException(Exception):
     """
     Raise this when the given content_key is not in any catalog for this customer.
+    """
+
+
+class PriceValidationError(ValidationError):
+    """
+    Raised in cases related to requested prices, when the requested price
+    fails our validation checks.
     """
 
 
@@ -391,7 +399,15 @@ class Subsidy(TimeStampedModel):
         ledger_transaction.state = TransactionStateChoices.FAILED
         ledger_transaction.save()
 
-    def redeem(self, lms_user_id, content_key, subsidy_access_policy_uuid, idempotency_key=None, metadata=None):
+    def redeem(
+        self,
+        lms_user_id,
+        content_key,
+        subsidy_access_policy_uuid,
+        idempotency_key=None,
+        requested_price_cents=None,
+        metadata=None,
+    ):
         """
         Redeem this subsidy and enroll the learner.
 
@@ -414,7 +430,7 @@ class Subsidy(TimeStampedModel):
         if existing_transaction := self.get_committed_transaction_no_reversal(lms_user_id, content_key):
             return (existing_transaction, False)
 
-        is_redeemable, content_price = self.is_redeemable(content_key)
+        is_redeemable, content_price = self.is_redeemable(content_key, requested_price_cents)
 
         base_exception_msg = (
             f'{self} cannot redeem {content_key} with price {content_price} '
@@ -430,6 +446,7 @@ class Subsidy(TimeStampedModel):
             transaction = self._create_redemption(
                 lms_user_id,
                 content_key,
+                content_price,
                 subsidy_access_policy_uuid,
                 lms_user_email=lms_user_email,
                 content_title=content_title,
@@ -459,6 +476,7 @@ class Subsidy(TimeStampedModel):
             self,
             lms_user_id,
             content_key,
+            content_price,
             subsidy_access_policy_uuid,
             content_title=None,
             lms_user_email=None,
@@ -499,7 +517,7 @@ class Subsidy(TimeStampedModel):
                 All other exceptions raised during the creation of an enrollment.  This should have already triggered
                 the rollback of a pending transaction.
         """
-        quantity = -1 * self.price_for_content(content_key)
+        quantity = -1 * content_price
         if not idempotency_key:
             idempotency_key = create_idempotency_key_for_transaction(
                 self.ledger,
@@ -549,7 +567,25 @@ class Subsidy(TimeStampedModel):
 
         return ledger_transaction
 
-    def is_redeemable(self, content_key):
+    def validate_requested_price(self, content_key, requested_price_cents, canonical_price_cents):
+        """
+        Validates that the requested redemption price (in USD cents)
+        is within some acceptable error bound interval.
+        """
+        if requested_price_cents < 0:
+            raise PriceValidationError('Can only redeem non-negative content prices in cents.')
+
+        lower_bound = settings.ALLOCATION_PRICE_VALIDATION_LOWER_BOUND_RATIO * canonical_price_cents
+        upper_bound = settings.ALLOCATION_PRICE_VALIDATION_UPPER_BOUND_RATIO * canonical_price_cents
+        if not (lower_bound <= requested_price_cents <= upper_bound):
+            raise PriceValidationError(
+                f'Requested price {requested_price_cents} for {content_key} '
+                f'outside of acceptable interval on canonical course price of {canonical_price_cents}.'
+            )
+
+        return requested_price_cents
+
+    def is_redeemable(self, content_key, requested_price_cents=None):
         """
         Check if this subsidy is redeemable (by anyone) at a given time.
 
@@ -558,11 +594,23 @@ class Subsidy(TimeStampedModel):
         Args:
             content_key (str): content key of content we may try to redeem.
             redemption_datetime (datetime.datetime): The point in time to check for redemability.
+            requested_price_cents (int): An optional "override" price for the given content.
+                 If present, we'll compare this quantity against the current balance,
+                 instead of the price read from our catalog service.  An override *must*
+                 be within some reasonable bound of the real price.
 
         Returns:
             2-tuple of (bool: True if redeemable, int: price of content)
         """
-        content_price = self.price_for_content(content_key)
+        canonical_price_cents = self.price_for_content(content_key)
+        content_price = canonical_price_cents
+        if requested_price_cents:
+            content_price = self.validate_requested_price(
+                content_key,
+                requested_price_cents,
+                canonical_price_cents,
+            )
+
         redeemable = False
         if content_price is not None:
             redeemable = self.current_balance() >= content_price
