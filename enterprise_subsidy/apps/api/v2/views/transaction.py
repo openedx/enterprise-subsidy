@@ -30,7 +30,7 @@ from enterprise_subsidy.apps.subsidy.constants import (
     PERMISSION_CAN_READ_ALL_TRANSACTIONS,
     PERMISSION_CAN_READ_TRANSACTIONS
 )
-from enterprise_subsidy.apps.subsidy.models import ContentNotFoundForCustomerException, Subsidy
+from enterprise_subsidy.apps.subsidy.models import ContentNotFoundForCustomerException, PriceValidationError, Subsidy
 
 logger = logging.getLogger(__name__)
 
@@ -156,8 +156,20 @@ class TransactionAdminListCreate(TransactionBaseViewMixin, generics.ListCreateAP
     def post(self, *args, **kwargs):
         """
         A create view that is accessible only to operators of the system.
+
         It creates (or just gets, if a matching Transaction is found with same ledger and idempotency_key) a
-        transaction via the `Subsidy.redeem()` method.
+        transaction via the `Subsidy.redeem()` method.  Normally, the logic of this view
+        is responsible for determining the price of the requested content key, with which
+        the redeemed transaction's quantity will be valued.
+
+        Note that, under some circumstances (for example, assigned learner content), it is
+        appropriate and allowable for the *caller* of this view to request a specific price
+        at which a redeemed transaction should occur.  In these circumstances, this service
+        still does some validation of the requested price to ensure that it falls within
+        a reasonable interval around the *true* price of the related content key. See:
+
+        https://github.com/openedx/enterprise-access/blob/main/docs/decisions/0012-assignment-based-policies.rst
+        https://github.com/openedx/enterprise-access/blob/main/docs/decisions/0014-assignment-price-validation.rst
         """
         return super().post(*args, **kwargs)
 
@@ -190,6 +202,11 @@ class TransactionAdminListCreate(TransactionBaseViewMixin, generics.ListCreateAP
             raise TransactionCreationAPIException(
                 detail=str(exc),
                 code=ErrorCodes.CONTENT_NOT_FOUND,
+            )
+        except PriceValidationError as exc:
+            raise TransactionCreationAPIException(
+                detail=str(exc),
+                code=ErrorCodes.INVALID_REQUESTED_PRICE,
             )
         except FulfillmentException as exc:
             raise TransactionCreationAPIException(

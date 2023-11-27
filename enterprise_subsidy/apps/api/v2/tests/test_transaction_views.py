@@ -704,6 +704,7 @@ class TransactionAdminCreateViewTests(APITestBase):
             self.content_key_2,
             uuid.UUID(self.subsidy_access_policy_1_uuid),
             idempotency_key='my-idempotency-key',
+            requested_price_cents=None,
             metadata=None,
         )
         assert response.json() == {'detail': 'Attempt to lock the Ledger failed, please try again.'}
@@ -755,11 +756,71 @@ class TransactionAdminCreateViewTests(APITestBase):
             self.content_key_2,
             uuid.UUID(self.subsidy_access_policy_1_uuid),
             idempotency_key='my-idempotency-key',
+            requested_price_cents=None,
             metadata=None,
         )
         assert response.json() == {
             'detail': str(exception_to_raise),
             'code': expected_error_code,
+        }
+
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.lms_user_client")
+    def test_operator_creation_requested_price_invalid(
+        self,
+        mock_lms_user_client,
+        mock_get_content_summary,
+        mock_price_for_content,
+        mock_enterprise_client
+    ):
+        """
+        Tests that the admin transaction creation endpoint responds with a 422
+        when creating a transaction for an invalid requested price.
+        """
+        self.set_up_operator()
+
+        canonical_price_cents = 1000
+        # request only half of the canonical price, which falls outside default allowable interval
+        requested_price_cents = 500
+        mock_lms_user_client.return_value.best_effort_user_data.return_value = {
+            'email': self.lms_user_email,
+        }
+        mock_enterprise_client.enroll.return_value = 'my-fulfillment-id'
+        mock_price_for_content.return_value = canonical_price_cents
+        mock_get_content_summary.return_value = {
+            'content_uuid': self.content_key_1,
+            'content_key': self.content_key_1,
+            'content_title': self.content_title_1,
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': canonical_price_cents,
+            'geag_variant_id': None,
+        }
+        url = reverse("api:v2:transaction-admin-list-create", args=[self.subsidy_1.uuid])
+        # use the same inputs as existing_transaction
+        request_data = {
+            'lms_user_id': STATIC_LMS_USER_ID,
+            'content_key': self.content_key_1,
+            'subsidy_access_policy_uuid': self.subsidy_access_policy_1_uuid,
+            'idempotency_key': 'my-idempotency-key',
+            'requested_price_cents': requested_price_cents,
+            'metadata': {
+                'foo': 'bar',
+            },
+        }
+
+        response = self.client.post(url, request_data)
+
+        self.assertEqual(response.status_code, status.HTTP_422_UNPROCESSABLE_ENTITY)
+        expected_error_detail = [
+            f'Requested price {requested_price_cents} for {self.content_key_1} outside of '
+            f'acceptable interval on canonical course price of {canonical_price_cents}.'
+        ]
+        assert response.json() == {
+            'detail': str(expected_error_detail),
+            'code': ErrorCodes.INVALID_REQUESTED_PRICE,
         }
 
     def test_operator_creation_required_fields_validation_eror(self):
@@ -770,14 +831,19 @@ class TransactionAdminCreateViewTests(APITestBase):
         self.set_up_operator()
 
         url = reverse("api:v2:transaction-admin-list-create", args=[self.subsidy_1.uuid])
+        payload = {
+            'anything': 'goes',
+            'requested_price_cents': -100,
+        }
 
-        response = self.client.post(url, {'anything': 'goes'})
+        response = self.client.post(url, payload)
 
         assert response.status_code == status.HTTP_400_BAD_REQUEST
         assert response.json() == {
             'content_key': ['This field is required.'],
             'lms_user_id': ['This field is required.'],
             'subsidy_access_policy_uuid': ['This field is required.'],
+            'requested_price_cents': ['Ensure this value is greater than or equal to 0.'],
         }
 
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
@@ -832,8 +898,10 @@ class TransactionAdminCreateViewTests(APITestBase):
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.lms_user_client")
+    @ddt.data(True, False)
     def test_operator_creation_happy_path_201(
         self,
+        use_requested_price,
         mock_lms_user_client,
         mock_get_content_summary,
         mock_price_for_content,
@@ -845,18 +913,20 @@ class TransactionAdminCreateViewTests(APITestBase):
         """
         self.set_up_operator()
 
+        canonical_price_cents = 1000
+        requested_price_cents = 900  # only in use if use_requested_price is True
         mock_lms_user_client.return_value.best_effort_user_data.return_value = {
             'email': self.lms_user_email,
         }
         mock_enterprise_client.enroll.return_value = 'my-fulfillment-id'
-        mock_price_for_content.return_value = 1000
+        mock_price_for_content.return_value = canonical_price_cents
         mock_get_content_summary.return_value = {
             'content_uuid': self.content_key_1,
             'content_key': self.content_key_1,
             'content_title': self.content_title_1,
             'source': 'edX',
             'mode': 'verified',
-            'content_price': 10000,
+            'content_price': canonical_price_cents,
             'geag_variant_id': None,
         }
         url = reverse("api:v2:transaction-admin-list-create", args=[self.subsidy_1.uuid])
@@ -870,6 +940,8 @@ class TransactionAdminCreateViewTests(APITestBase):
                 'foo': 'bar',
             },
         }
+        if use_requested_price:
+            request_data['requested_price_cents'] = requested_price_cents
 
         response = self.client.post(url, request_data)
 
@@ -891,7 +963,8 @@ class TransactionAdminCreateViewTests(APITestBase):
         assert response_data["subsidy_access_policy_uuid"] == request_data["subsidy_access_policy_uuid"]
         assert response_data["metadata"] == {'foo': 'bar'}
         assert response_data["unit"] == self.subsidy_1.ledger.unit
-        assert response_data["quantity"] == -1000
         assert response_data["fulfillment_identifier"] == 'my-fulfillment-id'
         assert response_data["reversal"] is None
         assert response_data["state"] == TransactionStateChoices.COMMITTED
+        expected_quantity = -1 * (requested_price_cents if use_requested_price else canonical_price_cents)
+        assert response_data["quantity"] == expected_quantity

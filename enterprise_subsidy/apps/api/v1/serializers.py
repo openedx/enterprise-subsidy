@@ -12,7 +12,12 @@ from requests.exceptions import HTTPError
 from rest_framework import serializers
 
 from enterprise_subsidy.apps.fulfillment.api import FulfillmentException
-from enterprise_subsidy.apps.subsidy.models import ContentNotFoundForCustomerException, RevenueCategoryChoices, Subsidy
+from enterprise_subsidy.apps.subsidy.models import (
+    ContentNotFoundForCustomerException,
+    PriceValidationError,
+    RevenueCategoryChoices,
+    Subsidy
+)
 
 logger = getLogger(__name__)
 
@@ -194,6 +199,14 @@ class TransactionCreationRequestSerializer(serializers.ModelSerializer):
         required=False,
         allow_null=True,
     )
+    requested_price_cents = serializers.IntegerField(
+        required=False,
+        allow_null=True,
+        help_text=(
+            'The price, in USD cents, at which the caller requests the redemption be made. Must be >= 0.'
+        ),
+        min_value=0,
+    )
 
     class Meta:
         """
@@ -206,6 +219,7 @@ class TransactionCreationRequestSerializer(serializers.ModelSerializer):
             'content_key',
             'subsidy_access_policy_uuid',
             'metadata',
+            'requested_price_cents',
         ]
         # Override lms_user_id, content_key, and subsidy_access_policy_uuid to each be required;
         # their model field definitions have `required=False`.
@@ -247,6 +261,7 @@ class TransactionCreationRequestSerializer(serializers.ModelSerializer):
                 validated_data['content_key'],
                 validated_data['subsidy_access_policy_uuid'],
                 idempotency_key=validated_data.get('idempotency_key'),
+                requested_price_cents=validated_data.get('requested_price_cents'),
                 metadata=validated_data.get('metadata'),
             )
         except LedgerLockAttemptFailed as exc:
@@ -261,6 +276,11 @@ class TransactionCreationRequestSerializer(serializers.ModelSerializer):
             logger.exception(
                 f'Could not find content while creating transaction for {validated_data}'
                 f'in subsidy {subsidy.uuid}'
+            )
+            raise exc
+        except PriceValidationError as exc:
+            logger.error(
+                f'Invalid price requested for {validated_data} in subsidy {subsidy.uuid}'
             )
             raise exc
         except FulfillmentException as exc:

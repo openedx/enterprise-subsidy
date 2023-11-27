@@ -22,7 +22,7 @@ from rest_framework import status
 from enterprise_subsidy.apps.fulfillment.api import InvalidFulfillmentMetadataException
 from test_utils.utils import MockResponse
 
-from ..models import ContentNotFoundForCustomerException, Subsidy
+from ..models import ContentNotFoundForCustomerException, PriceValidationError, Subsidy
 from .factories import SubsidyFactory
 
 
@@ -45,6 +45,10 @@ class SubsidyModelReadTestCase(TestCase):
         )
         cls.subsidy.content_metadata_api = mock.MagicMock()
         super().setUpTestData()
+
+    def tearDown(self):
+        super().tearDown()
+        self.subsidy.content_metadata_api.reset_mock()
 
     def test_price_for_content(self):
         """
@@ -187,6 +191,62 @@ class SubsidyModelReadTestCase(TestCase):
         self.assertEqual(is_redeemable, expected_to_be_redeemable)
         self.assertEqual(content_price, actual_content_price)
 
+    @ddt.data(True, False)
+    def test_is_redeemable_override(self, expected_to_be_redeemable):
+        """
+        Tests that Subsidy.is_redeemable() returns true when the subsidy
+        has enough remaining balance to cover a requested redemption price from the caller,
+        and false otherwise.
+        """
+        # Mock the override price to be slightly too expensive if
+        # expected_to_be_redeemable is false;
+        # mock it to be slightly affordable if true.
+        constant = -123 if expected_to_be_redeemable else 123
+        canonical_content_price = self.subsidy.current_balance() + constant
+        requested_price = canonical_content_price - 10
+
+        self.subsidy.content_metadata_api().get_course_price.return_value = canonical_content_price
+
+        is_redeemable, price_for_redemption = self.subsidy.is_redeemable('some-content-key', requested_price)
+
+        self.assertEqual(is_redeemable, expected_to_be_redeemable)
+        self.assertEqual(requested_price, price_for_redemption)
+        self.subsidy.content_metadata_api().get_course_price.assert_called_once_with(
+            self.subsidy.enterprise_customer_uuid,
+            'some-content-key',
+        )
+
+    def test_validate_requested_price_lt_zero(self):
+        """
+        Requested price validation should fail for requested prices < 0.
+        """
+        with self.assertRaisesRegex(PriceValidationError, 'non-negative'):
+            self.subsidy.validate_requested_price('content-key', -1, 100)
+
+    def test_validate_requested_price_too_high(self):
+        """
+        Requested price validation should fail for requested prices that are too high
+        """
+        with self.assertRaisesRegex(PriceValidationError, 'outside of acceptable interval'):
+            self.subsidy.validate_requested_price('content-key', 121, 100)
+
+    def test_validate_requested_price_too_low(self):
+        """
+        Requested price validation should fail for requested prices that are too low
+        """
+        with self.assertRaisesRegex(PriceValidationError, 'outside of acceptable interval'):
+            self.subsidy.validate_requested_price('content-key', 79, 100)
+
+    @ddt.data(80, 120)  # these numbers align exactly to the validation thresholds defined in base settings
+    def test_validate_requested_price_just_right(self, requested_price_cents):
+        """
+        Requested price validation should not fail on requested prices that are just right.
+        """
+        self.assertEqual(
+            self.subsidy.validate_requested_price('content-key', requested_price_cents, 100),
+            requested_price_cents,
+        )
+
 
 class SubsidyModelRedemptionTestCase(TestCase):
     """
@@ -286,6 +346,78 @@ class SubsidyModelRedemptionTestCase(TestCase):
         assert transaction_created
         assert new_transaction.state == TransactionStateChoices.COMMITTED
         assert new_transaction.quantity == -mock_content_price
+
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_redeem_with_requested_price(
+        self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content
+    ):
+        """
+        Test Subsidy.redeem() happy path with an acceptable requested price.
+        """
+        lms_user_id = 1
+        content_key = "course-v1:edX+test+course"
+        subsidy_access_policy_uuid = str(uuid4())
+        mock_enterprise_fulfillment_uuid = str(uuid4())
+        mock_content_price = 1000
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'course-v1:edX+test+course',
+            'content_key': 'course-v1:edX+test+course',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 1000,
+            'geag_variant_id': None,
+        }
+        mock_price_for_content.return_value = mock_content_price
+        mock_enterprise_client.enroll.return_value = mock_enterprise_fulfillment_uuid
+        new_transaction, transaction_created = self.subsidy.redeem(
+            lms_user_id,
+            content_key,
+            subsidy_access_policy_uuid,
+            requested_price_cents=990,
+        )
+        assert transaction_created
+        assert new_transaction.state == TransactionStateChoices.COMMITTED
+        assert new_transaction.quantity == -990
+
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_redeem_with_requested_price_validation_error(
+        self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content
+    ):
+        """
+        Test Subsidy.redeem() with an unacceptable requested price.
+        """
+        lms_user_id = 1
+        content_key = "course-v1:edX+test+course"
+        subsidy_access_policy_uuid = str(uuid4())
+        mock_enterprise_fulfillment_uuid = str(uuid4())
+        mock_content_price = 1000
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'course-v1:edX+test+course',
+            'content_key': 'course-v1:edX+test+course',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 1000,
+            'geag_variant_id': None,
+        }
+
+        # we'll later assert that no transaction was created during this redemption attempt
+        num_txs_before = Transaction.objects.all().count()
+
+        mock_price_for_content.return_value = mock_content_price
+        mock_enterprise_client.enroll.return_value = mock_enterprise_fulfillment_uuid
+        with self.assertRaisesRegex(PriceValidationError, 'outside of acceptable interval'):
+            self.subsidy.redeem(
+                lms_user_id,
+                content_key,
+                subsidy_access_policy_uuid,
+                requested_price_cents=500,
+            )
+
+        self.assertEqual(num_txs_before, Transaction.objects.all().count())
 
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
