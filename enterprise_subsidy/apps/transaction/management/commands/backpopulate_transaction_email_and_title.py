@@ -53,14 +53,21 @@ class Command(BaseCommand):
         """
         logger.info(f"Processing {subsidy.uuid} transaction {txn.uuid}")
 
-        if txn.lms_user_email is None and txn.lms_user_id is not None:
-            lms_user_email = subsidy.email_for_learner(txn.lms_user_id)
-            txn.lms_user_email = lms_user_email
-            logger.info(f"Found {lms_user_email} for {subsidy.uuid} transaction {txn.uuid}")
-        if txn.content_title is None and txn.content_key is not None:
-            content_title = subsidy.title_for_content(txn.content_key)
-            txn.content_title = content_title
-            logger.info(f"Found {content_title} for {subsidy.uuid} transaction {txn.uuid}")
+        try:
+            if txn.lms_user_email is None and txn.lms_user_id is not None:
+                lms_user_email = subsidy.email_for_learner(txn.lms_user_id)
+                txn.lms_user_email = lms_user_email
+                logger.info(f"Found {lms_user_email} for {subsidy.uuid} transaction {txn.uuid}")
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            logger.exception(f"Error while processing lms_user_email for {subsidy.uuid} transaction {txn.uuid}: {e}")
+
+        try:
+            if txn.content_title is None and txn.content_key is not None:
+                content_title = subsidy.title_for_content(txn.content_key)
+                txn.content_title = content_title
+                logger.info(f"Found {content_title} for {subsidy.uuid} transaction {txn.uuid}")
+        except Exception as e:  # pylint: disable=broad-exception-caught
+            logger.exception(f"Error while processing content_title for {subsidy.uuid} transaction {txn.uuid}: {e}")
 
         if not self.dry_run:
             txn.save()
