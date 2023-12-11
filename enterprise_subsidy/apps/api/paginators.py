@@ -3,12 +3,13 @@ Customer paginators for the subsidy API.
 """
 from math import ceil
 
+from edx_rest_framework_extensions.paginators import DefaultPagination
 from rest_framework import pagination
 
 from ..subsidy.models import Subsidy
 
 
-class TransactionListPaginator(pagination.PageNumberPagination):
+class TransactionListPaginator(DefaultPagination):
     """
     Optionally adds an `aggregates` dictionary to the base pagination response
     of transaction list views.

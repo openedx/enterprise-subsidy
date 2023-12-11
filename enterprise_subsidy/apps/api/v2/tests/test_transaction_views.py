@@ -380,6 +380,20 @@ class TransactionAdminListViewTests(APITestBase):
         self._prepend_initial_transaction_uuid(subsidy_uuid, expected_response_uuids)
         self.assertEqual(sorted(response_uuids), sorted(expected_response_uuids))
 
+    def test_admin_list_transactions_default_pagination_behavior(self):
+        """
+        Test listing of Transaction records for an admin or operator adheres to edx rest framework default pagination.
+        """
+        self.set_up_operator()
+        subsidy_uuid = APITestBase.subsidy_3_uuid
+        url = reverse("api:v2:transaction-admin-list-create", args=[subsidy_uuid])
+
+        response = self.client.get(url)
+        assert "num_pages" in response.data.keys()
+        assert "count" in response.data.keys()
+        assert "current_page" in response.data.keys()
+        assert "results" in response.data.keys()
+
     @ddt.data('admin', 'operator')
     def test_admin_list_transactions_happy_path_with_filters(self, role):
         """
