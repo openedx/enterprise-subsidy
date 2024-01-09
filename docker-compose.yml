@@ -1,16 +1,5 @@
 version: "2.1"
 services:
-  db:
-    image: edxops/mysql:5.7
-    container_name: enterprise-subsidy.db
-    environment:
-      MYSQL_ROOT_PASSWORD: ""
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-    networks:
-      - devstack_default
-    volumes:
-      - enterprise_subsidy_mysql57:/var/lib/mysql
-
   mysql80:
     command: mysqld --character-set-server=utf8 --collation-server=utf8_general_ci
     container_name: enterprise-subsidy.mysql80
@@ -54,11 +43,13 @@ services:
       - devstack_default
     stdin_open: true
     tty: true
+    depends_on:
+      - mysql80
+      - memcache
 
 networks:
   devstack_default:
     external: true
 
 volumes:
-  enterprise_subsidy_mysql57:
   enterprise_subsidy_mysql80:
