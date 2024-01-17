@@ -53,6 +53,12 @@ class JwtMixin():
         payload['roles'] = roles
         if include_user_id:
             payload['user_id'] = STATIC_LMS_USER_ID
+        else:
+            # For some reason, generate_unversioned_payload() automatically borrows the `id` from the provided user for
+            # the `user_id` in the generated payload, so we should delete it when the caller doesn't want to include a
+            # user_id.  In the real world, the JWT user_id being the exact same as the IDA User's `id` would be
+            # extremely unlikely.
+            del payload['user_id']
         return generate_jwt_token(payload)
 
     def set_jwt_cookie(self, role_context_pairs=None, include_user_id=True):
