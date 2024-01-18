@@ -192,7 +192,7 @@ drf-jwt==1.19.2
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
-drf-spectacular==0.27.0
+drf-spectacular==0.27.1
     # via -r requirements/validation.txt
 drf-yasg==1.21.7
     # via -r requirements/validation.txt
@@ -202,7 +202,7 @@ edx-django-release-util==1.3.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-edx-django-utils==5.9.0
+edx-django-utils==5.10.1
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
@@ -298,7 +298,7 @@ jsonfield2==4.0.0.post0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-jsonschema==4.20.0
+jsonschema==4.21.0
     # via
     #   -r requirements/validation.txt
     #   drf-spectacular
@@ -619,7 +619,7 @@ tomlkit==0.12.3
     # via
     #   -r requirements/validation.txt
     #   pylint
-tox==4.12.0
+tox==4.12.1
     # via -r requirements/validation.txt
 twine==4.0.2
     # via -r requirements/validation.txt
