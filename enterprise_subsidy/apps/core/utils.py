@@ -5,11 +5,13 @@ import hashlib
 from datetime import datetime
 
 from django.conf import settings
+from edx_django_utils.cache import RequestCache
 from pytz import UTC
 
 from enterprise_subsidy import __version__ as code_version
 
 CACHE_KEY_SEP = ':'
+DEFAULT_NAMESPACE = 'enterprise-subsidy-default'
 
 
 def versioned_cache_key(*args):
@@ -29,3 +31,10 @@ def versioned_cache_key(*args):
 def localized_utcnow():
     """Helper function to return localized utcnow()."""
     return UTC.localize(datetime.utcnow())  # pylint: disable=no-value-for-parameter
+
+
+def request_cache(namespace=DEFAULT_NAMESPACE):
+    """
+    Helper that returns a namespaced RequestCache instance.
+    """
+    return RequestCache(namespace=namespace)

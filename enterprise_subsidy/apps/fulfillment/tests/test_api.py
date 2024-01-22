@@ -198,7 +198,8 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
             else:
                 assert geag_payload.get(geag_field) == tx_metadata.get(payload_field)
 
-    def test_validate_pass(self):
+    @mock.patch("enterprise_subsidy.apps.api_client.enterprise.EnterpriseApiClient.get_enterprise_customer_data")
+    def test_validate_pass(self, mock_get_enterprise_customer_data):
         """
         Ensure `_validate` method passes
         """
@@ -208,7 +209,10 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
             'geag_email': 'donny@example.com',
             'geag_date_of_birth': '1900-01-01',
             'geag_terms_accepted_at': '2021-05-21T17:32:28Z',
-            'geag_data_share_consent': True,
+        }
+        mock_get_enterprise_customer_data.return_value = {
+            'auth_org_id': 'asde23eas',
+            'enable_data_sharing_consent': False,
         }
         transaction = TransactionFactory.create(
             state=TransactionStateChoices.PENDING,
@@ -221,7 +225,8 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
         # pylint: disable=protected-access
         assert self.geag_fulfillment_handler._validate(transaction)
 
-    def test_validate_fail(self):
+    @mock.patch("enterprise_subsidy.apps.api_client.enterprise.EnterpriseApiClient.get_enterprise_customer_data")
+    def test_validate_fail(self, mock_get_enterprise_customer_data):
         """
         Ensure `_validate` method raises with a missing `geag_terms_accepted_at`
         """
@@ -232,6 +237,10 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
             'geag_date_of_birth': '1900-01-01',
             'geag_terms_accepted_at': '2021-05-21T17:32:28Z',
             'geag_data_share_consent': True,
+        }
+        mock_get_enterprise_customer_data.return_value = {
+            'auth_org_id': 'asde23eas',
+            'enable_data_sharing_consent': True
         }
         transaction = TransactionFactory.create(
             state=TransactionStateChoices.PENDING,

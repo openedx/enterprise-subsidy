@@ -2,6 +2,8 @@
 Python API for interacting with fulfillment operations
 related to subsidy redemptions.
 """
+import logging
+
 from django.conf import settings
 from getsmarter_api_clients.geag import GetSmarterEnterpriseApiClient
 from openedx_ledger.models import ExternalFulfillmentProvider, ExternalTransactionReference
@@ -10,10 +12,14 @@ from requests.exceptions import HTTPError
 # pylint: disable=unused-import
 from enterprise_subsidy.apps.content_metadata import api as content_metadata_api
 from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
+from enterprise_subsidy.apps.core.utils import request_cache, versioned_cache_key
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 
 from .constants import EXEC_ED_2U_COURSE_TYPES, OPEN_COURSES_COURSE_TYPES
 from .exceptions import FulfillmentException, InvalidFulfillmentMetadataException
+
+REQUEST_CACHE_NAMESPACE = 'enterprise_data'
+logger = logging.getLogger(__name__)
 
 
 def create_fulfillment(subsidy_uuid, lms_user_id, content_key, **metadata):
@@ -81,11 +87,35 @@ class GEAGFulfillmentHandler():
         ent_uuid = self._get_enterprise_customer_uuid(transaction)
         return ContentMetadataApi().get_geag_variant_id(ent_uuid, transaction.content_key)
 
-    def _get_auth_org_id(self, transaction):
+    def _get_enterprise_customer_data(self, transaction):
+        """
+        Fetches and caches enterprise customer data based on a transaction.
+        """
+        cache_key = versioned_cache_key(
+            'get_enterprise_customer_data',
+            self._get_enterprise_customer_uuid(transaction),
+            transaction.uuid,
+        )
+        # Check if data is already cached
+        cached_response = request_cache(namespace=REQUEST_CACHE_NAMESPACE).get_cached_response(cache_key)
+        if cached_response.is_found:
+            logger.info(
+                'subsidy_record cache hit '
+                f'enterprise_customer_uuid={self._get_enterprise_customer_uuid(transaction)}, '
+                f'subsidy_uuid={transaction.uuid}'
+            )
+            return cached_response.value
+        # If data is not cached, fetch and cache it
         enterprise_customer_uuid = str(self._get_enterprise_customer_uuid(transaction))
         ent_client = self.get_enterprise_client(transaction)
-        ent_data = ent_client.get_enterprise_customer_data(enterprise_customer_uuid)
-        return ent_data.get('auth_org_id')
+        enterprise_data = ent_client.get_enterprise_customer_data(enterprise_customer_uuid)
+
+        request_cache(namespace=REQUEST_CACHE_NAMESPACE).set(cache_key, enterprise_data)
+
+        return enterprise_data
+
+    def _get_auth_org_id(self, transaction):
+        return self._get_enterprise_customer_data(transaction).get('auth_org_id')
 
     def _create_allocation_payload(self, transaction, currency='USD'):
         # TODO: come back an un-hack this once GEAG validation is
@@ -121,7 +151,11 @@ class GEAGFulfillmentHandler():
 
         Raises an exception when the transaction is missing required information
         """
+        enterprise_customer_data = self._get_enterprise_customer_data(transaction)
+        enable_data_sharing_consent = enterprise_customer_data.get('enable_data_sharing_consent', False)
         for field in self.REQUIRED_METADATA_FIELDS:
+            if field == 'geag_data_share_consent' and not enable_data_sharing_consent:
+                continue
             if not transaction.metadata.get(field):
                 raise InvalidFulfillmentMetadataException(f'missing {field} transaction metadata')
         return True
