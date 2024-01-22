@@ -95,7 +95,7 @@ defusedxml==0.8.0rc2
     #   -r requirements/validation.txt
     #   python3-openid
     #   social-auth-core
-diff-cover==8.0.2
+diff-cover==8.0.3
     # via -r requirements/dev.in
 dill==0.3.7
     # via
@@ -192,7 +192,7 @@ drf-jwt==1.19.2
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
-drf-spectacular==0.27.0
+drf-spectacular==0.27.1
     # via -r requirements/validation.txt
 drf-yasg==1.21.7
     # via -r requirements/validation.txt
@@ -202,7 +202,7 @@ edx-django-release-util==1.3.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-edx-django-utils==5.9.0
+edx-django-utils==5.10.1
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
@@ -235,7 +235,7 @@ exceptiongroup==1.2.0
     #   pytest
 factory-boy==3.3.0
     # via -r requirements/validation.txt
-faker==22.2.0
+faker==22.4.0
     # via
     #   -r requirements/validation.txt
     #   factory-boy
@@ -298,7 +298,7 @@ jsonfield2==4.0.0.post0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-jsonschema==4.20.0
+jsonschema==4.21.1
     # via
     #   -r requirements/validation.txt
     #   drf-spectacular
@@ -316,7 +316,7 @@ markdown-it-py==3.0.0
     # via
     #   -r requirements/validation.txt
     #   rich
-markupsafe==2.1.3
+markupsafe==2.1.4
     # via
     #   -r requirements/validation.txt
     #   jinja2
@@ -401,7 +401,7 @@ ply==3.11
     #   djangoql
 polib==1.2.0
     # via edx-i18n-tools
-psutil==5.9.7
+psutil==5.9.8
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
@@ -619,7 +619,7 @@ tomlkit==0.12.3
     # via
     #   -r requirements/validation.txt
     #   pylint
-tox==4.12.0
+tox==4.12.1
     # via -r requirements/validation.txt
 twine==4.0.2
     # via -r requirements/validation.txt
