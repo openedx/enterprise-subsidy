@@ -40,7 +40,7 @@ click==8.1.7
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
-cryptography==41.0.7
+cryptography==42.0.1
     # via
     #   -r requirements/base.txt
     #   pyjwt
@@ -142,7 +142,7 @@ edx-django-utils==5.10.1
     #   edx-rest-api-client
     #   getsmarter-api-clients
     #   openedx-ledger
-edx-drf-extensions==9.1.2
+edx-drf-extensions==10.0.0
     # via
     #   -r requirements/base.txt
     #   edx-rbac
@@ -188,7 +188,7 @@ jsonfield2==4.0.0.post0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-jsonschema==4.21.0
+jsonschema==4.21.1
     # via
     #   -r requirements/base.txt
     #   drf-spectacular
@@ -201,7 +201,7 @@ mysqlclient==2.2.1
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   openedx-ledger
-newrelic==9.5.0
+newrelic==9.6.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -211,7 +211,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.2.0
+openedx-events==9.3.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -234,7 +234,7 @@ ply==3.11
     # via
     #   -r requirements/base.txt
     #   djangoql
-psutil==5.9.7
+psutil==5.9.8
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -285,7 +285,7 @@ redis==5.0.1
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-referencing==0.32.1
+referencing==0.33.0
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -330,7 +330,7 @@ social-auth-app-django==5.4.0
     # via
     #   -r requirements/base.txt
     #   edx-auth-backends
-social-auth-core==4.5.1
+social-auth-core==4.5.2
     # via
     #   -r requirements/base.txt
     #   edx-auth-backends
