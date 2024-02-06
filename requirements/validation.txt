@@ -412,7 +412,7 @@ openedx-events==9.4.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-openedx-ledger==1.3.2
+openedx-ledger==1.3.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
