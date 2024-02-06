@@ -114,8 +114,8 @@ $(COMMON_CONSTRAINTS_TXT):
 
 upgrade: export CUSTOM_COMPILE_COMMAND=make upgrade
 upgrade: $(COMMON_CONSTRAINTS_TXT) ## update the requirements/*.txt files with the latest packages satisfying requirements/*.in
-	sed -i.'' 's/Django<4.0//g' requirements/common_constraints.txt
-	sed -i.'' 's/django-simple-history==//g' requirements/common_constraints.txt
+	sed -i 's/Django<4.0//g' requirements/common_constraints.txt
+	sed -i 's/django-simple-history==//g' requirements/common_constraints.txt
 	pip install -qr requirements/pip-tools.txt
 	# Make sure to compile files after any other files they include!
 	$(PIP_COMPILE) --allow-unsafe -o requirements/pip.txt requirements/pip.in
