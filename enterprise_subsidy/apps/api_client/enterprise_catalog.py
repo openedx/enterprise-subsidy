@@ -17,6 +17,7 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
     API client for calls to the enterprise service.
     """
     api_base_url = urljoin(settings.ENTERPRISE_CATALOG_URL, 'api/v1/')
+    metadata_endpoint = urljoin(api_base_url, 'content-metadata/')
     enterprise_customer_endpoint = urljoin(api_base_url, 'enterprise-customer/')
 
     def enterprise_customer_url(self, enterprise_customer_uuid):
@@ -30,6 +31,27 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
             self.enterprise_customer_url(enterprise_customer_uuid),
             f'content-metadata/{content_identifier}/'
         )
+
+    def get_content_metadata(self, content_identifier, **kwargs):
+        """
+        Returns base, non-customer specific data on an individual piece of content.
+
+        Arguments:
+                content_identifier (str): **Either** the content UUID or content key identifier for a content record.
+        """
+        content_metadata_url = self.metadata_endpoint
+        query_params = {"content_identifiers": [content_identifier]}
+        try:
+            response = self.client.get(content_metadata_url, params=query_params)
+            response.raise_for_status()
+            return response.json()
+        except requests.exceptions.HTTPError as exc:
+            if hasattr(response, 'text'):
+                logger.exception(
+                    f"Failed to fetch content metadata: {content_identifier} from the catalog service."
+                    f"Failed with error: {response.text}"
+                )
+            raise exc
 
     def get_content_metadata_for_customer(
         self, enterprise_customer_uuid, content_identifier, skip_customer_fetch=False, **kwargs

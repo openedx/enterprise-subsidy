@@ -10,7 +10,7 @@ from edx_django_utils.cache import TieredCache
 
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 
-from ..api import ContentMetadataApi, content_metadata_cache_key
+from ..api import ContentMetadataApi, content_metadata_cache_key, content_metadata_for_customer_cache_key
 from ..constants import CourseModes, ProductSources
 
 
@@ -118,7 +118,7 @@ class ContentMetadataApiTests(TestCase):
         },
     )
     @ddt.unpack
-    @mock.patch('enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_metadata')
+    @mock.patch('enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_metadata_for_customer')
     def test_client_can_fetch_mode_specific_prices(
         self,
         mock_get_content_metadata,
@@ -146,7 +146,7 @@ class ContentMetadataApiTests(TestCase):
         },
         None
     )
-    @mock.patch('enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_metadata')
+    @mock.patch('enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_metadata_for_customer')
     def test_client_discern_product_source(self, product_source, mock_get_content_metadata):
         """
         Test that the catalog client has the ability to smartly return the product source value from the content
@@ -241,12 +241,12 @@ class ContentMetadataApiTests(TestCase):
         Tests that consecutive calls for the same content metadata
         within the same request utilize the cache.
         """
-        cache_key = content_metadata_cache_key(self.enterprise_customer_uuid, self.course_key)
+        cache_key = content_metadata_for_customer_cache_key(self.enterprise_customer_uuid, self.course_key)
         self.assertFalse(TieredCache.get_cached_response(cache_key).is_found)
         client_instance = mock_catalog_client.return_value
         client_instance.get_content_metadata_for_customer.return_value = {'the': 'metadata'}
 
-        _ = ContentMetadataApi.get_content_metadata(self.enterprise_customer_uuid, self.course_key)
+        _ = ContentMetadataApi.get_content_metadata_for_customer(self.enterprise_customer_uuid, self.course_key)
 
         self.assertTrue(TieredCache.get_cached_response(cache_key).is_found)
         self.assertEqual(
@@ -254,7 +254,25 @@ class ContentMetadataApiTests(TestCase):
             {'the': 'metadata'},
         )
         self.assertEqual(
-            ContentMetadataApi.get_content_metadata(self.enterprise_customer_uuid, self.course_key),
+            ContentMetadataApi.get_content_metadata_for_customer(self.enterprise_customer_uuid, self.course_key),
             {'the': 'metadata'},
         )
+        TieredCache.delete_all_tiers(cache_key)
+
+        cache_key = content_metadata_cache_key(self.course_key)
+        self.assertFalse(TieredCache.get_cached_response(cache_key).is_found)
+        client_instance.get_content_metadata.return_value = {'the': 'metadata'}
+
+        _ = ContentMetadataApi.get_content_metadata(self.course_key)
+
+        self.assertTrue(TieredCache.get_cached_response(cache_key).is_found)
+        self.assertEqual(
+            TieredCache.get_cached_response(cache_key).value,
+            {'the': 'metadata'},
+        )
+        self.assertEqual(
+            ContentMetadataApi.get_content_metadata(self.course_key),
+            {'the': 'metadata'},
+        )
+        assert client_instance.get_content_metadata.call_count == 1
         TieredCache.delete_all_tiers(cache_key)

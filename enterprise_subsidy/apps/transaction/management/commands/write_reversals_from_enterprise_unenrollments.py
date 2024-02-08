@@ -16,7 +16,6 @@ from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
 from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
 from enterprise_subsidy.apps.fulfillment.exceptions import FulfillmentException
-from enterprise_subsidy.apps.subsidy.models import Subsidy
 from enterprise_subsidy.apps.transaction.utils import generate_transaction_reversal_idempotency_key
 
 logger = logging.getLogger(__name__)
@@ -178,17 +177,7 @@ class Command(BaseCommand):
 
         # Memoize the content metadata for the course run fetched from the enterprise catalog
         if not self.fetched_content_metadata.get(enrollment_course_run_key):
-            try:
-                customer_uuid = related_transaction.ledger.subsidy.enterprise_customer_uuid
-            except Subsidy.DoesNotExist:
-                logger.warning(
-                    f"{self.dry_run_prefix}Unable to determine enterprise customer uuid for transaction: "
-                    f"{related_transaction}"
-                )
-                return 0
-
             content_metadata = ContentMetadataApi.get_content_metadata(
-                customer_uuid,
                 enrollment_course_run_key,
             )
             self.fetched_content_metadata[enrollment_course_run_key] = content_metadata
