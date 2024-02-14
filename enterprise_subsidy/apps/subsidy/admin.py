@@ -38,6 +38,8 @@ class SubsidyAdmin(DjangoQLSearchMixin, SimpleHistoryAdmin):
         model = Subsidy
         fields = '__all__'
 
+    djangoql_completion_enabled_by_default = False
+
     _all_fields = [field.name for field in Subsidy._meta.get_fields()]
 
     if can_modify():
