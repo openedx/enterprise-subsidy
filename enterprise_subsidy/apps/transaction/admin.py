@@ -4,12 +4,46 @@ from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.urls import re_path, reverse
 from djangoql.admin import DjangoQLSearchMixin
+from openedx_ledger.admin import LedgerAdmin as BaseLedgerAdmin
 from openedx_ledger.admin import TransactionAdmin as BaseTransactionAdmin
-from openedx_ledger.models import Transaction
+from openedx_ledger.models import Ledger, Transaction
 
+from enterprise_subsidy.apps.subsidy.models import Subsidy
 from enterprise_subsidy.apps.transaction import views
 
 admin.site.unregister(Transaction)
+admin.site.unregister(Ledger)
+
+
+class SubsidyInline(admin.StackedInline):
+    """
+    Inline class to help present an inline view
+    within the ``LedgerAdmin`` class.
+    """
+    model = Subsidy
+    fields = [
+        'title',
+        'enterprise_customer_uuid',
+        'internal_only',
+        'active_datetime',
+        'expiration_datetime',
+    ]
+    readonly_fields = fields
+    show_change_link = True
+
+
+@admin.register(Ledger)
+class LedgerAdmin(DjangoQLSearchMixin, BaseLedgerAdmin):
+    """
+    An enterprise-subsidy specific override of the base ``openedx_ledger.LedgerAdmin``
+    class.  Notably, it presents an inline view of the related ``Subsidy`` model.
+    """
+    search_fields = BaseLedgerAdmin.search_fields
+    djangoql_completion_enabled_by_default = False
+
+    inlines = [
+        SubsidyInline,
+    ]
 
 
 @admin.register(Transaction)
@@ -23,7 +57,29 @@ class TransactionAdmin(DjangoQLSearchMixin, BaseTransactionAdmin):
         model = Transaction
         fields = '__all__'
 
+    djangoql_completion_enabled_by_default = False
+
     change_actions = BaseTransactionAdmin.change_actions + ('unenroll',)
+
+    list_select_related = [
+        'ledger',
+        'ledger__subsidy',
+    ]
+
+    list_display = list(BaseTransactionAdmin.list_display) + [
+        'enterprise_customer_uuid',
+        'ledger_uuid',
+    ]
+
+    readonly_fields = list(BaseTransactionAdmin.readonly_fields) + [
+        'enterprise_customer_uuid',
+    ]
+
+    def enterprise_customer_uuid(self, tx_obj):
+        return tx_obj.ledger.subsidy.enterprise_customer_uuid
+
+    def ledger_uuid(self, tx_obj):
+        return tx_obj.ledger.uuid
 
     # From https://github.com/ivelum/djangoql#using-djangoql-with-the-standard-django-admin-search:
     # "DjangoQL will recognize if you have defined search_fields in your ModelAdmin class,
@@ -38,6 +94,8 @@ class TransactionAdmin(DjangoQLSearchMixin, BaseTransactionAdmin):
         'uuid',
         'external_reference__external_reference_id',
         'subsidy_access_policy_uuid',
+        'ledger__uuid',
+        'ledger__subsidy__enterprise_customer_uuid'
     )
 
     @admin.action(
