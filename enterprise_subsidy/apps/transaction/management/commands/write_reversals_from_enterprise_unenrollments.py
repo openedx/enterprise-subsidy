@@ -82,10 +82,13 @@ class Command(BaseCommand):
         enrollment_course_run_key = enterprise_course_enrollment.get("course_id")
         enrollment_created_at = enterprise_course_enrollment.get("created")
         course_start_date = None
-        for run in content_metadata.get('course_runs'):
-            if run.get('key') == enrollment_course_run_key:
-                course_start_date = run.get('start')
-                break
+        if content_metadata.get('content_type') == 'courserun':
+            course_start_date = content_metadata.get('start')
+        else:
+            for run in content_metadata.get('course_runs', []):
+                if run.get('key') == enrollment_course_run_key:
+                    course_start_date = run.get('start')
+                    break
 
         if not course_start_date:
             logger.warning(
