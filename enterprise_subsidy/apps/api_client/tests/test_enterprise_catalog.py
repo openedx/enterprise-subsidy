@@ -101,7 +101,15 @@ class EnterpriseCatalogApiClientTests(TestCase):
         Test the enterprise catalog client's ability to handle api requests to fetch content metadata from the catalog
         service.
         """
-        mock_oauth_client.return_value.get.return_value = MockResponse(self.course_metadata, 200)
+        mock_oauth_client.return_value.get.return_value = MockResponse(
+            {
+                'results': [self.course_metadata],
+                'count': 1,
+                'next': None,
+                'previous': None,
+            },
+            200,
+        )
         enterprise_catalog_client = EnterpriseCatalogApiClient()
         response = enterprise_catalog_client.get_content_metadata(self.course_key)
         assert response == self.course_metadata

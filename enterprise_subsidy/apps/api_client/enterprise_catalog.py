@@ -44,7 +44,8 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
         try:
             response = self.client.get(content_metadata_url, params=query_params)
             response.raise_for_status()
-            return response.json()
+            response_json = response.json()
+            return response_json['results'][0] if response_json['results'] else None
         except requests.exceptions.HTTPError as exc:
             if hasattr(response, 'text'):
                 logger.exception(
