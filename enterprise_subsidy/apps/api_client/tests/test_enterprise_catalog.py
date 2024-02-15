@@ -83,10 +83,10 @@ class EnterpriseCatalogApiClientTests(TestCase):
         }
 
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
-    def test_successful_fetch_course_content_metadata(self, mock_oauth_client):
+    def test_successful_fetch_course_content_metadata_for_customer(self, mock_oauth_client):
         """
-        Test the enterprise catalog client's ability to handle api requests to fetch content metadata from the catalog
-        service.
+        Test the enterprise catalog client's ability to handle api requests to fetch customer specific content metadata
+        from the catalog service.
         """
         mock_oauth_client.return_value.get.return_value = MockResponse(self.course_metadata, 200)
         enterprise_catalog_client = EnterpriseCatalogApiClient()
@@ -94,3 +94,16 @@ class EnterpriseCatalogApiClientTests(TestCase):
             self.enterprise_customer_uuid, self.course_key
         )
         assert response == self.course_metadata
+
+    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
+    def test_successful_fetch_course_content_metadata(self, mock_oauth_client):
+        """
+        Test the enterprise catalog client's ability to handle api requests to fetch content metadata from the catalog
+        service.
+        """
+        mock_oauth_client.return_value.get.return_value = MockResponse(self.course_metadata, 200)
+        enterprise_catalog_client = EnterpriseCatalogApiClient()
+        response = enterprise_catalog_client.get_content_metadata(self.course_key)
+        assert response == self.course_metadata
+        assert mock_oauth_client.return_value.get.call_args.args[0] == enterprise_catalog_client.metadata_endpoint
+        assert mock_oauth_client.return_value.get.call_args.kwargs == {'params': {'content_identifiers': ['edX+DemoX']}}

@@ -27,11 +27,18 @@ CACHE_NAMESPACE = 'content_metadata'
 CONTENT_METADATA_CACHE_TIMEOUT = getattr(settings, 'CONTENT_METADATA_CACHE_TIMEOUT', 60 * 30)
 
 
-def content_metadata_cache_key(enterprise_customer_uuid, content_key):
+def content_metadata_for_customer_cache_key(enterprise_customer_uuid, content_key):
     """
     Returns a versioned cache key that includes the customer uuid and content_key.
     """
     return versioned_cache_key(CACHE_NAMESPACE, enterprise_customer_uuid, content_key)
+
+
+def content_metadata_cache_key(content_key):
+    """
+    Returns a versioned cache key that includes the customer uuid and content_key.
+    """
+    return versioned_cache_key(CACHE_NAMESPACE, content_key)
 
 
 class ContentMetadataApi:
@@ -140,7 +147,7 @@ class ContentMetadataApi:
         """
         Returns a summary dict some content metadata, makes the client call
         """
-        course_details = self.get_content_metadata(
+        course_details = self.get_content_metadata_for_customer(
             enterprise_customer_uuid,
             content_identifier,
             **kwargs,
@@ -165,7 +172,7 @@ class ContentMetadataApi:
             the method will log and throw an HTTPError exception. A 404 exception will be thrown if the content
             does not exist, or is not present in a catalog associated with the customer.
         """
-        course_details = self.get_content_metadata(
+        course_details = self.get_content_metadata_for_customer(
             enterprise_customer_uuid,
             content_identifier
         )
@@ -189,7 +196,7 @@ class ContentMetadataApi:
             the method will log and throw an HTTPError exception. A 404 exception will be thrown if the content
             does not exist, or is not present in a catalog associated with the customer.
         """
-        course_details = self.get_content_metadata(
+        course_details = self.get_content_metadata_for_customer(
             enterprise_customer_uuid,
             content_identifier
         )
@@ -202,13 +209,38 @@ class ContentMetadataApi:
         return self.get_content_summary(enterprise_customer_uuid, content_identifier).get('geag_variant_id')
 
     @staticmethod
-    def get_content_metadata(enterprise_customer_uuid, content_identifier, **kwargs):
+    def get_content_metadata(content_identifier, **kwargs):
         """
-        Fetches details about the given content from a tiered (request + django) cache;
-        or it fetches from the enterprise-catalog API if not present in the cache,
-        and then caches that result.
+        Fetches only base details on a content metadata record from a tiered (request + django) cache;
+        or fetches it from the enterprise-catalog API if not present in teh cache, and then caches the result.
         """
-        cache_key = content_metadata_cache_key(enterprise_customer_uuid, content_identifier)
+        cache_key = content_metadata_cache_key(content_identifier)
+        cached_response = TieredCache.get_cached_response(cache_key)
+        if cached_response.is_found:
+            return cached_response.value
+
+        course_details = EnterpriseCatalogApiClient().get_content_metadata(
+            content_identifier,
+            **kwargs,
+        )
+        if course_details:
+            TieredCache.set_all_tiers(
+                cache_key,
+                course_details,
+                django_cache_timeout=CONTENT_METADATA_CACHE_TIMEOUT,
+            )
+        logger.info(
+            f'Fetched course details {course_details} for content_identifier {content_identifier}',
+        )
+        return course_details
+
+    @staticmethod
+    def get_content_metadata_for_customer(enterprise_customer_uuid, content_identifier, **kwargs):
+        """
+        Fetches both base and customer specific details about the given content from a tiered (request + django) cache;
+        or it fetches from the enterprise-catalog API if not present in the cache, and then caches that result.
+        """
+        cache_key = content_metadata_for_customer_cache_key(enterprise_customer_uuid, content_identifier)
         cached_response = TieredCache.get_cached_response(cache_key)
         if cached_response.is_found:
             return cached_response.value
