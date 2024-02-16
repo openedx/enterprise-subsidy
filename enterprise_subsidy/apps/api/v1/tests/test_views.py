@@ -56,8 +56,10 @@ class APITestBase(APITestMixin):
     subsidy_access_policy_3_uuid = str(uuid.uuid4())
     subsidy_4_transaction_1_uuid = str(uuid.uuid4())
     subsidy_4_transaction_2_uuid = str(uuid.uuid4())
+    parent_content_key_1 = "edX+test"
     content_key_1 = "course-v1:edX+test+course.1"
     content_title_1 = "edx: Test Course 1"
+    parent_content_key_2 = "edX+test"
     content_key_2 = "course-v1:edX+test+course.2"
     content_title_2 = "edx: Test Course 2"
     lms_user_email = 'edx@example.com'
@@ -83,6 +85,7 @@ class APITestBase(APITestMixin):
             lms_user_email=self.lms_user_email,
             subsidy_access_policy_uuid=self.subsidy_access_policy_1_uuid,
             content_key=self.content_key_1,
+            parent_content_key=self.parent_content_key_1,
             content_title=self.content_title_1,
         )
         self.subsidy_1_transaction_2 = TransactionFactory(
@@ -94,6 +97,7 @@ class APITestBase(APITestMixin):
             lms_user_email=self.lms_user_email,
             subsidy_access_policy_uuid=self.subsidy_access_policy_2_uuid,
             content_key=self.content_key_2,
+            parent_content_key=self.parent_content_key_2,
             content_title=self.content_title_2,
         )
 
@@ -342,6 +346,7 @@ class SubsidyViewSetTests(APITestBase):
                 'lms_user_email': self.lms_user_email,
                 'subsidy_access_policy_uuid': str(self.subsidy_access_policy_1_uuid),
                 'content_key': self.content_key_1,
+                'parent_content_key': self.parent_content_key_1,
                 'content_title': self.content_title_1,
                 'external_reference': [],
                 'transaction_status_api_url': f"{self.transaction_status_api_url}/{self.subsidy_1_transaction_1_uuid}/",

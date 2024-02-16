@@ -135,6 +135,7 @@ class TransactionSerializer(serializers.ModelSerializer):
             "lms_user_id",
             "lms_user_email",
             "content_key",
+            "parent_content_key",
             "content_title",
             "quantity",
             "unit",  # Manually fetch from parent ledger via get_unit().
