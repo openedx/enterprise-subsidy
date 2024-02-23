@@ -16,3 +16,6 @@ Django>=4.2,<4.3
 
 # django-simple-history>3.4.0 for this repo... we were not concerned about migration issues
 django-simple-history>=3.4.0,<3.5.0
+
+# For python greater than 3.9 backports.zoneinfo causing failures
+backports.zoneinfo;python_version<"3.9"
