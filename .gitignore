@@ -104,3 +104,6 @@ docs/enterprise_subsidy.apps.*
 docs/enterprise_subsidy.rst
 docs/enterprise_subsidy.settings.rst
 docs/modules.rst
+
+# devstack backups etc.
+.dev/
