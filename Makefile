@@ -199,11 +199,29 @@ db-shell-57: # Run the mysql 5.7 shell as root, enter the app's database
 db-shell-8: # Run the mysql 8 shell as root, enter the app's database
 	docker exec -u 0 -it enterprise-subsidy.mysql80 mysql -u root enterprise_subsidy
 
+dev.backup:
+	docker-compose stop app
+	docker-compose up -d mysql80
+	sleep 10 # let mysql process get fully warmed up
+	docker compose exec mysql80 mysqldump --all-databases > .dev/enterprise_subsidy_all.sql
+
+dev.restore:
+	docker-compose stop app
+	docker-compose up -d mysql80
+	sleep 10 # let mysql process get fully warmed up
+	docker compose exec -T mysql80 mysql < .dev/enterprise_subsidy_all.sql
+
 dev.dbcopy8: ## Copy data from old mysql 5.7 container into a new 8 db
 	mkdir -p .dev/
 	docker-compose exec db bash -c "mysqldump --databases enterprise_subsidy" > .dev/enterprise_subsidy.sql
 	docker-compose exec -T mysql80 bash -c "mysql" < .dev/enterprise_subsidy.sql
 	rm .dev/enterprise_subsidy.sql
+
+dev.static:
+	docker-compose exec -u 0 app python3 manage.py collectstatic --noinput
+
+dev.migrate:
+	docker-compose exec -u 0 app python manage.py migrate
 
 %-logs: # View the logs of the specified service container
 	docker-compose logs -f --tail=500 $*
