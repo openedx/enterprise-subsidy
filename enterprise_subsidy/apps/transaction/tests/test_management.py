@@ -75,13 +75,20 @@ class TestTransactionManagementCommand(TestCase):
             external_fulfillment_provider=self.unknown_provider,
             transaction=self.unknown_transaction,
         )
+
         self.transaction_to_backpopulate = TransactionFactory(
             ledger=self.ledger,
             lms_user_email=None,
             content_title=None,
+            # We can't just set parent_content_key to None because it will break content_key (derived factory field).
+            # Do it after object creation.
+            # parent_content_key=None,
             quantity=100,
             fulfillment_identifier=self.fulfillment_identifier
         )
+        self.transaction_to_backpopulate.parent_content_key = None
+        self.transaction_to_backpopulate.save()
+
         self.internal_ledger = LedgerFactory()
         self.internal_subsidy = SubsidyFactory(ledger=self.internal_ledger, internal_only=True)
         self.internal_transaction_to_backpopulate = TransactionFactory(
@@ -89,12 +96,20 @@ class TestTransactionManagementCommand(TestCase):
             lms_user_email=None,
             content_title=None,
         )
+        self.internal_transaction_to_backpopulate.parent_content_key = None
+        self.internal_transaction_to_backpopulate.save()
+
         self.transaction_not_to_backpopulate = TransactionFactory(
             ledger=self.ledger,
-            lms_user_id=None,
-            lms_user_email=None,
+
+            # Setting content_key or lms_user_id to None force-disables backpopulation.
             content_key=None,
+            lms_user_id=None,
+
+            # The target fields to backpopulate are empty, nevertheless.
+            lms_user_email=None,
             content_title=None,
+            parent_content_key=None,
         )
 
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
@@ -980,3 +995,56 @@ class TestTransactionManagementCommand(TestCase):
         assert self.internal_transaction_to_backpopulate.content_title == expected_content_title
         assert self.transaction_not_to_backpopulate.lms_user_email is None
         assert self.transaction_not_to_backpopulate.content_title is None
+
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_backpopulate_transaction_parent_content_key(
+        self,
+        mock_get_content_summary,
+    ):
+        """
+        Test that the backpopulate_transaction_parent_content_key management command backpopulates the
+        parent_content_key.
+        """
+        expected_parent_content_key = 'edx+101'
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'a content uuid',
+            'content_key': expected_parent_content_key,
+            'content_title': 'a content title',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
+        call_command('backpopulate_transaction_parent_content_key')
+        self.transaction_to_backpopulate.refresh_from_db()
+        self.internal_transaction_to_backpopulate.refresh_from_db()
+        self.transaction_not_to_backpopulate.refresh_from_db()
+        assert self.transaction_to_backpopulate.parent_content_key == expected_parent_content_key
+        assert self.internal_transaction_to_backpopulate.parent_content_key is None
+        assert self.transaction_not_to_backpopulate.parent_content_key is None
+
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_backpopulate_transaction_parent_content_key_include_internal(
+        self,
+        mock_get_content_summary,
+    ):
+        """
+        Test backpopulate_transaction_parent_content_key while including internal subsidies.
+        """
+        expected_parent_content_key = 'edx+101'
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'a content uuid',
+            'content_key': expected_parent_content_key,
+            'content_title': 'a content title',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
+        call_command('backpopulate_transaction_parent_content_key', include_internal_subsidies=True)
+        self.transaction_to_backpopulate.refresh_from_db()
+        self.internal_transaction_to_backpopulate.refresh_from_db()
+        self.transaction_not_to_backpopulate.refresh_from_db()
+        assert self.transaction_to_backpopulate.parent_content_key == expected_parent_content_key
+        assert self.internal_transaction_to_backpopulate.parent_content_key == expected_parent_content_key
+        assert self.transaction_not_to_backpopulate.parent_content_key is None
