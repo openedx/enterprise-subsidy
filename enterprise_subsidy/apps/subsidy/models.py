@@ -294,6 +294,29 @@ class Subsidy(TimeStampedModel):
             return user_data.get('email')
         return None
 
+    def metadata_summary_for_content(self, content_key):
+        """
+        Best effort return the metadata summary of the given content.
+
+        Returns:
+            dict: Metadata summary (or empty dict if there is a bug in our code).
+
+        Raises:
+            ContentNotFoundForCustomerException: If the metadata service returned 404.
+        """
+        content_summary = {}
+        try:
+            content_summary = self.content_metadata_api().get_content_summary(
+                self.enterprise_customer_uuid,
+                content_key
+            )
+        except HTTPError as exc:
+            if exc.response.status_code == status.HTTP_404_NOT_FOUND:
+                raise ContentNotFoundForCustomerException(
+                    'The given content_key is not in any catalog for this customer.'
+                ) from exc
+        return content_summary
+
     def title_for_content(self, content_key):
         """
         Best effort return the title of the given content.
@@ -301,20 +324,7 @@ class Subsidy(TimeStampedModel):
         Returns:
             string: Title of content or None.
         """
-        content_title = None
-        try:
-            content_summary = self.content_metadata_api().get_content_summary(
-                self.enterprise_customer_uuid,
-                content_key
-            )
-            if content_summary:
-                content_title = content_summary.get('content_title')
-        except HTTPError as exc:
-            if exc.response.status_code == status.HTTP_404_NOT_FOUND:
-                raise ContentNotFoundForCustomerException(
-                    'The given content_key is not in any catalog for this customer.'
-                ) from exc
-        return content_title
+        return self.metadata_summary_for_content(content_key).get('content_title')
 
     def price_for_content(self, content_key):
         """
@@ -346,6 +356,7 @@ class Subsidy(TimeStampedModel):
         lms_user_id=None,
         lms_user_email=None,
         content_key=None,
+        parent_content_key=None,
         content_title=None,
         subsidy_access_policy_uuid=None,
         **transaction_metadata
@@ -366,6 +377,7 @@ class Subsidy(TimeStampedModel):
             lms_user_id=lms_user_id,
             lms_user_email=lms_user_email,
             content_key=content_key,
+            parent_content_key=parent_content_key,
             content_title=content_title,
             subsidy_access_policy_uuid=subsidy_access_policy_uuid,
             **transaction_metadata,
@@ -442,10 +454,16 @@ class Subsidy(TimeStampedModel):
             return (None, False)
         try:
             lms_user_email = self.email_for_learner(lms_user_id)
-            content_title = self.title_for_content(content_key)
+
+            # Fetch one or more metadata keys from catalog service, with overall metadata request locally cached.
+            content_metadata_summary = self.metadata_summary_for_content(content_key)
+            content_title = content_metadata_summary.get('content_title')
+            parent_content_key = content_metadata_summary.get('content_key')
+
             transaction = self._create_redemption(
                 lms_user_id,
                 content_key,
+                parent_content_key,
                 content_price,
                 subsidy_access_policy_uuid,
                 lms_user_email=lms_user_email,
@@ -476,6 +494,7 @@ class Subsidy(TimeStampedModel):
             self,
             lms_user_id,
             content_key,
+            parent_content_key,
             content_price,
             subsidy_access_policy_uuid,
             content_title=None,
@@ -531,6 +550,7 @@ class Subsidy(TimeStampedModel):
             idempotency_key,
             quantity,
             content_key=content_key,
+            parent_content_key=parent_content_key,
             content_title=content_title,
             lms_user_id=lms_user_id,
             lms_user_email=lms_user_email,
