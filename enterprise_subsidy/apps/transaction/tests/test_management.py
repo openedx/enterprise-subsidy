@@ -996,24 +996,19 @@ class TestTransactionManagementCommand(TestCase):
         assert self.transaction_not_to_backpopulate.lms_user_email is None
         assert self.transaction_not_to_backpopulate.content_title is None
 
-    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_metadata")
     def test_backpopulate_transaction_parent_content_key(
         self,
-        mock_get_content_summary,
+        mock_get_content_metadata,
     ):
         """
         Test that the backpopulate_transaction_parent_content_key management command backpopulates the
         parent_content_key.
         """
         expected_parent_content_key = 'edx+101'
-        mock_get_content_summary.return_value = {
-            'content_uuid': 'a content uuid',
-            'content_key': expected_parent_content_key,
-            'content_title': 'a content title',
-            'source': 'edX',
-            'mode': 'verified',
-            'content_price': 10000,
-            'geag_variant_id': None,
+        mock_get_content_metadata.return_value = {
+            'aggregation_key': f'courserun:{expected_parent_content_key}',
+            # Remainder of raw content metdata not needed to be mocked.
         }
         call_command('backpopulate_transaction_parent_content_key')
         self.transaction_to_backpopulate.refresh_from_db()
@@ -1023,23 +1018,18 @@ class TestTransactionManagementCommand(TestCase):
         assert self.internal_transaction_to_backpopulate.parent_content_key is None
         assert self.transaction_not_to_backpopulate.parent_content_key is None
 
-    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_metadata")
     def test_backpopulate_transaction_parent_content_key_include_internal(
         self,
-        mock_get_content_summary,
+        mock_get_content_metadata,
     ):
         """
         Test backpopulate_transaction_parent_content_key while including internal subsidies.
         """
         expected_parent_content_key = 'edx+101'
-        mock_get_content_summary.return_value = {
-            'content_uuid': 'a content uuid',
-            'content_key': expected_parent_content_key,
-            'content_title': 'a content title',
-            'source': 'edX',
-            'mode': 'verified',
-            'content_price': 10000,
-            'geag_variant_id': None,
+        mock_get_content_metadata.return_value = {
+            'aggregation_key': f'courserun:{expected_parent_content_key}',
+            # Remainder of raw content metdata not needed to be mocked.
         }
         call_command('backpopulate_transaction_parent_content_key', include_internal_subsidies=True)
         self.transaction_to_backpopulate.refresh_from_db()
