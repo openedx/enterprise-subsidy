@@ -7,10 +7,43 @@ from django.core.management.base import BaseCommand
 from django.db.models import Q
 from openedx_ledger.models import Transaction
 
+from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
 from enterprise_subsidy.apps.subsidy.models import Subsidy
 from enterprise_subsidy.apps.transaction.utils import batch_by_pk
 
 logger = logging.getLogger(__name__)
+
+# Borrowed from:
+# https://github.com/openedx/enterprise-catalog/blob/374a58d5/enterprise_catalog/apps/catalog/constants.py#L10
+COURSE_RUN = 'courserun'
+
+
+# The following couple functions are borrowed from enterprise-catalog code:
+# https://github.com/openedx/enterprise-catalog/blob/374a58d5/enterprise_catalog/apps/catalog/utils.py#L58
+def _partition_aggregation_key(aggregation_key):
+    """
+    Partitions the aggregation_key field from enterprise-catalog to return the type and key of the content it represents
+
+    Note that the content_key for a course run refers to a course rather than itself
+    """
+    content_type, _, content_key = aggregation_key.partition(':')
+    return content_type, content_key
+
+
+def _get_parent_content_key(metadata):
+    """
+    Returns the content key of the parent object from a piece of metadata
+
+    This is meant to be used on metadata from the /api/v1/content-metdata/ catalog endpoint. If the metadata represents
+    a course run, then the parent content key is the key of the course it belongs to. Otherwise, returns None
+    """
+    aggregation_key = metadata.get('aggregation_key', '')
+    content_type, content_key = _partition_aggregation_key(aggregation_key)
+    parent_content_key = None
+    if content_type == COURSE_RUN:
+        parent_content_key = content_key
+
+    return parent_content_key
 
 
 class Command(BaseCommand):
@@ -55,7 +88,9 @@ class Command(BaseCommand):
 
         try:
             if txn.parent_content_key is None and txn.content_key is not None:
-                parent_content_key = subsidy.metadata_summary_for_content(txn.content_key).get('content_key')
+                # Top level "key" key in contet-metdata API response is the course key.
+                content_metadata = ContentMetadataApi.get_content_metadata(txn.content_key)
+                parent_content_key = _get_parent_content_key(content_metadata)
                 txn.parent_content_key = parent_content_key
                 logger.info(
                     f"Found parent_content_key={parent_content_key} "
