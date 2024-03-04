@@ -9,7 +9,7 @@ asgiref==3.7.2
     #   -r requirements/base.txt
     #   django
     #   django-cors-headers
-astroid==3.0.3
+astroid==3.1.0
     # via
     #   pylint
     #   pylint-celery
@@ -27,7 +27,7 @@ backports-zoneinfo==0.2.1
     # via
     #   -r requirements/base.txt
     #   django
-cachetools==5.3.2
+cachetools==5.3.3
     # via tox
 certifi==2024.2.2
     # via
@@ -59,16 +59,16 @@ code-annotations==1.6.0
     #   edx-lint
 colorama==0.4.6
     # via tox
-coverage[toml]==7.4.2
+coverage[toml]==7.4.3
     # via
     #   -r requirements/test.in
     #   pytest-cov
-cryptography==42.0.4
+cryptography==42.0.5
     # via
     #   -r requirements/base.txt
     #   pyjwt
     #   social-auth-core
-ddt==1.7.1
+ddt==1.7.2
     # via -r requirements/test.in
 defusedxml==0.8.0rc2
     # via
@@ -80,6 +80,7 @@ dill==0.3.8
 distlib==0.3.8
     # via virtualenv
     # via
+    #   -c requirements/common_constraints.txt
     #   -c requirements/constraints.txt
     #   -r requirements/base.txt
     #   django-clearcache
@@ -196,7 +197,7 @@ exceptiongroup==1.2.0
     # via pytest
 factory-boy==3.3.0
     # via -r requirements/test.in
-faker==23.2.1
+faker==23.3.0
     # via factory-boy
 fastavro==1.9.4
     # via
@@ -212,7 +213,7 @@ idna==3.6
     # via
     #   -r requirements/base.txt
     #   requests
-importlib-resources==6.1.1
+importlib-resources==6.1.2
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -250,7 +251,7 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-newrelic==9.6.0
+newrelic==9.7.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -310,7 +311,7 @@ pyjwt[crypto]==2.8.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.0.3
+pylint==3.1.0
     # via
     #   edx-lint
     #   pylint-celery
@@ -336,7 +337,7 @@ pynacl==1.5.0
     #   edx-django-utils
 pyproject-api==1.6.1
     # via tox
-pytest==8.0.1
+pytest==8.1.0
     # via
     #   pytest-cov
     #   pytest-django
@@ -344,7 +345,7 @@ pytest-cov==4.1.0
     # via -r requirements/test.in
 pytest-django==4.8.0
     # via -r requirements/test.in
-python-dateutil==2.8.2
+python-dateutil==2.9.0.post0
     # via faker
 python-slugify==8.0.4
     # via code-annotations
@@ -367,7 +368,7 @@ pyyaml==6.0.1
     #   drf-yasg
     #   edx-django-release-util
     #   responses
-redis==5.0.1
+redis==5.0.2
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -430,7 +431,7 @@ sqlparse==0.4.4
     # via
     #   -r requirements/base.txt
     #   django
-stevedore==5.1.0
+stevedore==5.2.0
     # via
     #   -r requirements/base.txt
     #   code-annotations
@@ -445,11 +446,11 @@ tomli==2.0.1
     #   pyproject-api
     #   pytest
     #   tox
-tomlkit==0.12.3
+tomlkit==0.12.4
     # via pylint
 tox==4.13.0
     # via -r requirements/test.in
-typing-extensions==4.9.0
+typing-extensions==4.10.0
     # via
     #   -r requirements/base.txt
     #   asgiref
@@ -468,7 +469,7 @@ urllib3==2.2.1
     #   -r requirements/base.txt
     #   requests
     #   responses
-virtualenv==20.25.0
+virtualenv==20.25.1
     # via tox
 zipp==3.17.0
     # via
