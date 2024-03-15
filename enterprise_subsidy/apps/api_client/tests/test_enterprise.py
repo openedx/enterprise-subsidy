@@ -114,6 +114,53 @@ class EnterpriseApiClientTests(TestCase):
         )
 
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
+    def test_successful_create_single_learner_enrollment_forced(self, mock_oauth_client):
+        """
+        Test the enterprise client's ability to force a late enrollment when the enterprise-access service desires it.
+        """
+        expected_reference_id = 'test-reference-id'
+        mock_oauth_client.return_value.post.return_value = MockResponse(
+            {
+                'successes': [{
+                    'user_id': self.user_id,
+                    'email': self.user_email,
+                    'course_run_key': self.courserun_key,
+                    ENROLLMENT_REF_ID_FIELD_NAME: expected_reference_id,
+                }],
+                'pending': [],
+                'failures': []
+            },
+            201,
+        )
+        subsidy = SubsidyFactory(enterprise_customer_uuid=self.enterprise_customer_uuid, starting_balance=10000)
+        transaction = TransactionFactory(
+            state=TransactionStateChoices.PENDING,
+            quantity=-1000,
+            ledger=subsidy.ledger,
+            idempotency_key=f"{subsidy.ledger.idempotency_key}--1000-abcd",
+            metadata={'allow_late_enrollment': True},  # The actual unique thing we're testing in this test.
+        )
+
+        enterprise_client = EnterpriseApiClient()
+        actual_reference_id = enterprise_client.enroll(self.user_id, self.courserun_key, transaction)
+
+        assert actual_reference_id == expected_reference_id
+        mock_oauth_client().post.assert_called_with(
+            os.path.join(
+                EnterpriseApiClient.enterprise_customer_endpoint,
+                str(self.enterprise_customer_uuid),
+                'enroll_learners_in_courses/',
+            ),
+            json={'enrollments_info': [{
+                'user_id': self.user_id,
+                'course_run_key': self.courserun_key,
+                'transaction_id': str(transaction.uuid),
+                'force_enrollment': True,  # The actual unique thing we're testing in this test.
+            }]},
+            timeout=settings.BULK_ENROLL_REQUEST_TIMEOUT_SECONDS
+        )
+
+    @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
     def test_failed_create_single_learner_enrollment_2xx(self, mock_oauth_client):
         """
         Something bad happened on the enrollment API side which caused a response without any successful enrollments.

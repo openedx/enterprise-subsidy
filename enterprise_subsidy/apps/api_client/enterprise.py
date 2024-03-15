@@ -102,13 +102,17 @@ class EnterpriseApiClient(BaseOAuthClient):
             EnrollmentError:
                 If enrollment response contained an unexpected output, such as missing data.
         """
-        enrollments_info = [{
+        enrollment_info = {
             'user_id': lms_user_id,
             'course_run_key': course_run_key,
             'transaction_id': str(ledger_transaction.uuid),
-        }]
+        }
+        # If late enrollment has been enabled for this transaction, inform the enterprise bulk enroll endpoint to bypass
+        # any enrollment deadline validation.
+        if ledger_transaction.metadata and ledger_transaction.metadata.get('allow_late_enrollment', False):
+            enrollment_info['force_enrollment'] = True
         customer_uuid = ledger_transaction.ledger.subsidy.enterprise_customer_uuid
-        response = self.bulk_enroll_enterprise_learners(customer_uuid, enrollments_info)
+        response = self.bulk_enroll_enterprise_learners(customer_uuid, [enrollment_info])
         if "successes" not in response or len(response["successes"]) != 1:
             raise EnrollmentException("Enrollment response should contain exactly one successful enrollment.")
         enrollment_success_info = response["successes"][0]
