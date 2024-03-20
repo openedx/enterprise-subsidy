@@ -97,14 +97,24 @@ class ContentMetadataApi:
                 return source_name
         return ProductSources.EDX.value
 
-    def get_geag_variant_id_for_content(self, content_data):
+    def get_geag_variant_id_for_content(self, content_identifier, content_data):
         """
-        Returns the GEAG ``variant_id`` or ``None``, given a dict of ``content_data``.
-        In the GEAG system a ``variant_id`` is aka a ``product_id``.
+        Get a GEAG ``variant_id`` for the given content.
+
+        Args:
+            content_identifier (str): The content for which to get a variant.
+            content_data (dict): The content metadata dict fetched from the enterprise-catalog API.
+
+        Returns:
+            bool: The ``variant_id`` if one is found, or None otherwise.
+
+        Notes:
+            * In the GEAG system a ``variant_id`` is aka a ``product_id``.
+            * The ``content_identifier`` may be a course run key, in which case the variant returned will correspond to
+              that specific run, instead of the advertised run.
         """
-        variant_id = None
-        if additional_metadata := content_data.get('additional_metadata'):
-            variant_id = additional_metadata.get('variant_id')
+        course_run_content = self.get_course_run(content_identifier, content_data)
+        variant_id = course_run_content.get('variant_id')
         return variant_id
 
     def summary_data_for_content(self, content_identifier, content_data):
@@ -122,7 +132,7 @@ class ContentMetadataApi:
             'source': self.product_source_for_content(content_data),
             'mode': self.mode_for_content(content_data),
             'content_price': self.price_for_content(content_data, course_run_content),
-            'geag_variant_id': self.get_geag_variant_id_for_content(content_data),
+            'geag_variant_id': self.get_geag_variant_id_for_content(content_identifier, content_data),
         }
 
     def get_course_run(self, content_identifier, content_data):

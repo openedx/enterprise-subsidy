@@ -1551,9 +1551,14 @@ class ContentMetadataViewSetTests(APITestBase):
             "slug": "2u",
             "description": "2U, Trilogy, Getsmarter -- external source for 2u courses and programs"
         },
-        "additional_metadata": {
-            "variant_id": "79a95406-a9ac-49b3-a27c-44f3fd06092e"
-        }
+        "course_runs": [
+            {
+                "key": course_run_key,
+                "uuid": course_run_uuid,
+                "variant_id": "79a95406-a9ac-49b3-a27c-44f3fd06092e",
+            }
+        ],
+        "advertised_course_run_uuid": course_run_uuid,
     }
     mock_http_error_reason = 'Something Went Wrong'
     mock_http_error_url = 'foobar.com'
@@ -1587,8 +1592,8 @@ class ContentMetadataViewSetTests(APITestBase):
             'expected_content_title': content_title,
             'expected_content_uuid': content_uuid_2,
             'expected_content_key': content_key_2,
-            'expected_course_run_uuid': None,
-            'expected_course_run_key': None,
+            'expected_course_run_uuid': str(course_run_uuid),
+            'expected_course_run_key': course_run_key,
             'expected_content_price': 59949,
             'mock_metadata': executive_education_course_metadata,
             'expected_source': '2u',
