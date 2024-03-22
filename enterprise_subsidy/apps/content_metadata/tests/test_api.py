@@ -19,6 +19,12 @@ class ContentMetadataApiTests(TestCase):
     """
     Tests for the content metadata api.
     """
+    course_key = 'edX+DemoX'
+    courserun_key_1 = 'course-v1:edX+DemoX+Demo_Course.1'
+    courserun_key_2 = 'course-v1:edX+DemoX+Demo_Course.2'
+    variant_id_1 = str(uuid4())
+    variant_id_2 = str(uuid4())
+
     @classmethod
     def setUpTestData(cls):
         super().setUpTestData()
@@ -27,9 +33,9 @@ class ContentMetadataApiTests(TestCase):
         cls.enterprise_customer_uuid = uuid4()
         cls.user_id = 3
         cls.user_email = 'ayy@lmao.com'
-        cls.course_key = 'edX+DemoX'
         cls.course_uuid = uuid4()
-        cls.courserun_key = 'course-v1:edX+DemoX+Demo_Course'
+        cls.courserun_uuid_1 = uuid4()
+        cls.courserun_uuid_2 = uuid4()
 
         cls.course_entitlements = [
             {'mode': 'verified', 'price': '149.00', 'currency': 'USD', 'sku': '8A47F9E', 'expires': 'null'}
@@ -40,8 +46,8 @@ class ContentMetadataApiTests(TestCase):
             'uuid': cls.course_uuid,
             'title': 'Demonstration Course',
             'course_runs': [{
-                'key': cls.courserun_key,
-                'uuid': '00f8945b-bb50-4c7a-98f4-2f2f6178ff2f',
+                'key': cls.courserun_key_1,
+                'uuid': str(cls.courserun_uuid_1),
                 'title': 'Demonstration Course',
                 'external_key': None,
                 'seats': [{
@@ -83,10 +89,53 @@ class ContentMetadataApiTests(TestCase):
             'additional_metadata': None,
             'enrollment_count': 0,
             'recent_enrollment_count': 0,
-            'course_run_keys': [cls.courserun_key],
+            'course_run_keys': [cls.courserun_key_1],
             'content_last_modified': '2023-03-06T20:56:46.003840Z',
             'enrollment_url': 'https://foobar.com',
             'active': False
+        }
+
+        cls.executive_education_course_metadata = {
+            "key": cls.course_key,
+            "content_type": "course",
+            "uuid": cls.course_uuid,
+            "title": "Demonstration Exec Ed Course",
+            "course_runs": [
+                {
+                    "key": cls.courserun_key_1,
+                    "uuid": str(cls.courserun_uuid_1),
+                    "title": "Demonstration Exec Ed Course",
+                    "variant_id": cls.variant_id_1,
+                },
+                {
+                    "key": cls.courserun_key_2,
+                    "uuid": str(cls.courserun_uuid_2),
+                    "title": "Demonstration Exec Ed Course",
+                    "variant_id": cls.variant_id_2,
+                },
+            ],
+            "course_run_keys": [
+                cls.courserun_key_1,
+                cls.courserun_key_2,
+            ],
+            "advertised_course_run_uuid": str(cls.courserun_uuid_2),
+            "entitlements": [
+                {
+                    "mode": "paid-executive-education",
+                    "price": "599.49",
+                    "currency": "USD",
+                    "sku": "B98DE21",
+                    "expires": "null",
+                }
+            ],
+            "product_source": {
+                "name": "2u",
+                "slug": "2u",
+                "description": "2U, Trilogy, Getsmarter -- external source for 2u courses and programs",
+            },
+            "additional_metadata": {
+                "variant_id": cls.variant_id_2,
+            },
         }
 
     @ddt.data(
@@ -163,44 +212,100 @@ class ContentMetadataApiTests(TestCase):
         assert expected_source == response
 
     def test_summary_data_for_content(self):
-        summary = self.content_metadata_api.summary_data_for_content(self.courserun_key, self.course_metadata)
+        summary = self.content_metadata_api.summary_data_for_content(self.courserun_key_1, self.course_metadata)
         assert summary.get('content_key') == self.course_key
-        assert summary.get('course_run_key') == self.courserun_key
+        assert summary.get('course_run_key') == self.courserun_key_1
         assert summary.get('content_price') == 14900
 
     def test_summary_data_for_exec_ed_content(self):
-        executive_education_course_metadata = {
-            "key": self.course_key,
-            "content_type": "course",
-            "uuid": str(uuid4()),
-            "title": "Demonstration Course",
-            "entitlements": [
-                {
-                    "mode": "paid-executive-education",
-                    "price": "599.49",
-                    "currency": "USD",
-                    "sku": "B98DE21",
-                    "expires": "null"
-                }
-            ],
-            "product_source": {
-                "name": "2u",
-                "slug": "2u",
-                "description": "2U, Trilogy, Getsmarter -- external source for 2u courses and programs"
-            },
-            "additional_metadata": {
-                "variant_id": "79a95406-a9ac-49b3-a27c-44f3fd06092e"
-            }
-        }
-        mode = self.content_metadata_api.mode_for_content(executive_education_course_metadata)
+        mode = self.content_metadata_api.mode_for_content(self.executive_education_course_metadata)
         assert mode == 'paid-executive-education'
+
+        # Test assembling summary data given an identifier of a course.
         summary = self.content_metadata_api.summary_data_for_content(
             self.course_key,
-            executive_education_course_metadata
+            self.executive_education_course_metadata,
         )
         assert summary.get('content_key') == self.course_key
-        assert summary.get('course_run_key') is None
+        assert summary.get('course_run_key') is self.courserun_key_2
         assert summary.get('content_price') == 59949
+        assert summary.get('geag_variant_id') == self.variant_id_2
+
+        # Test assembling summary data given an identifier of a non-advertised course run.
+        summary = self.content_metadata_api.summary_data_for_content(
+            self.courserun_key_1,
+            self.executive_education_course_metadata,
+        )
+        assert summary.get('content_key') == self.course_key
+        assert summary.get('course_run_key') is self.courserun_key_1
+        assert summary.get('content_price') == 59949
+        assert summary.get('geag_variant_id') == self.variant_id_1
+
+        # Test assembling summary data given an identifier of an advertised course run.
+        # Note, the result should be identical to when a course identifier is given.
+        summary = self.content_metadata_api.summary_data_for_content(
+            self.courserun_key_2,
+            self.executive_education_course_metadata,
+        )
+        assert summary.get('content_key') == self.course_key
+        assert summary.get('course_run_key') is self.courserun_key_2
+        assert summary.get('content_price') == 59949
+        assert summary.get('geag_variant_id') == self.variant_id_2
+
+    @ddt.data(
+        {
+            'remove_variant_id_from_runs': False,
+            'requested_content_key': course_key,
+            'expected_variant_id': variant_id_2,  # The variant from the advertised run should be selected.
+        },
+        {
+            'remove_variant_id_from_runs': True,
+            'requested_content_key': course_key,
+            'expected_variant_id': None,
+        },
+        {
+            'remove_variant_id_from_runs': False,
+            'requested_content_key': courserun_key_1,
+            'expected_variant_id': variant_id_1,
+        },
+        {
+            'remove_variant_id_from_runs': True,
+            'requested_content_key': courserun_key_1,
+            'expected_variant_id': None,
+        },
+        {
+            'remove_variant_id_from_runs': False,
+            'requested_content_key': courserun_key_2,
+            'expected_variant_id': variant_id_2,
+        },
+        {
+            'remove_variant_id_from_runs': True,
+            'requested_content_key': courserun_key_2,
+            'expected_variant_id': None,
+        },
+    )
+    @ddt.unpack
+    def test_summary_data_for_exec_ed_content_variant_id_sometimes_missing(
+        self,
+        remove_variant_id_from_runs,
+        requested_content_key,
+        expected_variant_id,
+    ):
+        """
+        Test which variant_id is returned in summary data depending on a couple situations:
+        - whether variant_id is present in runs (such as with OCM content), and
+        - which content key was requested (course vs. advertised run vs.  non-advertised run).
+        """
+        mocked_data = self.executive_education_course_metadata.copy()
+        if remove_variant_id_from_runs:
+            for run in mocked_data['course_runs']:
+                del run['variant_id']
+
+        summary = self.content_metadata_api.summary_data_for_content(
+            requested_content_key,
+            mocked_data,
+        )
+        assert summary.get('geag_variant_id') == expected_variant_id
 
     @ddt.data(
         {
