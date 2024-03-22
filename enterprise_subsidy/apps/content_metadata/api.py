@@ -110,11 +110,18 @@ class ContentMetadataApi:
 
         Notes:
             * In the GEAG system a ``variant_id`` is aka a ``product_id``.
-            * The ``content_identifier`` may be a course run key, in which case the variant returned will correspond to
-              that specific run, instead of the advertised run.
+            * If ``content_identifier`` is a course key, the variant returned will correspond to the advertised run.
+            * If ``content_identifier`` is a course run key, the variant returned will correspond to that specific run,
+              instead of the advertised run.
+            * If, for some reason, a ``variant_id`` is not found inside the course run metadata, fallback to reading it
+              from the deprecated ``additional_metadata`` dict.
         """
         course_run_content = self.get_course_run(content_identifier, content_data)
         variant_id = course_run_content.get('variant_id')
+        # If no variant_id is found, and this is indeed an Exec Ed course, check the deprecated `additional_metadata`.
+        if not variant_id:
+            if additional_metadata := content_data.get('additional_metadata'):
+                variant_id = additional_metadata.get('variant_id')
         return variant_id
 
     def summary_data_for_content(self, content_identifier, content_data):
