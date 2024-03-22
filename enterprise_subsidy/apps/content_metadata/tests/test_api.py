@@ -255,39 +255,84 @@ class ContentMetadataApiTests(TestCase):
     @ddt.data(
         {
             'remove_variant_id_from_runs': False,
+            'remove_variant_id_from_additional_metadata': True,
             'requested_content_key': course_key,
             'expected_variant_id': variant_id_2,  # The variant from the advertised run should be selected.
         },
         {
             'remove_variant_id_from_runs': True,
+            'remove_variant_id_from_additional_metadata': True,
             'requested_content_key': course_key,
             'expected_variant_id': None,
         },
         {
             'remove_variant_id_from_runs': False,
+            'remove_variant_id_from_additional_metadata': True,
             'requested_content_key': courserun_key_1,
             'expected_variant_id': variant_id_1,
         },
         {
             'remove_variant_id_from_runs': True,
+            'remove_variant_id_from_additional_metadata': True,
             'requested_content_key': courserun_key_1,
             'expected_variant_id': None,
         },
         {
             'remove_variant_id_from_runs': False,
+            'remove_variant_id_from_additional_metadata': True,
             'requested_content_key': courserun_key_2,
             'expected_variant_id': variant_id_2,
         },
         {
             'remove_variant_id_from_runs': True,
+            'remove_variant_id_from_additional_metadata': True,
             'requested_content_key': courserun_key_2,
             'expected_variant_id': None,
+        },
+        # We can remove all the following test cases once we stop using the
+        # deprecated ``additional_metadata``.
+        {
+            'remove_variant_id_from_runs': False,
+            'remove_variant_id_from_additional_metadata': False,
+            'requested_content_key': course_key,
+            'expected_variant_id': variant_id_2,
+        },
+        {
+            'remove_variant_id_from_runs': True,
+            'remove_variant_id_from_additional_metadata': False,
+            'requested_content_key': course_key,
+            'expected_variant_id': variant_id_2,
+        },
+        {
+            'remove_variant_id_from_runs': False,
+            'remove_variant_id_from_additional_metadata': False,
+            'requested_content_key': courserun_key_1,
+            'expected_variant_id': variant_id_1,
+        },
+        {
+            'remove_variant_id_from_runs': True,
+            'remove_variant_id_from_additional_metadata': False,
+            'requested_content_key': courserun_key_1,
+            'expected_variant_id': variant_id_2,
+        },
+        {
+            'remove_variant_id_from_runs': False,
+            'remove_variant_id_from_additional_metadata': False,
+            'requested_content_key': courserun_key_2,
+            'expected_variant_id': variant_id_2,
+        },
+        {
+            'remove_variant_id_from_runs': True,
+            'remove_variant_id_from_additional_metadata': False,
+            'requested_content_key': courserun_key_2,
+            'expected_variant_id': variant_id_2,
         },
     )
     @ddt.unpack
     def test_summary_data_for_exec_ed_content_variant_id_sometimes_missing(
         self,
         remove_variant_id_from_runs,
+        remove_variant_id_from_additional_metadata,
         requested_content_key,
         expected_variant_id,
     ):
@@ -300,6 +345,8 @@ class ContentMetadataApiTests(TestCase):
         if remove_variant_id_from_runs:
             for run in mocked_data['course_runs']:
                 del run['variant_id']
+        if remove_variant_id_from_additional_metadata:
+            del mocked_data['additional_metadata']['variant_id']
 
         summary = self.content_metadata_api.summary_data_for_content(
             requested_content_key,
