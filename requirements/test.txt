@@ -23,10 +23,11 @@ attrs==23.2.0
     #   jsonschema
     #   openedx-events
     #   referencing
-backports-zoneinfo==0.2.1
+backports-zoneinfo==0.2.1 ; python_version < "3.9"
     # via
     #   -r requirements/base.txt
     #   django
+    #   -c requirements/constraints.txt
 cachetools==5.3.3
     # via tox
 certifi==2024.2.2
