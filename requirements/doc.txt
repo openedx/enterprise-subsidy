@@ -32,10 +32,11 @@ babel==2.14.0
     # via
     #   pydata-sphinx-theme
     #   sphinx
-backports-zoneinfo==0.2.1
+backports-zoneinfo==0.2.1 ; python_version < "3.9"
     # via
     #   -r requirements/test.txt
     #   django
+    #   -c requirements/constraints.txt
 beautifulsoup4==4.12.3
     # via pydata-sphinx-theme
 build==1.1.1
