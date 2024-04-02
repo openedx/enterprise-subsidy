@@ -173,7 +173,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.5.2
+openedx-events==9.7.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
