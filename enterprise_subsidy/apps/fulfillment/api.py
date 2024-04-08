@@ -204,3 +204,12 @@ class GEAGFulfillmentHandler():
             return self._save_fulfillment_reference(transaction, external_reference_id)
         except HTTPError as exc:
             raise FulfillmentException(response_payload.get('errors') or geag_response.text) from exc
+
+    def cancel_fulfillment(self, external_transaction_reference):
+        """
+        Cancels the provided external reference's (related to some ``Transaction`` record)
+        related enterprise allocation.
+        """
+        self.get_smarter_client().cancel_enterprise_allocation(
+            external_transaction_reference.external_reference_id,
+        )

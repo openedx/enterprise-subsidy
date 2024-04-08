@@ -9,14 +9,11 @@ from django.conf import settings
 from django.contrib import auth
 from django.core.management.base import BaseCommand
 from getsmarter_api_clients.geag import GetSmarterEnterpriseApiClient
-from openedx_ledger.api import reverse_full_transaction
 from openedx_ledger.models import Transaction, TransactionStateChoices
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
-from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
-from enterprise_subsidy.apps.fulfillment.exceptions import FulfillmentException
-from enterprise_subsidy.apps.transaction.utils import generate_transaction_reversal_idempotency_key
+from enterprise_subsidy.apps.transaction.api import cancel_transaction_external_fulfillment, reverse_transaction
 
 logger = logging.getLogger(__name__)
 User = auth.get_user_model()
@@ -202,25 +199,8 @@ class Command(BaseCommand):
         )
 
         if not self.dry_run:
-            idempotency_key = generate_transaction_reversal_idempotency_key(
-                fulfillment_uuid,
-                enrollment_unenrolled_at
-            )
-
-            for external_reference in related_transaction.external_reference.all():
-                provider_slug = external_reference.external_fulfillment_provider.slug
-                if provider_slug == GEAGFulfillmentHandler.EXTERNAL_FULFILLMENT_PROVIDER_SLUG:
-                    # this will raise if there is a problem before we reverse the ledger transaction
-                    # allowing us to try again later
-                    self.geag_client.cancel_enterprise_allocation(external_reference.external_reference_id)
-                else:
-                    raise FulfillmentException(f'dont know how to cancel {provider_slug}')
-
-            # Do we need to write any additional metadata to the Reversal?
-            reverse_full_transaction(
-                transaction=related_transaction,
-                idempotency_key=idempotency_key,
-            )
+            cancel_transaction_external_fulfillment(related_transaction)
+            reverse_transaction(related_transaction, unenroll_time=enrollment_unenrolled_at)
             return 1
         else:
             logger.info(
