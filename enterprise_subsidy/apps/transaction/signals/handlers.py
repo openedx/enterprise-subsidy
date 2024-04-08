@@ -3,11 +3,11 @@ Subsidy Service signals handler.
 """
 import logging
 
-import requests
 from django.dispatch import receiver
 from openedx_ledger.signals.signals import TRANSACTION_REVERSED
 
-from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
+from ..api import cancel_transaction_external_fulfillment, cancel_transaction_fulfillment
+from ..exceptions import TransactionFulfillmentCancelationException
 
 logger = logging.getLogger(__name__)
 
@@ -27,8 +27,9 @@ def listen_for_transaction_reversal(sender, **kwargs):
         logger.info(msg)
         raise ValueError(msg)
     try:
-        EnterpriseApiClient().cancel_fulfillment(transaction.fulfillment_identifier)
-    except requests.exceptions.HTTPError as exc:
+        cancel_transaction_external_fulfillment(transaction)
+        cancel_transaction_fulfillment(transaction)
+    except TransactionFulfillmentCancelationException as exc:
         error_msg = f"Error canceling platform fulfillment {transaction.fulfillment_identifier}: {exc}"
         logger.exception(error_msg)
         raise exc

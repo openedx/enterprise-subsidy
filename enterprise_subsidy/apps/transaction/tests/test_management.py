@@ -19,7 +19,6 @@ from openedx_ledger.test_utils.factories import (
 from pytest import mark
 
 from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
-from enterprise_subsidy.apps.fulfillment.exceptions import FulfillmentException
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
 from test_utils.utils import MockResponse
 
@@ -149,7 +148,7 @@ class TestTransactionManagementCommand(TestCase):
         'ContentMetadataApi'
     )
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.signals.handlers.EnterpriseApiClient'
+        'enterprise_subsidy.apps.transaction.api.EnterpriseApiClient'
     )
     def test_write_reversals_from_enterprise_unenrollments_with_microsecond_datetime_strings(
         self,
@@ -249,7 +248,7 @@ class TestTransactionManagementCommand(TestCase):
         'ContentMetadataApi'
     )
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.signals.handlers.EnterpriseApiClient'
+        'enterprise_subsidy.apps.transaction.api.EnterpriseApiClient'
     )
     def test_write_reversals_from_enterprise_unenrollment_does_not_rerequest_metadata(
         self,
@@ -412,7 +411,7 @@ class TestTransactionManagementCommand(TestCase):
         'ContentMetadataApi'
     )
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.signals.handlers.EnterpriseApiClient'
+        'enterprise_subsidy.apps.transaction.api.EnterpriseApiClient'
     )
     @ddt.data(
         ('2023-05-25T19:27:29Z', '2023-06-1T19:27:29Z'),
@@ -520,7 +519,7 @@ class TestTransactionManagementCommand(TestCase):
         'ContentMetadataApi'
     )
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.signals.handlers.EnterpriseApiClient'
+        'enterprise_subsidy.apps.transaction.api.EnterpriseApiClient'
     )
     @ddt.data(True, False)
     def test_write_reversals_from_enterprise_unenrollments(
@@ -628,7 +627,7 @@ class TestTransactionManagementCommand(TestCase):
         'ContentMetadataApi'
     )
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.signals.handlers.EnterpriseApiClient'
+        'enterprise_subsidy.apps.transaction.api.EnterpriseApiClient'
     )
     @override_settings(ENTERPRISE_SUBSIDY_AUTOMATIC_EXTERNAL_CANCELLATION=False)
     def test_write_reversals_from_geag_enterprise_unenrollments_disabled_setting(
@@ -720,8 +719,7 @@ class TestTransactionManagementCommand(TestCase):
         assert Reversal.objects.count() == 0
 
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
-        'GetSmarterEnterpriseApiClient'
+        'enterprise_subsidy.apps.fulfillment.api.GetSmarterEnterpriseApiClient'
     )
     @mock.patch(
         'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
@@ -732,7 +730,7 @@ class TestTransactionManagementCommand(TestCase):
         'ContentMetadataApi'
     )
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.signals.handlers.EnterpriseApiClient'
+        'enterprise_subsidy.apps.transaction.api.EnterpriseApiClient'
     )
     @override_settings(ENTERPRISE_SUBSIDY_AUTOMATIC_EXTERNAL_CANCELLATION=True)
     def test_write_reversals_from_geag_enterprise_unenrollments_enabled_setting(
@@ -836,7 +834,7 @@ class TestTransactionManagementCommand(TestCase):
         'ContentMetadataApi'
     )
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.signals.handlers.EnterpriseApiClient'
+        'enterprise_subsidy.apps.transaction.api.EnterpriseApiClient'
     )
     @override_settings(ENTERPRISE_SUBSIDY_AUTOMATIC_EXTERNAL_CANCELLATION=True)
     def test_write_reversals_from_geag_enterprise_unenrollments_unknown_provider(
@@ -846,7 +844,9 @@ class TestTransactionManagementCommand(TestCase):
         mock_fetch_recent_unenrollments_client,
     ):
         """
-        Test the write_reversals_from_enterprise_unenrollments management command's ability to create a reversal.
+        Test that write_reversals_from_enterprise_unenrollments management command
+        does not do anything with an external reference provider that it doesn't know
+        how to un-fulfill or reverse.
         """
         # Reversal creation will trigger a signal handler that will make a call to enterprise
         mock_signal_client.return_value = mock.MagicMock()
@@ -921,10 +921,11 @@ class TestTransactionManagementCommand(TestCase):
             'active': False
         }
 
-        assert Reversal.objects.count() == 0
-        with self.assertRaises(FulfillmentException):
-            call_command('write_reversals_from_enterprise_unenrollments')
-        assert Reversal.objects.count() == 0
+        self.assertIsNone(self.unknown_transaction.get_reversal())
+
+        call_command('write_reversals_from_enterprise_unenrollments')
+
+        self.assertIsNone(self.unknown_transaction.get_reversal())
 
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.lms_user_client")
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
