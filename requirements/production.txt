@@ -87,13 +87,13 @@ django-extensions==3.2.3
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-django-filter==24.1
+django-filter==24.2
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
 django-log-request-id==2.1.0
     # via -r requirements/base.txt
-django-model-utils==4.4.0
+django-model-utils==4.5.0
     # via
     #   -r requirements/base.txt
     #   edx-rbac
@@ -125,17 +125,17 @@ drf-jwt==1.19.2
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
-drf-spectacular==0.27.1
+drf-spectacular==0.27.2
     # via -r requirements/base.txt
 drf-yasg==1.21.7
     # via -r requirements/base.txt
-edx-auth-backends==4.2.0
+edx-auth-backends==4.3.0
     # via -r requirements/base.txt
-edx-django-release-util==1.3.0
+edx-django-release-util==1.4.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-edx-django-utils==5.11.0
+edx-django-utils==5.12.0
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
@@ -143,7 +143,7 @@ edx-django-utils==5.11.0
     #   getsmarter-api-clients
     #   openedx-events
     #   openedx-ledger
-edx-drf-extensions==10.2.0
+edx-drf-extensions==10.3.0
     # via
     #   -r requirements/base.txt
     #   edx-rbac
@@ -156,7 +156,7 @@ edx-rbac==1.8.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-edx-rest-api-client==5.6.1
+edx-rest-api-client==5.7.0
     # via -r requirements/base.txt
 fastavro==1.9.4
     # via
@@ -201,7 +201,7 @@ mysqlclient==2.2.4
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   openedx-ledger
-newrelic==9.7.1
+newrelic==9.8.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -211,7 +211,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.5.2
+openedx-events==9.7.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -238,7 +238,7 @@ psutil==5.9.8
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
-pycparser==2.21
+pycparser==2.22
     # via
     #   -r requirements/base.txt
     #   cffi
@@ -343,7 +343,7 @@ stevedore==5.2.0
     #   -r requirements/base.txt
     #   edx-django-utils
     #   edx-opaque-keys
-typing-extensions==4.10.0
+typing-extensions==4.11.0
     # via
     #   -r requirements/base.txt
     #   asgiref
