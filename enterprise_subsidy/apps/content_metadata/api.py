@@ -246,9 +246,8 @@ class ContentMetadataApi:
                 course_details,
                 django_cache_timeout=CONTENT_METADATA_CACHE_TIMEOUT,
             )
-        logger.info(
-            f'Fetched course details {course_details} for content_identifier {content_identifier}',
-        )
+        else:
+            logger.warning('Could not fetch metadata for content %s', content_identifier)
         return course_details
 
     @staticmethod
@@ -273,10 +272,10 @@ class ContentMetadataApi:
                 course_details,
                 django_cache_timeout=CONTENT_METADATA_CACHE_TIMEOUT,
             )
-        logger.info(
-            'Fetched course details %s for customer %s and content_identifier %s',
-            course_details,
-            enterprise_customer_uuid,
-            content_identifier,
-        )
+        else:
+            logger.warning(
+                'Could not fetch metadata for customer %s, content %s',
+                enterprise_customer_uuid,
+                content_identifier,
+            )
         return course_details
