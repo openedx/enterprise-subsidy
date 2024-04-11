@@ -99,11 +99,6 @@ class GEAGFulfillmentHandler():
         # Check if data is already cached
         cached_response = request_cache(namespace=REQUEST_CACHE_NAMESPACE).get_cached_response(cache_key)
         if cached_response.is_found:
-            logger.info(
-                'subsidy_record cache hit '
-                f'enterprise_customer_uuid={self._get_enterprise_customer_uuid(transaction)}, '
-                f'subsidy_uuid={transaction.uuid}'
-            )
             return cached_response.value
         # If data is not cached, fetch and cache it
         enterprise_customer_uuid = str(self._get_enterprise_customer_uuid(transaction))
@@ -201,6 +196,11 @@ class GEAGFulfillmentHandler():
             external_reference_id = response_payload.get('orderUuid')
             if not external_reference_id:
                 raise FulfillmentException('missing orderUuid / external_reference_id from geag')
+            logger.info(
+                '[transaction fulfillment] Fulfilled transaction %s with external reference id %s',
+                transaction.uuid,
+                external_reference_id,
+            )
             return self._save_fulfillment_reference(transaction, external_reference_id)
         except HTTPError as exc:
             raise FulfillmentException(response_payload.get('errors') or geag_response.text) from exc
@@ -211,5 +211,10 @@ class GEAGFulfillmentHandler():
         related enterprise allocation.
         """
         self.get_smarter_client().cancel_enterprise_allocation(
+            external_transaction_reference.external_reference_id,
+        )
+        logger.info(
+            '[transaction fulfillment] Cancelled fulfillment for transaction %s with external reference id %s',
+            external_transaction_reference.transaction.uuid,
             external_transaction_reference.external_reference_id,
         )

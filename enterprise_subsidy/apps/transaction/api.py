@@ -23,7 +23,7 @@ def cancel_transaction_fulfillment(transaction):
     to the ``audit`` mode).
     """
     if transaction.state != TransactionStateChoices.COMMITTED:
-        logger.info(
+        logger.error(
             "[fulfillment cancelation] %s is not committed, will not cancel fulfillment",
             transaction.uuid,
         )
@@ -31,7 +31,7 @@ def cancel_transaction_fulfillment(transaction):
             "Transaction is not committed"
         )
     if not transaction.fulfillment_identifier:
-        logger.info(
+        logger.error(
             "[fulfillment cancelation] %s has no fulfillment uuid, will not cancel fulfillment",
             transaction.uuid,
         )
