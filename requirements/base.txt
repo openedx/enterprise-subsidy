@@ -145,7 +145,7 @@ fastavro==1.9.4
     # via openedx-events
 getsmarter-api-clients==0.6.1
     # via -r requirements/base.in
-idna==3.6
+idna==3.7
     # via requests
 importlib-resources==6.4.0
     # via
@@ -174,7 +174,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.7.0
+openedx-events==9.9.1
     # via
     #   -r requirements/base.in
     #   openedx-ledger
@@ -259,7 +259,7 @@ social-auth-core==4.5.3
     # via
     #   edx-auth-backends
     #   social-auth-app-django
-sqlparse==0.4.4
+sqlparse==0.5.0
     # via django
 stevedore==5.2.0
     # via
