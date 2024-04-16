@@ -215,7 +215,7 @@ openedx-events==9.9.1
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-openedx-ledger==1.4.1
+openedx-ledger==1.4.2
     # via -r requirements/base.txt
 packaging==24.0
     # via
