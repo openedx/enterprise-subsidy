@@ -42,6 +42,16 @@ class Parameters:
             "The UUID associated with the requesting user's enterprise customer."
         ),
     )
+    ENTERPRISE_SUBSIDY_ACCESS_POLICY_UUID = OpenApiParameter(
+        'subsidy_access_policy_uuid',
+        type=OpenApiTypes.UUID,
+        location=OpenApiParameter.QUERY,
+        required=False,
+        allow_blank=True,
+        description=(
+            "The UUID associated with the subsidy access policy to which the query pertains."
+        ),
+    )
 
 
 def _open_api_error_response(exception_class, detail_str, example_name):

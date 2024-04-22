@@ -13,6 +13,7 @@ from rest_framework import exceptions, mixins, permissions, status, viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.status import HTTP_404_NOT_FOUND
 
 from enterprise_subsidy.apps.api.paginators import SubsidyListPaginator
 from enterprise_subsidy.apps.api.v1 import utils
@@ -20,6 +21,8 @@ from enterprise_subsidy.apps.api.v1.exceptions import ServerError
 from enterprise_subsidy.apps.api.v1.serializers import (
     CanRedeemResponseSerializer,
     SubsidyCreationRequestSerializer,
+    SubsidyLearnerAggregateRequestSerializer,
+    SubsidyLearnerAggregateSerializer,
     SubsidySerializer,
     SubsidyUpdateRequestSerializer
 )
@@ -126,6 +129,7 @@ class SubsidyViewSet(
             "update": PERMISSION_CAN_WRITE_SUBSIDIES,
             "destroy": PERMISSION_CAN_WRITE_SUBSIDIES,
             "partial_update": PERMISSION_CAN_WRITE_SUBSIDIES,
+            "get_aggregates_by_learner": PERMISSION_CAN_READ_SUBSIDIES,
         }
         permission_required = permission_for_action.get(self.request_action, PERMISSION_NOT_GRANTED)
         return [permission_required]
@@ -371,3 +375,33 @@ class SubsidyViewSet(
         """
         kwargs['partial'] = True
         return self.update(request, *args, **kwargs)
+
+    @extend_schema(
+        tags=['subsidy'],
+        request=SubsidyLearnerAggregateRequestSerializer,
+        parameters=[Parameters.ENTERPRISE_SUBSIDY_ACCESS_POLICY_UUID],
+        responses={
+            200: SubsidyLearnerAggregateSerializer,
+            400: exceptions.ValidationError,
+            403: exceptions.PermissionDenied,
+            500: exceptions.APIException,
+        }
+    )
+    @action(methods=['get'], detail=True)
+    def get_aggregates_by_learner(self, request, *args, **kwargs):
+        """
+        Fetch aggregated data by learner pertaining to a subsidy. Response data is not paginated.
+
+        Endpoint Location: GET /api/v1/subsidies/{uuid}/aggregates-by-learner
+        """
+        if not self.requested_subsidy:
+            return Response("Subsidy not found", HTTP_404_NOT_FOUND)
+        aggregated_enrollments_serializer = SubsidyLearnerAggregateRequestSerializer(data=request.query_params)
+        if aggregated_enrollments_serializer.is_valid(raise_exception=True):
+            validated_data = aggregated_enrollments_serializer.validated_data
+            aggregated_enrollments = self.requested_subsidy.aggregated_enrollments_from_transactions(
+                subsidy_access_policy_uuid=validated_data.get('subsidy_access_policy_uuid')
+            )
+            return Response(data=aggregated_enrollments, status=200)
+        else:
+            return Response(aggregated_enrollments_serializer.errors, status=status.HTTP_400_BAD_REQUEST)

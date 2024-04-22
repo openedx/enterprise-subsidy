@@ -5,6 +5,7 @@ import os
 import urllib
 import uuid
 from functools import partial
+from operator import itemgetter
 from unittest import mock
 
 import ddt
@@ -191,6 +192,7 @@ class SubsidyViewSetTests(APITestBase):
     get_details_url = partial(reverse, "api:v1:subsidy-detail")
     get_list_url = reverse("api:v1:subsidy-list")
     get_can_redeem_url = partial(reverse, "api:v1:subsidy-can-redeem")
+    get_aggregated_enrollments_url = partial(reverse, "api:v1:subsidies-aggregates-by-learner")
 
     def test_get_one_subsidy(self):
         """
@@ -541,6 +543,64 @@ class SubsidyViewSetTests(APITestBase):
         response = self.client.patch(url, factory_data, format='json')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.json()["unit"], subsidy.unit)
+
+    def test_get_aggregated_enrollments_with_policy_filter(self):
+        """
+        Test that the get_aggregated_enrollments can optionally filter aggregated data down to the policy UUID should
+        the query param be provided.
+        """
+        self.set_up_admin(enterprise_uuids=[self.subsidy_1.enterprise_customer_uuid])
+
+        # Reading only subsidy_1_transaction_1 by filtering by policy UUID
+        url = self.get_aggregated_enrollments_url([self.subsidy_1.uuid]) + \
+            f"?subsidy_access_policy_uuid={self.subsidy_1_transaction_1.subsidy_access_policy_uuid}"
+
+        response = self.client.get(url)
+
+        expected_lms_user_1_aggregated_enrollment_count = Transaction.objects.filter(
+            reversal__isnull=True,
+            state=TransactionStateChoices.COMMITTED,
+            lms_user_id=self.subsidy_1_transaction_1.lms_user_id,
+            ledger__subsidy=self.subsidy_1
+        ).count()
+        assert list(response.data) == [{
+            'lms_user_id': self.subsidy_1_transaction_1.lms_user_id,
+            'total': expected_lms_user_1_aggregated_enrollment_count,
+        }]
+
+    def test_get_aggregated_enrollments_success(self):
+        """
+        Test that the get_aggregated_enrollments endpoint will return the aggregated number of committed transactions
+        per LMS user ID associated with a subsidy
+        """
+        self.set_up_admin(enterprise_uuids=[self.subsidy_1.enterprise_customer_uuid])
+
+        # Reading subsidy_1_transaction_1 and subsidy_1_transaction_2
+        url = self.get_aggregated_enrollments_url([self.subsidy_1.uuid])
+        response = self.client.get(url)
+
+        expected_lms_user_1_aggregated_enrollment_count = Transaction.objects.filter(
+            reversal__isnull=True,
+            state=TransactionStateChoices.COMMITTED,
+            lms_user_id=self.subsidy_1_transaction_1.lms_user_id,
+            ledger__subsidy=self.subsidy_1
+        ).count()
+        expected_lms_user_2_aggregated_enrollment_count = Transaction.objects.filter(
+            reversal__isnull=True,
+            state=TransactionStateChoices.COMMITTED,
+            lms_user_id=self.subsidy_1_transaction_2.lms_user_id,
+            ledger__subsidy=self.subsidy_1,
+        ).count()
+        assert sorted(list(response.data), key=itemgetter('lms_user_id')) == sorted([
+            {
+                'lms_user_id': self.subsidy_1_transaction_1.lms_user_id,
+                'total': expected_lms_user_1_aggregated_enrollment_count
+            },
+            {
+                'lms_user_id': self.subsidy_1_transaction_2.lms_user_id,
+                'total': expected_lms_user_2_aggregated_enrollment_count
+            },
+        ], key=itemgetter('lms_user_id'))
 
 
 @ddt.ddt

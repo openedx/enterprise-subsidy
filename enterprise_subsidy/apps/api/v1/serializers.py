@@ -307,6 +307,30 @@ class TransactionCreationRequestSerializer(serializers.ModelSerializer):
 
 
 # pylint: disable=abstract-method
+class SubsidyLearnerAggregateSerializer(serializers.Serializer):
+    """
+    Serializer for providing responses to queries about aggregate enrollment data for a particular subsidy
+    """
+    lms_user_id = serializers.IntegerField(
+        help_text='User ID associated with user tied to a subsidy\'s transaction.'
+    )
+    total = serializers.IntegerField(
+        help_text='Number of enrollments found for the user.'
+    )
+
+
+# pylint: disable=abstract-method
+class SubsidyLearnerAggregateRequestSerializer(serializers.Serializer):
+    """
+    Serializer for creating a subsidy request
+    """
+    subsidy_access_policy_uuid = serializers.UUIDField(
+        required=False,
+        help_text="UUID of the enterprise subsidy policy. Used to filter down aggregate subsidy enrollment data",
+    )
+
+
+# pylint: disable=abstract-method
 class CanRedeemResponseSerializer(serializers.Serializer):
     """
     Serializer for providing responses to queries about redeemability
