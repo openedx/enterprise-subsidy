@@ -152,7 +152,7 @@ edx-opaque-keys[django]==2.5.1
     #   -r requirements/base.txt
     #   edx-drf-extensions
     #   openedx-events
-edx-rbac==1.8.0
+edx-rbac==1.9.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -168,7 +168,7 @@ gevent==24.2.1
     # via -r requirements/production.in
 greenlet==3.0.3
     # via gevent
-gunicorn==21.2.0
+gunicorn==22.0.0
     # via -r requirements/production.in
 idna==3.7
     # via
@@ -201,7 +201,7 @@ mysqlclient==2.2.4
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   openedx-ledger
-newrelic==9.8.0
+newrelic==9.9.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -211,7 +211,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.9.1
+openedx-events==9.9.2
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
