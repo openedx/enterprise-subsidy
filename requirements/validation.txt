@@ -28,11 +28,11 @@ attrs==23.2.0
     #   jsonschema
     #   openedx-events
     #   referencing
-backports-tarfile==1.1.0
+backports-tarfile==1.1.1
     # via
     #   -r requirements/quality.txt
     #   jaraco-context
-backports-zoneinfo==0.2.1
+backports-zoneinfo==0.2.1 ; python_version < "3.9"
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -252,13 +252,13 @@ edx-lint==5.3.6
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-edx-opaque-keys[django]==2.5.1
+edx-opaque-keys[django]==2.8.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   edx-drf-extensions
     #   openedx-events
-edx-rbac==1.8.0
+edx-rbac==1.9.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -267,7 +267,7 @@ edx-rest-api-client==5.7.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-exceptiongroup==1.2.0
+exceptiongroup==1.2.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -276,7 +276,7 @@ factory-boy==3.3.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-faker==24.9.0
+faker==24.11.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -337,7 +337,7 @@ jaraco-context==5.3.0
     # via
     #   -r requirements/quality.txt
     #   keyring
-jaraco-functools==4.0.0
+jaraco-functools==4.0.1
     # via
     #   -r requirements/quality.txt
     #   keyring
@@ -397,7 +397,7 @@ mysqlclient==2.2.4
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-newrelic==9.8.0
+newrelic==9.9.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -413,7 +413,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.9.1
+openedx-events==9.9.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -451,7 +451,7 @@ platformdirs==4.2.0
     #   pylint
     #   tox
     #   virtualenv
-pluggy==1.4.0
+pluggy==1.5.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -734,7 +734,7 @@ urllib3==2.2.1
     #   requests
     #   responses
     #   twine
-virtualenv==20.25.1
+virtualenv==20.25.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -745,3 +745,6 @@ zipp==3.18.1
     #   -r requirements/test.txt
     #   importlib-metadata
     #   importlib-resources
+
+# The following packages are considered to be unsafe in a requirements file:
+# setuptools
