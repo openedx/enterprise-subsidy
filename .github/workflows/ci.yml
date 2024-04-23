@@ -15,8 +15,8 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-20.04]
-        python-version: ['3.8']
-        toxenv: ["py38", "quality", "pii_check"]
+        python-version: ['3.8', '3.12']
+        toxenv: ["django42", "py38", "quality", "pii_check"]
 
     steps:
       - uses: actions/checkout@v3
