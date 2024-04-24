@@ -41,7 +41,7 @@ class ContentMetadataViewSet(
     GenericAPIView
 ):
     """
-    Subsidy service viewset partaining to content metadata.
+    Subsidy service viewset pertaining to content metadata.
 
     GET /api/v1/content-metadata/{Content Identifier}/
 

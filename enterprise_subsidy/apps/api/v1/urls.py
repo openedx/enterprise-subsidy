@@ -34,6 +34,11 @@ urlpatterns = [
         ContentMetadataViewSet.as_view(),
         name='content-metadata'
     ),
+    path(
+        'subsidies/<uuid>/aggregates-by-learner',
+        SubsidyViewSet.as_view({'get': 'get_aggregates_by_learner'}),
+        name='subsidies-aggregates-by-learner'
+    ),
 ]
 
 urlpatterns += router.urls

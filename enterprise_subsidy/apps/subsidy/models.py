@@ -678,6 +678,23 @@ class Subsidy(TimeStampedModel):
             content_key=content_key,
         )
 
+    def aggregated_enrollments_from_transactions(self, subsidy_access_policy_uuid=None):
+        """
+        Return aggregated number of all committed transactions without reversals grouped lms_user_id. Optionally
+        filtered down further with a policy UUID.
+        """
+        # Fetch all transactions associated with the subsidy that have no reversals and are committed.
+        relevant_transactions = self.all_transactions().filter(
+            reversal__isnull=True,
+            state=TransactionStateChoices.COMMITTED,
+            lms_user_id__isnull=False,
+        )
+        # Further filter by a policy UUID if provided
+        if subsidy_access_policy_uuid:
+            relevant_transactions = relevant_transactions.filter(subsidy_access_policy_uuid=subsidy_access_policy_uuid)
+        # Return the formatted aggregates
+        return relevant_transactions.values('lms_user_id').annotate(total=models.Count('content_key'))
+
     def __str__(self):
         return f'<Subsidy uuid={self.uuid}, title={self.title}>'
 
