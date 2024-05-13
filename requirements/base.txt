@@ -42,7 +42,6 @@ defusedxml==0.8.0rc2
 django==4.2.13
     # via
     #   -c requirements/common_constraints.txt
-    #   -c requirements/constraints.txt
     #   -r requirements/base.in
     #   django-clearcache
     #   django-cors-headers

@@ -87,7 +87,6 @@ cryptography==42.0.7
     # via
     #   -r requirements/test.txt
     #   pyjwt
-    #   secretstorage
     #   social-auth-core
 ddt==1.7.2
     # via -r requirements/test.txt
@@ -107,7 +106,6 @@ distlib==0.3.8
 django==4.2.13
     # via
     #   -c requirements/common_constraints.txt
-    #   -c requirements/constraints.txt
     #   -r requirements/test.txt
     #   django-clearcache
     #   django-cors-headers
@@ -297,10 +295,6 @@ jaraco-context==5.3.0
     # via keyring
 jaraco-functools==4.0.1
     # via keyring
-jeepney==0.8.0
-    # via
-    #   keyring
-    #   secretstorage
 jinja2==3.1.4
     # via
     #   -r requirements/test.txt
@@ -538,8 +532,6 @@ rules==3.4
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-secretstorage==3.3.3
-    # via keyring
 semantic-version==2.10.0
     # via
     #   -r requirements/test.txt

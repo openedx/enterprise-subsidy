@@ -81,7 +81,6 @@ distlib==0.3.8
     # via virtualenv
     # via
     #   -c requirements/common_constraints.txt
-    #   -c requirements/constraints.txt
     #   -r requirements/base.txt
     #   django-clearcache
     #   django-cors-headers
