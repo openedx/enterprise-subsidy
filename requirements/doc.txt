@@ -87,7 +87,7 @@ coverage[toml]==7.5.1
     # via
     #   -r requirements/test.txt
     #   pytest-cov
-cryptography==42.0.6
+cryptography==42.0.7
     # via
     #   -r requirements/test.txt
     #   pyjwt
@@ -108,7 +108,7 @@ distlib==0.3.8
     # via
     #   -r requirements/test.txt
     #   virtualenv
-django==4.2.11
+django==4.2.13
     # via
     #   -c requirements/common_constraints.txt
     #   -c requirements/constraints.txt
@@ -208,6 +208,10 @@ drf-yasg==1.21.7
     # via -r requirements/test.txt
 edx-auth-backends==4.3.0
     # via -r requirements/test.txt
+edx-ccx-keys==1.3.0
+    # via
+    #   -r requirements/test.txt
+    #   openedx-events
 edx-django-release-util==1.4.0
     # via
     #   -r requirements/test.txt
@@ -229,6 +233,7 @@ edx-lint==5.3.6
 edx-opaque-keys[django]==2.9.0
     # via
     #   -r requirements/test.txt
+    #   edx-ccx-keys
     #   edx-drf-extensions
     #   openedx-events
 edx-rbac==1.9.0
@@ -243,7 +248,7 @@ exceptiongroup==1.2.1
     #   pytest
 factory-boy==3.3.0
     # via -r requirements/test.txt
-faker==25.0.1
+faker==25.1.0
     # via
     #   -r requirements/test.txt
     #   factory-boy
@@ -353,7 +358,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.9.2
+openedx-events==9.10.0
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
@@ -531,7 +536,7 @@ rfc3986==2.0.0
     # via twine
 rich==13.7.1
     # via twine
-rpds-py==0.18.0
+rpds-py==0.18.1
     # via
     #   -r requirements/test.txt
     #   jsonschema
@@ -550,6 +555,7 @@ six==1.16.0
     # via
     #   -r requirements/test.txt
     #   edx-auth-backends
+    #   edx-ccx-keys
     #   edx-django-release-util
     #   edx-lint
     #   edx-rbac
@@ -615,7 +621,7 @@ tomli==2.0.1
     #   pyproject-api
     #   pytest
     #   tox
-tomlkit==0.12.4
+tomlkit==0.12.5
     # via
     #   -r requirements/test.txt
     #   pylint
