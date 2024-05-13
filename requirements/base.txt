@@ -15,6 +15,8 @@ attrs==23.2.0
     #   jsonschema
     #   openedx-events
     #   referencing
+avro==1.11.3
+    # via confluent-kafka
 backports-zoneinfo==0.2.1 ; python_version < "3.9"
     # via
     #   -c requirements/constraints.txt
@@ -28,7 +30,13 @@ cffi==1.16.0
 charset-normalizer==3.3.2
     # via requests
 click==8.1.7
-    # via edx-django-utils
+    # via
+    #   code-annotations
+    #   edx-django-utils
+code-annotations==1.8.0
+    # via edx-toggles
+confluent-kafka[avro,schema-registry]==2.4.0
+    # via -r requirements/base.in
 cryptography==42.0.7
     # via
     #   pyjwt
@@ -58,7 +66,9 @@ django==4.2.13
     #   edx-django-release-util
     #   edx-django-utils
     #   edx-drf-extensions
+    #   edx-event-bus-kafka
     #   edx-rbac
+    #   edx-toggles
     #   jsonfield2
     #   openedx-events
     #   openedx-ledger
@@ -71,6 +81,7 @@ django-crum==0.7.9
     # via
     #   edx-django-utils
     #   edx-rbac
+    #   edx-toggles
 django-extensions==3.2.3
     # via
     #   -r requirements/base.in
@@ -97,6 +108,7 @@ django-waffle==4.1.0
     #   -r requirements/base.in
     #   edx-django-utils
     #   edx-drf-extensions
+    #   edx-toggles
 djangoql==0.18.1
     # via
     #   -r requirements/base.in
@@ -129,7 +141,9 @@ edx-django-utils==5.13.0
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
+    #   edx-event-bus-kafka
     #   edx-rest-api-client
+    #   edx-toggles
     #   getsmarter-api-clients
     #   openedx-events
     #   openedx-ledger
@@ -137,6 +151,8 @@ edx-drf-extensions==10.3.0
     # via
     #   -r requirements/base.in
     #   edx-rbac
+edx-event-bus-kafka==5.7.0
+    # via -r requirements/base.in
 edx-opaque-keys[django]==2.9.0
     # via
     #   edx-ccx-keys
@@ -148,8 +164,12 @@ edx-rbac==1.9.0
     #   openedx-ledger
 edx-rest-api-client==5.7.0
     # via -r requirements/base.in
+edx-toggles==5.2.0
+    # via edx-event-bus-kafka
 fastavro==1.9.4
-    # via openedx-events
+    # via
+    #   confluent-kafka
+    #   openedx-events
 getsmarter-api-clients==0.6.1
     # via -r requirements/base.in
 idna==3.7
@@ -162,6 +182,8 @@ inflection==0.5.1
     # via
     #   drf-spectacular
     #   drf-yasg
+jinja2==3.1.4
+    # via code-annotations
 jsonfield2==4.0.0.post0
     # via
     #   -r requirements/base.in
@@ -170,11 +192,13 @@ jsonschema==4.22.0
     # via drf-spectacular
 jsonschema-specifications==2023.12.1
     # via jsonschema
+markupsafe==2.1.5
+    # via jinja2
 mysqlclient==2.2.4
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-newrelic==9.9.0
+newrelic==9.9.1
     # via edx-django-utils
 oauthlib==3.2.2
     # via
@@ -184,6 +208,7 @@ oauthlib==3.2.2
 openedx-events==9.10.0
     # via
     #   -r requirements/base.in
+    #   edx-event-bus-kafka
     #   openedx-ledger
 openedx-ledger==1.4.2
     # via -r requirements/base.in
@@ -212,6 +237,8 @@ pymongo==4.4.0
     # via edx-opaque-keys
 pynacl==1.5.0
     # via edx-django-utils
+python-slugify==8.0.4
+    # via code-annotations
 python3-openid==3.2.0
     # via social-auth-core
 pytz==2024.1
@@ -223,6 +250,7 @@ pytz==2024.1
     #   openedx-ledger
 pyyaml==6.0.1
     # via
+    #   code-annotations
     #   drf-spectacular
     #   drf-yasg
     #   edx-django-release-util
@@ -234,6 +262,7 @@ referencing==0.35.1
     #   jsonschema-specifications
 requests==2.31.0
     # via
+    #   confluent-kafka
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   requests-oauthlib
@@ -271,8 +300,11 @@ sqlparse==0.5.0
     # via django
 stevedore==5.2.0
     # via
+    #   code-annotations
     #   edx-django-utils
     #   edx-opaque-keys
+text-unidecode==1.3
+    # via python-slugify
 typing-extensions==4.11.0
     # via
     #   asgiref
