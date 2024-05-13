@@ -26,27 +26,48 @@ MAINTAINER sre@edx.org
 
 # make; we use makefiles for all sorts of stuff
 
+# ENV variables for Python 3.12 support
+ARG PYTHON_VERSION=3.12
+ENV TZ=UTC
+ENV TERM=xterm-256color
+ENV DEBIAN_FRONTEND=noninteractive
+
+# software-properties-common is needed to setup Python 3.12 env
+RUN apt-get update && \
+  apt-get install -y software-properties-common && \
+  apt-add-repository -y ppa:deadsnakes/ppa
+
 # If you add a package here please include a comment above describing what it is used for
 RUN apt-get update && apt-get -qy install --no-install-recommends \
+ build-essential \
  language-pack-en \
  locales \
- python3.8 \
- python3-pip \
- python3.8-venv \
  pkg-config \
  libmysqlclient-dev \
  libssl-dev \
- python3.8-dev \
  gcc \
  git \
- make
+ make \
+ curl \
+ libffi-dev \
+ libsqlite3-dev \
+ python3-pip \
+ python${PYTHON_VERSION} \
+ python${PYTHON_VERSION}-dev \
+ python${PYTHON_VERSION}-distutils 
+
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # delete apt package lists because we do not need them inflating our image
 RUN rm -rf /var/lib/apt/lists/*
 
+# need to use virtualenv pypi package with Python 3.12
+RUN curl -sS https://bootstrap.pypa.io/get-pip.py | python${PYTHON_VERSION}
+RUN pip install virtualenv
+
 # Create a virtualenv for sanity
 ENV VIRTUAL_ENV=/edx/venvs/enterprise-subsidy
-RUN python3.8 -m venv $VIRTUAL_ENV
+RUN virtualenv -p python${PYTHON_VERSION} $VIRTUAL_ENV
 ENV PATH="$VIRTUAL_ENV/bin:$PATH"
 
 RUN locale-gen en_US.UTF-8
