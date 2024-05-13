@@ -1,6 +1,7 @@
 # Core requirements for using this application
 -c constraints.txt
 
+confluent-kafka[avro,schema-registry]
 Django         # Web application framework
 djangoql
 django-cors-headers
@@ -15,6 +16,7 @@ drf_yasg
 edx-auth-backends
 edx-django-utils
 edx-django-release-util
+edx-event-bus-kafka
 edx-drf-extensions
 edx-rbac
 edx-rest-api-client

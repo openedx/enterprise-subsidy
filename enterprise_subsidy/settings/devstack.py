@@ -33,6 +33,11 @@ CACHES = {
 
 }
 
+INSTALLED_APPS += (
+    'edx_event_bus_kafka',
+    'openedx_events',
+)
+
 # Generic OAuth2 variables irrespective of SSO/backend service key types.
 OAUTH2_PROVIDER_URL = 'http://edx.devstack.lms:18000/oauth2'
 
@@ -77,4 +82,12 @@ ENTERPRISE_CATALOG_URL = 'http://enterprise.catalog.app:18160'
 ENTERPRISE_SUBSIDY_URL = 'http://localhost:18280'
 FRONTEND_APP_LEARNING_URL = 'http://localhost:2000'
 
-# Application settings
+# Kafka Settings
+# "Standard" Kafka settings as defined in https://github.com/openedx/event-bus-kafka/tree/main
+EVENT_BUS_KAFKA_SCHEMA_REGISTRY_URL = 'http://edx.devstack.schema-registry:8081'
+EVENT_BUS_KAFKA_BOOTSTRAP_SERVERS = 'edx.devstack.kafka:29092'
+EVENT_BUS_PRODUCER = 'edx_event_bus_kafka.create_producer'
+EVENT_BUS_CONSUMER = 'edx_event_bus_kafka.KafkaEventConsumer'
+EVENT_BUS_TOPIC_PREFIX = 'dev'
+
+# Application settings go here...
