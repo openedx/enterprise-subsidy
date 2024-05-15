@@ -90,4 +90,14 @@ EVENT_BUS_PRODUCER = 'edx_event_bus_kafka.create_producer'
 EVENT_BUS_CONSUMER = 'edx_event_bus_kafka.KafkaEventConsumer'
 EVENT_BUS_TOPIC_PREFIX = 'dev'
 
-# Application settings go here...
+EVENT_BUS_PRODUCER_CONFIG[TRANSACTION_CREATED_EVENT_NAME][TRANSACTION_LIFECYCLE_TOPIC]['enabled'] = True
+EVENT_BUS_PRODUCER_CONFIG[TRANSACTION_COMMITTED_EVENT_NAME][TRANSACTION_LIFECYCLE_TOPIC]['enabled'] = True
+EVENT_BUS_PRODUCER_CONFIG[TRANSACTION_FAILED_EVENT_NAME][TRANSACTION_LIFECYCLE_TOPIC]['enabled'] = True
+EVENT_BUS_PRODUCER_CONFIG[TRANSACTION_REVERSED_EVENT_NAME][TRANSACTION_LIFECYCLE_TOPIC]['enabled'] = True
+
+# Private settings
+# The local.py settings file also does this, but then this current file (devstack.py)
+# imports *from* local.py, so anything earlier in this file overrides what's in private.py
+# We want private.py to have the highest precedence, so re-import private settings again here.
+if os.path.isfile(join(dirname(abspath(__file__)), 'private.py')):
+    from .private import *  # pylint: disable=import-error

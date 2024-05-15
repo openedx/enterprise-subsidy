@@ -199,9 +199,16 @@ class Command(BaseCommand):
         )
 
         if not self.dry_run:
-            cancel_transaction_external_fulfillment(related_transaction)
-            reverse_transaction(related_transaction, unenroll_time=enrollment_unenrolled_at)
-            return 1
+            successfully_canceled = cancel_transaction_external_fulfillment(related_transaction)
+            if successfully_canceled:
+                reverse_transaction(related_transaction, unenroll_time=enrollment_unenrolled_at)
+                return 1
+            else:
+                logger.warning(
+                    'Could not cancel external fulfillment for transaction %s, no reversal written',
+                    related_transaction.uuid,
+                )
+                return 0
         else:
             logger.info(
                 f"{self.dry_run_prefix}Would have written Reversal record for enterprise fulfillment: "

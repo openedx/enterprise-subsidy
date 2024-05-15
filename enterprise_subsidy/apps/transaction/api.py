@@ -9,6 +9,7 @@ from openedx_ledger.api import reverse_full_transaction
 from openedx_ledger.models import TransactionStateChoices
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
+from enterprise_subsidy.apps.core.event_bus import send_transaction_reversed_event
 from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
 from enterprise_subsidy.apps.transaction.utils import generate_transaction_reversal_idempotency_key
 
@@ -72,17 +73,25 @@ def cancel_transaction_external_fulfillment(transaction):
             "Transaction is not committed"
         )
 
-    for external_reference in transaction.external_reference.all():
+    references = list(transaction.external_reference.all())
+    if not references:
+        return True
+
+    fulfillment_cancelation_successful = False
+    for external_reference in references:
         provider_slug = external_reference.external_fulfillment_provider.slug
         geag_handler = GEAGFulfillmentHandler()
         if provider_slug == geag_handler.EXTERNAL_FULFILLMENT_PROVIDER_SLUG:
             geag_handler.cancel_fulfillment(external_reference)
+            fulfillment_cancelation_successful = True
         else:
             logger.warning(
                 '[fulfillment cancelation] dont know how to cancel transaction %s with provider %s',
                 transaction.uuid,
                 provider_slug,
             )
+
+    return fulfillment_cancelation_successful
 
 
 def reverse_transaction(transaction, unenroll_time=None):
@@ -93,7 +102,10 @@ def reverse_transaction(transaction, unenroll_time=None):
         transaction.fulfillment_identifier,
         unenroll_time or timezone.now(),
     )
-    return reverse_full_transaction(
+    reversal = reverse_full_transaction(
         transaction=transaction,
         idempotency_key=idempotency_key,
     )
+    transaction.refresh_from_db()
+    send_transaction_reversed_event(transaction)
+    return reversal

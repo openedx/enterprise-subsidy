@@ -111,13 +111,16 @@ class TestTransactionManagementCommand(TestCase):
             parent_content_key=None,
         )
 
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
-    def test_write_reversals_from_enterprise_unenrollment_with_existing_reversal(self, mock_oauth_client):
+    def test_write_reversals_from_enterprise_unenrollment_with_existing_reversal(
+        self, mock_oauth_client, mock_send_event_bus_reversed
+    ):
         """
         Test that the write_reversals_from_enterprise_unenrollments management command does not create a reversal if
         one already exists.
         """
-        unenrolled_at = '2023-06-1T19:27:29Z'
+        unenrolled_at = '2023-06-01T19:27:29Z'
         mock_oauth_client.return_value.get.return_value = MockResponse(
             [{
                 'enterprise_course_enrollment': {
@@ -139,6 +142,9 @@ class TestTransactionManagementCommand(TestCase):
         call_command('write_reversals_from_enterprise_unenrollments')
         assert Reversal.objects.count() == 1
 
+        self.assertFalse(mock_send_event_bus_reversed.called)
+
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
     @mock.patch(
         'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
         'EnterpriseApiClient'
@@ -155,6 +161,7 @@ class TestTransactionManagementCommand(TestCase):
         mock_signal_client,
         mock_fetch_course_metadata_client,
         mock_fetch_recent_unenrollments_client,
+        mock_send_event_bus_reversed,
     ):
         mock_signal_client.return_value = mock.MagicMock()
         transaction_uuid_2 = uuid.uuid4()
@@ -171,7 +178,7 @@ class TestTransactionManagementCommand(TestCase):
                     'course_id': self.transaction.content_key,
                     # Created at and unenrolled_at both have microseconds as part of the datetime string
                     'created': '2023-05-25T19:27:29.182347Z',
-                    'unenrolled_at': '2023-06-1T19:27:29.12939Z',
+                    'unenrolled_at': '2023-06-01T19:27:29.12939Z',
                 },
                 'transaction_id': self.transaction.uuid,
                 'uuid': str(self.transaction.fulfillment_identifier),
@@ -239,6 +246,10 @@ class TestTransactionManagementCommand(TestCase):
         # strings
         assert mock_fetch_course_metadata_client.get_content_metadata.call_count == 1
 
+        self.assertEqual(1, Reversal.objects.count())
+        mock_send_event_bus_reversed.assert_called_once_with(self.transaction)
+
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
     @mock.patch(
         'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
         'EnterpriseApiClient'
@@ -255,6 +266,7 @@ class TestTransactionManagementCommand(TestCase):
         mock_signal_client,
         mock_fetch_course_metadata_client,
         mock_fetch_recent_unenrollments_client,
+        mock_send_event_bus_reversed,
     ):
         """
         Test that the write_reversals_from_enterprise_unenrollments management command does not re-request metadata
@@ -264,7 +276,7 @@ class TestTransactionManagementCommand(TestCase):
         mock_signal_client.return_value = mock.MagicMock()
 
         transaction_uuid_2 = uuid.uuid4()
-        TransactionFactory(
+        transaction_2 = TransactionFactory(
             ledger=self.ledger,
             quantity=100,
             uuid=transaction_uuid_2,
@@ -354,8 +366,15 @@ class TestTransactionManagementCommand(TestCase):
         assert mock_fetch_course_metadata_client.get_content_metadata.call_count == 1
         assert mock_fetch_recent_unenrollments_client.return_value.fetch_recent_unenrollments.call_count == 1
 
+        self.assertEqual(2, Reversal.objects.count())
+        actual_calls = [mock_call[0][0] for mock_call in mock_send_event_bus_reversed.call_args_list]
+        self.assertEqual(set(actual_calls), set([self.transaction, transaction_2]))
+
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
-    def test_write_reversals_from_enterprise_unenrollment_transaction_does_not_exist(self, mock_oauth_client):
+    def test_write_reversals_from_enterprise_unenrollment_transaction_does_not_exist(
+        self, mock_oauth_client, mock_send_event_bus_reversed
+    ):
         """
         Test that the write_reversals_from_enterprise_unenrollments management command does not create a reversal if
         the transaction does not exist.
@@ -377,8 +396,13 @@ class TestTransactionManagementCommand(TestCase):
         call_command('write_reversals_from_enterprise_unenrollments')
         assert Reversal.objects.count() == 0
 
+        self.assertFalse(mock_send_event_bus_reversed.called)
+
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
-    def test_write_reversals_from_enterprise_unenrollment_with_uncommitted_transaction(self, mock_oauth_client):
+    def test_write_reversals_from_enterprise_unenrollment_with_uncommitted_transaction(
+        self, mock_oauth_client, mock_send_event_bus_reversed
+    ):
         """
         Test that the write_reversals_from_enterprise_unenrollments management command does not create a reversal if
         the transaction is not committed.
@@ -402,6 +426,9 @@ class TestTransactionManagementCommand(TestCase):
         call_command('write_reversals_from_enterprise_unenrollments')
         assert Reversal.objects.count() == 0
 
+        self.assertFalse(mock_send_event_bus_reversed.called)
+
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
     @mock.patch(
         'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
         'EnterpriseApiClient'
@@ -425,6 +452,7 @@ class TestTransactionManagementCommand(TestCase):
         mock_signal_client,
         mock_fetch_course_metadata_client,
         mock_fetch_recent_unenrollments_client,
+        mock_send_event_bus_reversed,
     ):
         """
         Test that for write_reversals_from_enterprise_unenrollments, if the greater date between the course start date
@@ -510,6 +538,9 @@ class TestTransactionManagementCommand(TestCase):
         call_command('write_reversals_from_enterprise_unenrollments')
         assert Reversal.objects.count() == 0
 
+        self.assertFalse(mock_send_event_bus_reversed.called)
+
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
     @mock.patch(
         'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
         'EnterpriseApiClient'
@@ -528,6 +559,7 @@ class TestTransactionManagementCommand(TestCase):
         mock_signal_client,
         mock_fetch_course_metadata_client,
         mock_fetch_recent_unenrollments_client,
+        mock_send_event_bus_reversed,
     ):
         """
         Test the write_reversals_from_enterprise_unenrollments management command's ability to create a reversal.
@@ -613,11 +645,15 @@ class TestTransactionManagementCommand(TestCase):
             assert Reversal.objects.count() == 1
             reversal = Reversal.objects.first()
             assert reversal.transaction == self.transaction
-            assert reversal.idempotency_key == \
+            assert reversal.idempotency_key == (
                 f'unenrollment-reversal-{self.transaction.fulfillment_identifier}-2023-06-1T19:27:29Z'
+            )
+            mock_send_event_bus_reversed.assert_called_once_with(self.transaction)
         else:
             assert Reversal.objects.count() == 0
+            self.assertFalse(mock_send_event_bus_reversed.called)
 
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
     @mock.patch(
         'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
         'EnterpriseApiClient'
@@ -635,6 +671,7 @@ class TestTransactionManagementCommand(TestCase):
         mock_signal_client,
         mock_fetch_course_metadata_client,
         mock_fetch_recent_unenrollments_client,
+        mock_send_event_bus_reversed,
     ):
         """
         Test the write_reversals_from_enterprise_unenrollments management command's ability to create a reversal.
@@ -718,6 +755,9 @@ class TestTransactionManagementCommand(TestCase):
 
         assert Reversal.objects.count() == 0
 
+        self.assertFalse(mock_send_event_bus_reversed.called)
+
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
     @mock.patch(
         'enterprise_subsidy.apps.fulfillment.api.GetSmarterEnterpriseApiClient'
     )
@@ -739,6 +779,7 @@ class TestTransactionManagementCommand(TestCase):
         mock_fetch_course_metadata_client,
         mock_fetch_recent_unenrollments_client,
         mock_geag_client,
+        mock_send_event_bus_reversed,
     ):
         """
         Test the write_reversals_from_enterprise_unenrollments management command's ability to create a reversal.
@@ -825,6 +866,9 @@ class TestTransactionManagementCommand(TestCase):
 
         assert Reversal.objects.count() == 1
 
+        mock_send_event_bus_reversed.assert_called_once_with(self.geag_transaction)
+
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
     @mock.patch(
         'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
         'EnterpriseApiClient'
@@ -842,6 +886,7 @@ class TestTransactionManagementCommand(TestCase):
         mock_signal_client,
         mock_fetch_course_metadata_client,
         mock_fetch_recent_unenrollments_client,
+        mock_send_event_bus_reversed,
     ):
         """
         Test that write_reversals_from_enterprise_unenrollments management command
@@ -926,6 +971,8 @@ class TestTransactionManagementCommand(TestCase):
         call_command('write_reversals_from_enterprise_unenrollments')
 
         self.assertIsNone(self.unknown_transaction.get_reversal())
+
+        self.assertFalse(mock_send_event_bus_reversed.called)
 
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.lms_user_client")
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")

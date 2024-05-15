@@ -6,6 +6,8 @@ import logging
 from django.dispatch import receiver
 from openedx_ledger.signals.signals import TRANSACTION_REVERSED
 
+from enterprise_subsidy.apps.core.event_bus import send_transaction_reversed_event
+
 from ..api import cancel_transaction_external_fulfillment, cancel_transaction_fulfillment
 from ..exceptions import TransactionFulfillmentCancelationException
 
@@ -29,6 +31,7 @@ def listen_for_transaction_reversal(sender, **kwargs):
     try:
         cancel_transaction_external_fulfillment(transaction)
         cancel_transaction_fulfillment(transaction)
+        send_transaction_reversed_event(transaction)
     except TransactionFulfillmentCancelationException as exc:
         error_msg = f"Error canceling platform fulfillment {transaction.fulfillment_identifier}: {exc}"
         logger.exception(error_msg)

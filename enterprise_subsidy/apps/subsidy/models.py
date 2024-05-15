@@ -30,6 +30,7 @@ from simple_history.models import HistoricalRecords
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 from enterprise_subsidy.apps.api_client.lms_user import LmsUserApiClient
 from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
+from enterprise_subsidy.apps.core import event_bus
 from enterprise_subsidy.apps.core.utils import localized_utcnow
 from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
 
@@ -384,7 +385,7 @@ class Subsidy(TimeStampedModel):
             openedx_ledger.api.LedgerBalanceExceeded:
                 Raises this if the transaction would cause the balance of the ledger to become negative.
         """
-        return ledger_api.create_transaction(
+        ledger_transaction = ledger_api.create_transaction(
             ledger=self.ledger,
             quantity=quantity,
             idempotency_key=idempotency_key,
@@ -396,6 +397,8 @@ class Subsidy(TimeStampedModel):
             subsidy_access_policy_uuid=subsidy_access_policy_uuid,
             **transaction_metadata,
         )
+        event_bus.send_transaction_created_event(ledger_transaction)
+        return ledger_transaction
 
     def commit_transaction(self, ledger_transaction, fulfillment_identifier=None, external_reference=None):
         """
@@ -416,6 +419,7 @@ class Subsidy(TimeStampedModel):
             ledger_transaction.external_reference.set([external_reference])
         ledger_transaction.state = TransactionStateChoices.COMMITTED
         ledger_transaction.save()
+        event_bus.send_transaction_committed_event(ledger_transaction)
 
     def rollback_transaction(self, ledger_transaction, external_transaction_reference=None):
         """
@@ -463,6 +467,7 @@ class Subsidy(TimeStampedModel):
             logger.info('[rollback_transaction] Setting transaction %s state to failed.', ledger_transaction.uuid)
             ledger_transaction.state = TransactionStateChoices.FAILED
             ledger_transaction.save()
+            event_bus.send_transaction_failed_event(ledger_transaction)
 
     def redeem(
         self,
