@@ -24,8 +24,9 @@ class TransactionSignalHandlerTestCase(TestCase):
     Tests for the transaction signal handlers
     """
 
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
-    def test_transaction_reversed_signal_handler_catches_event(self, mock_oauth_client):
+    def test_transaction_reversed_signal_handler_catches_event(self, mock_oauth_client, mock_send_event_bus_reversed):
         """
         Test that the transaction reversed signal handler catches the transaction reversed event when it's emitted
         """
@@ -38,10 +39,14 @@ class TransactionSignalHandlerTestCase(TestCase):
             EnterpriseApiClient.enterprise_subsidy_fulfillment_endpoint +
             f"{transaction.fulfillment_identifier}/cancel-fulfillment",
         )
+        mock_send_event_bus_reversed.assert_called_once_with(transaction)
 
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
     @mock.patch('enterprise_subsidy.apps.fulfillment.api.GetSmarterEnterpriseApiClient')
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
-    def test_reversed_signal_causes_internal_and_external_unfulfillment(self, mock_oauth_client, mock_geag_client):
+    def test_reversed_signal_causes_internal_and_external_unfulfillment(
+        self, mock_oauth_client, mock_geag_client, mock_send_event_bus_reversed
+    ):
         """
         Tests that the signal handler cancels internal and external fulfillments
         related to the reversed transaction.
@@ -67,9 +72,13 @@ class TransactionSignalHandlerTestCase(TestCase):
         mock_geag_client().cancel_enterprise_allocation.assert_called_once_with(
             geag_reference.external_reference_id,
         )
+        mock_send_event_bus_reversed.assert_called_once_with(transaction)
 
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
     @mock.patch('enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient', return_value=mock.MagicMock())
-    def test_transaction_reversed_signal_without_fulfillment_identifier(self, mock_oauth_client):
+    def test_transaction_reversed_signal_without_fulfillment_identifier(
+        self, mock_oauth_client, mock_send_event_bus_reversed
+    ):
         """
         Test that the transaction reversed signal handler does not call the api client if the transaction has no
         fulfillment identifier
@@ -82,3 +91,4 @@ class TransactionSignalHandlerTestCase(TestCase):
             TRANSACTION_REVERSED.send(sender=self, reversal=reversal)
 
         assert mock_oauth_client.return_value.post.call_count == 0
+        self.assertFalse(mock_send_event_bus_reversed.called)

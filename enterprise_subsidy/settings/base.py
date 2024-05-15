@@ -377,3 +377,47 @@ LMS_USER_DATA_CACHE_TIMEOUT = ONE_HOUR
 # be more drift between the time of allocation and the time of redemption.
 ALLOCATION_PRICE_VALIDATION_LOWER_BOUND_RATIO = .80
 ALLOCATION_PRICE_VALIDATION_UPPER_BOUND_RATIO = 1.20
+
+# Kafka and event broker settings
+TRANSACTION_LIFECYCLE_TOPIC = "enterprise-subsidy-ledger-transaction-lifecycle"
+TRANSACTION_CREATED_EVENT_NAME = "org.openedx.enterprise.subsidy_ledger_transaction.created.v1"
+TRANSACTION_COMMITTED_EVENT_NAME = "org.openedx.enterprise.subsidy_ledger_transaction.committed.v1"
+TRANSACTION_FAILED_EVENT_NAME = "org.openedx.enterprise.subsidy_ledger_transaction.failed.v1"
+TRANSACTION_REVERSED_EVENT_NAME = "org.openedx.enterprise.subsidy_ledger_transaction.reversed.v1"
+
+# .. setting_name: EVENT_BUS_PRODUCER_CONFIG
+# .. setting_default: all events disabled
+# .. setting_description: Dictionary of event_types mapped to dictionaries of topic to topic-related configuration.
+#    Each topic configuration dictionary contains
+#    * `enabled`: a toggle denoting whether the event will be published to the topic. These should be annotated
+#       according to
+#       https://edx.readthedocs.io/projects/edx-toggles/en/latest/how_to/documenting_new_feature_toggles.html
+#    * `event_key_field` which is a period-delimited string path to event data field to use as event key.
+#    Note: The topic names should not include environment prefix as it will be dynamically added based on
+#    EVENT_BUS_TOPIC_PREFIX setting.
+EVENT_BUS_PRODUCER_CONFIG = {
+    TRANSACTION_CREATED_EVENT_NAME: {
+        TRANSACTION_LIFECYCLE_TOPIC: {
+            'event_key_field': 'ledger_transaction.uuid',
+            'enabled': False,
+        },
+    },
+    TRANSACTION_COMMITTED_EVENT_NAME: {
+        TRANSACTION_LIFECYCLE_TOPIC: {
+            'event_key_field': 'ledger_transaction.uuid',
+            'enabled': False,
+        },
+    },
+    TRANSACTION_FAILED_EVENT_NAME: {
+        TRANSACTION_LIFECYCLE_TOPIC: {
+            'event_key_field': 'ledger_transaction.uuid',
+            'enabled': False,
+        },
+    },
+    TRANSACTION_REVERSED_EVENT_NAME: {
+        TRANSACTION_LIFECYCLE_TOPIC: {
+            'event_key_field': 'ledger_transaction.uuid',
+            'enabled': False,
+        },
+    },
+}
