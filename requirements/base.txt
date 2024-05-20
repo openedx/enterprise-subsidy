@@ -276,7 +276,7 @@ rpds-py==0.18.1
     # via
     #   jsonschema
     #   referencing
-rules==3.3
+rules==3.4
     # via
     #   -r requirements/base.in
     #   openedx-ledger
@@ -316,7 +316,7 @@ uritemplate==4.1.1
     #   drf-yasg
 urllib3==2.2.1
     # via requests
-zipp==3.18.1
+zipp==3.18.2
     # via importlib-resources
 
 # The following packages are considered to be unsafe in a requirements file:
