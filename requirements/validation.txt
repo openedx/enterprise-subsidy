@@ -10,7 +10,7 @@ asgiref==3.8.1
     #   -r requirements/test.txt
     #   django
     #   django-cors-headers
-astroid==3.2.0
+astroid==3.2.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -488,7 +488,7 @@ pkgutil-resolve-name==1.3.10
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   jsonschema
-platformdirs==4.2.1
+platformdirs==4.2.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -534,7 +534,7 @@ pyjwt[crypto]==2.8.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.2.0
+pylint==3.2.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -577,7 +577,7 @@ pyproject-api==1.6.1
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   tox
-pytest==8.2.0
+pytest==8.2.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -679,7 +679,7 @@ rpds-py==0.18.1
     #   -r requirements/test.txt
     #   jsonschema
     #   referencing
-rules==3.3
+rules==3.4
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -758,7 +758,7 @@ tox==4.15.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-twine==5.0.0
+twine==5.1.0
     # via -r requirements/quality.txt
 typing-extensions==4.11.0
     # via
@@ -788,7 +788,7 @@ virtualenv==20.26.2
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   tox
-zipp==3.18.1
+zipp==3.18.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
