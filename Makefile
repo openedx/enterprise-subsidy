@@ -181,19 +181,8 @@ dev.up.build-no-cache: dev.up.redis
 	docker-compose build --no-cache
 	docker-compose up -d
 
-dev.up.with-events: dev.up.kafka-control-center dev.up
-
 dev.up.redis: # This has the nice side effect of starting the devstack_default network
 	docker-compose -f $(DEVSTACK_WORKSPACE)/devstack/docker-compose.yml up -d redis
-
-# Start kafka via the devstack docker-compose.yml
-# https://github.com/openedx-unsupported/devstack/blob/323b475b885a2704489566b262e2895a4dca62b6/docker-compose.yml#L140
-dev.up.kafka-control-center:
-	docker-compose -f $(DEVSTACK_WORKSPACE)/devstack/docker-compose.yml up -d kafka-control-center
-
-# Useful for just restarting everything related to the event broker
-dev.down.kafka-control-center:
-	docker-compose -f $(DEVSTACK_WORKSPACE)/devstack/docker-compose.yml down kafka zookeeper schema-registry kafka-control-center
 
 dev.down: # Kills containers and all of their data that isn't in volumes
 	docker-compose down

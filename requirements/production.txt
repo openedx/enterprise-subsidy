@@ -35,7 +35,6 @@ charset-normalizer==3.3.2
 click==8.1.7
     # via
     #   -r requirements/base.txt
-    #   code-annotations
     #   edx-django-utils
 code-annotations==1.8.0
     # via
@@ -72,9 +71,7 @@ django==4.2.13
     #   edx-django-release-util
     #   edx-django-utils
     #   edx-drf-extensions
-    #   edx-event-bus-kafka
     #   edx-rbac
-    #   edx-toggles
     #   jsonfield2
     #   openedx-events
     #   openedx-ledger
@@ -88,7 +85,6 @@ django-crum==0.7.9
     #   -r requirements/base.txt
     #   edx-django-utils
     #   edx-rbac
-    #   edx-toggles
 django-extensions==3.2.3
     # via
     #   -r requirements/base.txt
@@ -116,7 +112,6 @@ django-waffle==4.1.0
     #   -r requirements/base.txt
     #   edx-django-utils
     #   edx-drf-extensions
-    #   edx-toggles
 djangoql==0.18.1
     # via
     #   -r requirements/base.txt
@@ -154,9 +149,7 @@ edx-django-utils==5.13.0
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
-    #   edx-event-bus-kafka
     #   edx-rest-api-client
-    #   edx-toggles
     #   getsmarter-api-clients
     #   openedx-events
     #   openedx-ledger
@@ -164,8 +157,6 @@ edx-drf-extensions==10.3.0
     # via
     #   -r requirements/base.txt
     #   edx-rbac
-edx-event-bus-kafka==5.7.0
-    # via -r requirements/base.txt
 edx-opaque-keys[django]==2.9.0
     # via
     #   -r requirements/base.txt
@@ -178,14 +169,9 @@ edx-rbac==1.9.0
     #   openedx-ledger
 edx-rest-api-client==5.7.0
     # via -r requirements/base.txt
-edx-toggles==5.2.0
-    # via
-    #   -r requirements/base.txt
-    #   edx-event-bus-kafka
 fastavro==1.9.4
     # via
     #   -r requirements/base.txt
-    #   confluent-kafka
     #   openedx-events
 getsmarter-api-clients==0.6.1
     # via -r requirements/base.txt
@@ -204,10 +190,6 @@ inflection==0.5.1
     #   -r requirements/base.txt
     #   drf-spectacular
     #   drf-yasg
-jinja2==3.1.4
-    # via
-    #   -r requirements/base.txt
-    #   code-annotations
 jsonfield2==4.0.0.post0
     # via
     #   -r requirements/base.txt
@@ -220,16 +202,12 @@ jsonschema-specifications==2023.12.1
     # via
     #   -r requirements/base.txt
     #   jsonschema
-markupsafe==2.1.5
-    # via
-    #   -r requirements/base.txt
-    #   jinja2
 mysqlclient==2.2.4
     # via
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   openedx-ledger
-newrelic==9.9.1
+newrelic==9.9.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -242,7 +220,6 @@ oauthlib==3.2.2
 openedx-events==9.10.0
     # via
     #   -r requirements/base.txt
-    #   edx-event-bus-kafka
     #   openedx-ledger
 openedx-ledger==1.4.2
     # via -r requirements/base.txt
@@ -287,10 +264,6 @@ pynacl==1.5.0
     #   edx-django-utils
 python-memcached==1.62
     # via -r requirements/production.in
-python-slugify==8.0.4
-    # via
-    #   -r requirements/base.txt
-    #   code-annotations
 python3-openid==3.2.0
     # via
     #   -r requirements/base.txt
@@ -306,7 +279,6 @@ pyyaml==6.0.1
     # via
     #   -r requirements/base.txt
     #   -r requirements/production.in
-    #   code-annotations
     #   drf-spectacular
     #   drf-yasg
     #   edx-django-release-util
@@ -322,7 +294,6 @@ referencing==0.35.1
 requests==2.31.0
     # via
     #   -r requirements/base.txt
-    #   confluent-kafka
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   requests-oauthlib
@@ -338,7 +309,7 @@ rpds-py==0.18.1
     #   -r requirements/base.txt
     #   jsonschema
     #   referencing
-rules==3.4
+rules==3.3
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -373,13 +344,8 @@ sqlparse==0.5.0
 stevedore==5.2.0
     # via
     #   -r requirements/base.txt
-    #   code-annotations
     #   edx-django-utils
     #   edx-opaque-keys
-text-unidecode==1.3
-    # via
-    #   -r requirements/base.txt
-    #   python-slugify
 typing-extensions==4.11.0
     # via
     #   -r requirements/base.txt
@@ -399,7 +365,7 @@ zipp==3.18.2
     #   importlib-resources
 zope-event==5.0
     # via gevent
-zope-interface==6.4
+zope-interface==6.3
     # via gevent
 
 # The following packages are considered to be unsafe in a requirements file:

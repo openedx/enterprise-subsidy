@@ -9,7 +9,7 @@ asgiref==3.8.1
     #   -r requirements/base.txt
     #   django
     #   django-cors-headers
-astroid==3.2.2
+astroid==3.1.0
     # via
     #   pylint
     #   pylint-celery
@@ -51,14 +51,10 @@ click-log==0.4.0
     # via edx-lint
 code-annotations==1.8.0
     # via
-    #   -r requirements/base.txt
     #   -r requirements/test.in
     #   edx-lint
-    #   edx-toggles
 colorama==0.4.6
     # via tox
-confluent-kafka[avro,schema-registry]==2.4.0
-    # via -r requirements/base.txt
 coverage[toml]==7.5.1
     # via
     #   -r requirements/test.in
@@ -98,9 +94,7 @@ distlib==0.3.8
     #   edx-django-release-util
     #   edx-django-utils
     #   edx-drf-extensions
-    #   edx-event-bus-kafka
     #   edx-rbac
-    #   edx-toggles
     #   jsonfield2
     #   openedx-events
     #   openedx-ledger
@@ -114,7 +108,6 @@ django-crum==0.7.9
     #   -r requirements/base.txt
     #   edx-django-utils
     #   edx-rbac
-    #   edx-toggles
 django-dynamic-fixture==4.0.1
     # via -r requirements/test.in
 django-extensions==3.2.3
@@ -145,7 +138,6 @@ django-waffle==4.1.0
     #   -r requirements/base.txt
     #   edx-django-utils
     #   edx-drf-extensions
-    #   edx-toggles
 djangoql==0.18.1
     # via
     #   -r requirements/base.txt
@@ -184,9 +176,7 @@ edx-django-utils==5.13.0
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
-    #   edx-event-bus-kafka
     #   edx-rest-api-client
-    #   edx-toggles
     #   getsmarter-api-clients
     #   openedx-events
     #   openedx-ledger
@@ -194,8 +184,6 @@ edx-drf-extensions==10.3.0
     # via
     #   -r requirements/base.txt
     #   edx-rbac
-edx-event-bus-kafka==5.7.0
-    # via -r requirements/base.txt
 edx-lint==5.3.6
     # via -r requirements/test.in
 edx-opaque-keys[django]==2.9.0
@@ -221,7 +209,6 @@ faker==25.2.0
 fastavro==1.9.4
     # via
     #   -r requirements/base.txt
-    #   confluent-kafka
     #   openedx-events
 filelock==3.14.0
     # via
@@ -243,9 +230,7 @@ iniconfig==2.0.0
 isort==5.13.2
     # via pylint
 jinja2==3.1.4
-    # via
-    #   -r requirements/base.txt
-    #   code-annotations
+    # via code-annotations
 jsonfield2==4.0.0.post0
     # via
     #   -r requirements/base.txt
@@ -259,9 +244,7 @@ jsonschema-specifications==2023.12.1
     #   -r requirements/base.txt
     #   jsonschema
 markupsafe==2.1.5
-    # via
-    #   -r requirements/base.txt
-    #   jinja2
+    # via jinja2
 mccabe==0.7.0
     # via pylint
 mock==5.1.0
@@ -270,7 +253,7 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-newrelic==9.9.1
+newrelic==9.9.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -283,7 +266,6 @@ oauthlib==3.2.2
 openedx-events==9.10.0
     # via
     #   -r requirements/base.txt
-    #   edx-event-bus-kafka
     #   openedx-ledger
 openedx-ledger==1.4.2
     # via -r requirements/base.txt
@@ -327,7 +309,7 @@ pyjwt[crypto]==2.8.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.2.1
+pylint==3.1.0
     # via
     #   edx-lint
     #   pylint-celery
@@ -353,7 +335,7 @@ pynacl==1.5.0
     #   edx-django-utils
 pyproject-api==1.6.1
     # via tox
-pytest==8.2.1
+pytest==8.2.0
     # via
     #   pytest-cov
     #   pytest-django
@@ -364,9 +346,7 @@ pytest-django==4.8.0
 python-dateutil==2.9.0.post0
     # via faker
 python-slugify==8.0.4
-    # via
-    #   -r requirements/base.txt
-    #   code-annotations
+    # via code-annotations
 python3-openid==3.2.0
     # via
     #   -r requirements/base.txt
@@ -398,7 +378,6 @@ referencing==0.35.1
 requests==2.31.0
     # via
     #   -r requirements/base.txt
-    #   confluent-kafka
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   requests-oauthlib
@@ -417,7 +396,7 @@ rpds-py==0.18.1
     #   -r requirements/base.txt
     #   jsonschema
     #   referencing
-rules==3.4
+rules==3.3
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -477,7 +456,7 @@ urllib3==2.2.1
     #   -r requirements/base.txt
     #   requests
     #   responses
-virtualenv==20.26.2
+virtualenv==20.26.1
     # via tox
 
 # The following packages are considered to be unsafe in a requirements file:
