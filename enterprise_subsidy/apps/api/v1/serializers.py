@@ -1,7 +1,6 @@
 """
 Serializers for the enterprise-subsidy API.
 """
-import json
 from logging import getLogger
 from urllib.parse import urljoin
 
@@ -67,8 +66,8 @@ class SubsidySerializer(serializers.ModelSerializer):
     def get_current_balance(self, obj) -> int:
         return obj.current_balance()
     
-    @extend_schema_field(serializers.ListField)
-    def get_total_deposits(self, obj) -> list:
+    @extend_schema_field(serializers.IntegerField)
+    def get_total_deposits(self, obj) -> int:
         return obj.total_deposits()
 
 

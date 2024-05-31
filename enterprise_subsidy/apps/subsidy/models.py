@@ -226,7 +226,6 @@ class Subsidy(TimeStampedModel):
         on (reference_id, reference_type).  This is necessary
         because MySQL does not support conditional unique constraints.
         """
-        print(self.adjustments_for_subsidy())
         if not self.internal_only:
             other_record = Subsidy.objects.filter(
                 reference_id=self.reference_id,
