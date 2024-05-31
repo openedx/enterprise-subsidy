@@ -28,7 +28,9 @@ class SubsidySerializer(serializers.ModelSerializer):
     """
     current_balance = serializers.SerializerMethodField(help_text="The current (remaining) balance of this subsidy.")
     is_active = serializers.BooleanField(read_only=True, help_text="Whether this subsidy is currently active.")
-    total_deposits = serializers.SerializerMethodField(help_text="The aggregate of the initial balance plus all adjustments made on the subsidy in usd cents")
+    total_deposits = serializers.SerializerMethodField(
+        help_text="The aggregate of the initial balance plus all adjustments made on the subsidy in usd cents"
+    )
 
     class Meta:
         """
@@ -65,11 +67,10 @@ class SubsidySerializer(serializers.ModelSerializer):
     @extend_schema_field(serializers.IntegerField)
     def get_current_balance(self, obj) -> int:
         return obj.current_balance()
-    
+
     @extend_schema_field(serializers.IntegerField)
     def get_total_deposits(self, obj) -> int:
         return obj.total_deposits()
-
 
 
 class ReversalSerializer(serializers.ModelSerializer):

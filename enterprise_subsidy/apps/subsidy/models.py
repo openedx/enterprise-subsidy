@@ -21,7 +21,7 @@ from edx_rbac.models import UserRole, UserRoleAssignment
 from edx_rbac.utils import ALL_ACCESS_CONTEXT
 from model_utils.models import TimeStampedModel
 from openedx_ledger import api as ledger_api
-from openedx_ledger.models import Ledger, TransactionStateChoices, UnitChoices, Transaction
+from openedx_ledger.models import Ledger, Transaction, TransactionStateChoices, UnitChoices
 from openedx_ledger.utils import create_idempotency_key_for_transaction
 from requests.exceptions import HTTPError
 from rest_framework import status
@@ -348,11 +348,17 @@ class Subsidy(TimeStampedModel):
 
     def current_balance(self):
         return self.ledger.balance()
-    
+
     def total_deposits(self):
+        """
+        Returns the sum of all adjustments for the subsidy + the starting balance in USD cents.
+
+        Returns:
+            int: Sum of all adjustments and the starting balance in USD cents.
+        """
         adjustments_for_subsidy = Transaction.objects.filter(adjustment__isnull=False, ledger=self.ledger)
         total_deposits = sum([
-            transaction.quantity 
+            transaction.quantity
             for transaction in adjustments_for_subsidy
         ], self.starting_balance)
         return total_deposits

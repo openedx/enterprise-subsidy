@@ -216,6 +216,7 @@ class SubsidyViewSetTests(APITestBase):
             "internal_only": False,
             "revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
             "is_active": True,
+            "total_deposits": self.subsidy_1.starting_balance,
         }
         self.assertEqual(expected_result, response.json())
 
