@@ -25,7 +25,7 @@ avro==1.11.3
     #   confluent-kafka
 cachetools==5.3.3
     # via tox
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -r requirements/base.txt
     #   requests
@@ -59,7 +59,7 @@ colorama==0.4.6
     # via tox
 confluent-kafka[avro,schema-registry]==2.4.0
     # via -r requirements/base.txt
-coverage[toml]==7.5.1
+coverage[toml]==7.5.3
     # via
     #   -r requirements/test.in
     #   pytest-cov
@@ -180,7 +180,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-edx-django-utils==5.13.0
+edx-django-utils==5.14.2
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
@@ -216,7 +216,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.0
     # via -r requirements/test.in
-faker==25.2.0
+faker==25.3.0
     # via factory-boy
 fastavro==1.9.4
     # via
@@ -270,7 +270,7 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-newrelic==9.9.1
+newrelic==9.10.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -465,7 +465,7 @@ tomlkit==0.12.5
     # via pylint
 tox==4.15.0
     # via -r requirements/test.in
-typing-extensions==4.11.0
+typing-extensions==4.12.1
     # via
     #   -r requirements/base.txt
     #   edx-opaque-keys

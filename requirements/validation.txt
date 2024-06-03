@@ -33,7 +33,7 @@ cachetools==5.3.3
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   tox
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -82,7 +82,7 @@ confluent-kafka[avro,schema-registry]==2.4.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-coverage[toml]==7.5.1
+coverage[toml]==7.5.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -245,7 +245,7 @@ edx-django-release-util==1.4.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-edx-django-utils==5.13.0
+edx-django-utils==5.14.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -294,7 +294,7 @@ factory-boy==3.3.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-faker==25.2.0
+faker==25.3.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -413,7 +413,7 @@ mysqlclient==2.2.4
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-newrelic==9.9.1
+newrelic==9.10.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -452,7 +452,7 @@ pbr==6.0.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   stevedore
-pkginfo==1.10.0
+pkginfo==1.11.0
     # via
     #   -r requirements/quality.txt
     #   twine
@@ -719,7 +719,7 @@ tox==4.15.0
     #   -r requirements/test.txt
 twine==5.1.0
     # via -r requirements/quality.txt
-typing-extensions==4.11.0
+typing-extensions==4.12.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -742,7 +742,7 @@ virtualenv==20.26.2
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   tox
-zipp==3.18.2
+zipp==3.19.1
     # via
     #   -r requirements/quality.txt
     #   importlib-metadata
