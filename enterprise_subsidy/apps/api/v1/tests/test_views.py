@@ -14,6 +14,7 @@ from django.core.exceptions import MultipleObjectsReturned
 from edx_rbac.utils import ALL_ACCESS_CONTEXT
 from openedx_ledger.models import Transaction, TransactionStateChoices
 from openedx_ledger.test_utils.factories import (
+    AdjustmentFactory,
     ExternalFulfillmentProviderFactory,
     ExternalTransactionReferenceFactory,
     TransactionFactory
@@ -42,21 +43,29 @@ class APITestBase(APITestMixin):
     enterprise_1_uuid = STATIC_ENTERPRISE_UUID
     enterprise_2_uuid = str(uuid.uuid4())
     enterprise_3_uuid = str(uuid.uuid4())
+    enterprise_4_uuid = str(uuid.uuid4())
     subsidy_1_uuid = str(uuid.uuid4())
     subsidy_2_uuid = str(uuid.uuid4())
     subsidy_3_uuid = str(uuid.uuid4())
     subsidy_4_uuid = str(uuid.uuid4())
+    subsidy_5_uuid = str(uuid.uuid4())
     subsidy_1_transaction_1_uuid = str(uuid.uuid4())
     subsidy_1_transaction_2_uuid = str(uuid.uuid4())
     subsidy_2_transaction_1_uuid = str(uuid.uuid4())
     subsidy_2_transaction_2_uuid = str(uuid.uuid4())
     subsidy_3_transaction_1_uuid = str(uuid.uuid4())
     subsidy_3_transaction_2_uuid = str(uuid.uuid4())
+    subsidy_4_transaction_1_uuid = str(uuid.uuid4())
+    subsidy_4_transaction_2_uuid = str(uuid.uuid4())
+    subsidy_5_transaction_1_uuid = str(uuid.uuid4())
+    subsidy_5_transaction_2_uuid = str(uuid.uuid4())
     subsidy_access_policy_1_uuid = str(uuid.uuid4())
     subsidy_access_policy_2_uuid = str(uuid.uuid4())
     subsidy_access_policy_3_uuid = str(uuid.uuid4())
-    subsidy_4_transaction_1_uuid = str(uuid.uuid4())
-    subsidy_4_transaction_2_uuid = str(uuid.uuid4())
+    subsidy_access_policy_4_uuid = str(uuid.uuid4())
+    adjustment_uuid_1 = str(uuid.uuid4())
+    adjustment_uuid_2 = str(uuid.uuid4())
+
     parent_content_key_1 = "edX+test"
     content_key_1 = "course-v1:edX+test+course.1"
     content_title_1 = "edx: Test Course 1"
@@ -66,6 +75,8 @@ class APITestBase(APITestMixin):
     lms_user_email = 'edx@example.com'
     transaction_quantity_1 = -1
     transaction_quantity_2 = -2
+    adjustment_quantity_1 = 1000
+    adjustment_quantity_2 = -500
 
     def setUp(self):
         super().setUp()
@@ -176,6 +187,25 @@ class APITestBase(APITestMixin):
             lms_user_id=STATIC_LMS_USER_ID+1000,
         )
 
+        # Adjustments
+        self.subsidy_5 = SubsidyFactory(
+            uuid=self.subsidy_5_uuid,
+            enterprise_customer_uuid=self.enterprise_4_uuid,
+            starting_balance=15000
+        )
+        self.subsidy_5_transaction_adjustment_1 = TransactionFactory(
+            uuid=self.subsidy_5_transaction_1_uuid,
+            state=TransactionStateChoices.COMMITTED,
+            quantity=self.adjustment_quantity_1,
+            ledger=self.subsidy_5.ledger,
+        )
+        self.subsidy_5_transaction_1 = AdjustmentFactory(
+            uuid=self.adjustment_uuid_1,
+            transaction=self.subsidy_5_transaction_adjustment_1,
+            adjustment_quantity=1000,
+            ledger=self.subsidy_5.ledger,
+        )
+
         self.all_initial_transactions = set([
             str(self.subsidy_1_transaction_initial.uuid),
             str(self.subsidy_2_transaction_initial.uuid),
@@ -216,8 +246,81 @@ class SubsidyViewSetTests(APITestBase):
             "internal_only": False,
             "revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
             "is_active": True,
+            "total_deposits": self.subsidy_1.starting_balance,
         }
         self.assertEqual(expected_result, response.json())
+
+    def test_get_adjustments_related_subsidy(self):
+        """
+        Test that a subsidy detail call returns the expected
+        serialized response when an adjustment has occured.
+        """
+
+        # First transaction with a positive adjustment
+        self.set_up_admin(enterprise_uuids=[self.subsidy_5.enterprise_customer_uuid])
+        response = self.client.get(self.get_details_url([self.subsidy_5.uuid]))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        expected_result = {
+            "uuid": str(self.subsidy_5.uuid),
+            "title": self.subsidy_5.title,
+            "enterprise_customer_uuid": str(self.subsidy_5.enterprise_customer_uuid),
+            "active_datetime": self.subsidy_5.active_datetime.strftime(SERIALIZED_DATE_PATTERN),
+            "expiration_datetime": self.subsidy_5.expiration_datetime.strftime(SERIALIZED_DATE_PATTERN),
+            "unit": self.subsidy_5.unit,
+            "reference_id": self.subsidy_5.reference_id,
+            "reference_type": self.subsidy_5.reference_type,
+            "current_balance": self.subsidy_5.current_balance(),
+            "starting_balance": self.subsidy_5.starting_balance,
+            "internal_only": False,
+            "revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
+            "is_active": True,
+            "total_deposits": self.subsidy_5.total_deposits(),
+        }
+        total_deposits_including_positive_adjustment = sum(
+            [self.subsidy_5.starting_balance, APITestBase.adjustment_quantity_1]
+        )
+        self.assertEqual(expected_result, response.json())
+        self.assertEqual(expected_result.get('total_deposits'), total_deposits_including_positive_adjustment)
+
+        # Second transaction with a negative Adjustment
+        subsidy_5_transaction_adjustment_2 = TransactionFactory(
+            uuid=self.subsidy_5_transaction_2_uuid,
+            state=TransactionStateChoices.COMMITTED,
+            quantity=self.adjustment_quantity_2,
+            ledger=self.subsidy_5.ledger,
+        )
+        AdjustmentFactory(
+            uuid=self.adjustment_uuid_2,
+            transaction=subsidy_5_transaction_adjustment_2,
+            adjustment_quantity=-500,
+            ledger=self.subsidy_5.ledger,
+        )
+
+        response = self.client.get(self.get_details_url([self.subsidy_5.uuid]))
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        expected_result = {
+            "uuid": str(self.subsidy_5.uuid),
+            "title": self.subsidy_5.title,
+            "enterprise_customer_uuid": str(self.subsidy_5.enterprise_customer_uuid),
+            "active_datetime": self.subsidy_5.active_datetime.strftime(SERIALIZED_DATE_PATTERN),
+            "expiration_datetime": self.subsidy_5.expiration_datetime.strftime(SERIALIZED_DATE_PATTERN),
+            "unit": self.subsidy_5.unit,
+            "reference_id": self.subsidy_5.reference_id,
+            "reference_type": self.subsidy_5.reference_type,
+            "current_balance": self.subsidy_5.current_balance(),
+            "starting_balance": self.subsidy_5.starting_balance,
+            "internal_only": False,
+            "revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
+            "is_active": True,
+            "total_deposits": self.subsidy_5.total_deposits(),
+        }
+
+        total_deposits_including_negative_adjustment = sum(
+            [self.subsidy_5.starting_balance, APITestBase.adjustment_quantity_1, APITestBase.adjustment_quantity_2]
+        )
+
+        self.assertEqual(expected_result, response.json())
+        self.assertEqual(expected_result.get('total_deposits'), total_deposits_including_negative_adjustment)
 
     def test_get_subsidy_list_as_admin(self):
         """"
@@ -239,7 +342,7 @@ class SubsidyViewSetTests(APITestBase):
         response = self.client.get(self.get_list_url)
         print(response.json()['results'][0]['uuid'].find(str(self.subsidy_1.uuid)))
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.json()['count'], 4)
+        self.assertEqual(response.json()['count'], 5)
         self.assertEqual(len(response.json()['results']), response.json()['count'])
 
     def test_get_subsidy_list_with_query_parameter_enterprise_customer_uuid(self):

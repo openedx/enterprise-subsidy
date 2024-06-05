@@ -28,6 +28,9 @@ class SubsidySerializer(serializers.ModelSerializer):
     """
     current_balance = serializers.SerializerMethodField(help_text="The current (remaining) balance of this subsidy.")
     is_active = serializers.BooleanField(read_only=True, help_text="Whether this subsidy is currently active.")
+    total_deposits = serializers.SerializerMethodField(
+        help_text="The aggregate of the initial balance plus all adjustments made on the subsidy in usd cents"
+    )
 
     class Meta:
         """
@@ -48,6 +51,7 @@ class SubsidySerializer(serializers.ModelSerializer):
             "internal_only",
             "revenue_category",
             "is_active",
+            "total_deposits"
             # In the MVP implementation, there are only learner_credit subsidies.  Uncomment after subscription
             # subsidies are introduced.
             # "subsidy_type",
@@ -57,11 +61,16 @@ class SubsidySerializer(serializers.ModelSerializer):
             "uuid",
             "starting_balance",
             "current_balance",
+            "total_deposits",
         ]
 
     @extend_schema_field(serializers.IntegerField)
     def get_current_balance(self, obj) -> int:
         return obj.current_balance()
+
+    @extend_schema_field(serializers.IntegerField)
+    def get_total_deposits(self, obj) -> int:
+        return obj.total_deposits()
 
 
 class ReversalSerializer(serializers.ModelSerializer):

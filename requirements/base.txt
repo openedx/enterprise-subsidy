@@ -199,7 +199,7 @@ openedx-events==9.10.0
     #   -r requirements/base.in
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.4.2
+openedx-ledger==1.4.3
     # via -r requirements/base.in
 packaging==24.0
     # via drf-yasg
