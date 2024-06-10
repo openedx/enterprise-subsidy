@@ -25,7 +25,7 @@ avro==1.11.3
     #   confluent-kafka
 cachetools==5.3.3
     # via tox
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -r requirements/base.txt
     #   requests
@@ -59,11 +59,11 @@ colorama==0.4.6
     # via tox
 confluent-kafka[avro,schema-registry]==2.4.0
     # via -r requirements/base.txt
-coverage[toml]==7.5.1
+coverage[toml]==7.5.3
     # via
     #   -r requirements/test.in
     #   pytest-cov
-cryptography==42.0.7
+cryptography==42.0.8
     # via
     #   -r requirements/base.txt
     #   pyjwt
@@ -180,7 +180,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-edx-django-utils==5.13.0
+edx-django-utils==5.14.2
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
@@ -198,7 +198,7 @@ edx-event-bus-kafka==5.7.0
     # via -r requirements/base.txt
 edx-lint==5.3.6
     # via -r requirements/test.in
-edx-opaque-keys[django]==2.9.0
+edx-opaque-keys[django]==2.10.0
     # via
     #   -r requirements/base.txt
     #   edx-ccx-keys
@@ -216,7 +216,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.0
     # via -r requirements/test.in
-faker==25.2.0
+faker==25.8.0
     # via factory-boy
 fastavro==1.9.4
     # via
@@ -270,7 +270,7 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-newrelic==9.9.1
+newrelic==9.10.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -285,9 +285,9 @@ openedx-events==9.10.0
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.4.3
+openedx-ledger==1.4.4
     # via -r requirements/base.txt
-packaging==24.0
+packaging==24.1
     # via
     #   -r requirements/base.txt
     #   drf-yasg
@@ -327,7 +327,7 @@ pyjwt[crypto]==2.8.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.2.2
+pylint==3.2.3
     # via
     #   edx-lint
     #   pylint-celery
@@ -343,7 +343,7 @@ pylint-plugin-utils==0.8.2
     #   pylint-django
 pymemcache==4.0.0
     # via -r requirements/base.txt
-pymongo==4.4.0
+pymongo==4.7.3
     # via
     #   -r requirements/base.txt
     #   edx-opaque-keys
@@ -353,7 +353,7 @@ pynacl==1.5.0
     #   edx-django-utils
 pyproject-api==1.6.1
     # via tox
-pytest==8.2.1
+pytest==8.2.2
     # via
     #   pytest-cov
     #   pytest-django
@@ -386,7 +386,7 @@ pyyaml==6.0.1
     #   drf-yasg
     #   edx-django-release-util
     #   responses
-redis==5.0.4
+redis==5.0.5
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -410,7 +410,7 @@ requests-oauthlib==2.0.0
     #   -r requirements/base.txt
     #   getsmarter-api-clients
     #   social-auth-core
-responses==0.25.0
+responses==0.25.2
     # via -r requirements/test.in
 rpds-py==0.18.1
     # via
@@ -463,9 +463,9 @@ text-unidecode==1.3
     #   python-slugify
 tomlkit==0.12.5
     # via pylint
-tox==4.15.0
+tox==4.15.1
     # via -r requirements/test.in
-typing-extensions==4.11.0
+typing-extensions==4.12.2
     # via
     #   -r requirements/base.txt
     #   edx-opaque-keys
