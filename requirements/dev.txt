@@ -32,7 +32,7 @@ cachetools==5.3.3
     # via
     #   -r requirements/validation.txt
     #   tox
-certifi==2024.2.2
+certifi==2024.6.2
     # via
     #   -r requirements/validation.txt
     #   requests
@@ -74,11 +74,11 @@ colorama==0.4.6
     #   tox
 confluent-kafka[avro,schema-registry]==2.4.0
     # via -r requirements/validation.txt
-coverage[toml]==7.5.1
+coverage[toml]==7.5.3
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
-cryptography==42.0.7
+cryptography==42.0.8
     # via
     #   -r requirements/validation.txt
     #   pyjwt
@@ -141,7 +141,7 @@ django-crum==0.7.9
     #   edx-django-utils
     #   edx-rbac
     #   edx-toggles
-django-debug-toolbar==4.3.0
+django-debug-toolbar==4.4.2
     # via -r requirements/dev.in
 django-dynamic-fixture==4.0.1
     # via -r requirements/validation.txt
@@ -212,7 +212,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-edx-django-utils==5.13.0
+edx-django-utils==5.14.2
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
@@ -232,7 +232,7 @@ edx-i18n-tools==1.6.0
     # via -r requirements/dev.in
 edx-lint==5.3.6
     # via -r requirements/validation.txt
-edx-opaque-keys[django]==2.9.0
+edx-opaque-keys[django]==2.10.0
     # via
     #   -r requirements/validation.txt
     #   edx-ccx-keys
@@ -250,7 +250,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.0
     # via -r requirements/validation.txt
-faker==25.2.0
+faker==25.8.0
     # via
     #   -r requirements/validation.txt
     #   factory-boy
@@ -349,7 +349,7 @@ mdurl==0.1.2
     #   markdown-it-py
 mock==5.1.0
     # via -r requirements/validation.txt
-more-itertools==10.2.0
+more-itertools==10.3.0
     # via
     #   -r requirements/validation.txt
     #   jaraco-classes
@@ -358,7 +358,7 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-newrelic==9.9.1
+newrelic==9.10.0
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
@@ -377,9 +377,9 @@ openedx-events==9.10.0
     #   -r requirements/validation.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.4.3
+openedx-ledger==1.4.4
     # via -r requirements/validation.txt
-packaging==24.0
+packaging==24.1
     # via
     #   -r requirements/pip-tools.txt
     #   -r requirements/validation.txt
@@ -396,7 +396,7 @@ pbr==6.0.0
     #   stevedore
 pip-tools==7.4.1
     # via -r requirements/pip-tools.txt
-pkginfo==1.10.0
+pkginfo==1.11.1
     # via
     #   -r requirements/validation.txt
     #   twine
@@ -444,7 +444,7 @@ pyjwt[crypto]==2.8.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.2.2
+pylint==3.2.3
     # via
     #   -r requirements/validation.txt
     #   edx-lint
@@ -466,7 +466,7 @@ pylint-plugin-utils==0.8.2
     #   pylint-django
 pymemcache==4.0.0
     # via -r requirements/validation.txt
-pymongo==4.4.0
+pymongo==4.7.3
     # via
     #   -r requirements/validation.txt
     #   edx-opaque-keys
@@ -483,7 +483,7 @@ pyproject-hooks==1.1.0
     #   -r requirements/pip-tools.txt
     #   build
     #   pip-tools
-pytest==8.2.1
+pytest==8.2.2
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
@@ -524,7 +524,7 @@ readme-renderer==43.0
     # via
     #   -r requirements/validation.txt
     #   twine
-redis==5.0.4
+redis==5.0.5
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -554,7 +554,7 @@ requests-toolbelt==1.0.0
     # via
     #   -r requirements/validation.txt
     #   twine
-responses==0.25.0
+responses==0.25.2
     # via -r requirements/validation.txt
 rfc3986==2.0.0
     # via
@@ -626,11 +626,11 @@ tomlkit==0.12.5
     # via
     #   -r requirements/validation.txt
     #   pylint
-tox==4.15.0
+tox==4.15.1
     # via -r requirements/validation.txt
 twine==5.1.0
     # via -r requirements/validation.txt
-typing-extensions==4.11.0
+typing-extensions==4.12.2
     # via
     #   -r requirements/validation.txt
     #   edx-opaque-keys
@@ -653,7 +653,7 @@ wheel==0.43.0
     # via
     #   -r requirements/pip-tools.txt
     #   pip-tools
-zipp==3.18.2
+zipp==3.19.2
     # via
     #   -r requirements/validation.txt
     #   importlib-metadata
