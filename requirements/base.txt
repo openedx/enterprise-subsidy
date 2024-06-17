@@ -187,7 +187,7 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-newrelic==9.10.0
+newrelic==9.11.0
     # via edx-django-utils
 oauthlib==3.2.2
     # via
@@ -241,7 +241,7 @@ pyyaml==6.0.1
     #   drf-spectacular
     #   drf-yasg
     #   edx-django-release-util
-redis==5.0.5
+redis==5.0.6
     # via openedx-ledger
 referencing==0.35.1
     # via

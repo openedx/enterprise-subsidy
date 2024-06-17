@@ -259,7 +259,7 @@ fastavro==1.9.4
     #   -r requirements/validation.txt
     #   confluent-kafka
     #   openedx-events
-filelock==3.14.0
+filelock==3.15.1
     # via
     #   -r requirements/validation.txt
     #   tox
@@ -358,7 +358,7 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-newrelic==9.10.0
+newrelic==9.11.0
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
@@ -422,7 +422,7 @@ psutil==5.9.8
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
-pycodestyle==2.11.1
+pycodestyle==2.12.0
     # via -r requirements/validation.txt
 pycparser==2.22
     # via
@@ -524,7 +524,7 @@ readme-renderer==43.0
     # via
     #   -r requirements/validation.txt
     #   twine
-redis==5.0.5
+redis==5.0.6
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -554,7 +554,7 @@ requests-toolbelt==1.0.0
     # via
     #   -r requirements/validation.txt
     #   twine
-responses==0.25.2
+responses==0.25.3
     # via -r requirements/validation.txt
 rfc3986==2.0.0
     # via
