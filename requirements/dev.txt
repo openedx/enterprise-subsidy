@@ -133,7 +133,7 @@ django==4.2.13
     #   social-auth-app-django
 django-clearcache==1.2.1
     # via -r requirements/validation.txt
-django-cors-headers==4.3.1
+django-cors-headers==4.4.0
     # via -r requirements/validation.txt
 django-crum==0.7.9
     # via
@@ -250,7 +250,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.0
     # via -r requirements/validation.txt
-faker==25.8.0
+faker==25.9.1
     # via
     #   -r requirements/validation.txt
     #   factory-boy
@@ -259,7 +259,7 @@ fastavro==1.9.4
     #   -r requirements/validation.txt
     #   confluent-kafka
     #   openedx-events
-filelock==3.14.0
+filelock==3.15.3
     # via
     #   -r requirements/validation.txt
     #   tox
@@ -358,7 +358,7 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-newrelic==9.10.0
+newrelic==9.11.0
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
@@ -372,7 +372,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.10.0
+openedx-events==9.11.0
     # via
     #   -r requirements/validation.txt
     #   edx-event-bus-kafka
@@ -418,11 +418,11 @@ ply==3.11
     #   djangoql
 polib==1.2.0
     # via edx-i18n-tools
-psutil==5.9.8
+psutil==6.0.0
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
-pycodestyle==2.11.1
+pycodestyle==2.12.0
     # via -r requirements/validation.txt
 pycparser==2.22
     # via
@@ -524,7 +524,7 @@ readme-renderer==43.0
     # via
     #   -r requirements/validation.txt
     #   twine
-redis==5.0.5
+redis==5.0.6
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -554,7 +554,7 @@ requests-toolbelt==1.0.0
     # via
     #   -r requirements/validation.txt
     #   twine
-responses==0.25.2
+responses==0.25.3
     # via -r requirements/validation.txt
 rfc3986==2.0.0
     # via
@@ -639,7 +639,7 @@ uritemplate==4.1.1
     #   -r requirements/validation.txt
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.2.1
+urllib3==2.2.2
     # via
     #   -r requirements/validation.txt
     #   requests
