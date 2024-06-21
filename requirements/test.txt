@@ -107,7 +107,7 @@ distlib==0.3.8
     #   social-auth-app-django
 django-clearcache==1.2.1
     # via -r requirements/base.txt
-django-cors-headers==4.3.1
+django-cors-headers==4.4.0
     # via -r requirements/base.txt
 django-crum==0.7.9
     # via
@@ -216,14 +216,14 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.0
     # via -r requirements/test.in
-faker==25.8.0
+faker==25.9.1
     # via factory-boy
 fastavro==1.9.4
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
     #   openedx-events
-filelock==3.14.0
+filelock==3.15.3
     # via
     #   tox
     #   virtualenv
@@ -270,7 +270,7 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-newrelic==9.10.0
+newrelic==9.11.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -280,7 +280,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.10.0
+openedx-events==9.11.0
     # via
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
@@ -311,7 +311,7 @@ ply==3.11
     # via
     #   -r requirements/base.txt
     #   djangoql
-psutil==5.9.8
+psutil==6.0.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -386,7 +386,7 @@ pyyaml==6.0.1
     #   drf-yasg
     #   edx-django-release-util
     #   responses
-redis==5.0.5
+redis==5.0.6
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -410,7 +410,7 @@ requests-oauthlib==2.0.0
     #   -r requirements/base.txt
     #   getsmarter-api-clients
     #   social-auth-core
-responses==0.25.2
+responses==0.25.3
     # via -r requirements/test.in
 rpds-py==0.18.1
     # via
@@ -474,7 +474,7 @@ uritemplate==4.1.1
     #   -r requirements/base.txt
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.2.1
+urllib3==2.2.2
     # via
     #   -r requirements/base.txt
     #   requests

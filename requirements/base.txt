@@ -68,7 +68,7 @@ django==4.2.13
     #   social-auth-app-django
 django-clearcache==1.2.1
     # via -r requirements/base.in
-django-cors-headers==4.3.1
+django-cors-headers==4.4.0
     # via -r requirements/base.in
 django-crum==0.7.9
     # via
@@ -187,14 +187,14 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-newrelic==9.10.0
+newrelic==9.11.0
     # via edx-django-utils
 oauthlib==3.2.2
     # via
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.10.0
+openedx-events==9.11.0
     # via
     #   -r requirements/base.in
     #   edx-event-bus-kafka
@@ -207,7 +207,7 @@ pbr==6.0.0
     # via stevedore
 ply==3.11
     # via djangoql
-psutil==5.9.8
+psutil==6.0.0
     # via edx-django-utils
 pycparser==2.22
     # via cffi
@@ -241,7 +241,7 @@ pyyaml==6.0.1
     #   drf-spectacular
     #   drf-yasg
     #   edx-django-release-util
-redis==5.0.5
+redis==5.0.6
     # via openedx-ledger
 referencing==0.35.1
     # via
@@ -298,7 +298,7 @@ uritemplate==4.1.1
     # via
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.2.1
+urllib3==2.2.2
     # via requests
 
 # The following packages are considered to be unsafe in a requirements file:
