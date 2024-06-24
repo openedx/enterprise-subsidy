@@ -248,6 +248,7 @@ class SubsidyModelReadTestCase(TestCase):
         )
 
 
+@ddt.ddt
 class SubsidyModelRedemptionTestCase(TestCase):
     """
     Tests functionality related to redemption on the Subsidy model
@@ -475,6 +476,8 @@ class SubsidyModelRedemptionTestCase(TestCase):
             'source': 'edX',
             'mode': 'verified',
             'content_price': 10000,
+            # When this key value is non-None, it triggers an attempt to create an external fulfillment. This attempt
+            # will fail because the metadata below is missing a bunch of required keys, e.g. 'geag_date_of_birth'.
             'geag_variant_id': str(uuid4()),
         }
         mock_price_for_content.return_value = mock_content_price
@@ -482,6 +485,11 @@ class SubsidyModelRedemptionTestCase(TestCase):
         tx_metadata = {
             'geag_first_name': 'Donny',
             'geag_last_name': 'Kerabatsos',
+            # The following required keys are missing and will cause external fulfillment to fail.
+            # 'geag_email': ,
+            # 'geag_date_of_birth': ,
+            # 'geag_terms_accepted_at': ,
+            # 'geag_data_share_consent': ,
         }
         with pytest.raises(InvalidFulfillmentMetadataException):
             self.subsidy.redeem(
@@ -492,6 +500,78 @@ class SubsidyModelRedemptionTestCase(TestCase):
             )
         created_transaction = Transaction.objects.latest('created')
         assert created_transaction.state == TransactionStateChoices.FAILED
+
+    @ddt.data(
+        {"cancel_external_fulfillment_side_effect": None},
+        {"cancel_external_fulfillment_side_effect": HTTPError()},
+        {"cancel_external_fulfillment_side_effect": Exception()},
+    )
+    @ddt.unpack
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    @mock.patch("enterprise_subsidy.apps.api_client.enterprise.EnterpriseApiClient.get_enterprise_customer_data")
+    @mock.patch("enterprise_subsidy.apps.fulfillment.api.GEAGFulfillmentHandler._fulfill_in_geag")
+    @mock.patch("enterprise_subsidy.apps.fulfillment.api.GEAGFulfillmentHandler.cancel_fulfillment")
+    def test_redeem_with_platform_exception_rolls_back_geag(
+        self,
+        mock_cancel_fulfillment,
+        mock_fulfill_in_geag,
+        mock_get_enterprise_customer_data,
+        mock_get_content_summary,
+        mock_enterprise_client,
+        mock_price_for_content,
+        cancel_external_fulfillment_side_effect,
+    ):
+        """
+        Test Subsidy.redeem() rollback upon platform networking exception handles geag cancellation.
+        """
+        lms_user_id = 1
+        content_key = "course-v1:edX+test+course"
+        subsidy_access_policy_uuid = str(uuid4())
+        mock_content_price = 1000
+        mock_fulfillment_order_uuid = str(uuid4())
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'course-v1:edX+test+course',
+            'content_key': 'course-v1:edX+test+course',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': str(uuid4()),
+        }
+        # Simulate a network failure when attempting to cancel the external fulfillment. The hope is that the
+        # transaction should still get rolled back (by progressing to state=failed).
+        if cancel_external_fulfillment_side_effect:
+            mock_cancel_fulfillment.side_effect = cancel_external_fulfillment_side_effect
+        mock_price_for_content.return_value = mock_content_price
+        # Create the conditions for a failed platform fulfillment after a successful external fulfillment.
+        mock_enterprise_client.enroll.side_effect = HTTPError(
+            response=MockResponse(None, status.HTTP_500_INTERNAL_SERVER_ERROR),
+        )
+        mock_get_enterprise_customer_data.return_value = {}
+        mock_fulfill_in_geag.return_value.json.return_value = {
+            'orderUuid': mock_fulfillment_order_uuid,
+        }
+        tx_metadata = {
+            'geag_first_name': 'Donny',
+            'geag_last_name': 'Kerabatsos',
+            'geag_email': 'foo@bar.com',
+            'geag_date_of_birth': '1990-01-01',
+            'geag_terms_accepted_at': '2024-01-01T00:00:00Z',
+            'geag_data_share_consent': True,
+        }
+        with pytest.raises(HTTPError):
+            self.subsidy.redeem(
+                lms_user_id,
+                content_key,
+                subsidy_access_policy_uuid,
+                metadata=tx_metadata
+            )
+        created_transaction = Transaction.objects.latest('created')
+        assert created_transaction.state == TransactionStateChoices.FAILED
+        # The meat of what's being tested: Did we attempt to cancel the external fulfillment?
+        assert mock_cancel_fulfillment.called
+        assert mock_cancel_fulfillment.call_args.args[0].external_reference_id == mock_fulfillment_order_uuid
 
 
 class SubsidyManagerTestCase(TestCase):
