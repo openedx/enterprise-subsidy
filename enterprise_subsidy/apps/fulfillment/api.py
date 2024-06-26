@@ -185,6 +185,9 @@ class GEAGFulfillmentHandler():
     def fulfill(self, transaction):
         """
         Attempt to fulfill a ledger transaction with the GEAG fulfillment system
+
+        Returns:
+            ExternalTransactionReference: A new ExternalTransactionReference representing the new external fulfillment.
         """
         self._validate(transaction)
         allocation_payload = self._create_allocation_payload(transaction)
@@ -209,6 +212,12 @@ class GEAGFulfillmentHandler():
         """
         Cancels the provided external reference's (related to some ``Transaction`` record)
         related enterprise allocation.
+
+        Raises:
+            HTTPError:
+                Calling the external platform API to cancel an external fulfillment failed. Currently, this could happen
+                if the external reference does not refer to a GEAG fulfillment because we currently only support GEAG
+                external fulfillments.
         """
         self.get_smarter_client().cancel_enterprise_allocation(
             external_transaction_reference.external_reference_id,

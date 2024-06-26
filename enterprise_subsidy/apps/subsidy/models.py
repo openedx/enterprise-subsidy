@@ -417,13 +417,52 @@ class Subsidy(TimeStampedModel):
         ledger_transaction.state = TransactionStateChoices.COMMITTED
         ledger_transaction.save()
 
-    def rollback_transaction(self, ledger_transaction):
+    def rollback_transaction(self, ledger_transaction, external_transaction_reference=None):
         """
-        Progress the transaction to a failed state.
+        Progress the transaction to a failed state. Also attempt to cancel any external fulfillments given.
+
+        Args:
+            ledger_transaction (openedx_ledger.models.Transaction):
+                The transaction to rollback.
+            external_transaction_reference (openedx_ledger.models.ExternalTransactionReference):
+                The external fulfillment to cancel (optional). Must link back to the given transaction.
+
+        Raises:
+            I made a best effort to avoid raising an exception unless there's local database issues like locking or
+            other read errors on transaction.save().
         """
-        logger.info(f'Setting transaction {ledger_transaction.uuid} state to failed.')
-        ledger_transaction.state = TransactionStateChoices.FAILED
-        ledger_transaction.save()
+        try:
+            if external_transaction_reference and external_transaction_reference.transaction == ledger_transaction:
+                logger.info(
+                    '[rollback_transaction] Attempting to cancel external fulfillment %s for transaction %s.',
+                    external_transaction_reference.external_reference_id,
+                    ledger_transaction.uuid,
+                )
+                self.geag_fulfillment_handler().cancel_fulfillment(external_transaction_reference)
+                logger.info(
+                    '[rollback_transaction] Successfully canceled external fulfillment %s for transaction %s.',
+                    external_transaction_reference.external_reference_id,
+                    ledger_transaction.uuid,
+                )
+        except HTTPError as exc:
+            logger.error(
+                "[rollback_transaction] Error canceling external fulfillment %s: %s",
+                external_transaction_reference.external_reference_id,
+                exc,
+            )
+        except Exception as exc:  # pylint: disable=broad-except
+            # We are extra sensitive to raising an exception from this method because it's already running inside a
+            # rollback context, so the caller already knows something went wrong and is trying to recover.
+            logger.error(
+                "[rollback_transaction] Swallowing uncaught exception trying to cancel external fulfillment %s: %s",
+                external_transaction_reference.external_reference_id,
+                exc,
+            )
+        finally:
+            # No matter what, we absolutely need to progress the transaction to a failed state.
+            logger.info('[rollback_transaction] Setting transaction %s state to failed.', ledger_transaction.uuid)
+            ledger_transaction.state = TransactionStateChoices.FAILED
+            ledger_transaction.save()
 
     def redeem(
         self,
@@ -576,9 +615,10 @@ class Subsidy(TimeStampedModel):
         ledger_transaction.state = TransactionStateChoices.PENDING
         ledger_transaction.save()
 
+        external_transaction_reference = None
         try:
             if self.geag_fulfillment_handler().can_fulfill(ledger_transaction):
-                self.geag_fulfillment_handler().fulfill(ledger_transaction)
+                external_transaction_reference = self.geag_fulfillment_handler().fulfill(ledger_transaction)
         except Exception as exc:
             logger.exception(
                 f'Failed to fulfill transaction {ledger_transaction.uuid} with the GEAG handler.'
@@ -596,7 +636,7 @@ class Subsidy(TimeStampedModel):
             logger.exception(
                 f'Failed to enroll for transaction {ledger_transaction.uuid} via the enterprise client.'
             )
-            self.rollback_transaction(ledger_transaction)
+            self.rollback_transaction(ledger_transaction, external_transaction_reference)
             raise exc
 
         return ledger_transaction

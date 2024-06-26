@@ -52,11 +52,16 @@ def cancel_transaction_fulfillment(transaction):
 
 def cancel_transaction_external_fulfillment(transaction):
     """
-    Cancels all related external GEAG allocations for the given transaction.
+    Cancels all related external fulfillments for the given transaction.
 
-    raises:
-      FulfillmentException if the related external references for the transaction
-        are not for a GEAG fulfillment provider.
+    Note: All related external fulfillments that do NOT refer to a GEAG allocation _are skipped_, as only GEAG external
+    fulfillments are currently supported. A warning will be logged.
+
+    Raises:
+        TransactionFulfillmentCancelationException: The transaction is not committed, and no actions were taken.
+        requests.exceptions.HTTPError:
+            Calling the external platform API to cancel an external fulfillment failed for at least one external
+            reference related to the given transaction.
     """
     if transaction.state != TransactionStateChoices.COMMITTED:
         logger.info(
