@@ -379,7 +379,7 @@ ALLOCATION_PRICE_VALIDATION_LOWER_BOUND_RATIO = .80
 ALLOCATION_PRICE_VALIDATION_UPPER_BOUND_RATIO = 1.20
 
 # Kafka and event broker settings
-TRANSACTION_LIFECYCLE_TOPIC = "enterprise-subsidy-ledger-transaction-lifecycle"
+TRANSACTION_LIFECYCLE_TOPIC = "enterprise-subsidies-transaction-lifecycle"
 TRANSACTION_CREATED_EVENT_NAME = "org.openedx.enterprise.subsidy_ledger_transaction.created.v1"
 TRANSACTION_COMMITTED_EVENT_NAME = "org.openedx.enterprise.subsidy_ledger_transaction.committed.v1"
 TRANSACTION_FAILED_EVENT_NAME = "org.openedx.enterprise.subsidy_ledger_transaction.failed.v1"
