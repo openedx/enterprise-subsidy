@@ -66,6 +66,7 @@ THIRD_PARTY_APPS = (
     'social_django',
     'waffle',
     'rules.apps.AutodiscoverRulesConfig',
+    'openedx_events',
 )
 
 PROJECT_APPS = (

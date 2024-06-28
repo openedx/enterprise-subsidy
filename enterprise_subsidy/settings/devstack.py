@@ -35,7 +35,6 @@ CACHES = {
 
 INSTALLED_APPS += (
     'edx_event_bus_kafka',
-    'openedx_events',
 )
 
 # Generic OAuth2 variables irrespective of SSO/backend service key types.
