@@ -274,7 +274,7 @@ class SubsidyViewSetTests(APITestBase):
             "internal_only": False,
             "revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
             "is_active": True,
-            "total_deposits": self.subsidy_5.total_deposits(),
+            "total_deposits": self.subsidy_5.total_deposits,
         }
         total_deposits_including_positive_adjustment = sum(
             [self.subsidy_5.starting_balance, APITestBase.adjustment_quantity_1]
@@ -312,7 +312,7 @@ class SubsidyViewSetTests(APITestBase):
             "internal_only": False,
             "revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
             "is_active": True,
-            "total_deposits": self.subsidy_5.total_deposits(),
+            "total_deposits": self.subsidy_5.total_deposits,
         }
 
         total_deposits_including_negative_adjustment = sum(
