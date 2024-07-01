@@ -22,7 +22,7 @@ edx-rbac
 edx-rest-api-client
 jsonfield2
 mysqlclient
-# openedx-events
+openedx-events
 openedx-ledger
 pymemcache
 pytz
@@ -30,6 +30,3 @@ rules
 getsmarter-api-clients
 django-log-request-id
 django-clearcache
-
-# Temporary pin to a fork to use new enterprise events
-git+https://github.com/iloveagent57/openedx-events.git@67d7bc392af88996ca1e63d789c6017248dac305

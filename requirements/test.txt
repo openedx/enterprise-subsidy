@@ -208,7 +208,7 @@ edx-rbac==1.9.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-edx-rest-api-client==5.7.0
+edx-rest-api-client==5.7.1
     # via -r requirements/base.txt
 edx-toggles==5.2.0
     # via
@@ -216,7 +216,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.0
     # via -r requirements/test.in
-faker==25.9.1
+faker==26.0.0
     # via factory-boy
 fastavro==1.9.4
     # via
@@ -327,7 +327,7 @@ pyjwt[crypto]==2.8.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.2.3
+pylint==3.2.5
     # via
     #   edx-lint
     #   pylint-celery
@@ -343,7 +343,7 @@ pylint-plugin-utils==0.8.2
     #   pylint-django
 pymemcache==4.0.0
     # via -r requirements/base.txt
-pymongo==4.7.3
+pymongo==4.8.0
     # via
     #   -r requirements/base.txt
     #   edx-opaque-keys
@@ -386,7 +386,7 @@ pyyaml==6.0.1
     #   drf-yasg
     #   edx-django-release-util
     #   responses
-redis==5.0.6
+redis==5.0.7
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -395,7 +395,7 @@ referencing==0.35.1
     #   -r requirements/base.txt
     #   jsonschema
     #   jsonschema-specifications
-requests==2.31.0
+requests==2.32.3
     # via
     #   -r requirements/base.txt
     #   confluent-kafka

@@ -93,7 +93,7 @@ defusedxml==0.8.0rc2
     #   -r requirements/validation.txt
     #   python3-openid
     #   social-auth-core
-diff-cover==9.0.0
+diff-cover==9.1.0
     # via -r requirements/dev.in
 dill==0.3.8
     # via
@@ -242,7 +242,7 @@ edx-rbac==1.9.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-edx-rest-api-client==5.7.0
+edx-rest-api-client==5.7.1
     # via -r requirements/validation.txt
 edx-toggles==5.2.0
     # via
@@ -250,7 +250,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.0
     # via -r requirements/validation.txt
-faker==25.9.1
+faker==26.0.0
     # via
     #   -r requirements/validation.txt
     #   factory-boy
@@ -396,7 +396,7 @@ pbr==6.0.0
     #   stevedore
 pip-tools==7.4.1
     # via -r requirements/pip-tools.txt
-pkginfo==1.11.1
+pkginfo==1.10.0
     # via
     #   -r requirements/validation.txt
     #   twine
@@ -444,7 +444,7 @@ pyjwt[crypto]==2.8.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.2.3
+pylint==3.2.5
     # via
     #   -r requirements/validation.txt
     #   edx-lint
@@ -466,7 +466,7 @@ pylint-plugin-utils==0.8.2
     #   pylint-django
 pymemcache==4.0.0
     # via -r requirements/validation.txt
-pymongo==4.7.3
+pymongo==4.8.0
     # via
     #   -r requirements/validation.txt
     #   edx-opaque-keys
@@ -524,7 +524,7 @@ readme-renderer==43.0
     # via
     #   -r requirements/validation.txt
     #   twine
-redis==5.0.6
+redis==5.0.7
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -533,7 +533,7 @@ referencing==0.35.1
     #   -r requirements/validation.txt
     #   jsonschema
     #   jsonschema-specifications
-requests==2.31.0
+requests==2.32.3
     # via
     #   -r requirements/validation.txt
     #   confluent-kafka
@@ -628,7 +628,7 @@ tomlkit==0.12.5
     #   pylint
 tox==4.15.1
     # via -r requirements/validation.txt
-twine==5.1.0
+twine==5.1.1
     # via -r requirements/validation.txt
 typing-extensions==4.12.2
     # via
