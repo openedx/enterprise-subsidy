@@ -155,7 +155,7 @@ edx-rbac==1.9.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-edx-rest-api-client==5.7.0
+edx-rest-api-client==5.7.1
     # via -r requirements/base.in
 edx-toggles==5.2.0
     # via edx-event-bus-kafka
@@ -194,7 +194,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.11.0
+openedx-events @ git+https://github.com/iloveagent57/openedx-events.git@67d7bc392af88996ca1e63d789c6017248dac305
     # via
     #   -r requirements/base.in
     #   edx-event-bus-kafka
@@ -220,7 +220,7 @@ pyjwt[crypto]==2.8.0
     #   social-auth-core
 pymemcache==4.0.0
     # via -r requirements/base.in
-pymongo==4.7.3
+pymongo==4.8.0
     # via edx-opaque-keys
 pynacl==1.5.0
     # via edx-django-utils
@@ -241,13 +241,13 @@ pyyaml==6.0.1
     #   drf-spectacular
     #   drf-yasg
     #   edx-django-release-util
-redis==5.0.6
+redis==5.0.7
     # via openedx-ledger
 referencing==0.35.1
     # via
     #   jsonschema
     #   jsonschema-specifications
-requests==2.31.0
+requests==2.32.3
     # via
     #   confluent-kafka
     #   edx-drf-extensions

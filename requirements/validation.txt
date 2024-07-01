@@ -281,7 +281,7 @@ edx-rbac==1.9.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-edx-rest-api-client==5.7.0
+edx-rest-api-client==5.7.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -294,7 +294,7 @@ factory-boy==3.3.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-faker==25.9.1
+faker==26.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -429,7 +429,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.11.0
+openedx-events @ git+https://github.com/iloveagent57/openedx-events.git@67d7bc392af88996ca1e63d789c6017248dac305
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -452,7 +452,7 @@ pbr==6.0.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   stevedore
-pkginfo==1.11.1
+pkginfo==1.10.0
     # via
     #   -r requirements/quality.txt
     #   twine
@@ -502,7 +502,7 @@ pyjwt[crypto]==2.8.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.2.3
+pylint==3.2.5
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -530,7 +530,7 @@ pymemcache==4.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-pymongo==4.7.3
+pymongo==4.8.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -595,7 +595,7 @@ readme-renderer==43.0
     # via
     #   -r requirements/quality.txt
     #   twine
-redis==5.0.6
+redis==5.0.7
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -606,7 +606,7 @@ referencing==0.35.1
     #   -r requirements/test.txt
     #   jsonschema
     #   jsonschema-specifications
-requests==2.31.0
+requests==2.32.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -717,7 +717,7 @@ tox==4.15.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-twine==5.1.0
+twine==5.1.1
     # via -r requirements/quality.txt
 typing-extensions==4.12.2
     # via
