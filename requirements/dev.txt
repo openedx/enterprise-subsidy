@@ -32,7 +32,7 @@ cachetools==5.3.3
     # via
     #   -r requirements/validation.txt
     #   tox
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -r requirements/validation.txt
     #   requests
@@ -141,7 +141,7 @@ django-crum==0.7.9
     #   edx-django-utils
     #   edx-rbac
     #   edx-toggles
-django-debug-toolbar==4.4.2
+django-debug-toolbar==4.4.5
     # via -r requirements/dev.in
 django-dynamic-fixture==4.0.1
     # via -r requirements/validation.txt
@@ -362,7 +362,7 @@ newrelic==9.11.0
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
-nh3==0.2.17
+nh3==0.2.18
     # via
     #   -r requirements/validation.txt
     #   readme-renderer
@@ -377,7 +377,7 @@ openedx-events==9.11.0
     #   -r requirements/validation.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.0
+openedx-ledger==1.5.1
     # via -r requirements/validation.txt
 packaging==24.1
     # via
@@ -564,7 +564,7 @@ rich==13.7.1
     # via
     #   -r requirements/validation.txt
     #   twine
-rpds-py==0.18.1
+rpds-py==0.19.0
     # via
     #   -r requirements/validation.txt
     #   jsonschema
@@ -626,7 +626,7 @@ tomlkit==0.12.5
     # via
     #   -r requirements/validation.txt
     #   pylint
-tox==4.15.1
+tox==4.16.0
     # via -r requirements/validation.txt
 twine==5.1.1
     # via -r requirements/validation.txt
