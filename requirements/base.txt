@@ -15,7 +15,7 @@ attrs==23.2.0
     #   referencing
 avro==1.11.3
     # via confluent-kafka
-certifi==2024.6.2
+certifi==2024.7.4
     # via requests
 cffi==1.16.0
     # via

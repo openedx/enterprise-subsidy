@@ -19,7 +19,7 @@ avro==1.11.3
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -r requirements/base.txt
     #   requests

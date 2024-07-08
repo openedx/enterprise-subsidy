@@ -25,7 +25,7 @@ avro==1.11.3
     #   confluent-kafka
 cachetools==5.3.3
     # via tox
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -r requirements/base.txt
     #   requests
@@ -463,7 +463,7 @@ text-unidecode==1.3
     #   python-slugify
 tomlkit==0.12.5
     # via pylint
-tox==4.15.1
+tox==4.16.0
     # via -r requirements/test.in
 typing-extensions==4.12.2
     # via
