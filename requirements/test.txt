@@ -287,7 +287,7 @@ openedx-events==9.11.0
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.1
+openedx-ledger==1.5.3
     # via -r requirements/base.txt
 packaging==24.1
     # via
