@@ -81,7 +81,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         try:
             producer = create_producer()
-            # breakpoint()
             producer.send(
                 signal=ENTERPRISE_PING_SIGNAL,
                 topic=ENTERPRISE_CORE_TOPIC,

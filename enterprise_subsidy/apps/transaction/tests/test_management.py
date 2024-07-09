@@ -1086,3 +1086,47 @@ class TestTransactionManagementCommand(TestCase):
         assert self.transaction_to_backpopulate.parent_content_key == expected_parent_content_key
         assert self.internal_transaction_to_backpopulate.parent_content_key == expected_parent_content_key
         assert self.transaction_not_to_backpopulate.parent_content_key is None
+
+
+@mark.django_db
+@ddt.ddt
+class TestReplayReversalMgmtCommand(TestCase):
+    """
+    Test the replay_reversal_events mgmt command.
+    """
+    MOCK_PATH_PREFIX = 'enterprise_subsidy.apps.transaction.management.commands.replay_reversal_events'
+
+    def setUp(self):
+        super().setUp()
+        self.ledger = LedgerFactory()
+        self.transaction_a = TransactionFactory(ledger=self.ledger, quantity=100)
+        ReversalFactory(
+            transaction=self.transaction_a, idempotency_key=f'unenrollment-reversal-{self.transaction_a.uuid}',
+        )
+
+        self.transaction_b = TransactionFactory(ledger=self.ledger, quantity=200)
+        ReversalFactory(
+            transaction=self.transaction_b, idempotency_key=f'unenrollment-reversal-{self.transaction_b.uuid}',
+        )
+
+        # one un-reversed transaction
+        self.transaction_c = TransactionFactory(ledger=self.ledger, quantity=200)
+
+    @mock.patch(f'{MOCK_PATH_PREFIX}.send_transaction_reversed_event')
+    def test_command_dry_run(self, mock_send_event):
+        """
+        Test that no events are actually produced during a dry run.
+        """
+        call_command('replay_reversal_events', dry_run=True)
+        self.assertFalse(mock_send_event.called)
+
+    @mock.patch(f'{MOCK_PATH_PREFIX}.send_transaction_reversed_event')
+    def test_command_sends_events(self, mock_send_event):
+        """
+        Test that the command produces events for all reversed transactions.
+        """
+        call_command('replay_reversal_events', dry_run=False)
+        mock_send_event.assert_has_calls([
+            mock.call(self.transaction_a),
+            mock.call(self.transaction_b),
+        ], any_order=True)
