@@ -140,6 +140,8 @@ django-simple-history==3.4.0
     #   -c requirements/constraints.txt
     #   -r requirements/base.txt
     #   openedx-ledger
+django-test-migrations==1.4.0
+    # via -r requirements/test.in
 django-waffle==4.1.0
     # via
     #   -r requirements/base.txt

@@ -169,6 +169,8 @@ django-simple-history==3.4.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
+django-test-migrations==1.4.0
+    # via -r requirements/validation.txt
 django-waffle==4.1.0
     # via
     #   -r requirements/validation.txt
