@@ -88,18 +88,15 @@ def has_explicit_access_to_subsidy_learner(user, context):
 
 # Now, recombine the implicit and explicit rules for a given feature role using composition.  Also, waterfall the rules
 # by defining access levels which give "higher" levels access to their own level, as well as everything below.
-# pylint: disable=unsupported-binary-operation
 has_learner_level_access = (
     has_implicit_access_to_subsidy_operator | has_explicit_access_to_subsidy_operator |
     has_implicit_access_to_subsidy_admin | has_explicit_access_to_subsidy_admin |
     has_implicit_access_to_subsidy_learner | has_explicit_access_to_subsidy_learner
 )
-# pylint: disable=unsupported-binary-operation
 has_admin_level_access = (
     has_implicit_access_to_subsidy_operator | has_explicit_access_to_subsidy_operator |
     has_implicit_access_to_subsidy_admin | has_explicit_access_to_subsidy_admin
 )
-# pylint: disable=unsupported-binary-operation
 has_operator_level_access = has_implicit_access_to_subsidy_operator | has_explicit_access_to_subsidy_operator
 
 
