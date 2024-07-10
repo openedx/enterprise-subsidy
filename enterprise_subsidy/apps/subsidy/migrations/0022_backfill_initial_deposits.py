@@ -53,7 +53,10 @@ def forwards_func(apps, schema_editor):
         sales_contract_reference_provider = None
         try:
             sales_contract_reference_id = tx.ledger.subsidy.reference_id
-            sales_contract_reference_provider = sales_contract_reference_providers[tx.ledger.subsidy.reference_type]
+            # If a pre-established provider is not found, that means it was not defined in
+            # SubsidyReferenceChoices.CHOICES.  We don't really want to pollute the SalesContractReferenceProvider table
+            # with unofficial test records, so the compromise is to just use get() and fallback to NULL.
+            sales_contract_reference_provider = sales_contract_reference_providers.get(tx.ledger.subsidy.reference_type)
         except Ledger.subsidy.RelatedObjectDoesNotExist:
             logger.warning(
                 "Found a ledger (%s) without a related subsidy, so the initial deposit will not have a sales contract.",
