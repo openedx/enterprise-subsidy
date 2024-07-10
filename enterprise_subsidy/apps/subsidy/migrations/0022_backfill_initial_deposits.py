@@ -7,11 +7,15 @@ SubsidyReferenceChoices.
 Note this has no reverse migration logic. Attempts to rollback the deployment which includes this PR will not delete
 (un-backfill) the deposits created during the forward migration.
 """
+import logging
+
 import django.utils.timezone
 from django.db import migrations
 
 from enterprise_subsidy.apps.subsidy.migration_utils import find_legacy_initial_transactions
 from enterprise_subsidy.apps.subsidy.models import SubsidyReferenceChoices
+
+logger = logging.getLogger(__name__)
 
 
 def forwards_func(apps, schema_editor):
@@ -19,6 +23,7 @@ def forwards_func(apps, schema_editor):
     The core logic of this migration.
     """
     # We get the models from the versioned app registry; if we directly import it, it'll be the wrong version.
+    Ledger = apps.get_model("openedx_ledger", "Ledger")
     Transaction = apps.get_model("openedx_ledger", "Transaction")
     Deposit = apps.get_model("openedx_ledger", "Deposit")
     HistoricalDeposit = apps.get_model("openedx_ledger", "HistoricalDeposit")
@@ -44,12 +49,22 @@ def forwards_func(apps, schema_editor):
     deposits_to_backfill = []
     historical_deposits_to_backfill = []
     for tx in legacy_initial_transactions:
+        sales_contract_reference_id = None
+        sales_contract_reference_provider = None
+        try:
+            sales_contract_reference_id = tx.ledger.subsidy.reference_id
+            sales_contract_reference_provider = sales_contract_reference_providers[tx.ledger.subsidy.reference_type]
+        except Ledger.subsidy.RelatedObjectDoesNotExist:
+            logger.warning(
+                "Found a ledger (%s) without a related subsidy, so the initial deposit will not have a sales contract.",
+                tx.ledger.uuid,
+            )
         deposit_fields = {
             "ledger": tx.ledger,
             "transaction": tx,
             "desired_deposit_quantity": tx.quantity,
-            "sales_contract_reference_id": tx.ledger.subsidy.reference_id,
-            "sales_contract_reference_provider": sales_contract_reference_providers[tx.ledger.subsidy.reference_type],
+            "sales_contract_reference_id": sales_contract_reference_id,
+            "sales_contract_reference_provider": sales_contract_reference_provider,
         }
         deposit = Deposit(**deposit_fields)
         historical_deposit = HistoricalDeposit(
