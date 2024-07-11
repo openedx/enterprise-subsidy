@@ -11,14 +11,17 @@ from openedx_ledger.models import TransactionStateChoices
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "initial_deposit_exists,subsidy_exists,subsidy_reference_id",
+    "initial_deposit_exists,subsidy_exists,subsidy_reference_id,subsidy_reference_type",
     [
-        (False, False, None),
-        (False, True,  None),
-        (False, True,  "abc123"),
-        (True,  False, None),
-        (True,  True,  None),
-        (True,  True,  "abc123"),
+        (False, False, None,     "salesforce_opportunity_line_item"),
+        (False, True,  None,     "salesforce_opportunity_line_item"),
+        # This is the most common case that we're targetting in prod.
+        (False, True,  "abc123", "salesforce_opportunity_line_item"),
+        # This specific case defends against a case in stage where there was a Subsidy with a bogus reference_type.
+        (False, True,  "abc123", "bogus_made_up"),
+        (True,  False, None,     "salesforce_opportunity_line_item"),
+        (True,  True,  None,     "salesforce_opportunity_line_item"),
+        (True,  True,  "abc123", "salesforce_opportunity_line_item"),
     ],
 )
 def test_migration_0022_backfill_initial_deposits(
@@ -26,6 +29,7 @@ def test_migration_0022_backfill_initial_deposits(
     initial_deposit_exists,
     subsidy_exists,
     subsidy_reference_id,
+    subsidy_reference_type,
 ):
     """
     Test Backfilling initial deposits via data migration.
@@ -49,6 +53,7 @@ def test_migration_0022_backfill_initial_deposits(
             ledger=ledger,
             starting_balance=100,
             reference_id=subsidy_reference_id,
+            reference_type=subsidy_reference_type,
             enterprise_customer_uuid=uuid.uuid4(),
         )
     transaction = Transaction.objects.create(
@@ -93,24 +98,25 @@ def test_migration_0022_backfill_initial_deposits(
     assert HistoricalDeposit.objects.all().count() == 1
 
     # Finally check that all the deposit values are correct.
-    assert Deposit.objects.first().ledger.uuid == ledger.uuid
-    assert Deposit.objects.first().desired_deposit_quantity == 100
-    assert Deposit.objects.first().transaction.uuid == transaction.uuid
+    deposit = Deposit.objects.first()
+    assert deposit.ledger.uuid == ledger.uuid
+    assert deposit.desired_deposit_quantity == 100
+    assert deposit.transaction.uuid == transaction.uuid
     if subsidy_exists:
-        assert Deposit.objects.first().sales_contract_reference_id == subsidy_reference_id
-        assert Deposit.objects.first().sales_contract_reference_provider.slug == subsidy.reference_type
+        assert deposit.sales_contract_reference_id == subsidy_reference_id
+        if subsidy_reference_type == "salesforce_opportunity_line_item":
+            assert deposit.sales_contract_reference_provider.slug == subsidy.reference_type
+        else:
+            assert Deposit.objects.first().sales_contract_reference_provider is None
     else:
-        assert Deposit.objects.first().sales_contract_reference_id is None
-        assert Deposit.objects.first().sales_contract_reference_provider is None
+        assert deposit.sales_contract_reference_id is None
+        assert deposit.sales_contract_reference_provider is None
 
-    assert HistoricalDeposit.objects.first().ledger.uuid == ledger.uuid
-    assert HistoricalDeposit.objects.first().desired_deposit_quantity == 100
-    assert HistoricalDeposit.objects.first().transaction.uuid == transaction.uuid
-    if subsidy_exists:
-        assert HistoricalDeposit.objects.first().sales_contract_reference_id == subsidy_reference_id
-        assert HistoricalDeposit.objects.first().sales_contract_reference_provider.slug == subsidy.reference_type
-    else:
-        assert HistoricalDeposit.objects.first().sales_contract_reference_id is None
-        assert HistoricalDeposit.objects.first().sales_contract_reference_provider is None
-    assert HistoricalDeposit.objects.first().history_type == "+"
-    assert HistoricalDeposit.objects.first().history_change_reason == "Data migration to backfill initial deposits"
+    historical_deposit = HistoricalDeposit.objects.first()
+    assert historical_deposit.ledger.uuid == ledger.uuid
+    assert historical_deposit.desired_deposit_quantity == 100
+    assert historical_deposit.transaction.uuid == transaction.uuid
+    assert historical_deposit.sales_contract_reference_id == deposit.sales_contract_reference_id
+    assert historical_deposit.sales_contract_reference_provider == deposit.sales_contract_reference_provider
+    assert historical_deposit.history_type == "+"
+    assert historical_deposit.history_change_reason == "Data migration to backfill initial deposits"
