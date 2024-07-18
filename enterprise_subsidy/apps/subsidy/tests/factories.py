@@ -47,7 +47,7 @@ class SubsidyFactory(factory.django.DjangoModelFactory):
     reference_type = SubsidyReferenceChoices.SALESFORCE_OPPORTUNITY_LINE_ITEM
     enterprise_customer_uuid = factory.LazyFunction(uuid4)
     active_datetime = factory.LazyFunction(fake_datetime)
-    expiration_datetime = factory.LazyFunction(lambda: fake_datetime(True))
+    expiration_datetime = factory.LazyFunction(lambda: fake_datetime(is_future=True))
     revenue_category = RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY
     internal_only = False
     title = factory.Faker("sentence")

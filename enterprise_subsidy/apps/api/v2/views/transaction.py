@@ -5,7 +5,7 @@ import logging
 
 from django.utils.functional import cached_property
 from django_filters import rest_framework as drf_filters
-from drf_spectacular.utils import extend_schema, extend_schema_view
+from drf_spectacular.utils import extend_schema
 from edx_rbac.decorators import permission_required
 from edx_rest_framework_extensions.auth.jwt.authentication import JwtAuthentication
 from openedx_ledger.models import LedgerLockAttemptFailed, Transaction
@@ -97,13 +97,14 @@ class TransactionAdminListCreate(TransactionBaseViewMixin, generics.ListCreateAP
 
     def __init__(self, *args, **kwargs):
         self.extra_context = {}
-        return super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def get_serializer_class(self):
         if self.request.method.lower() == 'get':
             return TransactionSerializer
         if self.request.method.lower() == 'post':
             return TransactionCreationRequestSerializer
+        return None
 
     def set_transaction_was_created(self, created):
         self.extra_context['created'] = created

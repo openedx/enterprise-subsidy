@@ -17,6 +17,7 @@ ENTERPRISE_SUBSIDY_ADMIN_ROLE = 'enterprise_subsidy_admin'
 ENTERPRISE_SUBSIDY_OPERATOR_ROLE = 'enterprise_subsidy_operator'
 
 # Permissions directly control the specific code paths and functionality granted to the user within the subsidy app.
+PERMISSION_CAN_CREATE_DEPOSITS = "subsidy.can_create_deposits"
 PERMISSION_CAN_CREATE_TRANSACTIONS = "subsidy.can_create_transactions"
 PERMISSION_CAN_READ_SUBSIDIES = "subsidy.can_read_subsidies"
 PERMISSION_CAN_READ_TRANSACTIONS = "subsidy.can_read_transactions"
