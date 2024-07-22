@@ -128,7 +128,7 @@ class DepositCreationRequestSerializer(serializers.ModelSerializer):
                 sales_contract_reference_id=validated_data['sales_contract_reference_id'],
                 sales_contract_reference_provider=validated_data['sales_contract_reference_provider'],
                 idempotency_key=validated_data.get('idempotency_key'),
-                **validated_data.get('metadata', {}),
+                **(validated_data.get('metadata') or {}),
             )
         except openedx_ledger.api.DepositCreationError as exc:
             logger.error(
