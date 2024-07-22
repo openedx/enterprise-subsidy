@@ -48,6 +48,17 @@ class DepositCreateViewTests(APITestMixin):
             },
             "expected_response_status": status.HTTP_201_CREATED,
         },
+        {
+            "subsidy_active": True,
+            "creation_request_data": {
+                "desired_deposit_quantity": 100,
+                "sales_contract_reference_id": str(uuid.uuid4()),
+                "sales_contract_reference_provider": DEFAULT_SALES_CONTRACT_REFERENCE_PROVIDER_SLUG,
+                # Test getting a null metadata value.
+                "metadata": None,
+            },
+            "expected_response_status": status.HTTP_201_CREATED,
+        },
 
         ###
         # Sad paths:
@@ -119,7 +130,7 @@ class DepositCreateViewTests(APITestMixin):
                 creation_request_data["sales_contract_reference_provider"]
             assert Deposit.objects.count() == 2
             created_deposit = Deposit.objects.get(uuid=response.data["uuid"])
-            assert created_deposit.transaction.metadata == creation_request_data.get("metadata", {})
+            assert created_deposit.transaction.metadata == (creation_request_data.get("metadata") or {})
         else:
             assert Deposit.objects.count() == 1
 
