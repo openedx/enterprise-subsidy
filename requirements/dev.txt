@@ -390,7 +390,7 @@ packaging==24.1
     #   pyproject-api
     #   pytest
     #   tox
-path==16.14.0
+path==17.0.0
     # via edx-i18n-tools
 pbr==6.0.0
     # via
@@ -485,7 +485,7 @@ pyproject-hooks==1.1.0
     #   -r requirements/pip-tools.txt
     #   build
     #   pip-tools
-pytest==8.3.1
+pytest==8.3.2
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
@@ -566,7 +566,7 @@ rich==13.7.1
     # via
     #   -r requirements/validation.txt
     #   twine
-rpds-py==0.19.0
+rpds-py==0.19.1
     # via
     #   -r requirements/validation.txt
     #   jsonschema
