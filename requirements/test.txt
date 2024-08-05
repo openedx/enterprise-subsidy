@@ -13,7 +13,7 @@ astroid==3.2.4
     # via
     #   pylint
     #   pylint-celery
-attrs==23.2.0
+attrs==24.1.0
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -59,7 +59,7 @@ colorama==0.4.6
     # via tox
 confluent-kafka[avro,schema-registry]==2.5.0
     # via -r requirements/base.txt
-coverage[toml]==7.6.0
+coverage[toml]==7.6.1
     # via
     #   -r requirements/test.in
     #   pytest-cov
@@ -121,7 +121,7 @@ django-extensions==3.2.3
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-django-filter==24.2
+django-filter==24.3
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -182,7 +182,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-edx-django-utils==5.14.2
+edx-django-utils==5.15.0
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
@@ -196,7 +196,7 @@ edx-drf-extensions==10.3.0
     # via
     #   -r requirements/base.txt
     #   edx-rbac
-edx-event-bus-kafka==5.7.0
+edx-event-bus-kafka==5.8.0
     # via -r requirements/base.txt
 edx-lint==5.3.7
     # via -r requirements/test.in
@@ -218,7 +218,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.0
     # via -r requirements/test.in
-faker==26.0.0
+faker==26.1.0
     # via factory-boy
 fastavro==1.9.5
     # via
@@ -321,7 +321,7 @@ pycparser==2.22
     # via
     #   -r requirements/base.txt
     #   cffi
-pyjwt[crypto]==2.8.0
+pyjwt[crypto]==2.9.0
     # via
     #   -r requirements/base.txt
     #   drf-jwt
