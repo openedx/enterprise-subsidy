@@ -355,7 +355,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.11.0
+openedx-events @ git+https://github.com/pwnage101/openedx-events.git@f00926ae93e84a114779a0e9c98c152e8927706d
     # via
     #   -r requirements/test.txt
     #   edx-event-bus-kafka

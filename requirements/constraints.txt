@@ -18,3 +18,5 @@ django-simple-history>=3.4.0,<3.5.0
 # around default model fields vs. the serializer field defs,
 # and the discontinued use of OrderedDict in serializers.
 djangorestframework<3.15
+
+git+https://github.com/pwnage101/openedx-events.git@f00926ae93e84a114779a0e9c98c152e8927706d#egg=openedx_events
