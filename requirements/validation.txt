@@ -16,7 +16,7 @@ astroid==3.2.4
     #   -r requirements/test.txt
     #   pylint
     #   pylint-celery
-attrs==23.2.0
+attrs==24.1.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -82,7 +82,7 @@ confluent-kafka[avro,schema-registry]==2.5.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-coverage[toml]==7.6.0
+coverage[toml]==7.6.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -165,7 +165,7 @@ django-extensions==3.2.3
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-django-filter==24.2
+django-filter==24.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -249,7 +249,7 @@ edx-django-release-util==1.4.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-edx-django-utils==5.14.2
+edx-django-utils==5.15.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -265,7 +265,7 @@ edx-drf-extensions==10.3.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   edx-rbac
-edx-event-bus-kafka==5.7.0
+edx-event-bus-kafka==5.8.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -298,7 +298,7 @@ factory-boy==3.3.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-faker==26.0.0
+faker==26.1.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -352,7 +352,7 @@ jaraco-context==5.3.0
     # via
     #   -r requirements/quality.txt
     #   keyring
-jaraco-functools==4.0.1
+jaraco-functools==4.0.2
     # via
     #   -r requirements/quality.txt
     #   keyring
@@ -381,7 +381,7 @@ jsonschema-specifications==2023.12.1
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   jsonschema
-keyring==25.2.1
+keyring==25.3.0
     # via
     #   -r requirements/quality.txt
     #   twine
@@ -483,7 +483,7 @@ psutil==6.0.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   edx-django-utils
-pycodestyle==2.12.0
+pycodestyle==2.12.1
     # via -r requirements/quality.txt
 pycparser==2.22
     # via
@@ -497,7 +497,7 @@ pygments==2.18.0
     #   -r requirements/quality.txt
     #   readme-renderer
     #   rich
-pyjwt[crypto]==2.8.0
+pyjwt[crypto]==2.9.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
