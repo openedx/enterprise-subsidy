@@ -14,13 +14,13 @@ astroid==3.2.4
     #   -r requirements/test.txt
     #   pylint
     #   pylint-celery
-attrs==24.1.0
+attrs==24.2.0
     # via
     #   -r requirements/test.txt
     #   jsonschema
     #   openedx-events
     #   referencing
-avro==1.11.3
+avro==1.12.0
     # via
     #   -r requirements/test.txt
     #   confluent-kafka
@@ -32,7 +32,7 @@ certifi==2024.7.4
     # via
     #   -r requirements/test.txt
     #   requests
-cffi==1.16.0
+cffi==1.17.0
     # via
     #   -r requirements/test.txt
     #   cryptography
@@ -92,7 +92,7 @@ distlib==0.3.8
     # via
     #   -r requirements/test.txt
     #   virtualenv
-django==4.2.14
+django==4.2.15
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/test.txt
@@ -212,7 +212,7 @@ edx-drf-extensions==10.3.0
     # via
     #   -r requirements/test.txt
     #   edx-rbac
-edx-event-bus-kafka==5.8.0
+edx-event-bus-kafka==5.8.1
     # via -r requirements/test.txt
 edx-lint==5.3.7
     # via
@@ -236,7 +236,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.0
     # via -r requirements/test.txt
-faker==26.1.0
+faker==26.3.0
     # via
     #   -r requirements/test.txt
     #   factory-boy
@@ -256,10 +256,8 @@ idna==3.7
     # via
     #   -r requirements/test.txt
     #   requests
-importlib-metadata==6.11.0
-    # via
-    #   -c requirements/common_constraints.txt
-    #   twine
+importlib-metadata==8.2.0
+    # via twine
 inflection==0.5.1
     # via
     #   -r requirements/test.txt
@@ -316,7 +314,7 @@ mdurl==0.1.2
     # via markdown-it-py
 mock==5.1.0
     # via -r requirements/test.txt
-more-itertools==10.3.0
+more-itertools==10.4.0
     # via
     #   jaraco-classes
     #   jaraco-functools
@@ -324,7 +322,7 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-newrelic==9.12.0
+newrelic==9.13.0
     # via
     #   -r requirements/test.txt
     #   edx-django-utils
@@ -341,7 +339,7 @@ openedx-events==9.11.0
     #   -r requirements/test.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.4
+openedx-ledger==1.5.5
     # via -r requirements/test.txt
 packaging==24.1
     # via
@@ -457,7 +455,7 @@ pytz==2024.1
     #   drf-yasg
     #   getsmarter-api-clients
     #   openedx-ledger
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   -r requirements/test.txt
     #   code-annotations
@@ -501,7 +499,7 @@ rfc3986==2.0.0
     # via twine
 rich==13.7.1
     # via twine
-rpds-py==0.19.1
+rpds-py==0.20.0
     # via
     #   -r requirements/test.txt
     #   jsonschema
@@ -558,7 +556,7 @@ tomlkit==0.13.0
     # via
     #   -r requirements/test.txt
     #   pylint
-tox==4.16.0
+tox==4.17.1
     # via -r requirements/test.txt
 twine==5.1.1
     # via -r requirements/quality.in
@@ -582,7 +580,7 @@ virtualenv==20.26.3
     # via
     #   -r requirements/test.txt
     #   tox
-zipp==3.19.2
+zipp==3.20.0
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
