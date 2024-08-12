@@ -130,10 +130,6 @@ upgrade: $(COMMON_CONSTRAINTS_TXT) ## update the requirements/*.txt files with t
 	$(PIP_COMPILE) -o requirements/ci.txt requirements/ci.in
 	$(PIP_COMPILE) -o requirements/dev.txt requirements/dev.in
 	$(PIP_COMPILE) -o requirements/production.txt requirements/production.in
-	# Let tox control the Django version for tests
-	grep -e "^django==" requirements/base.txt > requirements/django.txt
-	sed '/^[dD]jango==/d' requirements/test.txt > requirements/test.tmp
-	mv requirements/test.tmp requirements/test.txt
 
 extract_translations: ## extract strings to be translated, outputting .mo files
 	python manage.py makemessages -l en -v1 -d django
