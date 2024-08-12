@@ -37,11 +37,6 @@ class Command(BaseCommand):
             provider_url=settings.GET_SMARTER_OAUTH2_PROVIDER_URL,
             api_url=settings.GET_SMARTER_API_URL
         )
-        self.automatic_external_cancellation = getattr(
-            settings,
-            "ENTERPRISE_SUBSIDY_AUTOMATIC_EXTERNAL_CANCELLATION",
-            False
-        )
 
     def add_arguments(self, parser):
         """
@@ -162,18 +157,6 @@ class Command(BaseCommand):
             f"{self.dry_run_prefix}No existing Reversal found for enterprise fulfillment: {fulfillment_uuid}. "
             f"Writing Reversal for Transaction: {related_transaction}."
         )
-
-        # On initial release we are only supporting learner initiated unenrollments for OCM courses.
-        # OCM courses are identified by the lack of an external_reference on the Transaction object.
-        # Externally referenced transactions can be unenrolled through the Django admin actions related to the
-        # Transaction model.
-        if related_transaction.external_reference.exists() and not self.automatic_external_cancellation:
-            logger.info(
-                f"{self.dry_run_prefix}Found unenrolled enterprise fulfillment: {fulfillment_uuid} related to "
-                f"an externally referenced transaction: {related_transaction.external_reference.first()}. "
-                f"Skipping ENTERPRISE_SUBSIDY_AUTOMATIC_EXTERNAL_CANCELLATION={self.automatic_external_cancellation}."
-            )
-            return 0
 
         # Memoize the content metadata for the course run fetched from the enterprise catalog
         if not self.fetched_content_metadata.get(enrollment_course_run_key):

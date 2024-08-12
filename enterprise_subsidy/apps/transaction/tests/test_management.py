@@ -7,7 +7,7 @@ from unittest import mock
 
 import ddt
 from django.core.management import call_command
-from django.test import TestCase, override_settings
+from django.test import TestCase
 from openedx_ledger.models import Reversal, TransactionStateChoices
 from openedx_ledger.test_utils.factories import (
     ExternalFulfillmentProviderFactory,
@@ -655,110 +655,6 @@ class TestTransactionManagementCommand(TestCase):
 
     @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
-        'EnterpriseApiClient'
-    )
-    @mock.patch(
-        'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
-        'ContentMetadataApi'
-    )
-    @mock.patch(
-        'enterprise_subsidy.apps.transaction.api.EnterpriseApiClient'
-    )
-    @override_settings(ENTERPRISE_SUBSIDY_AUTOMATIC_EXTERNAL_CANCELLATION=False)
-    def test_write_reversals_from_geag_enterprise_unenrollments_disabled_setting(
-        self,
-        mock_signal_client,
-        mock_fetch_course_metadata_client,
-        mock_fetch_recent_unenrollments_client,
-        mock_send_event_bus_reversed,
-    ):
-        """
-        Test the write_reversals_from_enterprise_unenrollments management command's ability to create a reversal.
-        """
-        # Reversal creation will trigger a signal handler that will make a call to enterprise
-        mock_signal_client.return_value = mock.MagicMock()
-
-        # Call to enterprise, fetching recent unenrollments
-        mock_fetch_recent_unenrollments_client.return_value.fetch_recent_unenrollments.return_value = [
-            {
-                'enterprise_course_enrollment': {
-                    'enterprise_customer_user': 10,
-                    'course_id': self.geag_transaction.content_key,
-                    'created': '2023-05-25T19:27:29Z',
-                    'unenrolled_at': '2023-06-1T19:27:29Z',
-                },
-                'transaction_id': self.geag_transaction.uuid,
-                'uuid': str(self.geag_transaction.fulfillment_identifier),
-            }
-        ]
-
-        # Call to enterprise catalog, fetching course metadata
-        mock_fetch_course_metadata_client.get_content_metadata.return_value = {
-            'key': self.course_key,
-            'content_type': 'course',
-            'uuid': self.course_uuid,
-            'title': 'Demonstration Course',
-            'course_runs': [{
-                'key': self.geag_transaction.content_key,
-                'uuid': '00f8945b-bb50-4c7a-98f4-2f2f6178ff2f',
-                'title': 'Demonstration Course',
-                'external_key': None,
-                'seats': [{
-                    'type': 'verified',
-                    'price': '149.00',
-                    'currency': 'USD',
-                    'upgrade_deadline': '2023-05-26T15:45:32.494051Z',
-                    'upgrade_deadline_override': None,
-                    'credit_provider': None,
-                    'credit_hours': None,
-                    'sku': '8CF08E5',
-                    'bulk_sku': 'A5B6DBE'
-                }, {
-                    'type': 'audit',
-                    'price': '0.00',
-                    'currency': 'USD',
-                    'upgrade_deadline': None,
-                    'upgrade_deadline_override': None,
-                    'credit_provider': None,
-                    'credit_hours': None,
-                    'sku': '68EFFFF',
-                    'bulk_sku': None
-                }],
-                'start': '2013-02-05T05:00:00Z',
-                'end': None,
-                'go_live_date': None,
-                'enrollment_start': None,
-                'enrollment_end': None,
-                'is_enrollable': True,
-                'availability': 'Current',
-                'course': 'edX+DemoX',
-                'first_enrollable_paid_seat_price': 149,
-                'enrollment_count': 0,
-                'recent_enrollment_count': 0,
-                'course_uuid': self.course_uuid,
-            }],
-            'entitlements': self.course_entitlements,
-            'modified': '2022-05-26T15:46:24.355321Z',
-            'additional_metadata': None,
-            'enrollment_count': 0,
-            'recent_enrollment_count': 0,
-            'course_run_keys': [self.courserun_key],
-            'content_last_modified': '2023-03-06T20:56:46Z',
-            'enrollment_url': 'https://foobar.com',
-            'active': False
-        }
-
-        assert Reversal.objects.count() == 0
-
-        call_command('write_reversals_from_enterprise_unenrollments')
-
-        assert Reversal.objects.count() == 0
-
-        self.assertFalse(mock_send_event_bus_reversed.called)
-
-    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.send_transaction_reversed_event')
-    @mock.patch(
         'enterprise_subsidy.apps.fulfillment.api.GetSmarterEnterpriseApiClient'
     )
     @mock.patch(
@@ -772,7 +668,6 @@ class TestTransactionManagementCommand(TestCase):
     @mock.patch(
         'enterprise_subsidy.apps.transaction.api.EnterpriseApiClient'
     )
-    @override_settings(ENTERPRISE_SUBSIDY_AUTOMATIC_EXTERNAL_CANCELLATION=True)
     def test_write_reversals_from_geag_enterprise_unenrollments_enabled_setting(
         self,
         mock_signal_client,
@@ -880,7 +775,6 @@ class TestTransactionManagementCommand(TestCase):
     @mock.patch(
         'enterprise_subsidy.apps.transaction.api.EnterpriseApiClient'
     )
-    @override_settings(ENTERPRISE_SUBSIDY_AUTOMATIC_EXTERNAL_CANCELLATION=True)
     def test_write_reversals_from_geag_enterprise_unenrollments_unknown_provider(
         self,
         mock_signal_client,
