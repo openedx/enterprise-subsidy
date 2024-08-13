@@ -1803,6 +1803,7 @@ class ContentMetadataViewSetTests(APITestBase):
                 'content_price': expected_content_price,
                 'mode': expected_mode,
                 'geag_variant_id': expected_geag_variant_id,
+                'enroll_by_date': None,
             }
 
             # Now make a second call to validate that the view-level cache is utilized.
@@ -1824,6 +1825,7 @@ class ContentMetadataViewSetTests(APITestBase):
                 'content_price': expected_content_price,
                 'mode': expected_mode,
                 'geag_variant_id': expected_geag_variant_id,
+                'enroll_by_date': None,
             }
             # Validate that, in the first, non-cached request, we call
             # the enterprise catalog endpoint via the client, and that

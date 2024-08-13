@@ -124,12 +124,47 @@ class ContentMetadataApi:
                 variant_id = additional_metadata.get('variant_id')
         return variant_id
 
+    def enroll_by_date_for_content(self, content_data, content_mode):
+        """
+        Determines the enrollment deadline for the given ``content_data``,
+        which could be either a course or course run, hence the branching
+        on content type below.
+
+        Args:
+            content_data: A dictionary of metadata pertaining to a course or course run.
+            content_mode: The (already computed) course mode for the content.
+
+        Returns:
+            A datetime string, or possibly null.
+        """
+        if content_data.get('content_type') == 'course':
+            return content_data.get('normalized_metadata', {}).get('enroll_by_date')
+
+        # For edx-verified mode course runs, first try to extract
+        # the verified upgrade deadline from the course run's seat
+        # associated with the given content_mode
+        upgrade_deadline = None
+        if content_mode == CourseModes.EDX_VERIFIED.value:
+            seats_for_mode = [
+                seat for seat in content_data.get('seats', [])
+                if seat.get('type') == content_mode
+            ]
+            if seats_for_mode:
+                seat = seats_for_mode[0]
+                upgrade_deadline = seat.get('upgrade_deadline_override') or seat.get('upgrade_deadline')
+
+        # Return the upgrade deadline. If no such deadline exists,
+        # or if we're dealing with another course mode (e.g. exec ed),
+        # use the `enrollment_end` of the course run.
+        return upgrade_deadline or content_data.get('enrollment_end')
+
     def summary_data_for_content(self, content_identifier, content_data):
         """
         Returns a summary dict specifying the content_uuid, content_key, source, and content_price
         for a dict of content metadata.
         """
         course_run_content = self.get_course_run(content_identifier, content_data)
+        content_mode = self.mode_for_content(content_data)
         return {
             'content_title': content_data.get('title'),
             'content_uuid': content_data.get('uuid'),
@@ -137,8 +172,9 @@ class ContentMetadataApi:
             'course_run_uuid': course_run_content.get('uuid'),
             'course_run_key': course_run_content.get('key'),
             'source': self.product_source_for_content(content_data),
-            'mode': self.mode_for_content(content_data),
+            'mode': content_mode,
             'content_price': self.price_for_content(content_data, course_run_content),
+            'enroll_by_date': self.enroll_by_date_for_content(content_data, content_mode),
             'geag_variant_id': self.get_geag_variant_id_for_content(content_identifier, content_data),
         }
 
