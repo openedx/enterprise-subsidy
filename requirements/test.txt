@@ -219,7 +219,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.0
     # via -r requirements/test.in
-faker==26.3.0
+faker==27.0.0
     # via factory-boy
 fastavro==1.9.5
     # via
@@ -288,7 +288,7 @@ openedx-events==9.11.0
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.5
+openedx-ledger==1.5.6
     # via -r requirements/base.txt
 packaging==24.1
     # via
