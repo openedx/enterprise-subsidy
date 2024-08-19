@@ -28,7 +28,7 @@ avro==1.12.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   confluent-kafka
-cachetools==5.4.0
+cachetools==5.5.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -294,7 +294,7 @@ edx-toggles==5.2.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   edx-event-bus-kafka
-factory-boy==3.3.0
+factory-boy==3.3.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -712,12 +712,12 @@ text-unidecode==1.3
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   python-slugify
-tomlkit==0.13.0
+tomlkit==0.13.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pylint
-tox==4.17.1
+tox==4.18.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
