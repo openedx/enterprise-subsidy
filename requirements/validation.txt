@@ -28,7 +28,7 @@ avro==1.12.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   confluent-kafka
-cachetools==5.4.0
+cachetools==5.5.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -205,7 +205,7 @@ djangoql==0.18.1
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-djangorestframework==3.14.0
+djangorestframework==3.15.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -294,7 +294,7 @@ edx-toggles==5.2.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   edx-event-bus-kafka
-factory-boy==3.3.0
+factory-boy==3.3.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -439,7 +439,7 @@ openedx-events==9.11.0
     #   -r requirements/test.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.6
+openedx-ledger==1.5.7
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -582,7 +582,6 @@ pytz==2024.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-    #   djangorestframework
     #   drf-yasg
     #   getsmarter-api-clients
     #   openedx-ledger
@@ -712,12 +711,12 @@ text-unidecode==1.3
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   python-slugify
-tomlkit==0.13.0
+tomlkit==0.13.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pylint
-tox==4.17.1
+tox==4.18.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
