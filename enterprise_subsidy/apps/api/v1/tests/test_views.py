@@ -1690,6 +1690,17 @@ class ContentMetadataViewSetTests(APITestBase):
                 "key": course_run_key,
                 "uuid": course_run_uuid,
                 "first_enrollable_paid_seat_price": 100,
+                "seats": [
+                    {
+                        "type": "verified",
+                        "upgrade_deadline_override": "2025-01-01T00:00:00Z",
+                        "upgrade_deadline": "2024-01-01T00:00:00Z",
+                    },
+                    {
+                        "type": "audit",
+                        "upgrade_deadline": None,
+                    },
+                ],
             }
         ],
         "advertised_course_run_uuid": course_run_uuid,
@@ -1719,6 +1730,7 @@ class ContentMetadataViewSetTests(APITestBase):
                 "key": course_run_key,
                 "uuid": course_run_uuid,
                 "variant_id": "79a95406-a9ac-49b3-a27c-44f3fd06092e",
+                "enrollment_end": "2024-01-01T00:00:00Z",
             }
         ],
         "advertised_course_run_uuid": course_run_uuid,
@@ -1738,6 +1750,7 @@ class ContentMetadataViewSetTests(APITestBase):
             'expected_source': 'edX',
             'expected_mode': 'verified',
             'expected_geag_variant_id': None,
+            'expected_enroll_by_date': None,
         },
         {
             'expected_content_title': content_title,
@@ -1750,6 +1763,7 @@ class ContentMetadataViewSetTests(APITestBase):
             'expected_source': 'edX',
             'expected_mode': 'verified',
             'expected_geag_variant_id': None,
+            'expected_enroll_by_date': '2025-01-01T00:00:00Z',
         },
         {
             'expected_content_title': content_title,
@@ -1763,6 +1777,7 @@ class ContentMetadataViewSetTests(APITestBase):
             'expected_mode': 'paid-executive-education',
             # generated randomly using a fair die
             'expected_geag_variant_id': '79a95406-a9ac-49b3-a27c-44f3fd06092e',
+            'expected_enroll_by_date': '2024-01-01T00:00:00Z',
         },
     )
     @ddt.unpack
@@ -1778,6 +1793,7 @@ class ContentMetadataViewSetTests(APITestBase):
         expected_source,
         expected_mode,
         expected_geag_variant_id,
+        expected_enroll_by_date,
     ):
         with mock.patch(
             'enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient',
@@ -1803,7 +1819,7 @@ class ContentMetadataViewSetTests(APITestBase):
                 'content_price': expected_content_price,
                 'mode': expected_mode,
                 'geag_variant_id': expected_geag_variant_id,
-                'enroll_by_date': None,
+                'enroll_by_date': expected_enroll_by_date,
             }
 
             # Now make a second call to validate that the view-level cache is utilized.
@@ -1825,7 +1841,7 @@ class ContentMetadataViewSetTests(APITestBase):
                 'content_price': expected_content_price,
                 'mode': expected_mode,
                 'geag_variant_id': expected_geag_variant_id,
-                'enroll_by_date': None,
+                'enroll_by_date': expected_enroll_by_date,
             }
             # Validate that, in the first, non-cached request, we call
             # the enterprise catalog endpoint via the client, and that

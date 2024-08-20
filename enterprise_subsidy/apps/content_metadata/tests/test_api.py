@@ -109,12 +109,14 @@ class ContentMetadataApiTests(TestCase):
                     "uuid": str(cls.courserun_uuid_1),
                     "title": "Demonstration Exec Ed Course",
                     "variant_id": cls.variant_id_1,
+                    "enrollment_end": "2023-06-24T00:00:00.000000Z",
                 },
                 {
                     "key": cls.courserun_key_2,
                     "uuid": str(cls.courserun_uuid_2),
                     "title": "Demonstration Exec Ed Course",
                     "variant_id": cls.variant_id_2,
+                    "enrollment_end": "2024-06-24T00:00:00.000000Z",
                 },
             ],
             "course_run_keys": [
@@ -138,9 +140,6 @@ class ContentMetadataApiTests(TestCase):
             },
             "additional_metadata": {
                 "variant_id": cls.variant_id_2,
-            },
-            "normalized_metadata": {
-                "enroll_by_date": "2024-01-01T00:00:00Z",
             },
         }
 
@@ -247,6 +246,7 @@ class ContentMetadataApiTests(TestCase):
         assert summary.get('course_run_key') is self.courserun_key_1
         assert summary.get('content_price') == 59949
         assert summary.get('geag_variant_id') == self.variant_id_1
+        assert summary.get('enroll_by_date') == '2023-06-24T00:00:00.000000Z'
 
         # Test assembling summary data given an identifier of an advertised course run.
         # Note, the result should be identical to when a course identifier is given.
@@ -258,7 +258,7 @@ class ContentMetadataApiTests(TestCase):
         assert summary.get('course_run_key') is self.courserun_key_2
         assert summary.get('content_price') == 59949
         assert summary.get('geag_variant_id') == self.variant_id_2
-        assert summary.get('enroll_by_date') == '2024-01-01T00:00:00Z'
+        assert summary.get('enroll_by_date') == '2024-06-24T00:00:00.000000Z'
 
     @ddt.data(
         {

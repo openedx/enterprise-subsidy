@@ -124,29 +124,24 @@ class ContentMetadataApi:
                 variant_id = additional_metadata.get('variant_id')
         return variant_id
 
-    def enroll_by_date_for_content(self, content_data, content_mode):
+    def enroll_by_date_for_content(self, course_run_data, content_mode):
         """
-        Determines the enrollment deadline for the given ``content_data``,
-        which could be either a course or course run, hence the branching
-        on content type below.
+        Determines the enrollment deadline for the given ``course_run_data``.
 
         Args:
-            content_data: A dictionary of metadata pertaining to a course or course run.
-            content_mode: The (already computed) course mode for the content.
+            course_run_data: A dictionary of metadata pertaining to a course run.
+            content_mode: The (already computed) course mode for the course run.
 
         Returns:
             A datetime string, or possibly null.
         """
-        if content_data.get('content_type') == 'course':
-            return content_data.get('normalized_metadata', {}).get('enroll_by_date')
-
         # For edx-verified mode course runs, first try to extract
         # the verified upgrade deadline from the course run's seat
         # associated with the given content_mode
         upgrade_deadline = None
         if content_mode == CourseModes.EDX_VERIFIED.value:
             seats_for_mode = [
-                seat for seat in content_data.get('seats', [])
+                seat for seat in course_run_data.get('seats', [])
                 if seat.get('type') == content_mode
             ]
             if seats_for_mode:
@@ -156,7 +151,7 @@ class ContentMetadataApi:
         # Return the upgrade deadline. If no such deadline exists,
         # or if we're dealing with another course mode (e.g. exec ed),
         # use the `enrollment_end` of the course run.
-        return upgrade_deadline or content_data.get('enrollment_end')
+        return upgrade_deadline or course_run_data.get('enrollment_end')
 
     def summary_data_for_content(self, content_identifier, content_data):
         """
@@ -174,7 +169,7 @@ class ContentMetadataApi:
             'source': self.product_source_for_content(content_data),
             'mode': content_mode,
             'content_price': self.price_for_content(content_data, course_run_content),
-            'enroll_by_date': self.enroll_by_date_for_content(content_data, content_mode),
+            'enroll_by_date': self.enroll_by_date_for_content(course_run_content, content_mode),
             'geag_variant_id': self.get_geag_variant_id_for_content(content_identifier, content_data),
         }
 
