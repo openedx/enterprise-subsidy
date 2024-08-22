@@ -8,10 +8,8 @@ import ddt
 from django.test import TestCase
 from edx_django_utils.cache import TieredCache
 
-from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
-
 from ..api import ContentMetadataApi, content_metadata_cache_key, content_metadata_for_customer_cache_key
-from ..constants import CourseModes, ProductSources
+from ..constants import DEFAULT_CONTENT_PRICE, CourseModes, ProductSources
 
 
 @ddt.ddt
@@ -158,17 +156,21 @@ class ContentMetadataApiTests(TestCase):
                 "slug": "2u",
                 "description": "2U, Trilogy, Getsmarter -- external source for 2u courses and programs"
             },
+            'course_runs': [],
+            'expected_price': 210000,
+            'advertised_course_run_uuid': None,
         },
         {
-            'entitlements': [
+            'course_runs': [
                 {
-                    "mode": "verified",
-                    "price": "794.00",
-                    "currency": "USD",
-                    "sku": "B6DE08E",
+                    'uuid': '1234',
+                    'first_enrollable_paid_seat_price': '123.50',
                 }
             ],
+            'advertised_course_run_uuid': '1234',
+            'entitlements': None,
             'product_source': None,
+            'expected_price': 12350,
         },
     )
     @ddt.unpack
@@ -178,6 +180,9 @@ class ContentMetadataApiTests(TestCase):
         mock_get_content_metadata,
         entitlements,
         product_source,
+        course_runs,
+        expected_price,
+        advertised_course_run_uuid,
     ):
         """
         Test the enterprise catalog client's ability to handle api requests to fetch content metadata from the catalog
@@ -186,11 +191,13 @@ class ContentMetadataApiTests(TestCase):
         mocked_data = self.course_metadata.copy()
         mocked_data['product_source'] = product_source
         mocked_data['entitlements'] = entitlements
+        mocked_data['course_runs'] = course_runs
+        mocked_data['advertised_course_run_uuid'] = advertised_course_run_uuid
         mock_get_content_metadata.return_value = mocked_data
         price_in_cents = self.content_metadata_api.get_course_price(
             self.enterprise_customer_uuid, self.course_key
         )
-        assert price_in_cents == float(entitlements[0].get('price')) * CENTS_PER_DOLLAR
+        assert price_in_cents == expected_price
 
     @ddt.data(
         {
@@ -371,9 +378,9 @@ class ContentMetadataApiTests(TestCase):
         {
             'content_data': {
                 'product_source': {'name': ProductSources.EDX.value, 'slug': ProductSources.EDX.value},
-                'entitlements': [{'mode': CourseModes.EDX_VERIFIED.value, 'price': '3.50'}],
+                'entitlements': [{'mode': CourseModes.EDX_VERIFIED.value, 'price': '34.50'}],
             },
-            'course_run_data': {},
+            'course_run_data': {'first_enrollable_paid_seat_price': '3.50'},
             'expected_price': 350,
         },
         {
@@ -387,7 +394,12 @@ class ContentMetadataApiTests(TestCase):
         {
             'content_data': {},
             'course_run_data': {},
-            'expected_price': None,
+            'expected_price': DEFAULT_CONTENT_PRICE,
+        },
+        {
+            'content_data': {},
+            'course_run_data': {'first_enrollable_paid_seat_price': None},
+            'expected_price': DEFAULT_CONTENT_PRICE,
         },
     )
     @ddt.unpack

@@ -1741,19 +1741,6 @@ class ContentMetadataViewSetTests(APITestBase):
     @ddt.data(
         {
             'expected_content_title': content_title,
-            'expected_content_uuid': content_uuid_1,
-            'expected_content_key': content_key_1,
-            'expected_course_run_uuid': None,
-            'expected_course_run_key': None,
-            'expected_content_price': 14900.0,
-            'mock_metadata': edx_course_metadata,
-            'expected_source': 'edX',
-            'expected_mode': 'verified',
-            'expected_geag_variant_id': None,
-            'expected_enroll_by_date': None,
-        },
-        {
-            'expected_content_title': content_title,
             'expected_content_uuid': content_uuid_3,
             'expected_content_key': content_key_3,
             'expected_course_run_uuid': str(course_run_uuid),

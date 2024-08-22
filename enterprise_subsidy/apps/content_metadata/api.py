@@ -12,7 +12,7 @@ from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCata
 from enterprise_subsidy.apps.core.utils import versioned_cache_key
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 
-from .constants import CourseModes, ProductSources
+from .constants import DEFAULT_CONTENT_PRICE, CourseModes, ProductSources
 
 logger = logging.getLogger(__name__)
 
@@ -62,23 +62,24 @@ class ContentMetadataApi:
         those values to USD cents as an integer.
         """
         content_price = None
-        if course_run_data.get('first_enrollable_paid_seat_price'):
-            content_price = course_run_data['first_enrollable_paid_seat_price']
 
-        if not content_price:
+        product_source = self.product_source_for_content(content_data)
+        if product_source == ProductSources.TWOU.value:
             enrollment_mode_for_content = self.mode_for_content(content_data)
             for entitlement in content_data.get('entitlements', []):
                 if entitlement.get('mode') == enrollment_mode_for_content:
                     content_price = entitlement.get('price')
-
-        if content_price:
-            return int(Decimal(content_price) * CENTS_PER_DOLLAR)
         else:
+            content_price = course_run_data.get('first_enrollable_paid_seat_price')
+
+        if not content_price:
             logger.info(
                 f"Could not determine price for content key {content_data.get('key')} "
-                f"and course run key {course_run_data.get('key')}"
+                f"and course run key {course_run_data.get('key')}, setting to default."
             )
-            return None
+            content_price = DEFAULT_CONTENT_PRICE
+
+        return int(Decimal(content_price) * CENTS_PER_DOLLAR)
 
     def mode_for_content(self, content_data):
         """
