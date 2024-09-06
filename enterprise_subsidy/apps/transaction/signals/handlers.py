@@ -182,19 +182,6 @@ def handle_lc_enrollment_revoked(**kwargs):
         f"Writing Reversal for Transaction: {related_transaction}."
     )
 
-    # On initial release we are only supporting learner initiated unenrollments for OCM courses.
-    # OCM courses are identified by the lack of an external_reference on the Transaction object.
-    # Externally referenced transactions can be unenrolled through the Django admin actions related to the
-    # Transaction model.
-    automatic_external_cancellation = getattr(settings, "ENTERPRISE_SUBSIDY_AUTOMATIC_EXTERNAL_CANCELLATION", False)
-    if related_transaction.external_reference.exists() and not automatic_external_cancellation:
-        logger.info(
-            f"Found unenrolled enterprise fulfillment: {fulfillment_uuid} related to "
-            f"an externally referenced transaction: {related_transaction.external_reference.first()}. "
-            f"Skipping ENTERPRISE_SUBSIDY_AUTOMATIC_EXTERNAL_CANCELLATION={automatic_external_cancellation}."
-        )
-        return
-
     # NOTE: get_content_metadata() is backed by TieredCache, so this would be performant if a bunch learners unenroll
     # from the same course at the same time. However, normally no two learners in the same course would unenroll within
     # a single cache timeout period, so we'd expect this to normally always re-fetch from remote API. That's OK because
