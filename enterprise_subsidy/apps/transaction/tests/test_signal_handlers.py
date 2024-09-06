@@ -141,7 +141,6 @@ class TransactionSignalHandlerTestCase(TestCase):
     @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.reverse_transaction')
     @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.unenrollment_can_be_refunded')
     @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.ContentMetadataApi.get_content_metadata')
-    @override_settings(ENTERPRISE_SUBSIDY_AUTOMATIC_EXTERNAL_CANCELLATION=True)
     def test_handle_lc_enrollment_revoked(
         self,
         mock_get_content_metadata,
