@@ -94,6 +94,11 @@ class ContentMetadataApiTests(TestCase):
             'normalized_metadata': {
                 'enroll_by_date': '2023-05-26T15:45:32.494051Z',
             },
+            "normalized_metadata_by_run": {
+                "course-v1:edX+DemoX+Demo_Course.1": {
+                    "content_price": 149.0
+                }
+            }
         }
 
         cls.executive_education_course_metadata = {
@@ -139,6 +144,14 @@ class ContentMetadataApiTests(TestCase):
             "additional_metadata": {
                 "variant_id": cls.variant_id_2,
             },
+            "normalized_metadata_by_run": {
+                "course-v1:edX+DemoX+Demo_Course.1": {
+                    "content_price": 599.49
+                },
+                "course-v1:edX+DemoX+Demo_Course.2": {
+                    "content_price": 599.49
+                }
+            }
         }
 
     @ddt.data(

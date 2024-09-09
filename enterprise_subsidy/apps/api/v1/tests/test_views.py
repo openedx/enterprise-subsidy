@@ -1705,6 +1705,11 @@ class ContentMetadataViewSetTests(APITestBase):
         ],
         "advertised_course_run_uuid": course_run_uuid,
         "product_source": None,
+        "normalized_metadata_by_run": {
+            "edX+DemoX3+20230101": {
+                "content_price": 100.0
+            }
+        }
     }
     executive_education_course_metadata = {
         "key": content_key_2,
@@ -1734,6 +1739,11 @@ class ContentMetadataViewSetTests(APITestBase):
             }
         ],
         "advertised_course_run_uuid": course_run_uuid,
+        "normalized_metadata_by_run": {
+            "edX+DemoX3+20230101": {
+                "content_price": 599.49
+            }
+        }
     }
     mock_http_error_reason = 'Something Went Wrong'
     mock_http_error_url = 'foobar.com'
@@ -1745,7 +1755,7 @@ class ContentMetadataViewSetTests(APITestBase):
             'expected_content_key': content_key_3,
             'expected_course_run_uuid': str(course_run_uuid),
             'expected_course_run_key': course_run_key,
-            'expected_content_price': 10000.0,
+            'expected_content_price': 10000,
             'mock_metadata': edx_course_metadata_with_runs,
             'expected_source': 'edX',
             'expected_mode': 'verified',
