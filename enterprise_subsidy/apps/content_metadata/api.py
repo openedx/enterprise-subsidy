@@ -54,12 +54,11 @@ class ContentMetadataApi:
         """
         return EnterpriseCatalogApiClient()
 
-    def price_for_content(self, content_data, course_run_data):
+    def price_for_content_fallback(self, content_data, course_run_data):
         """
-        Helper to return the "official" price for content.
-        The endpoint at ``self.content_metadata_url`` will always return price fields
-        as USD (dollars), possibly as a string or a float.  This method converts
-        those values to USD cents as an integer.
+        Fallback logic for `price_for_content` logic if the `normalized_metadata_by_run` field.
+        The fallback logic is the original logic for determining the `content_price` before
+        using normalized metadata as the first source of truth for `content_price`.
         """
         content_price = None
         if course_run_data.get('first_enrollable_paid_seat_price'):
@@ -70,6 +69,23 @@ class ContentMetadataApi:
             for entitlement in content_data.get('entitlements', []):
                 if entitlement.get('mode') == enrollment_mode_for_content:
                     content_price = entitlement.get('price')
+
+        return content_price
+
+    def price_for_content(self, content_data, course_run_data):
+        """
+        Helper to return the "official" price for content.
+        The endpoint at ``self.content_metadata_url`` will always return price fields
+        as USD (dollars), possibly as a string or a float.  This method converts
+        those values to USD cents as an integer.
+        """
+        content_price = None
+
+        if (content_key := course_run_data.get('key')) and content_data['normalized_metadata_by_run'][content_key]:
+            content_price = content_data['normalized_metadata_by_run'][content_key]['content_price']
+
+        if not content_price:
+            content_price = self.price_for_content_fallback(content_data,course_run_data)
 
         if content_price:
             return int(Decimal(content_price) * CENTS_PER_DOLLAR)
