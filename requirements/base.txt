@@ -8,16 +8,16 @@ asgiref==3.8.1
     # via
     #   django
     #   django-cors-headers
-attrs==23.2.0
+attrs==24.2.0
     # via
     #   jsonschema
     #   openedx-events
     #   referencing
-avro==1.11.3
+avro==1.12.0
     # via confluent-kafka
-certifi==2024.6.2
+certifi==2024.7.4
     # via requests
-cffi==1.16.0
+cffi==1.17.0
     # via
     #   cryptography
     #   pynacl
@@ -29,9 +29,9 @@ click==8.1.7
     #   edx-django-utils
 code-annotations==1.8.0
     # via edx-toggles
-confluent-kafka[avro,schema-registry]==2.4.0
+confluent-kafka[avro,schema-registry]==2.5.0
     # via -r requirements/base.in
-cryptography==42.0.8
+cryptography==43.0.0
     # via
     #   pyjwt
     #   social-auth-core
@@ -39,7 +39,7 @@ defusedxml==0.8.0rc2
     # via
     #   python3-openid
     #   social-auth-core
-django==4.2.13
+django==4.2.15
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
@@ -79,7 +79,7 @@ django-extensions==3.2.3
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-django-filter==24.2
+django-filter==24.3
     # via
     #   -r requirements/base.in
     #   openedx-ledger
@@ -106,9 +106,8 @@ djangoql==0.18.1
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-djangorestframework==3.14.0
+djangorestframework==3.15.2
     # via
-    #   -c requirements/constraints.txt
     #   -r requirements/base.in
     #   drf-jwt
     #   drf-spectacular
@@ -130,7 +129,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-edx-django-utils==5.14.2
+edx-django-utils==5.15.0
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
@@ -144,14 +143,14 @@ edx-drf-extensions==10.3.0
     # via
     #   -r requirements/base.in
     #   edx-rbac
-edx-event-bus-kafka==5.7.0
+edx-event-bus-kafka==5.8.1
     # via -r requirements/base.in
 edx-opaque-keys[django]==2.10.0
     # via
     #   edx-ccx-keys
     #   edx-drf-extensions
     #   openedx-events
-edx-rbac==1.9.0
+edx-rbac==1.10.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
@@ -159,13 +158,13 @@ edx-rest-api-client==5.7.1
     # via -r requirements/base.in
 edx-toggles==5.2.0
     # via edx-event-bus-kafka
-fastavro==1.9.4
+fastavro==1.9.5
     # via
     #   confluent-kafka
     #   openedx-events
 getsmarter-api-clients==0.6.1
     # via -r requirements/base.in
-idna==3.7
+idna==3.8
     # via requests
 inflection==0.5.1
     # via
@@ -177,7 +176,7 @@ jsonfield2==4.0.0.post0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-jsonschema==4.22.0
+jsonschema==4.23.0
     # via drf-spectacular
 jsonschema-specifications==2023.12.1
     # via jsonschema
@@ -187,19 +186,19 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-newrelic==9.11.0
+newrelic==9.13.0
     # via edx-django-utils
 oauthlib==3.2.2
     # via
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.11.0
+openedx-events==9.12.0
     # via
     #   -r requirements/base.in
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.4.5
+openedx-ledger==1.5.7
     # via -r requirements/base.in
 packaging==24.1
     # via drf-yasg
@@ -211,7 +210,7 @@ psutil==6.0.0
     # via edx-django-utils
 pycparser==2.22
     # via cffi
-pyjwt[crypto]==2.8.0
+pyjwt[crypto]==2.9.0
     # via
     #   drf-jwt
     #   edx-auth-backends
@@ -231,17 +230,16 @@ python3-openid==3.2.0
 pytz==2024.1
     # via
     #   -r requirements/base.in
-    #   djangorestframework
     #   drf-yasg
     #   getsmarter-api-clients
     #   openedx-ledger
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   code-annotations
     #   drf-spectacular
     #   drf-yasg
     #   edx-django-release-util
-redis==5.0.7
+redis==5.0.8
     # via openedx-ledger
 referencing==0.35.1
     # via
@@ -259,7 +257,7 @@ requests-oauthlib==2.0.0
     # via
     #   getsmarter-api-clients
     #   social-auth-core
-rpds-py==0.18.1
+rpds-py==0.20.0
     # via
     #   jsonschema
     #   referencing
@@ -277,15 +275,15 @@ six==1.16.0
     #   edx-rbac
 slumber==0.7.1
     # via edx-rest-api-client
-social-auth-app-django==5.4.1
+social-auth-app-django==5.4.2
     # via edx-auth-backends
 social-auth-core==4.5.4
     # via
     #   edx-auth-backends
     #   social-auth-app-django
-sqlparse==0.5.0
+sqlparse==0.5.1
     # via django
-stevedore==5.2.0
+stevedore==5.3.0
     # via
     #   code-annotations
     #   edx-django-utils

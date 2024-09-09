@@ -11,6 +11,7 @@ from enterprise_subsidy.apps.subsidy.constants import (
     ENTERPRISE_SUBSIDY_ADMIN_ROLE,
     ENTERPRISE_SUBSIDY_LEARNER_ROLE,
     ENTERPRISE_SUBSIDY_OPERATOR_ROLE,
+    PERMISSION_CAN_CREATE_DEPOSITS,
     PERMISSION_CAN_CREATE_TRANSACTIONS,
     PERMISSION_CAN_READ_ALL_TRANSACTIONS,
     PERMISSION_CAN_READ_CONTENT_METADATA,
@@ -88,22 +89,20 @@ def has_explicit_access_to_subsidy_learner(user, context):
 
 # Now, recombine the implicit and explicit rules for a given feature role using composition.  Also, waterfall the rules
 # by defining access levels which give "higher" levels access to their own level, as well as everything below.
-# pylint: disable=unsupported-binary-operation
 has_learner_level_access = (
     has_implicit_access_to_subsidy_operator | has_explicit_access_to_subsidy_operator |
     has_implicit_access_to_subsidy_admin | has_explicit_access_to_subsidy_admin |
     has_implicit_access_to_subsidy_learner | has_explicit_access_to_subsidy_learner
 )
-# pylint: disable=unsupported-binary-operation
 has_admin_level_access = (
     has_implicit_access_to_subsidy_operator | has_explicit_access_to_subsidy_operator |
     has_implicit_access_to_subsidy_admin | has_explicit_access_to_subsidy_admin
 )
-# pylint: disable=unsupported-binary-operation
 has_operator_level_access = has_implicit_access_to_subsidy_operator | has_explicit_access_to_subsidy_operator
 
 
 # Finally, grant specific permissions to the appropriate access level.
+rules.add_perm(PERMISSION_CAN_CREATE_DEPOSITS, has_operator_level_access)
 rules.add_perm(PERMISSION_CAN_CREATE_TRANSACTIONS, has_operator_level_access)
 rules.add_perm(PERMISSION_CAN_READ_SUBSIDIES, has_admin_level_access)
 rules.add_perm(PERMISSION_CAN_READ_TRANSACTIONS, has_learner_level_access)

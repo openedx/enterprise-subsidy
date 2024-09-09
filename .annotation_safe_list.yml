@@ -17,6 +17,8 @@ contenttypes.ContentType:
   ".. no_pii:": "This model has no PII"
 openedx_ledger.HistoricalAdjustment:
   ".. no_pii:": "This model has no PII"
+openedx_ledger.HistoricalDeposit:
+  ".. no_pii:": "This model has no PII"
 openedx_ledger.HistoricalLedger:
   ".. no_pii:": "This model has no PII"
 openedx_ledger.HistoricalReversal:

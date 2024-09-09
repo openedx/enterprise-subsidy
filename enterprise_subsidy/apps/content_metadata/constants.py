@@ -18,3 +18,6 @@ class CourseModes(Enum):
     """
     EDX_VERIFIED = "verified"  # e.g. edX Verified Courses
     EXECUTIVE_EDUCATION = "paid-executive-education"  # e.g. ExecEd courses
+
+
+DEFAULT_CONTENT_PRICE = 0.0

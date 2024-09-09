@@ -15,6 +15,7 @@ User-scoped transactions list:
 """
 from django.urls import path
 
+from enterprise_subsidy.apps.api.v2.views.deposit import DepositAdminCreate
 from enterprise_subsidy.apps.api.v2.views.transaction import TransactionAdminListCreate, TransactionUserList
 
 app_name = 'v2'
@@ -30,5 +31,10 @@ urlpatterns = [
         'subsidies/<subsidy_uuid>/transactions/',
         TransactionUserList.as_view(),
         name='transaction-user-list',
+    ),
+    path(
+        'subsidies/<subsidy_uuid>/admin/deposits/',
+        DepositAdminCreate.as_view(),
+        name='deposit-admin-create',
     ),
 ]

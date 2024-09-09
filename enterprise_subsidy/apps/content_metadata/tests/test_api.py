@@ -8,10 +8,8 @@ import ddt
 from django.test import TestCase
 from edx_django_utils.cache import TieredCache
 
-from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
-
 from ..api import ContentMetadataApi, content_metadata_cache_key, content_metadata_for_customer_cache_key
-from ..constants import CourseModes, ProductSources
+from ..constants import DEFAULT_CONTENT_PRICE, CourseModes, ProductSources
 
 
 @ddt.ddt
@@ -92,7 +90,10 @@ class ContentMetadataApiTests(TestCase):
             'course_run_keys': [cls.courserun_key_1],
             'content_last_modified': '2023-03-06T20:56:46.003840Z',
             'enrollment_url': 'https://foobar.com',
-            'active': False
+            'active': False,
+            'normalized_metadata': {
+                'enroll_by_date': '2023-05-26T15:45:32.494051Z',
+            },
         }
 
         cls.executive_education_course_metadata = {
@@ -106,12 +107,14 @@ class ContentMetadataApiTests(TestCase):
                     "uuid": str(cls.courserun_uuid_1),
                     "title": "Demonstration Exec Ed Course",
                     "variant_id": cls.variant_id_1,
+                    "enrollment_end": "2023-06-24T00:00:00.000000Z",
                 },
                 {
                     "key": cls.courserun_key_2,
                     "uuid": str(cls.courserun_uuid_2),
                     "title": "Demonstration Exec Ed Course",
                     "variant_id": cls.variant_id_2,
+                    "enrollment_end": "2024-06-24T00:00:00.000000Z",
                 },
             ],
             "course_run_keys": [
@@ -153,17 +156,21 @@ class ContentMetadataApiTests(TestCase):
                 "slug": "2u",
                 "description": "2U, Trilogy, Getsmarter -- external source for 2u courses and programs"
             },
+            'course_runs': [],
+            'expected_price': 210000,
+            'advertised_course_run_uuid': None,
         },
         {
-            'entitlements': [
+            'course_runs': [
                 {
-                    "mode": "verified",
-                    "price": "794.00",
-                    "currency": "USD",
-                    "sku": "B6DE08E",
+                    'uuid': '1234',
+                    'first_enrollable_paid_seat_price': '123.50',
                 }
             ],
+            'advertised_course_run_uuid': '1234',
+            'entitlements': None,
             'product_source': None,
+            'expected_price': 12350,
         },
     )
     @ddt.unpack
@@ -173,6 +180,9 @@ class ContentMetadataApiTests(TestCase):
         mock_get_content_metadata,
         entitlements,
         product_source,
+        course_runs,
+        expected_price,
+        advertised_course_run_uuid,
     ):
         """
         Test the enterprise catalog client's ability to handle api requests to fetch content metadata from the catalog
@@ -181,11 +191,13 @@ class ContentMetadataApiTests(TestCase):
         mocked_data = self.course_metadata.copy()
         mocked_data['product_source'] = product_source
         mocked_data['entitlements'] = entitlements
+        mocked_data['course_runs'] = course_runs
+        mocked_data['advertised_course_run_uuid'] = advertised_course_run_uuid
         mock_get_content_metadata.return_value = mocked_data
         price_in_cents = self.content_metadata_api.get_course_price(
             self.enterprise_customer_uuid, self.course_key
         )
-        assert price_in_cents == float(entitlements[0].get('price')) * CENTS_PER_DOLLAR
+        assert price_in_cents == expected_price
 
     @ddt.data(
         {
@@ -216,6 +228,7 @@ class ContentMetadataApiTests(TestCase):
         assert summary.get('content_key') == self.course_key
         assert summary.get('course_run_key') == self.courserun_key_1
         assert summary.get('content_price') == 14900
+        assert summary.get('enroll_by_date') == '2023-05-26T15:45:32.494051Z'
 
     def test_summary_data_for_exec_ed_content(self):
         mode = self.content_metadata_api.mode_for_content(self.executive_education_course_metadata)
@@ -240,6 +253,7 @@ class ContentMetadataApiTests(TestCase):
         assert summary.get('course_run_key') is self.courserun_key_1
         assert summary.get('content_price') == 59949
         assert summary.get('geag_variant_id') == self.variant_id_1
+        assert summary.get('enroll_by_date') == '2023-06-24T00:00:00.000000Z'
 
         # Test assembling summary data given an identifier of an advertised course run.
         # Note, the result should be identical to when a course identifier is given.
@@ -251,6 +265,7 @@ class ContentMetadataApiTests(TestCase):
         assert summary.get('course_run_key') is self.courserun_key_2
         assert summary.get('content_price') == 59949
         assert summary.get('geag_variant_id') == self.variant_id_2
+        assert summary.get('enroll_by_date') == '2024-06-24T00:00:00.000000Z'
 
     @ddt.data(
         {
@@ -363,9 +378,9 @@ class ContentMetadataApiTests(TestCase):
         {
             'content_data': {
                 'product_source': {'name': ProductSources.EDX.value, 'slug': ProductSources.EDX.value},
-                'entitlements': [{'mode': CourseModes.EDX_VERIFIED.value, 'price': '3.50'}],
+                'entitlements': [{'mode': CourseModes.EDX_VERIFIED.value, 'price': '34.50'}],
             },
-            'course_run_data': {},
+            'course_run_data': {'first_enrollable_paid_seat_price': '3.50'},
             'expected_price': 350,
         },
         {
@@ -379,7 +394,12 @@ class ContentMetadataApiTests(TestCase):
         {
             'content_data': {},
             'course_run_data': {},
-            'expected_price': None,
+            'expected_price': DEFAULT_CONTENT_PRICE,
+        },
+        {
+            'content_data': {},
+            'course_run_data': {'first_enrollable_paid_seat_price': None},
+            'expected_price': DEFAULT_CONTENT_PRICE,
         },
     )
     @ddt.unpack
@@ -428,3 +448,38 @@ class ContentMetadataApiTests(TestCase):
         )
         assert client_instance.get_content_metadata.call_count == 1
         TieredCache.delete_all_tiers(cache_key)
+
+    @ddt.data(True, False)
+    def test_enroll_by_date_for_verified_course_run_content(self, has_override):
+        upgrade_deadline_key = 'upgrade_deadline_override' if has_override else 'upgrade_deadline'
+        content_data = {
+            'content_type': 'courserun',
+            'enrollment_end': '2024-12-01T00:00:00Z',
+            'seats': [
+                {
+                    'type': 'verified',
+                    upgrade_deadline_key: '2025-01-01T00:00:00Z',
+                }
+            ]
+        }
+        self.assertEqual(
+            ContentMetadataApi().enroll_by_date_for_content(content_data, 'verified'),
+            '2025-01-01T00:00:00Z',
+        )
+
+    @ddt.data('verified', 'paid-executive-education')
+    def test_enroll_by_date_for_content_fallback(self, mode):
+        content_data = {
+            'content_type': 'courserun',
+            'enrollment_end': '2024-12-01T00:00:00Z',
+        }
+        self.assertEqual(
+            ContentMetadataApi().enroll_by_date_for_content(content_data, mode),
+            '2024-12-01T00:00:00Z',
+        )
+
+    def test_enroll_by_date_for_content_handles_null(self):
+        content_data = {
+            'content_type': 'courserun',
+        }
+        self.assertIsNone(ContentMetadataApi().enroll_by_date_for_content(content_data, 'verified'))

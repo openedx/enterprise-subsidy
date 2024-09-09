@@ -9,18 +9,18 @@ asgiref==3.8.1
     #   -r requirements/validation.txt
     #   django
     #   django-cors-headers
-astroid==3.2.2
+astroid==3.2.4
     # via
     #   -r requirements/validation.txt
     #   pylint
     #   pylint-celery
-attrs==23.2.0
+attrs==24.2.0
     # via
     #   -r requirements/validation.txt
     #   jsonschema
     #   openedx-events
     #   referencing
-avro==1.11.3
+avro==1.12.0
     # via
     #   -r requirements/validation.txt
     #   confluent-kafka
@@ -28,15 +28,15 @@ build==1.2.1
     # via
     #   -r requirements/pip-tools.txt
     #   pip-tools
-cachetools==5.3.3
+cachetools==5.5.0
     # via
     #   -r requirements/validation.txt
     #   tox
-certifi==2024.6.2
+certifi==2024.7.4
     # via
     #   -r requirements/validation.txt
     #   requests
-cffi==1.16.0
+cffi==1.17.0
     # via
     #   -r requirements/validation.txt
     #   cryptography
@@ -72,13 +72,13 @@ colorama==0.4.6
     # via
     #   -r requirements/validation.txt
     #   tox
-confluent-kafka[avro,schema-registry]==2.4.0
+confluent-kafka[avro,schema-registry]==2.5.0
     # via -r requirements/validation.txt
-coverage[toml]==7.5.4
+coverage[toml]==7.6.1
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
-cryptography==42.0.8
+cryptography==43.0.0
     # via
     #   -r requirements/validation.txt
     #   pyjwt
@@ -93,7 +93,7 @@ defusedxml==0.8.0rc2
     #   -r requirements/validation.txt
     #   python3-openid
     #   social-auth-core
-diff-cover==9.1.0
+diff-cover==9.1.1
     # via -r requirements/dev.in
 dill==0.3.8
     # via
@@ -103,7 +103,7 @@ distlib==0.3.8
     # via
     #   -r requirements/validation.txt
     #   virtualenv
-django==4.2.13
+django==4.2.15
     # via
     #   -r requirements/validation.txt
     #   django-clearcache
@@ -141,7 +141,7 @@ django-crum==0.7.9
     #   edx-django-utils
     #   edx-rbac
     #   edx-toggles
-django-debug-toolbar==4.4.2
+django-debug-toolbar==4.4.6
     # via -r requirements/dev.in
 django-dynamic-fixture==4.0.1
     # via -r requirements/validation.txt
@@ -150,7 +150,7 @@ django-extensions==3.2.3
     #   -r requirements/dev.in
     #   -r requirements/validation.txt
     #   openedx-ledger
-django-filter==24.2
+django-filter==24.3
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -169,6 +169,8 @@ django-simple-history==3.4.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
+django-test-migrations==1.4.0
+    # via -r requirements/validation.txt
 django-waffle==4.1.0
     # via
     #   -r requirements/validation.txt
@@ -179,7 +181,7 @@ djangoql==0.18.1
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-djangorestframework==3.14.0
+djangorestframework==3.15.2
     # via
     #   -r requirements/validation.txt
     #   drf-jwt
@@ -212,7 +214,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-edx-django-utils==5.14.2
+edx-django-utils==5.15.0
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
@@ -226,11 +228,11 @@ edx-drf-extensions==10.3.0
     # via
     #   -r requirements/validation.txt
     #   edx-rbac
-edx-event-bus-kafka==5.7.0
+edx-event-bus-kafka==5.8.1
     # via -r requirements/validation.txt
-edx-i18n-tools==1.6.0
+edx-i18n-tools==1.6.2
     # via -r requirements/dev.in
-edx-lint==5.3.6
+edx-lint==5.4.0
     # via -r requirements/validation.txt
 edx-opaque-keys[django]==2.10.0
     # via
@@ -238,7 +240,7 @@ edx-opaque-keys[django]==2.10.0
     #   edx-ccx-keys
     #   edx-drf-extensions
     #   openedx-events
-edx-rbac==1.9.0
+edx-rbac==1.10.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -248,13 +250,13 @@ edx-toggles==5.2.0
     # via
     #   -r requirements/validation.txt
     #   edx-event-bus-kafka
-factory-boy==3.3.0
+factory-boy==3.3.1
     # via -r requirements/validation.txt
-faker==26.0.0
+faker==28.0.0
     # via
     #   -r requirements/validation.txt
     #   factory-boy
-fastavro==1.9.4
+fastavro==1.9.5
     # via
     #   -r requirements/validation.txt
     #   confluent-kafka
@@ -266,11 +268,11 @@ filelock==3.15.4
     #   virtualenv
 getsmarter-api-clients==0.6.1
     # via -r requirements/validation.txt
-idna==3.7
+idna==3.8
     # via
     #   -r requirements/validation.txt
     #   requests
-importlib-metadata==6.11.0
+importlib-metadata==8.4.0
     # via
     #   -r requirements/validation.txt
     #   twine
@@ -291,11 +293,11 @@ jaraco-classes==3.4.0
     # via
     #   -r requirements/validation.txt
     #   keyring
-jaraco-context==5.3.0
+jaraco-context==6.0.1
     # via
     #   -r requirements/validation.txt
     #   keyring
-jaraco-functools==4.0.1
+jaraco-functools==4.0.2
     # via
     #   -r requirements/validation.txt
     #   keyring
@@ -313,7 +315,7 @@ jsonfield2==4.0.0.post0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-jsonschema==4.22.0
+jsonschema==4.23.0
     # via
     #   -r requirements/validation.txt
     #   drf-spectacular
@@ -321,16 +323,12 @@ jsonschema-specifications==2023.12.1
     # via
     #   -r requirements/validation.txt
     #   jsonschema
-keyring==25.2.1
+keyring==25.3.0
     # via
     #   -r requirements/validation.txt
     #   twine
-lxml[html-clean,html_clean]==5.2.2
-    # via
-    #   edx-i18n-tools
-    #   lxml-html-clean
-lxml-html-clean==0.1.1
-    # via lxml
+lxml==5.3.0
+    # via edx-i18n-tools
 markdown-it-py==3.0.0
     # via
     #   -r requirements/validation.txt
@@ -349,7 +347,7 @@ mdurl==0.1.2
     #   markdown-it-py
 mock==5.1.0
     # via -r requirements/validation.txt
-more-itertools==10.3.0
+more-itertools==10.4.0
     # via
     #   -r requirements/validation.txt
     #   jaraco-classes
@@ -358,11 +356,11 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-newrelic==9.11.0
+newrelic==9.13.0
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
-nh3==0.2.17
+nh3==0.2.18
     # via
     #   -r requirements/validation.txt
     #   readme-renderer
@@ -372,12 +370,12 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.11.0
+openedx-events==9.12.0
     # via
     #   -r requirements/validation.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.4.5
+openedx-ledger==1.5.7
     # via -r requirements/validation.txt
 packaging==24.1
     # via
@@ -388,7 +386,7 @@ packaging==24.1
     #   pyproject-api
     #   pytest
     #   tox
-path==16.14.0
+path==16.16.0
     # via edx-i18n-tools
 pbr==6.0.0
     # via
@@ -422,7 +420,7 @@ psutil==6.0.0
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
-pycodestyle==2.12.0
+pycodestyle==2.12.1
     # via -r requirements/validation.txt
 pycparser==2.22
     # via
@@ -436,7 +434,7 @@ pygments==2.18.0
     #   diff-cover
     #   readme-renderer
     #   rich
-pyjwt[crypto]==2.8.0
+pyjwt[crypto]==2.9.0
     # via
     #   -r requirements/validation.txt
     #   drf-jwt
@@ -444,7 +442,7 @@ pyjwt[crypto]==2.8.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.2.5
+pylint==3.2.6
     # via
     #   -r requirements/validation.txt
     #   edx-lint
@@ -483,7 +481,7 @@ pyproject-hooks==1.1.0
     #   -r requirements/pip-tools.txt
     #   build
     #   pip-tools
-pytest==8.2.2
+pytest==8.3.2
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
@@ -507,11 +505,10 @@ python3-openid==3.2.0
 pytz==2024.1
     # via
     #   -r requirements/validation.txt
-    #   djangorestframework
     #   drf-yasg
     #   getsmarter-api-clients
     #   openedx-ledger
-pyyaml==6.0.1
+pyyaml==6.0.2
     # via
     #   -r requirements/validation.txt
     #   code-annotations
@@ -520,11 +517,11 @@ pyyaml==6.0.1
     #   edx-django-release-util
     #   edx-i18n-tools
     #   responses
-readme-renderer==43.0
+readme-renderer==44.0
     # via
     #   -r requirements/validation.txt
     #   twine
-redis==5.0.7
+redis==5.0.8
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -543,6 +540,7 @@ requests==2.32.3
     #   requests-toolbelt
     #   responses
     #   slumber
+    
     #   social-auth-core
     #   twine
 requests-oauthlib==2.0.0
@@ -564,7 +562,7 @@ rich==13.7.1
     # via
     #   -r requirements/validation.txt
     #   twine
-rpds-py==0.18.1
+rpds-py==0.20.0
     # via
     #   -r requirements/validation.txt
     #   jsonschema
@@ -598,7 +596,7 @@ snowballstemmer==2.2.0
     # via
     #   -r requirements/validation.txt
     #   pydocstyle
-social-auth-app-django==5.4.1
+social-auth-app-django==5.4.2
     # via
     #   -r requirements/validation.txt
     #   edx-auth-backends
@@ -607,12 +605,12 @@ social-auth-core==4.5.4
     #   -r requirements/validation.txt
     #   edx-auth-backends
     #   social-auth-app-django
-sqlparse==0.5.0
+sqlparse==0.5.1
     # via
     #   -r requirements/validation.txt
     #   django
     #   django-debug-toolbar
-stevedore==5.2.0
+stevedore==5.3.0
     # via
     #   -r requirements/validation.txt
     #   code-annotations
@@ -622,17 +620,18 @@ text-unidecode==1.3
     # via
     #   -r requirements/validation.txt
     #   python-slugify
-tomlkit==0.12.5
+tomlkit==0.13.2
     # via
     #   -r requirements/validation.txt
     #   pylint
-tox==4.15.1
+tox==4.18.0
     # via -r requirements/validation.txt
 twine==5.1.1
     # via -r requirements/validation.txt
 typing-extensions==4.12.2
     # via
     #   -r requirements/validation.txt
+    #   django-test-migrations
     #   edx-opaque-keys
 uritemplate==4.1.1
     # via
@@ -649,11 +648,11 @@ virtualenv==20.26.3
     # via
     #   -r requirements/validation.txt
     #   tox
-wheel==0.43.0
+wheel==0.44.0
     # via
     #   -r requirements/pip-tools.txt
     #   pip-tools
-zipp==3.19.2
+zipp==3.20.0
     # via
     #   -r requirements/validation.txt
     #   importlib-metadata
