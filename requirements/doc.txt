@@ -40,11 +40,11 @@ cachetools==5.5.0
     # via
     #   -r requirements/test.txt
     #   tox
-certifi==2024.7.4
+certifi==2024.8.30
     # via
     #   -r requirements/test.txt
     #   requests
-cffi==1.17.0
+cffi==1.17.1
     # via
     #   -r requirements/test.txt
     #   cryptography
@@ -77,17 +77,16 @@ colorama==0.4.6
     # via
     #   -r requirements/test.txt
     #   tox
-confluent-kafka[avro,schema-registry]==2.5.0
+confluent-kafka[avro,schema-registry]==2.5.3
     # via -r requirements/test.txt
 coverage[toml]==7.6.1
     # via
     #   -r requirements/test.txt
     #   pytest-cov
-cryptography==43.0.0
+cryptography==43.0.1
     # via
     #   -r requirements/test.txt
     #   pyjwt
-    #   secretstorage
     #   social-auth-core
 ddt==1.7.2
     # via -r requirements/test.txt
@@ -104,7 +103,7 @@ distlib==0.3.8
     # via
     #   -r requirements/test.txt
     #   virtualenv
-django==4.2.15
+django==4.2.16
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/test.txt
@@ -153,7 +152,7 @@ django-filter==24.3
     #   openedx-ledger
 django-log-request-id==2.1.0
     # via -r requirements/test.txt
-django-model-utils==4.5.1
+django-model-utils==5.0.0
     # via
     #   -r requirements/test.txt
     #   edx-rbac
@@ -189,9 +188,9 @@ dnspython==2.6.1
     # via
     #   -r requirements/test.txt
     #   pymongo
-doc8==1.1.1
+doc8==1.1.2
     # via -r requirements/doc.in
-docutils==0.20.1
+docutils==0.21.2
     # via
     #   doc8
     #   pydata-sphinx-theme
@@ -226,7 +225,7 @@ edx-django-utils==5.15.0
     #   getsmarter-api-clients
     #   openedx-events
     #   openedx-ledger
-edx-drf-extensions==10.3.0
+edx-drf-extensions==10.4.0
     # via
     #   -r requirements/test.txt
     #   edx-rbac
@@ -234,7 +233,7 @@ edx-event-bus-kafka==5.8.1
     # via -r requirements/test.txt
 edx-lint==5.4.0
     # via -r requirements/test.txt
-edx-opaque-keys[django]==2.10.0
+edx-opaque-keys[django]==2.11.0
     # via
     #   -r requirements/test.txt
     #   edx-ccx-keys
@@ -244,7 +243,7 @@ edx-rbac==1.10.0
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-edx-rest-api-client==5.7.1
+edx-rest-api-client==6.0.0
     # via -r requirements/test.txt
 edx-toggles==5.2.0
     # via
@@ -252,11 +251,11 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.1
     # via -r requirements/test.txt
-faker==28.0.0
+faker==28.4.1
     # via
     #   -r requirements/test.txt
     #   factory-boy
-fastavro==1.9.5
+fastavro==1.9.7
     # via
     #   -r requirements/test.txt
     #   confluent-kafka
@@ -295,10 +294,6 @@ jaraco-context==6.0.1
     # via keyring
 jaraco-functools==4.0.2
     # via keyring
-jeepney==0.8.0
-    # via
-    #   keyring
-    #   secretstorage
 jinja2==3.1.4
     # via
     #   -r requirements/test.txt
@@ -332,7 +327,7 @@ mdurl==0.1.2
     # via markdown-it-py
 mock==5.1.0
     # via -r requirements/test.txt
-more-itertools==10.4.0
+more-itertools==10.5.0
     # via
     #   jaraco-classes
     #   jaraco-functools
@@ -352,7 +347,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.12.0
+openedx-events==9.14.0
     # via
     #   -r requirements/test.txt
     #   edx-event-bus-kafka
@@ -369,7 +364,7 @@ packaging==24.1
     #   pytest
     #   sphinx
     #   tox
-pbr==6.0.0
+pbr==6.1.0
     # via
     #   -r requirements/test.txt
     #   stevedore
@@ -416,7 +411,7 @@ pyjwt[crypto]==2.9.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.2.6
+pylint==3.2.7
     # via
     #   -r requirements/test.txt
     #   edx-lint
@@ -459,7 +454,7 @@ pytest==8.3.2
     #   pytest-django
 pytest-cov==5.0.0
     # via -r requirements/test.txt
-pytest-django==4.8.0
+pytest-django==4.9.0
     # via -r requirements/test.txt
 python-dateutil==2.9.0.post0
     # via
@@ -487,7 +482,7 @@ pyyaml==6.0.2
     #   drf-yasg
     #   edx-django-release-util
     #   responses
-readme-renderer==43.0
+readme-renderer==44.0
     # via twine
 redis==5.0.8
     # via
@@ -507,7 +502,6 @@ requests==2.32.3
     #   requests-oauthlib
     #   requests-toolbelt
     #   responses
-    #   slumber
     #   social-auth-core
     #   sphinx
     #   twine
@@ -524,19 +518,17 @@ restructuredtext-lint==1.4.0
     # via doc8
 rfc3986==2.0.0
     # via twine
-rich==13.7.1
+rich==13.8.0
     # via twine
 rpds-py==0.20.0
     # via
     #   -r requirements/test.txt
     #   jsonschema
     #   referencing
-rules==3.4
+rules==3.5
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-secretstorage==3.3.3
-    # via keyring
 semantic-version==2.10.0
     # via
     #   -r requirements/test.txt
@@ -550,10 +542,6 @@ six==1.16.0
     #   edx-lint
     #   edx-rbac
     #   python-dateutil
-slumber==0.7.1
-    # via
-    #   -r requirements/test.txt
-    #   edx-rest-api-client
 snowballstemmer==2.2.0
     # via sphinx
 social-auth-app-django==5.4.2
@@ -630,7 +618,7 @@ virtualenv==20.26.3
     # via
     #   -r requirements/test.txt
     #   tox
-zipp==3.20.0
+zipp==3.20.1
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:
