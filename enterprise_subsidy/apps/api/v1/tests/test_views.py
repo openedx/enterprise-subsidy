@@ -247,6 +247,8 @@ class SubsidyViewSetTests(APITestBase):
             "revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
             "is_active": True,
             "total_deposits": self.subsidy_1.starting_balance,
+            "created": self.subsidy_1.created.strftime(SERIALIZED_DATE_PATTERN),
+            "modified": self.subsidy_1.modified.strftime(SERIALIZED_DATE_PATTERN),
         }
         self.assertEqual(expected_result, response.json())
 
@@ -275,6 +277,8 @@ class SubsidyViewSetTests(APITestBase):
             "revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
             "is_active": True,
             "total_deposits": self.subsidy_5.total_deposits,
+            "created": self.subsidy_5.created.strftime(SERIALIZED_DATE_PATTERN),
+            "modified": self.subsidy_5.modified.strftime(SERIALIZED_DATE_PATTERN),
         }
         total_deposits_including_positive_adjustment = sum(
             [self.subsidy_5.starting_balance, APITestBase.adjustment_quantity_1]
@@ -313,6 +317,8 @@ class SubsidyViewSetTests(APITestBase):
             "revenue_category": RevenueCategoryChoices.BULK_ENROLLMENT_PREPAY,
             "is_active": True,
             "total_deposits": self.subsidy_5.total_deposits,
+            "created": self.subsidy_5.created.strftime(SERIALIZED_DATE_PATTERN),
+            "modified": self.subsidy_5.modified.strftime(SERIALIZED_DATE_PATTERN),
         }
 
         total_deposits_including_negative_adjustment = sum(
