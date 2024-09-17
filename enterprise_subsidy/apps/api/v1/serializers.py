@@ -51,7 +51,9 @@ class SubsidySerializer(serializers.ModelSerializer):
             "internal_only",
             "revenue_category",
             "is_active",
-            "total_deposits"
+            "total_deposits",
+            "created",
+            "modified",
             # In the MVP implementation, there are only learner_credit subsidies.  Uncomment after subscription
             # subsidies are introduced.
             # "subsidy_type",
