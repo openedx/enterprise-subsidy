@@ -229,7 +229,7 @@ mysqlclient==2.2.4
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   openedx-ledger
-newrelic==9.13.0
+newrelic==10.0.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -309,7 +309,7 @@ pyyaml==6.0.2
     #   drf-spectacular
     #   drf-yasg
     #   edx-django-release-util
-redis==5.0.8
+redis==5.1.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger

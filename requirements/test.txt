@@ -9,7 +9,7 @@ asgiref==3.8.1
     #   -r requirements/base.txt
     #   django
     #   django-cors-headers
-astroid==3.3.3
+astroid==3.3.4
     # via
     #   pylint
     #   pylint-celery
@@ -75,7 +75,7 @@ defusedxml==0.8.0rc2
     #   -r requirements/base.txt
     #   python3-openid
     #   social-auth-core
-dill==0.3.8
+dill==0.3.9
     # via pylint
 distlib==0.3.8
     # via virtualenv
@@ -218,7 +218,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.1
     # via -r requirements/test.in
-faker==29.0.0
+faker==30.0.0
     # via factory-boy
 fastavro==1.9.7
     # via
@@ -272,7 +272,7 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-newrelic==9.13.0
+newrelic==10.0.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -329,7 +329,7 @@ pyjwt[crypto]==2.9.0
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.3.0
+pylint==3.3.1
     # via
     #   edx-lint
     #   pylint-celery
@@ -387,7 +387,7 @@ pyyaml==6.0.2
     #   drf-yasg
     #   edx-django-release-util
     #   responses
-redis==5.0.8
+redis==5.1.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -476,7 +476,7 @@ urllib3==2.2.3
     #   -r requirements/base.txt
     #   requests
     #   responses
-virtualenv==20.26.5
+virtualenv==20.26.6
     # via tox
 
 # The following packages are considered to be unsafe in a requirements file:
