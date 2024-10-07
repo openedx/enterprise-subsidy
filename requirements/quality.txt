@@ -9,7 +9,7 @@ asgiref==3.8.1
     #   -r requirements/test.txt
     #   django
     #   django-cors-headers
-astroid==3.3.4
+astroid==3.3.5
     # via
     #   -r requirements/test.txt
     #   pylint
@@ -173,7 +173,7 @@ djangorestframework==3.15.2
     #   drf-spectacular
     #   drf-yasg
     #   edx-drf-extensions
-dnspython==2.6.1
+dnspython==2.7.0
     # via
     #   -r requirements/test.txt
     #   pymongo
@@ -197,7 +197,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-edx-django-utils==5.15.0
+edx-django-utils==5.16.0
     # via
     #   -r requirements/test.txt
     #   edx-drf-extensions
@@ -235,7 +235,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.1
     # via -r requirements/test.txt
-faker==30.0.0
+faker==30.1.0
     # via
     #   -r requirements/test.txt
     #   factory-boy
@@ -414,7 +414,7 @@ pylint-plugin-utils==0.8.2
     #   pylint-django
 pymemcache==4.0.0
     # via -r requirements/test.txt
-pymongo==4.9.1
+pymongo==4.10.1
     # via
     #   -r requirements/test.txt
     #   edx-opaque-keys
@@ -463,7 +463,7 @@ pyyaml==6.0.2
     #   responses
 readme-renderer==44.0
     # via twine
-redis==5.1.0
+redis==5.1.1
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
@@ -494,7 +494,7 @@ responses==0.25.3
     # via -r requirements/test.txt
 rfc3986==2.0.0
     # via twine
-rich==13.8.1
+rich==13.9.2
     # via twine
 rpds-py==0.20.0
     # via
@@ -549,7 +549,7 @@ tomlkit==0.13.2
     # via
     #   -r requirements/test.txt
     #   pylint
-tox==4.20.0
+tox==4.21.2
     # via -r requirements/test.txt
 twine==5.1.1
     # via -r requirements/quality.in
@@ -558,6 +558,7 @@ typing-extensions==4.12.2
     #   -r requirements/test.txt
     #   django-test-migrations
     #   edx-opaque-keys
+    #   faker
 uritemplate==4.1.1
     # via
     #   -r requirements/test.txt
