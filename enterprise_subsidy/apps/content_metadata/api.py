@@ -54,12 +54,11 @@ class ContentMetadataApi:
         """
         return EnterpriseCatalogApiClient()
 
-    def price_for_content(self, content_data, course_run_data):
+    def price_for_content_fallback(self, content_data, course_run_data):
         """
-        Helper to return the "official" price for content.
-        The endpoint at ``self.content_metadata_url`` will always return price fields
-        as USD (dollars), possibly as a string or a float.  This method converts
-        those values to USD cents as an integer.
+        Fallback logic for `price_for_content` logic if the `normalized_metadata_by_run` field is None.
+        The fallback logic is the original logic for determining the `content_price` before
+        using normalized metadata as the first source of truth for `content_price`.
         """
         content_price = None
 
@@ -78,6 +77,25 @@ class ContentMetadataApi:
                 f"and course run key {course_run_data.get('key')}, setting to default."
             )
             content_price = DEFAULT_CONTENT_PRICE
+
+        return content_price
+
+    def price_for_content(self, content_data, course_run_data):
+        """
+        Helper to return the "official" price for content.
+        The endpoint at ``self.content_metadata_url`` will always return price fields
+        as USD (dollars), possibly as a string or a float.  This method converts
+        those values to USD cents as an integer.
+        """
+        content_price = None
+        course_run_key = course_run_data.get('key')
+
+        if course_run_key in content_data.get('normalized_metadata_by_run', {}):
+            if normalized_price := content_data['normalized_metadata_by_run'][course_run_key].get('content_price'):
+                content_price = normalized_price
+
+        if not content_price:
+            content_price = self.price_for_content_fallback(content_data, course_run_data)
 
         return int(Decimal(content_price) * CENTS_PER_DOLLAR)
 
