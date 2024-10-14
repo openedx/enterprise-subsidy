@@ -46,7 +46,7 @@ chardet==5.2.0
     #   -r requirements/validation.txt
     #   diff-cover
     #   tox
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -r requirements/validation.txt
     #   requests
@@ -72,9 +72,9 @@ colorama==0.4.6
     # via
     #   -r requirements/validation.txt
     #   tox
-confluent-kafka[avro,schema-registry]==2.5.3
+confluent-kafka[avro,schema-registry]==2.6.0
     # via -r requirements/validation.txt
-coverage[toml]==7.6.1
+coverage[toml]==7.6.3
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
@@ -99,7 +99,7 @@ dill==0.3.9
     # via
     #   -r requirements/validation.txt
     #   pylint
-distlib==0.3.8
+distlib==0.3.9
     # via
     #   -r requirements/validation.txt
     #   virtualenv
@@ -133,7 +133,7 @@ django==4.2.16
     #   social-auth-app-django
 django-clearcache==1.2.1
     # via -r requirements/validation.txt
-django-cors-headers==4.4.0
+django-cors-headers==4.5.0
     # via -r requirements/validation.txt
 django-crum==0.7.9
     # via
@@ -214,7 +214,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-edx-django-utils==5.16.0
+edx-django-utils==6.0.0
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
@@ -252,7 +252,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.1
     # via -r requirements/validation.txt
-faker==30.1.0
+faker==30.3.0
     # via
     #   -r requirements/validation.txt
     #   factory-boy
@@ -319,7 +319,7 @@ jsonschema==4.23.0
     # via
     #   -r requirements/validation.txt
     #   drf-spectacular
-jsonschema-specifications==2023.12.1
+jsonschema-specifications==2024.10.1
     # via
     #   -r requirements/validation.txt
     #   jsonschema
@@ -331,13 +331,13 @@ lxml[html-clean,html_clean]==5.3.0
     # via
     #   edx-i18n-tools
     #   lxml-html-clean
-lxml-html-clean==0.2.2
+lxml-html-clean==0.3.1
     # via lxml
 markdown-it-py==3.0.0
     # via
     #   -r requirements/validation.txt
     #   rich
-markupsafe==2.1.5
+markupsafe==3.0.1
     # via
     #   -r requirements/validation.txt
     #   jinja2
@@ -360,7 +360,7 @@ mysqlclient==2.2.4
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-newrelic==10.0.0
+newrelic==10.1.0
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
@@ -374,12 +374,12 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.14.1
+openedx-events==9.15.0
     # via
     #   -r requirements/validation.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.10
+openedx-ledger==1.5.12
     # via -r requirements/validation.txt
 packaging==24.1
     # via
@@ -457,7 +457,7 @@ pylint-celery==0.3
     # via
     #   -r requirements/validation.txt
     #   edx-lint
-pylint-django==2.5.5
+pylint-django==2.6.1
     # via
     #   -r requirements/validation.txt
     #   edx-lint
