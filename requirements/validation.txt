@@ -49,7 +49,7 @@ chardet==5.2.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   tox
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -78,11 +78,11 @@ colorama==0.4.6
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   tox
-confluent-kafka[avro,schema-registry]==2.5.3
+confluent-kafka[avro,schema-registry]==2.6.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-coverage[toml]==7.6.1
+coverage[toml]==7.6.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -109,7 +109,7 @@ dill==0.3.9
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pylint
-distlib==0.3.8
+distlib==0.3.9
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -145,7 +145,7 @@ django-clearcache==1.2.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-django-cors-headers==4.4.0
+django-cors-headers==4.5.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -249,7 +249,7 @@ edx-django-release-util==1.4.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-edx-django-utils==5.16.0
+edx-django-utils==6.1.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -298,7 +298,7 @@ factory-boy==3.3.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-faker==30.1.0
+faker==30.4.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -376,7 +376,7 @@ jsonschema==4.23.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   drf-spectacular
-jsonschema-specifications==2023.12.1
+jsonschema-specifications==2024.10.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -389,7 +389,7 @@ markdown-it-py==3.0.0
     # via
     #   -r requirements/quality.txt
     #   rich
-markupsafe==2.1.5
+markupsafe==3.0.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -417,7 +417,7 @@ mysqlclient==2.2.4
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-newrelic==10.0.0
+newrelic==10.2.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -433,13 +433,13 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.14.1
+openedx-events==9.15.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.10
+openedx-ledger==1.5.13
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -519,7 +519,7 @@ pylint-celery==0.3
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   edx-lint
-pylint-django==2.5.5
+pylint-django==2.6.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -710,7 +710,7 @@ tomlkit==0.13.2
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pylint
-tox==4.21.2
+tox==4.22.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt

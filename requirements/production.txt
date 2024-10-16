@@ -28,7 +28,7 @@ cffi==1.17.1
     #   -r requirements/base.txt
     #   cryptography
     #   pynacl
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via
     #   -r requirements/base.txt
     #   requests
@@ -41,7 +41,7 @@ code-annotations==1.8.0
     # via
     #   -r requirements/base.txt
     #   edx-toggles
-confluent-kafka[avro,schema-registry]==2.5.3
+confluent-kafka[avro,schema-registry]==2.6.0
     # via -r requirements/base.txt
 cryptography==43.0.1
     # via
@@ -81,7 +81,7 @@ django==4.2.16
     #   social-auth-app-django
 django-clearcache==1.2.1
     # via -r requirements/base.txt
-django-cors-headers==4.4.0
+django-cors-headers==4.5.0
     # via -r requirements/base.txt
 django-crum==0.7.9
     # via
@@ -150,7 +150,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-edx-django-utils==5.16.0
+edx-django-utils==6.1.0
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
@@ -189,7 +189,7 @@ fastavro==1.9.7
     #   openedx-events
 getsmarter-api-clients==0.6.1
     # via -r requirements/base.txt
-gevent==24.2.1
+gevent==24.10.2
     # via -r requirements/production.in
 greenlet==3.1.1
     # via gevent
@@ -216,11 +216,11 @@ jsonschema==4.23.0
     # via
     #   -r requirements/base.txt
     #   drf-spectacular
-jsonschema-specifications==2023.12.1
+jsonschema-specifications==2024.10.1
     # via
     #   -r requirements/base.txt
     #   jsonschema
-markupsafe==2.1.5
+markupsafe==3.0.1
     # via
     #   -r requirements/base.txt
     #   jinja2
@@ -229,7 +229,7 @@ mysqlclient==2.2.4
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   openedx-ledger
-newrelic==10.0.0
+newrelic==10.2.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -239,12 +239,12 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.14.1
+openedx-events==9.15.0
     # via
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.10
+openedx-ledger==1.5.13
     # via -r requirements/base.txt
 packaging==24.1
     # via
@@ -389,7 +389,7 @@ urllib3==2.2.3
     #   requests
 zope-event==5.0
     # via gevent
-zope-interface==7.0.3
+zope-interface==7.1.0
     # via gevent
 
 # The following packages are considered to be unsafe in a requirements file:
