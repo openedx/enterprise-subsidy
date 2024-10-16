@@ -21,7 +21,7 @@ cffi==1.17.1
     # via
     #   cryptography
     #   pynacl
-charset-normalizer==3.3.2
+charset-normalizer==3.4.0
     # via requests
 click==8.1.7
     # via
@@ -29,7 +29,7 @@ click==8.1.7
     #   edx-django-utils
 code-annotations==1.8.0
     # via edx-toggles
-confluent-kafka[avro,schema-registry]==2.5.3
+confluent-kafka[avro,schema-registry]==2.6.0
     # via -r requirements/base.in
 cryptography==43.0.1
     # via
@@ -68,7 +68,7 @@ django==4.2.16
     #   social-auth-app-django
 django-clearcache==1.2.1
     # via -r requirements/base.in
-django-cors-headers==4.4.0
+django-cors-headers==4.5.0
     # via -r requirements/base.in
 django-crum==0.7.9
     # via
@@ -129,7 +129,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-edx-django-utils==5.16.0
+edx-django-utils==6.1.0
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
@@ -178,27 +178,27 @@ jsonfield2==4.0.0.post0
     #   openedx-ledger
 jsonschema==4.23.0
     # via drf-spectacular
-jsonschema-specifications==2023.12.1
+jsonschema-specifications==2024.10.1
     # via jsonschema
-markupsafe==2.1.5
+markupsafe==3.0.1
     # via jinja2
 mysqlclient==2.2.4
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-newrelic==10.0.0
+newrelic==10.2.0
     # via edx-django-utils
 oauthlib==3.2.2
     # via
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.14.1
+openedx-events==9.15.0
     # via
     #   -r requirements/base.in
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.10
+openedx-ledger==1.5.13
     # via -r requirements/base.in
 packaging==24.1
     # via drf-yasg
