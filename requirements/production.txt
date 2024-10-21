@@ -43,7 +43,7 @@ code-annotations==1.8.0
     #   edx-toggles
 confluent-kafka[avro,schema-registry]==2.6.0
     # via -r requirements/base.txt
-cryptography==43.0.1
+cryptography==43.0.3
     # via
     #   -r requirements/base.txt
     #   pyjwt
@@ -138,7 +138,7 @@ drf-jwt==1.19.2
     #   edx-drf-extensions
 drf-spectacular==0.27.2
     # via -r requirements/base.txt
-drf-yasg==1.21.7
+drf-yasg==1.21.8
     # via -r requirements/base.txt
 edx-auth-backends==4.4.0
     # via -r requirements/base.txt
@@ -150,7 +150,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-edx-django-utils==6.1.0
+edx-django-utils==7.0.0
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
@@ -189,7 +189,7 @@ fastavro==1.9.7
     #   openedx-events
 getsmarter-api-clients==0.6.1
     # via -r requirements/base.txt
-gevent==24.10.2
+gevent==24.10.3
     # via -r requirements/production.in
 greenlet==3.1.1
     # via gevent
@@ -220,11 +220,11 @@ jsonschema-specifications==2024.10.1
     # via
     #   -r requirements/base.txt
     #   jsonschema
-markupsafe==3.0.1
+markupsafe==3.0.2
     # via
     #   -r requirements/base.txt
     #   jinja2
-mysqlclient==2.2.4
+mysqlclient==2.2.5
     # via
     #   -r requirements/base.txt
     #   -r requirements/production.in
@@ -259,7 +259,7 @@ ply==3.11
     # via
     #   -r requirements/base.txt
     #   djangoql
-psutil==6.0.0
+psutil==6.1.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils

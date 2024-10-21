@@ -74,11 +74,11 @@ colorama==0.4.6
     #   tox
 confluent-kafka[avro,schema-registry]==2.6.0
     # via -r requirements/validation.txt
-coverage[toml]==7.6.3
+coverage[toml]==7.6.4
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
-cryptography==43.0.1
+cryptography==43.0.3
     # via
     #   -r requirements/validation.txt
     #   pyjwt
@@ -202,7 +202,7 @@ drf-jwt==1.19.2
     #   edx-drf-extensions
 drf-spectacular==0.27.2
     # via -r requirements/validation.txt
-drf-yasg==1.21.7
+drf-yasg==1.21.8
     # via -r requirements/validation.txt
 edx-auth-backends==4.4.0
     # via -r requirements/validation.txt
@@ -214,7 +214,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-edx-django-utils==6.1.0
+edx-django-utils==7.0.0
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
@@ -252,7 +252,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.1
     # via -r requirements/validation.txt
-faker==30.4.0
+faker==30.6.0
     # via
     #   -r requirements/validation.txt
     #   factory-boy
@@ -337,7 +337,7 @@ markdown-it-py==3.0.0
     # via
     #   -r requirements/validation.txt
     #   rich
-markupsafe==3.0.1
+markupsafe==3.0.2
     # via
     #   -r requirements/validation.txt
     #   jinja2
@@ -356,7 +356,7 @@ more-itertools==10.5.0
     #   -r requirements/validation.txt
     #   jaraco-classes
     #   jaraco-functools
-mysqlclient==2.2.4
+mysqlclient==2.2.5
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -420,7 +420,7 @@ ply==3.11
     #   djangoql
 polib==1.2.0
     # via edx-i18n-tools
-psutil==6.0.0
+psutil==6.1.0
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
@@ -622,7 +622,7 @@ tomlkit==0.13.2
     # via
     #   -r requirements/validation.txt
     #   pylint
-tox==4.22.0
+tox==4.23.0
     # via -r requirements/validation.txt
 twine==5.1.1
     # via -r requirements/validation.txt
@@ -643,7 +643,7 @@ urllib3==2.2.3
     #   requests
     #   responses
     #   twine
-virtualenv==20.26.6
+virtualenv==20.27.0
     # via
     #   -r requirements/validation.txt
     #   tox
