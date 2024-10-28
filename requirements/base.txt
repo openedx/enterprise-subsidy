@@ -41,7 +41,7 @@ defusedxml==0.8.0rc2
     #   social-auth-core
 django==4.2.16
     # via
-    #   -c requirements/common_constraints.txt
+    #   -c /home/runner/work/enterprise-subsidy/enterprise-subsidy/requirements/common_constraints.txt
     #   -r requirements/base.in
     #   django-clearcache
     #   django-cors-headers
@@ -93,7 +93,7 @@ django-object-actions==4.3.0
     #   openedx-ledger
 django-simple-history==3.4.0
     # via
-    #   -c requirements/constraints.txt
+    #   -c /home/runner/work/enterprise-subsidy/enterprise-subsidy/requirements/constraints.txt
     #   -r requirements/base.in
     #   openedx-ledger
 django-waffle==4.1.0
@@ -139,11 +139,11 @@ edx-django-utils==7.0.0
     #   getsmarter-api-clients
     #   openedx-events
     #   openedx-ledger
-edx-drf-extensions==10.4.0
+edx-drf-extensions==10.5.0
     # via
     #   -r requirements/base.in
     #   edx-rbac
-edx-event-bus-kafka==5.8.1
+edx-event-bus-kafka==6.0.0
     # via -r requirements/base.in
 edx-opaque-keys[django]==2.11.0
     # via
@@ -239,7 +239,7 @@ pyyaml==6.0.2
     #   drf-spectacular
     #   drf-yasg
     #   edx-django-release-util
-redis==5.1.1
+redis==5.2.0
     # via openedx-ledger
 referencing==0.35.1
     # via
