@@ -163,9 +163,6 @@ detect_changed_source_translations: ## check if translation files are up-to-date
 
 validate_translations: fake_translations detect_changed_source_translations ## install fake translations and check if translation files are up-to-date
 
-docker_build:
-	docker build . -f Dockerfile -t openedx/enterprise-subsidy --no-cache
-
 # devstack-themed shortcuts
 dev.up: dev.up.redis
 	docker-compose up -d
@@ -242,18 +239,8 @@ app-restart-devserver:  # restart just the app Django dev server
 %-attach:
 	docker attach enterprise-subsidy.$*
 
-github_docker_build:
-	docker build . -f Dockerfile --target app -t openedx/enterprise-subsidy
-
-github_docker_tag: github_docker_build
-	docker tag openedx/enterprise-subsidy openedx/enterprise-subsidy:${GITHUB_SHA}
-
 github_docker_auth:
 	echo "$$DOCKERHUB_PASSWORD" | docker login -u "$$DOCKERHUB_USERNAME" --password-stdin
-
-github_docker_push: github_docker_tag github_docker_auth ## push to docker hub
-	docker push 'openedx/enterprise-subsidy:latest'
-	docker push "openedx/enterprise-subsidy:${GITHUB_SHA}"
 
 selfcheck: ## check that the Makefile is well-formed
 	@echo "The Makefile is well-formed."

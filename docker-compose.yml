@@ -21,12 +21,7 @@ services:
     command: memcached -vv
 
   app:
-    # Uncomment this line to use the official enterprise-subsidy base image
-    # image: openedx/enterprise-subsidy
-    image: openedx/enterprise-subsidy:latest-devstack
-    build:
-      context: .
-      dockerfile: Dockerfile
+    image: edxops/enterprise-subsidy-dev
     container_name: enterprise-subsidy.app
     volumes:
       - .:/edx/app/enterprise-subsidy
