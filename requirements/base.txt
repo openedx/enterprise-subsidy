@@ -41,7 +41,7 @@ defusedxml==0.8.0rc2
     #   social-auth-core
 django==4.2.16
     # via
-    #   -c /home/runner/work/enterprise-subsidy/enterprise-subsidy/requirements/common_constraints.txt
+    #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
     #   django-clearcache
     #   django-cors-headers
@@ -68,7 +68,7 @@ django==4.2.16
     #   social-auth-app-django
 django-clearcache==1.2.1
     # via -r requirements/base.in
-django-cors-headers==4.5.0
+django-cors-headers==4.6.0
     # via -r requirements/base.in
 django-crum==0.7.9
     # via
@@ -93,7 +93,7 @@ django-object-actions==4.3.0
     #   openedx-ledger
 django-simple-history==3.4.0
     # via
-    #   -c /home/runner/work/enterprise-subsidy/enterprise-subsidy/requirements/constraints.txt
+    #   -c requirements/constraints.txt
     #   -r requirements/base.in
     #   openedx-ledger
 django-waffle==4.1.0
@@ -256,7 +256,7 @@ requests-oauthlib==2.0.0
     # via
     #   getsmarter-api-clients
     #   social-auth-core
-rpds-py==0.20.0
+rpds-py==0.20.1
     # via
     #   jsonschema
     #   referencing
