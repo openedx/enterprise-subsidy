@@ -289,7 +289,7 @@ openedx-events==9.15.0
     #   openedx-ledger
 openedx-ledger==1.5.14
     # via -r requirements/base.txt
-packaging==24.1
+packaging==24.2
     # via
     #   -r requirements/base.txt
     #   drf-yasg
@@ -412,7 +412,7 @@ requests-oauthlib==2.0.0
     #   social-auth-core
 responses==0.25.3
     # via -r requirements/test.in
-rpds-py==0.20.1
+rpds-py==0.21.0
     # via
     #   -r requirements/base.txt
     #   jsonschema

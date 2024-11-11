@@ -200,7 +200,7 @@ openedx-events==9.15.0
     #   openedx-ledger
 openedx-ledger==1.5.14
     # via -r requirements/base.in
-packaging==24.1
+packaging==24.2
     # via drf-yasg
 pbr==6.1.0
     # via stevedore
@@ -256,7 +256,7 @@ requests-oauthlib==2.0.0
     # via
     #   getsmarter-api-clients
     #   social-auth-core
-rpds-py==0.20.1
+rpds-py==0.21.0
     # via
     #   jsonschema
     #   referencing
