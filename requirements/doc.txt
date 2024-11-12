@@ -359,7 +359,7 @@ openedx-events==9.15.0
     #   openedx-ledger
 openedx-ledger==1.5.14
     # via -r requirements/test.txt
-packaging==24.1
+packaging==24.2
     # via
     #   -r requirements/test.txt
     #   build
@@ -524,7 +524,7 @@ rfc3986==2.0.0
     # via twine
 rich==13.9.4
     # via twine
-rpds-py==0.20.1
+rpds-py==0.21.0
     # via
     #   -r requirements/test.txt
     #   jsonschema
@@ -625,7 +625,7 @@ virtualenv==20.27.1
     # via
     #   -r requirements/test.txt
     #   tox
-zipp==3.20.2
+zipp==3.21.0
     # via importlib-metadata
 
 # The following packages are considered to be unsafe in a requirements file:

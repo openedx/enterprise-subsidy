@@ -443,7 +443,7 @@ openedx-ledger==1.5.14
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-packaging==24.1
+packaging==24.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -643,7 +643,7 @@ rich==13.9.4
     # via
     #   -r requirements/quality.txt
     #   twine
-rpds-py==0.20.1
+rpds-py==0.21.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -741,7 +741,7 @@ virtualenv==20.27.1
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   tox
-zipp==3.20.2
+zipp==3.21.0
     # via
     #   -r requirements/quality.txt
     #   importlib-metadata
