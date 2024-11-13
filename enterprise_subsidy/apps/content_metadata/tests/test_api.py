@@ -420,16 +420,18 @@ class ContentMetadataApiTests(TestCase):
         actual_price = self.content_metadata_api.price_for_content(content_data, course_run_data)
         self.assertEqual(expected_price, actual_price)
 
+    @mock.patch('enterprise_subsidy.apps.content_metadata.api.EnterpriseCatalogApiClientV2')
     @mock.patch('enterprise_subsidy.apps.content_metadata.api.EnterpriseCatalogApiClient')
-    def test_tiered_caching_works(self, mock_catalog_client):
+    def test_tiered_caching_works(self, mock_catalog_client_v1, mock_catalog_client_v2):
         """
         Tests that consecutive calls for the same content metadata
         within the same request utilize the cache.
         """
         cache_key = content_metadata_for_customer_cache_key(self.enterprise_customer_uuid, self.course_key)
         self.assertFalse(TieredCache.get_cached_response(cache_key).is_found)
-        client_instance = mock_catalog_client.return_value
-        client_instance.get_content_metadata_for_customer.return_value = {'the': 'metadata'}
+        client_instance_v1 = mock_catalog_client_v1.return_value
+        client_instance_v2 = mock_catalog_client_v2.return_value
+        client_instance_v2.get_content_metadata_for_customer.return_value = {'the': 'metadata'}
 
         _ = ContentMetadataApi.get_content_metadata_for_customer(self.enterprise_customer_uuid, self.course_key)
 
@@ -446,7 +448,7 @@ class ContentMetadataApiTests(TestCase):
 
         cache_key = content_metadata_cache_key(self.course_key)
         self.assertFalse(TieredCache.get_cached_response(cache_key).is_found)
-        client_instance.get_content_metadata.return_value = {'the': 'metadata'}
+        client_instance_v1.get_content_metadata.return_value = {'the': 'metadata'}
 
         _ = ContentMetadataApi.get_content_metadata(self.course_key)
 
@@ -459,7 +461,7 @@ class ContentMetadataApiTests(TestCase):
             ContentMetadataApi.get_content_metadata(self.course_key),
             {'the': 'metadata'},
         )
-        assert client_instance.get_content_metadata.call_count == 1
+        assert client_instance_v1.get_content_metadata.call_count == 1
         TieredCache.delete_all_tiers(cache_key)
 
     @ddt.data(True, False)
