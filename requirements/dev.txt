@@ -63,7 +63,7 @@ click-log==0.4.0
     # via
     #   -r requirements/validation.txt
     #   edx-lint
-code-annotations==1.8.0
+code-annotations==1.8.1
     # via
     #   -r requirements/validation.txt
     #   edx-lint
@@ -74,7 +74,7 @@ colorama==0.4.6
     #   tox
 confluent-kafka[avro,schema-registry]==2.6.0
     # via -r requirements/validation.txt
-coverage[toml]==7.6.4
+coverage[toml]==7.6.7
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
@@ -171,7 +171,7 @@ django-simple-history==3.4.0
     #   openedx-ledger
 django-test-migrations==1.4.0
     # via -r requirements/validation.txt
-django-waffle==4.1.0
+django-waffle==4.2.0
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
@@ -252,7 +252,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.1
     # via -r requirements/validation.txt
-faker==30.8.2
+faker==33.0.0
     # via
     #   -r requirements/validation.txt
     #   factory-boy
@@ -331,7 +331,7 @@ lxml[html-clean,html_clean]==5.3.0
     # via
     #   edx-i18n-tools
     #   lxml-html-clean
-lxml-html-clean==0.3.1
+lxml-html-clean==0.4.1
     # via lxml
 markdown-it-py==3.0.0
     # via
@@ -356,7 +356,7 @@ more-itertools==10.5.0
     #   -r requirements/validation.txt
     #   jaraco-classes
     #   jaraco-functools
-mysqlclient==2.2.5
+mysqlclient==2.2.6
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -438,7 +438,7 @@ pygments==2.18.0
     #   diff-cover
     #   readme-renderer
     #   rich
-pyjwt[crypto]==2.9.0
+pyjwt[crypto]==2.10.0
     # via
     #   -r requirements/validation.txt
     #   drf-jwt
@@ -603,7 +603,7 @@ social-auth-core==4.5.4
     #   -r requirements/validation.txt
     #   edx-auth-backends
     #   social-auth-app-django
-sqlparse==0.5.1
+sqlparse==0.5.2
     # via
     #   -r requirements/validation.txt
     #   django

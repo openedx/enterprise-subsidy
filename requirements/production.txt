@@ -37,7 +37,7 @@ click==8.1.7
     #   -r requirements/base.txt
     #   code-annotations
     #   edx-django-utils
-code-annotations==1.8.0
+code-annotations==1.8.1
     # via
     #   -r requirements/base.txt
     #   edx-toggles
@@ -111,7 +111,7 @@ django-simple-history==3.4.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-django-waffle==4.1.0
+django-waffle==4.2.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -189,7 +189,7 @@ fastavro==1.9.7
     #   openedx-events
 getsmarter-api-clients==0.6.1
     # via -r requirements/base.txt
-gevent==24.10.3
+gevent==24.11.1
     # via -r requirements/production.in
 greenlet==3.1.1
     # via gevent
@@ -224,7 +224,7 @@ markupsafe==3.0.2
     # via
     #   -r requirements/base.txt
     #   jinja2
-mysqlclient==2.2.5
+mysqlclient==2.2.6
     # via
     #   -r requirements/base.txt
     #   -r requirements/production.in
@@ -267,7 +267,7 @@ pycparser==2.22
     # via
     #   -r requirements/base.txt
     #   cffi
-pyjwt[crypto]==2.9.0
+pyjwt[crypto]==2.10.0
     # via
     #   -r requirements/base.txt
     #   drf-jwt
@@ -360,7 +360,7 @@ social-auth-core==4.5.4
     #   -r requirements/base.txt
     #   edx-auth-backends
     #   social-auth-app-django
-sqlparse==0.5.1
+sqlparse==0.5.2
     # via
     #   -r requirements/base.txt
     #   django
