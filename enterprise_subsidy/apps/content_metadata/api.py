@@ -8,7 +8,10 @@ from decimal import Decimal
 from django.conf import settings
 from edx_django_utils.cache import TieredCache
 
-from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
+from enterprise_subsidy.apps.api_client.enterprise_catalog import (
+    EnterpriseCatalogApiClient,
+    EnterpriseCatalogApiClientV2
+)
 from enterprise_subsidy.apps.core.utils import versioned_cache_key
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 
@@ -45,14 +48,6 @@ class ContentMetadataApi:
     """
     An API for interacting with enterprise catalog content metadata.
     """
-
-    def catalog_client(self):
-        """
-        Get a client for access the Enterprise Catalog service API (enterprise-catalog endpoints).  This contains
-        functions used for fetching full content metadata and pricing data on courses. Cached to reduce the chance of
-        repeated calls to auth.
-        """
-        return EnterpriseCatalogApiClient()
 
     def price_for_content_fallback(self, content_data, course_run_data):
         """
@@ -311,7 +306,7 @@ class ContentMetadataApi:
         if cached_response.is_found:
             return cached_response.value
 
-        course_details = EnterpriseCatalogApiClient().get_content_metadata_for_customer(
+        course_details = EnterpriseCatalogApiClientV2().get_content_metadata_for_customer(
             enterprise_customer_uuid,
             content_identifier,
             **kwargs,

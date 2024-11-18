@@ -16,9 +16,13 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
     """
     API client for calls to the enterprise service.
     """
-    api_base_url = urljoin(settings.ENTERPRISE_CATALOG_URL, 'api/v1/')
-    metadata_endpoint = urljoin(api_base_url, 'content-metadata/')
-    enterprise_customer_endpoint = urljoin(api_base_url, 'enterprise-customer/')
+    api_version = 'v1'
+
+    def __init__(self):
+        self.api_base_url = urljoin(settings.ENTERPRISE_CATALOG_URL, f'api/{self.api_version}/')
+        self.metadata_endpoint = urljoin(self.api_base_url, 'content-metadata/')
+        self.enterprise_customer_endpoint = urljoin(self.api_base_url, 'enterprise-customer/')
+        super().__init__()
 
     def enterprise_customer_url(self, enterprise_customer_uuid):
         return urljoin(
@@ -92,3 +96,18 @@ class EnterpriseCatalogApiClient(BaseOAuthClient):
                     f'Failed to fetch enterprise customer data for {enterprise_customer_uuid} because {response.text}',
                 )
             raise exc
+
+
+class EnterpriseCatalogApiClientV2(EnterpriseCatalogApiClient):
+    """
+    V2 API client for calls to the enterprise service.
+
+    Right now this just extends the V1 class to avoid duplicate logic.
+    """
+    api_version = 'v2'
+
+    def get_content_metadata(self, content_identifier, **kwargs):
+        """
+        Non-customer-based endpoint does not currently exist with a v2 version.
+        """
+        raise NotImplementedError

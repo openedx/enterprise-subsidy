@@ -24,7 +24,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse
 
 from enterprise_subsidy.apps.api.v1.tests.mixins import STATIC_ENTERPRISE_UUID, STATIC_LMS_USER_ID, APITestMixin
-from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClient
+from enterprise_subsidy.apps.api_client.enterprise_catalog import EnterpriseCatalogApiClientV2
 from enterprise_subsidy.apps.subsidy.constants import SYSTEM_ENTERPRISE_ADMIN_ROLE, SYSTEM_ENTERPRISE_LEARNER_ROLE
 from enterprise_subsidy.apps.subsidy.models import RevenueCategoryChoices, Subsidy
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
@@ -1849,7 +1849,7 @@ class ContentMetadataViewSetTests(APITestBase):
             # Validate that, in the first, non-cached request, we call
             # the enterprise catalog endpoint via the client, and that
             # a `skip_customer_fetch` parameter is included in the request.
-            catalog_customer_base = EnterpriseCatalogApiClient().enterprise_customer_endpoint
+            catalog_customer_base = EnterpriseCatalogApiClientV2().enterprise_customer_endpoint
             expected_request_url = f"{catalog_customer_base}{customer_uuid}/content-metadata/{expected_content_key}/"
             mock_oauth_client.return_value.get.assert_called_once_with(
                 expected_request_url,
@@ -1908,7 +1908,7 @@ class ContentMetadataViewSetTests(APITestBase):
 
             assert response.status_code == catalog_status_code
             assert response.json() == expected_response
-            catalog_customer_endpoint = EnterpriseCatalogApiClient().enterprise_customer_endpoint
+            catalog_customer_endpoint = EnterpriseCatalogApiClientV2().enterprise_customer_endpoint
             expected_request_url = f"{catalog_customer_endpoint}{customer_uuid}/content-metadata/content_key/"
             mock_oauth_client.return_value.get.assert_called_once_with(
                 expected_request_url,
