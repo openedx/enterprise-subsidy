@@ -49,7 +49,7 @@ click==8.1.7
     #   edx-lint
 click-log==0.4.0
     # via edx-lint
-code-annotations==1.8.0
+code-annotations==1.8.1
     # via
     #   -r requirements/base.txt
     #   -r requirements/test.in
@@ -59,7 +59,7 @@ colorama==0.4.6
     # via tox
 confluent-kafka[avro,schema-registry]==2.6.0
     # via -r requirements/base.txt
-coverage[toml]==7.6.4
+coverage[toml]==7.6.7
     # via
     #   -r requirements/test.in
     #   pytest-cov
@@ -143,7 +143,7 @@ django-simple-history==3.4.0
     #   openedx-ledger
 django-test-migrations==1.4.0
     # via -r requirements/test.in
-django-waffle==4.1.0
+django-waffle==4.2.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -218,7 +218,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.1
     # via -r requirements/test.in
-faker==30.8.2
+faker==33.0.0
     # via factory-boy
 fastavro==1.9.7
     # via
@@ -268,7 +268,7 @@ mccabe==0.7.0
     # via pylint
 mock==5.1.0
     # via -r requirements/test.in
-mysqlclient==2.2.5
+mysqlclient==2.2.6
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -321,7 +321,7 @@ pycparser==2.22
     # via
     #   -r requirements/base.txt
     #   cffi
-pyjwt[crypto]==2.9.0
+pyjwt[crypto]==2.10.0
     # via
     #   -r requirements/base.txt
     #   drf-jwt
@@ -443,7 +443,7 @@ social-auth-core==4.5.4
     #   -r requirements/base.txt
     #   edx-auth-backends
     #   social-auth-app-django
-sqlparse==0.5.1
+sqlparse==0.5.2
     # via
     #   -r requirements/base.txt
     #   django
