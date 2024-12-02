@@ -28,7 +28,7 @@ DATABASES = {
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.memcached.PyMemcacheCache',
-        'LOCATION': 'enterprise-subsidy.memcache:11211',
+        'LOCATION': os.environ.get('MEMCACHE_HOST', 'enterprise-subsidy.memcache:11211'),
     }
 
 }
