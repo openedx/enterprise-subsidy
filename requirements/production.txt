@@ -37,13 +37,13 @@ click==8.1.7
     #   -r requirements/base.txt
     #   code-annotations
     #   edx-django-utils
-code-annotations==1.8.2
+code-annotations==2.0.0
     # via
     #   -r requirements/base.txt
     #   edx-toggles
 confluent-kafka[avro,schema-registry]==2.6.1
     # via -r requirements/base.txt
-cryptography==43.0.3
+cryptography==44.0.0
     # via
     #   -r requirements/base.txt
     #   pyjwt
@@ -136,13 +136,13 @@ drf-jwt==1.19.2
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
-drf-spectacular==0.27.2
+drf-spectacular==0.28.0
     # via -r requirements/base.txt
 drf-yasg==1.21.8
     # via -r requirements/base.txt
 edx-auth-backends==4.4.0
     # via -r requirements/base.txt
-edx-ccx-keys==1.3.0
+edx-ccx-keys==2.0.2
     # via
     #   -r requirements/base.txt
     #   openedx-events
@@ -229,7 +229,7 @@ mysqlclient==2.2.6
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   openedx-ledger
-newrelic==10.3.0
+newrelic==10.3.1
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -244,7 +244,7 @@ openedx-events==9.15.0
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.15
+openedx-ledger==1.5.17
     # via -r requirements/base.txt
 packaging==24.2
     # via
@@ -267,7 +267,7 @@ pycparser==2.22
     # via
     #   -r requirements/base.txt
     #   cffi
-pyjwt[crypto]==2.10.0
+pyjwt[crypto]==2.10.1
     # via
     #   -r requirements/base.txt
     #   drf-jwt
@@ -331,7 +331,7 @@ requests-oauthlib==2.0.0
     #   -r requirements/base.txt
     #   getsmarter-api-clients
     #   social-auth-core
-rpds-py==0.21.0
+rpds-py==0.22.0
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -389,7 +389,7 @@ urllib3==2.2.3
     #   requests
 zope-event==5.0
     # via gevent
-zope-interface==7.1.1
+zope-interface==7.2
     # via gevent
 
 # The following packages are considered to be unsafe in a requirements file:
