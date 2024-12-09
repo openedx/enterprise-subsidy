@@ -9,7 +9,7 @@ asgiref==3.8.1
     #   -r requirements/validation.txt
     #   django
     #   django-cors-headers
-astroid==3.3.5
+astroid==3.3.6
     # via
     #   -r requirements/validation.txt
     #   pylint
@@ -74,7 +74,7 @@ colorama==0.4.6
     #   tox
 confluent-kafka[avro,schema-registry]==2.6.1
     # via -r requirements/validation.txt
-coverage[toml]==7.6.8
+coverage[toml]==7.6.9
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
@@ -103,7 +103,7 @@ distlib==0.3.9
     # via
     #   -r requirements/validation.txt
     #   virtualenv
-django==4.2.16
+django==4.2.17
     # via
     #   -r requirements/validation.txt
     #   django-clearcache
@@ -214,7 +214,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-edx-django-utils==7.0.1
+edx-django-utils==7.1.0
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
@@ -522,7 +522,7 @@ readme-renderer==44.0
     # via
     #   -r requirements/validation.txt
     #   twine
-redis==5.2.0
+redis==5.2.1
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -561,7 +561,7 @@ rich==13.9.4
     # via
     #   -r requirements/validation.txt
     #   twine
-rpds-py==0.22.0
+rpds-py==0.22.3
     # via
     #   -r requirements/validation.txt
     #   jsonschema
@@ -578,7 +578,7 @@ semantic-version==2.10.0
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
-six==1.16.0
+six==1.17.0
     # via
     #   -r requirements/validation.txt
     #   edx-auth-backends

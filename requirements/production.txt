@@ -53,7 +53,7 @@ defusedxml==0.8.0rc2
     #   -r requirements/base.txt
     #   python3-openid
     #   social-auth-core
-django==4.2.16
+django==4.2.17
     # via
     #   -r requirements/base.txt
     #   django-clearcache
@@ -150,7 +150,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-edx-django-utils==7.0.1
+edx-django-utils==7.1.0
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
@@ -309,7 +309,7 @@ pyyaml==6.0.2
     #   drf-spectacular
     #   drf-yasg
     #   edx-django-release-util
-redis==5.2.0
+redis==5.2.1
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -331,7 +331,7 @@ requests-oauthlib==2.0.0
     #   -r requirements/base.txt
     #   getsmarter-api-clients
     #   social-auth-core
-rpds-py==0.22.0
+rpds-py==0.22.3
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -344,7 +344,7 @@ semantic-version==2.10.0
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
-six==1.16.0
+six==1.17.0
     # via
     #   -r requirements/base.txt
     #   edx-auth-backends
