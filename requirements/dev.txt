@@ -9,7 +9,7 @@ asgiref==3.8.1
     #   -r requirements/validation.txt
     #   django
     #   django-cors-headers
-astroid==3.3.5
+astroid==3.3.6
     # via
     #   -r requirements/validation.txt
     #   pylint
@@ -32,7 +32,7 @@ cachetools==5.5.0
     # via
     #   -r requirements/validation.txt
     #   tox
-certifi==2024.8.30
+certifi==2024.12.14
     # via
     #   -r requirements/validation.txt
     #   requests
@@ -63,7 +63,7 @@ click-log==0.4.0
     # via
     #   -r requirements/validation.txt
     #   edx-lint
-code-annotations==2.0.0
+code-annotations==2.1.0
     # via
     #   -r requirements/validation.txt
     #   edx-lint
@@ -74,7 +74,7 @@ colorama==0.4.6
     #   tox
 confluent-kafka[avro,schema-registry]==2.6.1
     # via -r requirements/validation.txt
-coverage[toml]==7.6.8
+coverage[toml]==7.6.9
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
@@ -93,7 +93,7 @@ defusedxml==0.8.0rc2
     #   -r requirements/validation.txt
     #   python3-openid
     #   social-auth-core
-diff-cover==9.2.0
+diff-cover==9.2.1
     # via -r requirements/dev.in
 dill==0.3.9
     # via
@@ -103,7 +103,7 @@ distlib==0.3.9
     # via
     #   -r requirements/validation.txt
     #   virtualenv
-django==4.2.16
+django==4.2.17
     # via
     #   -r requirements/validation.txt
     #   django-clearcache
@@ -214,7 +214,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-edx-django-utils==7.0.1
+edx-django-utils==7.1.0
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
@@ -356,7 +356,7 @@ mysqlclient==2.2.6
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-newrelic==10.3.1
+newrelic==10.4.0
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
@@ -522,7 +522,7 @@ readme-renderer==44.0
     # via
     #   -r requirements/validation.txt
     #   twine
-redis==5.2.0
+redis==5.2.1
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -561,7 +561,7 @@ rich==13.9.4
     # via
     #   -r requirements/validation.txt
     #   twine
-rpds-py==0.22.0
+rpds-py==0.22.3
     # via
     #   -r requirements/validation.txt
     #   jsonschema
@@ -578,7 +578,7 @@ semantic-version==2.10.0
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
-six==1.16.0
+six==1.17.0
     # via
     #   -r requirements/validation.txt
     #   edx-auth-backends
@@ -600,7 +600,7 @@ social-auth-core==4.5.4
     #   -r requirements/validation.txt
     #   edx-auth-backends
     #   social-auth-app-django
-sqlparse==0.5.2
+sqlparse==0.5.3
     # via
     #   -r requirements/validation.txt
     #   django

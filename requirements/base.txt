@@ -15,7 +15,7 @@ attrs==24.2.0
     #   referencing
 avro==1.12.0
     # via confluent-kafka
-certifi==2024.8.30
+certifi==2024.12.14
     # via requests
 cffi==1.17.1
     # via
@@ -27,7 +27,7 @@ click==8.1.7
     # via
     #   code-annotations
     #   edx-django-utils
-code-annotations==2.0.0
+code-annotations==2.1.0
     # via edx-toggles
 confluent-kafka[avro,schema-registry]==2.6.1
     # via -r requirements/base.in
@@ -39,7 +39,7 @@ defusedxml==0.8.0rc2
     # via
     #   python3-openid
     #   social-auth-core
-django==4.2.16
+django==4.2.17
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
@@ -129,7 +129,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-edx-django-utils==7.0.1
+edx-django-utils==7.1.0
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
@@ -186,7 +186,7 @@ mysqlclient==2.2.6
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-newrelic==10.3.1
+newrelic==10.4.0
     # via edx-django-utils
 oauthlib==3.2.2
     # via
@@ -239,7 +239,7 @@ pyyaml==6.0.2
     #   drf-spectacular
     #   drf-yasg
     #   edx-django-release-util
-redis==5.2.0
+redis==5.2.1
     # via openedx-ledger
 referencing==0.35.1
     # via
@@ -256,7 +256,7 @@ requests-oauthlib==2.0.0
     # via
     #   getsmarter-api-clients
     #   social-auth-core
-rpds-py==0.22.0
+rpds-py==0.22.3
     # via
     #   jsonschema
     #   referencing
@@ -266,7 +266,7 @@ rules==3.5
     #   openedx-ledger
 semantic-version==2.10.0
     # via edx-drf-extensions
-six==1.16.0
+six==1.17.0
     # via
     #   edx-auth-backends
     #   edx-ccx-keys
@@ -278,7 +278,7 @@ social-auth-core==4.5.4
     # via
     #   edx-auth-backends
     #   social-auth-app-django
-sqlparse==0.5.2
+sqlparse==0.5.3
     # via django
 stevedore==5.4.0
     # via
