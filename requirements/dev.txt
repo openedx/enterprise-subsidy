@@ -4,19 +4,24 @@
 #
 #    make upgrade
 #
+anyio==4.7.0
+    # via
+    #   -r requirements/validation.txt
+    #   httpx
 asgiref==3.8.1
     # via
     #   -r requirements/validation.txt
     #   django
     #   django-cors-headers
-astroid==3.3.6
+astroid==3.3.7
     # via
     #   -r requirements/validation.txt
     #   pylint
     #   pylint-celery
-attrs==24.2.0
+attrs==24.3.0
     # via
     #   -r requirements/validation.txt
+    #   confluent-kafka
     #   jsonschema
     #   openedx-events
     #   referencing
@@ -31,10 +36,13 @@ build==1.2.2.post1
 cachetools==5.5.0
     # via
     #   -r requirements/validation.txt
+    #   confluent-kafka
     #   tox
 certifi==2024.12.14
     # via
     #   -r requirements/validation.txt
+    #   httpcore
+    #   httpx
     #   requests
 cffi==1.17.1
     # via
@@ -50,7 +58,7 @@ charset-normalizer==3.4.0
     # via
     #   -r requirements/validation.txt
     #   requests
-click==8.1.7
+click==8.1.8
     # via
     #   -r requirements/pip-tools.txt
     #   -r requirements/validation.txt
@@ -72,7 +80,7 @@ colorama==0.4.6
     # via
     #   -r requirements/validation.txt
     #   tox
-confluent-kafka[avro,schema-registry]==2.6.1
+confluent-kafka[avro,schema-registry]==2.7.0
     # via -r requirements/validation.txt
 coverage[toml]==7.6.9
     # via
@@ -256,7 +264,7 @@ faker==33.1.0
     # via
     #   -r requirements/validation.txt
     #   factory-boy
-fastavro==1.9.7
+fastavro==1.10.0
     # via
     #   -r requirements/validation.txt
     #   confluent-kafka
@@ -268,9 +276,23 @@ filelock==3.16.1
     #   virtualenv
 getsmarter-api-clients==0.6.1
     # via -r requirements/validation.txt
+h11==0.14.0
+    # via
+    #   -r requirements/validation.txt
+    #   httpcore
+httpcore==1.0.7
+    # via
+    #   -r requirements/validation.txt
+    #   httpx
+httpx==0.27.2
+    # via
+    #   -r requirements/validation.txt
+    #   confluent-kafka
 idna==3.10
     # via
     #   -r requirements/validation.txt
+    #   anyio
+    #   httpx
     #   requests
 inflection==0.5.1
     # via
@@ -302,7 +324,7 @@ jeepney==0.8.0
     #   -r requirements/validation.txt
     #   keyring
     #   secretstorage
-jinja2==3.1.4
+jinja2==3.1.5
     # via
     #   -r requirements/validation.txt
     #   code-annotations
@@ -360,7 +382,7 @@ newrelic==10.4.0
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
-nh3==0.2.19
+nh3==0.2.20
     # via
     #   -r requirements/validation.txt
     #   readme-renderer
@@ -417,7 +439,7 @@ ply==3.11
     #   djangoql
 polib==1.2.0
     # via edx-i18n-tools
-psutil==6.1.0
+psutil==6.1.1
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
@@ -587,6 +609,11 @@ six==1.17.0
     #   edx-lint
     #   edx-rbac
     #   python-dateutil
+sniffio==1.3.1
+    # via
+    #   -r requirements/validation.txt
+    #   anyio
+    #   httpx
 snowballstemmer==2.2.0
     # via
     #   -r requirements/validation.txt
@@ -626,6 +653,7 @@ twine==6.0.1
 typing-extensions==4.12.2
     # via
     #   -r requirements/validation.txt
+    #   anyio
     #   django-test-migrations
     #   edx-opaque-keys
     #   faker
@@ -634,7 +662,7 @@ uritemplate==4.1.1
     #   -r requirements/validation.txt
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.2.3
+urllib3==2.3.0
     # via
     #   -r requirements/validation.txt
     #   requests
