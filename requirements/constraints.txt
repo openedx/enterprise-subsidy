@@ -13,3 +13,6 @@
 
 # django-simple-history>3.4.0 for this repo... we were not concerned about migration issues
 django-simple-history>=3.4.0,<3.5.0
+
+# confluent-kafka 2.7.0 increased CPU usage
+confluent-kafka<2.6.2
