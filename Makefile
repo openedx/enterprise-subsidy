@@ -195,7 +195,7 @@ dev.stop: # Stops containers so they can be restarted
 	docker-compose stop
 
 app-shell: # Run the app shell as root
-	docker exec -u 0 -it enterprise-subsidy.app bash
+	docker exec -u 0 -it enterprise-subsidy.app bash -c "cd /edx/app/enterprise-subsidy && bash"
 
 db-shell-57: # Run the mysql 5.7 shell as root, enter the app's database
 	docker exec -u 0 -it enterprise-subsidy.db mysql -u root enterprise_subsidy
