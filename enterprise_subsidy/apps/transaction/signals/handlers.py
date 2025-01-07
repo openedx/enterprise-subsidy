@@ -33,7 +33,6 @@ infinite loops are terminated.
   ↳ Updates any assignments as needed.
 """
 import logging
-from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.dispatch import receiver
@@ -49,6 +48,7 @@ from enterprise_subsidy.apps.transaction.api import (
     reverse_transaction
 )
 from enterprise_subsidy.apps.transaction.exceptions import TransactionFulfillmentCancelationException
+from enterprise_subsidy.apps.transaction.utils import unenrollment_can_be_refunded
 
 logger = logging.getLogger(__name__)
 
@@ -80,52 +80,6 @@ def listen_for_transaction_reversal(sender, **kwargs):
         raise exc
 
 
-def unenrollment_can_be_refunded(
-    content_metadata,
-    enterprise_course_enrollment,
-):
-    """
-    helper method to determine if an unenrollment is refundable
-    """
-    # Retrieve the course start date from the content metadata
-    enrollment_course_run_key = enterprise_course_enrollment.get("course_id")
-    course_start_date = None
-    if content_metadata.get('content_type') == 'courserun':
-        course_start_date = content_metadata.get('start')
-    else:
-        for run in content_metadata.get('course_runs', []):
-            if run.get('key') == enrollment_course_run_key:
-                course_start_date = run.get('start')
-                break
-
-    if not course_start_date:
-        logger.warning(
-            f"No course start date found for course run: {enrollment_course_run_key}. "
-            "Unable to determine refundability."
-        )
-        return False
-
-    # https://2u-internal.atlassian.net/browse/ENT-6825
-    # OCM course refundability is defined as True IFF:
-    # ie MAX(enterprise enrollment created at, course start date) + 14 days > unenrolled_at date
-    enrollment_created_datetime = enterprise_course_enrollment.get("created")
-    enrollment_unenrolled_at_datetime = enterprise_course_enrollment.get("unenrolled_at")
-    course_start_datetime = datetime.fromisoformat(course_start_date)
-    refund_cutoff_date = max(course_start_datetime, enrollment_created_datetime) + timedelta(days=14)
-    if refund_cutoff_date > enrollment_unenrolled_at_datetime:
-        logger.info(
-            f"Course run: {enrollment_course_run_key} is refundable for enterprise customer user: "
-            f"{enterprise_course_enrollment.get('enterprise_customer_user')}. Writing Reversal record."
-        )
-        return True
-    else:
-        logger.info(
-            f"Unenrollment from course: {enrollment_course_run_key} by user: "
-            f"{enterprise_course_enrollment.get('enterprise_customer_user')} is not refundable."
-        )
-        return False
-
-
 @receiver(LEARNER_CREDIT_COURSE_ENROLLMENT_REVOKED)
 def handle_lc_enrollment_revoked(**kwargs):
     """
@@ -143,6 +97,12 @@ def handle_lc_enrollment_revoked(**kwargs):
         learner_credit_course_enrollment (dict-like):
             An openedx-events serialized representation of LearnerCreditEnterpriseCourseEnrollment.
     """
+    if not settings.ENABLE_HANDLE_LC_ENROLLMENT_REVOKED:
+        logger.info(
+            "Handling of LEARNER_CREDIT_COURSE_ENROLLMENT_REVOKED event has been disabled. "
+            "Skipping handle_lc_enrollment_revoked() handler."
+        )
+        return
     revoked_enrollment_data = kwargs.get('learner_credit_course_enrollment')
     fulfillment_uuid = revoked_enrollment_data.get("uuid")
     enterprise_course_enrollment = revoked_enrollment_data.get("enterprise_course_enrollment")

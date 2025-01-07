@@ -19,14 +19,10 @@ from openedx_ledger.test_utils.factories import (
     ReversalFactory,
     TransactionFactory
 )
-from pytz import UTC
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
-from enterprise_subsidy.apps.transaction.signals.handlers import (
-    handle_lc_enrollment_revoked,
-    unenrollment_can_be_refunded
-)
+from enterprise_subsidy.apps.transaction.signals.handlers import handle_lc_enrollment_revoked
 from test_utils.utils import MockResponse
 
 
@@ -105,7 +101,6 @@ class TransactionSignalHandlerTestCase(TestCase):
         assert mock_oauth_client.return_value.post.call_count == 0
         self.assertFalse(mock_send_event_bus_reversed.called)
 
-
     @ddt.data(
         # Happy path.
         {},
@@ -141,6 +136,7 @@ class TransactionSignalHandlerTestCase(TestCase):
     @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.reverse_transaction')
     @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.unenrollment_can_be_refunded')
     @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.ContentMetadataApi.get_content_metadata')
+    @override_settings(ENABLE_HANDLE_LC_ENROLLMENT_REVOKED=True)
     def test_handle_lc_enrollment_revoked(
         self,
         mock_get_content_metadata,
@@ -184,59 +180,3 @@ class TransactionSignalHandlerTestCase(TestCase):
             assert any(re.search(expected_log_regex, log) for log in logs.output)
         if expected_reverse_transaction_called:
             mock_reverse_transaction.assert_called_once_with(transaction, unenroll_time=enrollment_unenrolled_at)
-
-    @ddt.data(
-        # ALMOST non-refundable due to enterprise_enrollment_created_at.
-        {
-            "enterprise_enrollment_created_at": datetime(2020, 1, 10, tzinfo=UTC),
-            "course_start_date": datetime(2020, 1, 1, tzinfo=UTC),
-            "unenrolled_at": datetime(2020, 1, 23, tzinfo=UTC),
-            "expected_refundable": True,
-        },
-        # Non-refundable due to enterprise_enrollment_created_at.
-        {
-            "enterprise_enrollment_created_at": datetime(2020, 1, 10, tzinfo=UTC),
-            "course_start_date": datetime(2020, 1, 1, tzinfo=UTC),
-            "unenrolled_at": datetime(2020, 1, 24, tzinfo=UTC),
-            "expected_refundable": False,
-        },
-        # ALMOST non-refundable due to course_start_date.
-        {
-            "enterprise_enrollment_created_at": datetime(2020, 1, 1, tzinfo=UTC),
-            "course_start_date": datetime(2020, 1, 10, tzinfo=UTC),
-            "unenrolled_at": datetime(2020, 1, 23, tzinfo=UTC),
-            "expected_refundable": True,
-        },
-        # Non-refundable due to course_start_date.
-        {
-            "enterprise_enrollment_created_at": datetime(2020, 1, 1, tzinfo=UTC),
-            "course_start_date": datetime(2020, 1, 10, tzinfo=UTC),
-            "unenrolled_at": datetime(2020, 1, 24, tzinfo=UTC),
-            "expected_refundable": False,
-        },
-    )
-    @ddt.unpack
-    def test_unenrollment_can_be_refunded(
-        self,
-        enterprise_enrollment_created_at,
-        course_start_date,
-        unenrolled_at,
-        expected_refundable,
-    ):
-        """
-        Make sure the following forumla is respected:
-
-        MAX(enterprise_enrollment_created_at, course_start_date) + 14 days > unenrolled_at
-        """
-        test_content_metadata = {
-            "content_type": "courserun",
-            "start": course_start_date.strftime('%Y-%m-%dT%H:%M:%SZ'),
-        }
-        test_enterprise_course_enrollment = {
-            "created": enterprise_enrollment_created_at,
-            "unenrolled_at": unenrolled_at,
-        }
-        assert unenrollment_can_be_refunded(
-            test_content_metadata,
-            test_enterprise_course_enrollment,
-        ) == expected_refundable

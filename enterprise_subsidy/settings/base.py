@@ -422,3 +422,11 @@ EVENT_BUS_PRODUCER_CONFIG = {
         },
     },
 }
+
+# FEATURE FLAGS CONFIGURATION
+
+# Enable handling of the LEARNER_CREDIT_COURSE_ENROLLMENT_REVOKED event, which triggers
+# writing of a reversal on learner-initiated unenrollment.
+ENABLE_HANDLE_LC_ENROLLMENT_REVOKED = False
+
+# END FEATURE FLAGS CONFIGURATION
