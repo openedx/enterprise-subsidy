@@ -3,7 +3,6 @@ Management command to fetch enterprise enrollment objects that have been unenrol
 Transaction Reversals where appropriate.
 """
 import logging
-from datetime import datetime, timedelta
 
 from django.conf import settings
 from django.contrib import auth
@@ -14,6 +13,7 @@ from openedx_ledger.models import Transaction, TransactionStateChoices
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
 from enterprise_subsidy.apps.transaction.api import cancel_transaction_external_fulfillment, reverse_transaction
+from enterprise_subsidy.apps.transaction.utils import unenrollment_can_be_refunded
 
 logger = logging.getLogger(__name__)
 User = auth.get_user_model()
@@ -51,67 +51,6 @@ class Command(BaseCommand):
                 'the unenrollments and log the actions that would have been taken.'
             ),
         )
-
-    def convert_unenrollment_datetime_string(self, datetime_str):
-        """
-        Helper method to strip microseconds from a datetime object
-        """
-        try:
-            formatted_datetime = datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M:%SZ")
-        except ValueError:
-            formatted_datetime = datetime.strptime(datetime_str, "%Y-%m-%dT%H:%M:%S.%fZ")
-        return formatted_datetime
-
-    def unenrollment_can_be_refunded(
-        self,
-        content_metadata,
-        enterprise_course_enrollment,
-    ):
-        """
-        helper method to determine if an unenrollment is refundable
-        """
-        # Retrieve the course start date from the content metadata
-        enrollment_course_run_key = enterprise_course_enrollment.get("course_id")
-        enrollment_created_at = enterprise_course_enrollment.get("created")
-        course_start_date = None
-        if content_metadata.get('content_type') == 'courserun':
-            course_start_date = content_metadata.get('start')
-        else:
-            for run in content_metadata.get('course_runs', []):
-                if run.get('key') == enrollment_course_run_key:
-                    course_start_date = run.get('start')
-                    break
-
-        if not course_start_date:
-            logger.warning(
-                f"No course start date found for course run: {enrollment_course_run_key}. "
-                "Unable to determine refundability."
-            )
-            return False
-
-        # https://2u-internal.atlassian.net/browse/ENT-6825
-        # OCM course refundability is defined as True IFF:
-        # ie MAX(enterprise enrollment created at, course start date) + 14 days > unenrolled_at date
-        enrollment_created_at = enterprise_course_enrollment.get("created")
-        enrollment_unenrolled_at = enterprise_course_enrollment.get("unenrolled_at")
-
-        enrollment_created_datetime = self.convert_unenrollment_datetime_string(enrollment_created_at)
-        course_start_datetime = self.convert_unenrollment_datetime_string(course_start_date)
-        enrollment_unenrolled_at_datetime = self.convert_unenrollment_datetime_string(enrollment_unenrolled_at)
-        refund_cutoff_date = max(course_start_datetime, enrollment_created_datetime) + timedelta(days=14)
-
-        if refund_cutoff_date > enrollment_unenrolled_at_datetime:
-            logger.info(
-                f"Course run: {enrollment_course_run_key} is refundable for enterprise customer user: "
-                f"{enterprise_course_enrollment.get('enterprise_customer_user')}. Writing Reversal record."
-            )
-            return True
-        else:
-            logger.info(
-                f"Unenrollment from course: {enrollment_course_run_key} by user: "
-                f"{enterprise_course_enrollment.get('enterprise_customer_user')} is not refundable."
-            )
-            return False
 
     def handle_reversing_enterprise_course_unenrollment(self, unenrollment):
         """
@@ -168,7 +107,7 @@ class Command(BaseCommand):
             content_metadata = self.fetched_content_metadata.get(enrollment_course_run_key)
 
         # Check if the OCM unenrollment is refundable
-        if not self.unenrollment_can_be_refunded(content_metadata, enterprise_course_enrollment):
+        if not unenrollment_can_be_refunded(content_metadata, enterprise_course_enrollment):
             logger.info(
                 f"{self.dry_run_prefix}Unenrollment from course: {enrollment_course_run_key} by user: "
                 f"{enterprise_course_enrollment.get('enterprise_customer_user')} is not refundable."

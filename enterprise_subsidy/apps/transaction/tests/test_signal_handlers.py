@@ -1,10 +1,16 @@
 """
 Tests for the subsidy service transaction app signal handlers
 """
+import re
+from datetime import datetime
 from unittest import mock
+from uuid import uuid4
 
+import ddt
 import pytest
 from django.test import TestCase
+from django.test.utils import override_settings
+from openedx_ledger.models import TransactionStateChoices
 from openedx_ledger.signals.signals import TRANSACTION_REVERSED
 from openedx_ledger.test_utils.factories import (
     ExternalFulfillmentProviderFactory,
@@ -16,9 +22,11 @@ from openedx_ledger.test_utils.factories import (
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
+from enterprise_subsidy.apps.transaction.signals.handlers import handle_lc_enrollment_revoked
 from test_utils.utils import MockResponse
 
 
+@ddt.ddt
 class TransactionSignalHandlerTestCase(TestCase):
     """
     Tests for the transaction signal handlers
@@ -92,3 +100,83 @@ class TransactionSignalHandlerTestCase(TestCase):
 
         assert mock_oauth_client.return_value.post.call_count == 0
         self.assertFalse(mock_send_event_bus_reversed.called)
+
+    @ddt.data(
+        # Happy path.
+        {},
+        # Sad paths:
+        {
+            "transaction_state": None,
+            "expected_log_regex": "No Subsidy Transaction found",
+            "expected_reverse_transaction_called": False,
+        },
+        {
+            "transaction_state": TransactionStateChoices.PENDING,
+            "expected_log_regex": "not in a committed state",
+            "expected_reverse_transaction_called": False,
+        },
+        {
+            "reversal_exists": True,
+            "expected_log_regex": "Found existing Reversal",
+            "expected_reverse_transaction_called": False,
+        },
+        {
+            "refundable": False,
+            "expected_log_regex": "not refundable",
+            "expected_reverse_transaction_called": False,
+        },
+        {
+            "external_fulfillment_will_succeed": False,
+            "expected_log_regex": "no reversal written",
+            "expected_reverse_transaction_called": False,
+        },
+    )
+    @ddt.unpack
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.cancel_transaction_external_fulfillment')
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.reverse_transaction')
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.unenrollment_can_be_refunded')
+    @mock.patch('enterprise_subsidy.apps.transaction.signals.handlers.ContentMetadataApi.get_content_metadata')
+    @override_settings(ENABLE_HANDLE_LC_ENROLLMENT_REVOKED=True)
+    def test_handle_lc_enrollment_revoked(
+        self,
+        mock_get_content_metadata,
+        mock_unenrollment_can_be_refunded,
+        mock_reverse_transaction,
+        mock_cancel_transaction_external_fulfillment,
+        transaction_state=TransactionStateChoices.COMMITTED,
+        reversal_exists=False,
+        refundable=True,
+        external_fulfillment_will_succeed=True,
+        expected_log_regex=None,
+        expected_reverse_transaction_called=True,
+    ):
+        mock_get_content_metadata.return_value = {"unused": "unused"}
+        mock_unenrollment_can_be_refunded.return_value = refundable
+        mock_cancel_transaction_external_fulfillment.return_value = external_fulfillment_will_succeed
+        ledger = LedgerFactory()
+        transaction = None
+        if transaction_state:
+            transaction = TransactionFactory(ledger=ledger, state=transaction_state)
+        if reversal_exists:
+            ReversalFactory(
+                transaction=transaction,
+                quantity=-transaction.quantity,
+            )
+        enrollment_unenrolled_at = datetime(2020, 1, 1)
+        test_lc_course_enrollment = {
+            "uuid": uuid4(),
+            "transaction_id": transaction.uuid if transaction else uuid4(),
+            "enterprise_course_enrollment": {
+                "course_id": "course-v1:bin+bar+baz",
+                "unenrolled_at": enrollment_unenrolled_at,
+                "enterprise_customer_user": {
+                    "unused": "unused",
+                },
+            }
+        }
+        with self.assertLogs(level='INFO') as logs:
+            handle_lc_enrollment_revoked(learner_credit_course_enrollment=test_lc_course_enrollment)
+        if expected_log_regex:
+            assert any(re.search(expected_log_regex, log) for log in logs.output)
+        if expected_reverse_transaction_called:
+            mock_reverse_transaction.assert_called_once_with(transaction, unenroll_time=enrollment_unenrolled_at)

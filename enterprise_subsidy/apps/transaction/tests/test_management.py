@@ -288,7 +288,7 @@ class TestTransactionManagementCommand(TestCase):
                     'enterprise_customer_user': 10,
                     'course_id': self.transaction.content_key,
                     'created': '2023-05-25T19:27:29Z',
-                    'unenrolled_at': '2023-06-1T19:27:29Z',
+                    'unenrolled_at': '2023-06-01T19:27:29Z',
                 },
                 'transaction_id': self.transaction.uuid,
                 'uuid': str(self.transaction.fulfillment_identifier),
@@ -298,7 +298,7 @@ class TestTransactionManagementCommand(TestCase):
                     'enterprise_customer_user': 11,
                     'course_id': self.transaction.content_key,
                     'created': '2023-05-25T19:27:29Z',
-                    'unenrolled_at': '2023-06-1T19:27:29Z',
+                    'unenrolled_at': '2023-06-01T19:27:29Z',
                 },
                 'transaction_id': transaction_uuid_2,
                 'uuid': str(uuid.uuid4()),
@@ -385,7 +385,7 @@ class TestTransactionManagementCommand(TestCase):
                     'enterprise_customer_user': 10,
                     'course_id': self.courserun_key,
                     'created': '2023-05-25T19:27:29Z',
-                    'unenrolled_at': '2023-06-1T19:27:29Z',
+                    'unenrolled_at': '2023-06-01T19:27:29Z',
                 },
                 'transaction_id': uuid.uuid4(),
                 'uuid': self.fulfillment_identifier,
@@ -413,7 +413,7 @@ class TestTransactionManagementCommand(TestCase):
                     'enterprise_customer_user': 10,
                     'course_id': self.courserun_key,
                     'created': '2023-05-25T19:27:29Z',
-                    'unenrolled_at': '2023-06-1T19:27:29Z',
+                    'unenrolled_at': '2023-06-01T19:27:29Z',
                 },
                 'transaction_id': self.transaction.uuid,
                 'uuid': self.fulfillment_identifier,
@@ -441,8 +441,8 @@ class TestTransactionManagementCommand(TestCase):
         'enterprise_subsidy.apps.transaction.api.EnterpriseApiClient'
     )
     @ddt.data(
-        ('2023-05-25T19:27:29Z', '2023-06-1T19:27:29Z'),
-        ('2023-06-1T19:27:29Z', '2023-05-25T19:27:29Z'),
+        ('2023-05-25T19:27:29Z', '2023-06-01T19:27:29Z'),
+        ('2023-06-01T19:27:29Z', '2023-05-25T19:27:29Z'),
     )
     @ddt.unpack
     def test_write_reversals_from_enterprise_unenrollment_refund_period_ended(
@@ -574,7 +574,7 @@ class TestTransactionManagementCommand(TestCase):
                     'enterprise_customer_user': 10,
                     'course_id': self.transaction.content_key,
                     'created': '2023-05-25T19:27:29Z',
-                    'unenrolled_at': '2023-06-1T19:27:29Z',
+                    'unenrolled_at': '2023-06-01T19:27:29Z',
                 },
                 'transaction_id': self.transaction.uuid,
                 'uuid': str(self.transaction.fulfillment_identifier),
@@ -646,7 +646,7 @@ class TestTransactionManagementCommand(TestCase):
             reversal = Reversal.objects.first()
             assert reversal.transaction == self.transaction
             assert reversal.idempotency_key == (
-                f'unenrollment-reversal-{self.transaction.fulfillment_identifier}-2023-06-1T19:27:29Z'
+                f'unenrollment-reversal-{self.transaction.fulfillment_identifier}-2023-06-01T19:27:29Z'
             )
             mock_send_event_bus_reversed.assert_called_once_with(self.transaction)
         else:
@@ -692,7 +692,7 @@ class TestTransactionManagementCommand(TestCase):
                     'enterprise_customer_user': 10,
                     'course_id': self.geag_transaction.content_key,
                     'created': '2023-05-25T19:27:29Z',
-                    'unenrolled_at': '2023-06-1T19:27:29Z',
+                    'unenrolled_at': '2023-06-01T19:27:29Z',
                 },
                 'transaction_id': self.geag_transaction.uuid,
                 'uuid': str(self.geag_transaction.fulfillment_identifier),
@@ -797,7 +797,7 @@ class TestTransactionManagementCommand(TestCase):
                     'enterprise_customer_user': 10,
                     'course_id': self.unknown_transaction.content_key,
                     'created': '2023-05-25T19:27:29Z',
-                    'unenrolled_at': '2023-06-1T19:27:29Z',
+                    'unenrolled_at': '2023-06-01T19:27:29Z',
                 },
                 'transaction_id': self.unknown_transaction.uuid,
                 'uuid': str(self.unknown_transaction.fulfillment_identifier),
