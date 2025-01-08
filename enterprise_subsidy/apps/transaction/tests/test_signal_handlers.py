@@ -10,6 +10,11 @@ import ddt
 import pytest
 from django.test import TestCase
 from django.test.utils import override_settings
+from openedx_events.enterprise.data import (
+    EnterpriseCourseEnrollment,
+    EnterpriseCustomerUser,
+    LearnerCreditEnterpriseCourseEnrollment
+)
 from openedx_ledger.models import TransactionStateChoices
 from openedx_ledger.signals.signals import TRANSACTION_REVERSED
 from openedx_ledger.test_utils.factories import (
@@ -163,17 +168,37 @@ class TransactionSignalHandlerTestCase(TestCase):
                 quantity=-transaction.quantity,
             )
         enrollment_unenrolled_at = datetime(2020, 1, 1)
-        test_lc_course_enrollment = {
-            "uuid": uuid4(),
-            "transaction_id": transaction.uuid if transaction else uuid4(),
-            "enterprise_course_enrollment": {
-                "course_id": "course-v1:bin+bar+baz",
-                "unenrolled_at": enrollment_unenrolled_at,
-                "enterprise_customer_user": {
-                    "unused": "unused",
-                },
-            }
-        }
+        test_lc_course_enrollment = LearnerCreditEnterpriseCourseEnrollment(
+            uuid=uuid4(),
+            created=datetime(2020, 1, 1, 12, 0),
+            modified=datetime(2020, 1, 1, 12, 0),
+            fulfillment_type="learner_credit",
+            is_revoked=True,
+            enterprise_course_entitlement_uuid=None,
+            transaction_id=(transaction.uuid if transaction else uuid4()),
+            enterprise_course_enrollment=EnterpriseCourseEnrollment(
+                id=1,
+                created=datetime(2020, 1, 1, 12, 0),
+                modified=datetime(2020, 1, 1, 12, 0),
+                course_id="course-v1:bin+bar+baz",
+                saved_for_later=False,
+                source_slug=None,
+                unenrolled=True,
+                unenrolled_at=enrollment_unenrolled_at,
+                enterprise_customer_user=EnterpriseCustomerUser(
+                    id=1,
+                    created=datetime(2020, 1, 1, 12, 0),
+                    modified=datetime(2020, 1, 1, 12, 0),
+                    enterprise_customer_uuid=uuid4(),
+                    user_id=1,
+                    active=True,
+                    linked=True,
+                    is_relinkable=True,
+                    should_inactivate_other_customers=True,
+                    invite_key=None,
+                ),
+            ),
+        )
         with self.assertLogs(level='INFO') as logs:
             handle_lc_enrollment_revoked(learner_credit_course_enrollment=test_lc_course_enrollment)
         if expected_log_regex:

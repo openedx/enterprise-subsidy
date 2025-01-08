@@ -104,14 +104,14 @@ def handle_lc_enrollment_revoked(**kwargs):
         )
         return
     revoked_enrollment_data = kwargs.get('learner_credit_course_enrollment')
-    fulfillment_uuid = revoked_enrollment_data.get("uuid")
-    enterprise_course_enrollment = revoked_enrollment_data.get("enterprise_course_enrollment")
-    enrollment_course_run_key = enterprise_course_enrollment.get("course_id")
-    enrollment_unenrolled_at = enterprise_course_enrollment.get("unenrolled_at")
+    fulfillment_uuid = revoked_enrollment_data.uuid
+    enterprise_course_enrollment = revoked_enrollment_data.enterprise_course_enrollment
+    enrollment_course_run_key = enterprise_course_enrollment.course_id
+    enrollment_unenrolled_at = enterprise_course_enrollment.unenrolled_at
 
     # Look for a transaction related to the unenrollment
     related_transaction = Transaction.objects.filter(
-        uuid=revoked_enrollment_data.get('transaction_id')
+        uuid=revoked_enrollment_data.transaction_id
     ).first()
     if not related_transaction:
         logger.info(
@@ -151,16 +151,16 @@ def handle_lc_enrollment_revoked(**kwargs):
     )
 
     # Check if the OCM unenrollment is refundable
-    if not unenrollment_can_be_refunded(content_metadata, enterprise_course_enrollment):
+    if not unenrollment_can_be_refunded(content_metadata, enterprise_course_enrollment.__dict__):
         logger.info(
             f"Unenrollment from course: {enrollment_course_run_key} by user: "
-            f"{enterprise_course_enrollment.get('enterprise_customer_user')} is not refundable."
+            f"{enterprise_course_enrollment.enterprise_customer_user} is not refundable."
         )
         return
 
     logger.info(
         f"Course run: {enrollment_course_run_key} is refundable for enterprise "
-        f"customer user: {enterprise_course_enrollment.get('enterprise_customer_user')}. Writing "
+        f"customer user: {enterprise_course_enrollment.enterprise_customer_user}. Writing "
         "Reversal record."
     )
 

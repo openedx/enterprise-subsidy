@@ -60,10 +60,11 @@ def unenrollment_can_be_refunded(
 
     Args:
       content_metadata (dict): Metadata for course from which the learner has been unenrolled.
-      enterprise_course_enrollment: (dict-like):
-        Serialized ECE object. This supports two possible serialization formats:
-          1. Serialized via the DRF when calling the unenrolled API.
-          2. Serialized via openedx-events when edx-enterprise emits a learner credit lifecycle event.
+      enterprise_course_enrollment: (dict):
+        Serialized ECE object. If the caller has an instance of
+        openedx_events.enterprise.data.EnterpriseCourseEnrollment, coerce to
+        data object first:
+          ece_record.__dict__
 
     """
     # Retrieve the course start date from the content metadata
