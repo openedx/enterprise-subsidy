@@ -106,7 +106,8 @@ def handle_lc_enrollment_revoked(**kwargs):
     revoked_enrollment_data = kwargs.get('learner_credit_course_enrollment')
     fulfillment_uuid = revoked_enrollment_data.uuid
     enterprise_course_enrollment = revoked_enrollment_data.enterprise_course_enrollment
-    enrollment_course_run_key = enterprise_course_enrollment.course_id
+    # Convert CourseLocator object to a course run key string.
+    enrollment_course_run_key = str(enterprise_course_enrollment.course_id)
     enrollment_unenrolled_at = enterprise_course_enrollment.unenrolled_at
 
     # Look for a transaction related to the unenrollment

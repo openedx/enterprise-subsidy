@@ -10,6 +10,7 @@ import ddt
 import pytest
 from django.test import TestCase
 from django.test.utils import override_settings
+from opaque_keys.edx.locator import CourseLocator
 from openedx_events.enterprise.data import (
     EnterpriseCourseEnrollment,
     EnterpriseCustomerUser,
@@ -180,7 +181,7 @@ class TransactionSignalHandlerTestCase(TestCase):
                 id=1,
                 created=datetime(2020, 1, 1, 12, 0),
                 modified=datetime(2020, 1, 1, 12, 0),
-                course_id="course-v1:bin+bar+baz",
+                course_id=CourseLocator("bin", "bar", "baz", None, None),
                 saved_for_later=False,
                 source_slug=None,
                 unenrolled=True,
@@ -205,3 +206,6 @@ class TransactionSignalHandlerTestCase(TestCase):
             assert any(re.search(expected_log_regex, log) for log in logs.output)
         if expected_reverse_transaction_called:
             mock_reverse_transaction.assert_called_once_with(transaction, unenroll_time=enrollment_unenrolled_at)
+        if mock_get_content_metadata.mock_calls:
+            # Make sure what we're passing a str to ContentMetadataApi.get_content_metadata(), not a CourseLocator.
+            assert isinstance(mock_get_content_metadata.mock_calls[0].args[0], str)
