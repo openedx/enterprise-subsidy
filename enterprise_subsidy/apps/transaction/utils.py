@@ -63,12 +63,11 @@ def unenrollment_can_be_refunded(
       enterprise_course_enrollment: (dict):
         Serialized ECE object. If the caller has an instance of
         openedx_events.enterprise.data.EnterpriseCourseEnrollment, coerce to
-        data object first:
-          ece_record.__dict__
+        data object first: `ece_record.__dict__`
 
     """
     # Retrieve the course start date from the content metadata
-    enrollment_course_run_key = enterprise_course_enrollment.get("course_id")
+    enrollment_course_run_key = str(enterprise_course_enrollment.get("course_id"))
     course_start_date = None
     if content_metadata.get('content_type') == 'courserun':
         course_start_date = content_metadata.get('start')
