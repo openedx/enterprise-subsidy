@@ -26,13 +26,31 @@ services:
     volumes:
       - .:/edx/app/enterprise-subsidy
       - ../src:/edx/src
-
     command: bash -c 'while true; do python /edx/app/enterprise-subsidy/manage.py runserver 0.0.0.0:18280; sleep 2; done'
     environment:
       DJANGO_SETTINGS_MODULE: enterprise_subsidy.settings.devstack
       ENABLE_DJANGO_TOOLBAR: 1
     ports:
-      - "18280:18280" # TODO: change this to your port
+      - "18280:18280"
+    networks:
+      - devstack_default
+    stdin_open: true
+    tty: true
+    depends_on:
+      - mysql80
+      - memcache
+
+  consume_learner_credit_course_enrollment_lifecycle:
+    image: edxops/enterprise-subsidy-dev
+    container_name: enterprise-subsidy.consume_learner_credit_course_enrollment_lifecycle
+    volumes:
+      - .:/edx/app/enterprise-subsidy
+      - ../src:/edx/src
+    command: bash -c 'while true; do python /edx/app/enterprise-subsidy/manage.py consume_events -t learner-credit-course-enrollment-lifecycle -g enterprise_subsidy_dev; sleep 2; done'
+    environment:
+      DJANGO_SETTINGS_MODULE: enterprise_subsidy.settings.devstack
+    ports:
+      - "18281:18281"
     networks:
       - devstack_default
     stdin_open: true
