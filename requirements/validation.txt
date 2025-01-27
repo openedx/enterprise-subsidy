@@ -21,7 +21,7 @@ astroid==3.3.8
     #   -r requirements/test.txt
     #   pylint
     #   pylint-celery
-attrs==24.3.0
+attrs==25.1.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -34,7 +34,7 @@ avro==1.12.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   confluent-kafka
-cachetools==5.5.0
+cachetools==5.5.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -278,7 +278,7 @@ edx-event-bus-kafka==6.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-edx-lint==5.4.1
+edx-lint==5.6.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -307,7 +307,7 @@ factory-boy==3.3.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-faker==33.3.1
+faker==35.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -318,7 +318,7 @@ fastavro==1.10.0
     #   -r requirements/test.txt
     #   confluent-kafka
     #   openedx-events
-filelock==3.16.1
+filelock==3.17.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -343,6 +343,10 @@ httpx==0.28.1
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   confluent-kafka
+id==1.5.0
+    # via
+    #   -r requirements/quality.txt
+    #   twine
 idna==3.10
     # via
     #   -r requirements/quality.txt
@@ -461,7 +465,7 @@ openedx-events==9.15.2
     #   -r requirements/test.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.17
+openedx-ledger==1.5.18
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -479,10 +483,6 @@ pbr==6.1.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   stevedore
-pkginfo==1.12.0
-    # via
-    #   -r requirements/quality.txt
-    #   twine
 platformdirs==4.3.6
     # via
     #   -r requirements/quality.txt
@@ -567,7 +567,7 @@ pynacl==1.5.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   edx-django-utils
-pyproject-api==1.8.0
+pyproject-api==1.9.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -626,7 +626,7 @@ redis==5.2.1
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-referencing==0.36.1
+referencing==0.36.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -639,6 +639,7 @@ requests==2.32.3
     #   confluent-kafka
     #   edx-drf-extensions
     #   edx-rest-api-client
+    #   id
     #   requests-oauthlib
     #   requests-toolbelt
     #   responses
@@ -738,11 +739,11 @@ tomlkit==0.13.2
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pylint
-tox==4.23.2
+tox==4.24.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-twine==6.0.1
+twine==6.1.0
     # via -r requirements/quality.txt
 typing-extensions==4.12.2
     # via

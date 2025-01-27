@@ -18,7 +18,7 @@ astroid==3.3.8
     #   -r requirements/validation.txt
     #   pylint
     #   pylint-celery
-attrs==24.3.0
+attrs==25.1.0
     # via
     #   -r requirements/validation.txt
     #   confluent-kafka
@@ -33,7 +33,7 @@ build==1.2.2.post1
     # via
     #   -r requirements/pip-tools.txt
     #   pip-tools
-cachetools==5.5.0
+cachetools==5.5.1
     # via
     #   -r requirements/validation.txt
     #   confluent-kafka
@@ -240,7 +240,7 @@ edx-event-bus-kafka==6.0.0
     # via -r requirements/validation.txt
 edx-i18n-tools==1.6.3
     # via -r requirements/dev.in
-edx-lint==5.4.1
+edx-lint==5.6.0
     # via -r requirements/validation.txt
 edx-opaque-keys[django]==2.11.0
     # via
@@ -260,7 +260,7 @@ edx-toggles==5.2.0
     #   edx-event-bus-kafka
 factory-boy==3.3.1
     # via -r requirements/validation.txt
-faker==33.3.1
+faker==35.0.0
     # via
     #   -r requirements/validation.txt
     #   factory-boy
@@ -269,7 +269,7 @@ fastavro==1.10.0
     #   -r requirements/validation.txt
     #   confluent-kafka
     #   openedx-events
-filelock==3.16.1
+filelock==3.17.0
     # via
     #   -r requirements/validation.txt
     #   tox
@@ -288,6 +288,10 @@ httpx==0.28.1
     # via
     #   -r requirements/validation.txt
     #   confluent-kafka
+id==1.5.0
+    # via
+    #   -r requirements/validation.txt
+    #   twine
 idna==3.10
     # via
     #   -r requirements/validation.txt
@@ -397,7 +401,7 @@ openedx-events==9.15.2
     #   -r requirements/validation.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.17
+openedx-ledger==1.5.18
     # via -r requirements/validation.txt
 packaging==24.2
     # via
@@ -417,10 +421,6 @@ pbr==6.1.0
     #   stevedore
 pip-tools==7.4.1
     # via -r requirements/pip-tools.txt
-pkginfo==1.12.0
-    # via
-    #   -r requirements/validation.txt
-    #   twine
 platformdirs==4.3.6
     # via
     #   -r requirements/validation.txt
@@ -495,7 +495,7 @@ pynacl==1.5.0
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
-pyproject-api==1.8.0
+pyproject-api==1.9.0
     # via
     #   -r requirements/validation.txt
     #   tox
@@ -548,7 +548,7 @@ redis==5.2.1
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-referencing==0.36.1
+referencing==0.36.2
     # via
     #   -r requirements/validation.txt
     #   jsonschema
@@ -559,6 +559,7 @@ requests==2.32.3
     #   confluent-kafka
     #   edx-drf-extensions
     #   edx-rest-api-client
+    #   id
     #   requests-oauthlib
     #   requests-toolbelt
     #   responses
@@ -645,9 +646,9 @@ tomlkit==0.13.2
     # via
     #   -r requirements/validation.txt
     #   pylint
-tox==4.23.2
+tox==4.24.1
     # via -r requirements/validation.txt
-twine==6.0.1
+twine==6.1.0
     # via -r requirements/validation.txt
 typing-extensions==4.12.2
     # via

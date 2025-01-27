@@ -10,7 +10,7 @@ asgiref==3.8.1
     # via
     #   django
     #   django-cors-headers
-attrs==24.3.0
+attrs==25.1.0
     # via
     #   confluent-kafka
     #   jsonschema
@@ -18,7 +18,7 @@ attrs==24.3.0
     #   referencing
 avro==1.12.0
     # via confluent-kafka
-cachetools==5.5.0
+cachetools==5.5.1
     # via confluent-kafka
 certifi==2024.12.14
     # via
@@ -215,7 +215,7 @@ openedx-events==9.15.2
     #   -r requirements/base.in
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.17
+openedx-ledger==1.5.18
     # via -r requirements/base.in
 packaging==24.2
     # via drf-yasg
@@ -258,7 +258,7 @@ pyyaml==6.0.2
     #   edx-django-release-util
 redis==5.2.1
     # via openedx-ledger
-referencing==0.36.1
+referencing==0.36.2
     # via
     #   jsonschema
     #   jsonschema-specifications
