@@ -13,7 +13,7 @@ asgiref==3.8.1
     #   -r requirements/base.txt
     #   django
     #   django-cors-headers
-attrs==24.3.0
+attrs==25.1.0
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -24,7 +24,7 @@ avro==1.12.0
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
-cachetools==5.5.0
+cachetools==5.5.1
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -269,7 +269,7 @@ openedx-events==9.15.2
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.17
+openedx-ledger==1.5.18
     # via -r requirements/base.txt
 packaging==24.2
     # via
@@ -338,7 +338,7 @@ redis==5.2.1
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-referencing==0.36.1
+referencing==0.36.2
     # via
     #   -r requirements/base.txt
     #   jsonschema
