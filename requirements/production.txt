@@ -28,7 +28,7 @@ cachetools==5.5.1
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
-certifi==2024.12.14
+certifi==2025.1.31
     # via
     #   -r requirements/base.txt
     #   httpcore
@@ -254,7 +254,7 @@ mysqlclient==2.2.7
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   openedx-ledger
-newrelic==10.4.0
+newrelic==10.5.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -264,7 +264,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.15.2
+openedx-events==9.17.0
     # via
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
@@ -302,7 +302,7 @@ pyjwt[crypto]==2.10.1
     #   social-auth-core
 pymemcache==4.0.0
     # via -r requirements/base.txt
-pymongo==4.10.1
+pymongo==4.11
     # via
     #   -r requirements/base.txt
     #   edx-opaque-keys
@@ -320,7 +320,7 @@ python3-openid==3.2.0
     # via
     #   -r requirements/base.txt
     #   social-auth-core
-pytz==2024.2
+pytz==2025.1
     # via
     #   -r requirements/base.txt
     #   drf-yasg
