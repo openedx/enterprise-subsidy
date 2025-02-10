@@ -33,7 +33,7 @@ cachetools==5.5.1
     #   -r requirements/base.txt
     #   confluent-kafka
     #   tox
-certifi==2024.12.14
+certifi==2025.1.31
     # via
     #   -r requirements/base.txt
     #   httpcore
@@ -69,7 +69,7 @@ colorama==0.4.6
     # via tox
 confluent-kafka[avro,schema-registry]==2.8.0
     # via -r requirements/base.txt
-coverage[toml]==7.6.10
+coverage[toml]==7.6.11
     # via
     #   -r requirements/test.in
     #   pytest-cov
@@ -89,7 +89,7 @@ dill==0.3.9
     # via pylint
 distlib==0.3.9
     # via virtualenv
-django==4.2.18
+django==4.2.19
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.txt
@@ -118,7 +118,7 @@ django==4.2.18
     #   social-auth-app-django
 django-clearcache==1.2.1
     # via -r requirements/base.txt
-django-cors-headers==4.6.0
+django-cors-headers==4.7.0
     # via -r requirements/base.txt
 django-crum==0.7.9
     # via
@@ -226,9 +226,9 @@ edx-toggles==5.2.0
     # via
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
-factory-boy==3.3.1
+factory-boy==3.3.3
     # via -r requirements/test.in
-faker==35.0.0
+faker==35.2.0
     # via factory-boy
 fastavro==1.10.0
     # via
@@ -266,7 +266,7 @@ inflection==0.5.1
     #   drf-yasg
 iniconfig==2.0.0
     # via pytest
-isort==5.13.2
+isort==6.0.0
     # via pylint
 jinja2==3.1.5
     # via
@@ -296,7 +296,7 @@ mysqlclient==2.2.7
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-newrelic==10.4.0
+newrelic==10.6.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -306,7 +306,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.15.2
+openedx-events==9.17.0
     # via
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
@@ -320,7 +320,7 @@ packaging==24.2
     #   pyproject-api
     #   pytest
     #   tox
-pbr==6.1.0
+pbr==6.1.1
     # via
     #   -r requirements/base.txt
     #   stevedore
@@ -353,7 +353,7 @@ pyjwt[crypto]==2.10.1
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.3.3
+pylint==3.3.4
     # via
     #   edx-lint
     #   pylint-celery
@@ -369,7 +369,7 @@ pylint-plugin-utils==0.8.2
     #   pylint-django
 pymemcache==4.0.0
     # via -r requirements/base.txt
-pymongo==4.10.1
+pymongo==4.11
     # via
     #   -r requirements/base.txt
     #   edx-opaque-keys
@@ -397,7 +397,7 @@ python3-openid==3.2.0
     # via
     #   -r requirements/base.txt
     #   social-auth-core
-pytz==2024.2
+pytz==2025.1
     # via
     #   -r requirements/base.txt
     #   drf-yasg

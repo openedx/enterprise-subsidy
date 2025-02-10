@@ -40,7 +40,7 @@ cachetools==5.5.1
     #   -r requirements/test.txt
     #   confluent-kafka
     #   tox
-certifi==2024.12.14
+certifi==2025.1.31
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -91,7 +91,7 @@ confluent-kafka[avro,schema-registry]==2.8.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-coverage[toml]==7.6.10
+coverage[toml]==7.6.11
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -123,7 +123,7 @@ distlib==0.3.9
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   virtualenv
-django==4.2.18
+django==4.2.19
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -154,7 +154,7 @@ django-clearcache==1.2.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-django-cors-headers==4.6.0
+django-cors-headers==4.7.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -303,11 +303,11 @@ edx-toggles==5.2.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   edx-event-bus-kafka
-factory-boy==3.3.1
+factory-boy==3.3.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-faker==35.0.0
+faker==35.2.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -365,7 +365,7 @@ iniconfig==2.0.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pytest
-isort==5.13.2
+isort==6.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -443,7 +443,7 @@ mysqlclient==2.2.7
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-newrelic==10.4.0
+newrelic==10.6.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -459,7 +459,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==9.15.2
+openedx-events==9.17.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -478,7 +478,7 @@ packaging==24.2
     #   pytest
     #   tox
     #   twine
-pbr==6.1.0
+pbr==6.1.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -529,7 +529,7 @@ pyjwt[crypto]==2.10.1
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.3.3
+pylint==3.3.4
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -557,7 +557,7 @@ pymemcache==4.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-pymongo==4.10.1
+pymongo==4.11
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -601,7 +601,7 @@ python3-openid==3.2.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   social-auth-core
-pytz==2024.2
+pytz==2025.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
