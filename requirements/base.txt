@@ -16,6 +16,8 @@ attrs==25.1.0
     #   jsonschema
     #   openedx-events
     #   referencing
+authlib==1.5.1
+    # via confluent-kafka
 avro==1.12.0
     # via confluent-kafka
 cachetools==5.5.2
@@ -37,10 +39,11 @@ click==8.1.8
     #   edx-django-utils
 code-annotations==2.2.0
     # via edx-toggles
-confluent-kafka[avro,schema-registry]==2.8.0
+confluent-kafka[avro,schema-registry]==2.8.2
     # via -r requirements/base.in
-cryptography==44.0.1
+cryptography==44.0.2
     # via
+    #   authlib
     #   pyjwt
     #   social-auth-core
 defusedxml==0.7.1
@@ -127,7 +130,7 @@ drf-jwt==1.19.2
     # via edx-drf-extensions
 drf-spectacular==0.28.0
     # via -r requirements/base.in
-drf-yasg==1.21.8
+drf-yasg==1.21.9
     # via -r requirements/base.in
 edx-auth-backends==4.4.0
     # via -r requirements/base.in
@@ -137,7 +140,7 @@ edx-django-release-util==1.4.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-edx-django-utils==7.1.0
+edx-django-utils==7.2.0
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
