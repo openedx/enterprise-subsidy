@@ -69,7 +69,7 @@ defusedxml==0.7.1
     #   -r requirements/base.txt
     #   python3-openid
     #   social-auth-core
-django==4.2.19
+django==4.2.20
     # via
     #   -r requirements/base.txt
     #   django-clearcache
@@ -234,7 +234,7 @@ inflection==0.5.1
     #   -r requirements/base.txt
     #   drf-spectacular
     #   drf-yasg
-jinja2==3.1.5
+jinja2==3.1.6
     # via
     #   -r requirements/base.txt
     #   code-annotations
@@ -259,7 +259,7 @@ mysqlclient==2.2.7
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   openedx-ledger
-newrelic==10.6.0
+newrelic==10.7.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils

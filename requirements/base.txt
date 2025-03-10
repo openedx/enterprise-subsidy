@@ -50,7 +50,7 @@ defusedxml==0.7.1
     # via
     #   python3-openid
     #   social-auth-core
-django==4.2.19
+django==4.2.20
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
@@ -190,7 +190,7 @@ inflection==0.5.1
     # via
     #   drf-spectacular
     #   drf-yasg
-jinja2==3.1.5
+jinja2==3.1.6
     # via code-annotations
 jsonfield2==4.0.0.post0
     # via
@@ -206,7 +206,7 @@ mysqlclient==2.2.7
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-newrelic==10.6.0
+newrelic==10.7.0
     # via edx-django-utils
 oauthlib==3.2.2
     # via
