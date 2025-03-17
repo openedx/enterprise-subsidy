@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-anyio==4.8.0
+anyio==4.9.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -15,13 +15,13 @@ asgiref==3.8.1
     #   -r requirements/test.txt
     #   django
     #   django-cors-headers
-astroid==3.3.8
+astroid==3.3.9
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pylint
     #   pylint-celery
-attrs==25.1.0
+attrs==25.3.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -96,7 +96,7 @@ confluent-kafka[avro,schema-registry]==2.8.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-coverage[toml]==7.6.12
+coverage[toml]==7.7.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -129,7 +129,7 @@ distlib==0.3.9
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   virtualenv
-django==4.2.19
+django==4.2.20
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -246,7 +246,7 @@ drf-spectacular==0.28.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-drf-yasg==1.21.9
+drf-yasg==1.21.10
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -313,7 +313,7 @@ factory-boy==3.3.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-faker==36.1.1
+faker==37.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -324,7 +324,7 @@ fastavro==1.10.0
     #   -r requirements/test.txt
     #   confluent-kafka
     #   openedx-events
-filelock==3.17.0
+filelock==3.18.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -393,7 +393,7 @@ jeepney==0.9.0
     #   -r requirements/quality.txt
     #   keyring
     #   secretstorage
-jinja2==3.1.5
+jinja2==3.1.6
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -449,7 +449,7 @@ mysqlclient==2.2.7
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-newrelic==10.6.0
+newrelic==10.7.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -535,7 +535,7 @@ pyjwt[crypto]==2.10.1
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.3.4
+pylint==3.3.5
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -656,7 +656,7 @@ requests-toolbelt==1.0.0
     # via
     #   -r requirements/quality.txt
     #   twine
-responses==0.25.6
+responses==0.25.7
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -739,7 +739,7 @@ tomlkit==0.13.2
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pylint
-tox==4.24.1
+tox==4.24.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -771,7 +771,7 @@ urllib3==2.2.3
     #   requests
     #   responses
     #   twine
-virtualenv==20.29.2
+virtualenv==20.29.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
