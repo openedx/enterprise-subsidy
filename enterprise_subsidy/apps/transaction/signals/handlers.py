@@ -154,16 +154,11 @@ def handle_lc_enrollment_revoked(**kwargs):
     # Check if the OCM unenrollment is refundable
     if not unenrollment_can_be_refunded(content_metadata, enterprise_course_enrollment.__dict__):
         logger.info(
-            f"Unenrollment from course: {enrollment_course_run_key} by user: "
+            f"[REVOCATION NOT REFUNDABLE] Unenrollment from course: {enrollment_course_run_key} by user: "
             f"{enterprise_course_enrollment.enterprise_customer_user} is not refundable."
+            f"Transaction uuid: {related_transaction.uuid}"
         )
         return
-
-    logger.info(
-        f"Course run: {enrollment_course_run_key} is refundable for enterprise "
-        f"customer user: {enterprise_course_enrollment.enterprise_customer_user}. Writing "
-        "Reversal record."
-    )
 
     successfully_canceled = cancel_transaction_external_fulfillment(related_transaction)
     if not successfully_canceled:
@@ -174,3 +169,8 @@ def handle_lc_enrollment_revoked(**kwargs):
         return
 
     reverse_transaction(related_transaction, unenroll_time=enrollment_unenrolled_at)
+    logger.info(
+        f"[REVOCATION SUCCESSFULLY REVERSED] Course run: {enrollment_course_run_key} is refundable for enterprise "
+        f"customer user: {enterprise_course_enrollment.enterprise_customer_user}. "
+        f"Reversal record for transaction uuid {related_transaction.uuid} has been created."
+    )
