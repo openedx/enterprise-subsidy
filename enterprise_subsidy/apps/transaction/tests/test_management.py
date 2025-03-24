@@ -3,6 +3,7 @@ Test the Enterprise Subsidy service management commands and related functions.
 """
 
 import uuid
+from datetime import datetime
 from unittest import mock
 
 import ddt
@@ -17,6 +18,7 @@ from openedx_ledger.test_utils.factories import (
     TransactionFactory
 )
 from pytest import mark
+from pytz import UTC
 
 from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
@@ -441,8 +443,8 @@ class TestTransactionManagementCommand(TestCase):
         'enterprise_subsidy.apps.transaction.api.EnterpriseApiClient'
     )
     @ddt.data(
-        ('2023-05-25T19:27:29Z', '2023-06-01T19:27:29Z'),
-        ('2023-06-01T19:27:29Z', '2023-05-25T19:27:29Z'),
+        ('2023-05-25T19:27:29Z', datetime(2023, 6, 1, 19, 7, 29, tzinfo=UTC)),
+        ('2023-06-01T19:27:29Z', datetime(2023, 5, 25, 19, 27, 29, tzinfo=UTC))
     )
     @ddt.unpack
     def test_write_reversals_from_enterprise_unenrollment_refund_period_ended(
@@ -463,6 +465,9 @@ class TestTransactionManagementCommand(TestCase):
         # unenrolled_at is 14 days after the considered refund period start date so the reversal is not created
         unenrolled_at = '2023-06-16T19:27:29Z'
 
+        self.transaction.created = enrollment_created_at
+        self.transaction.save()
+
         # Call to enterprise, fetching recent unenrollments
         mock_fetch_recent_unenrollments_client.return_value.fetch_recent_unenrollments.return_value = [
             {
@@ -470,7 +475,6 @@ class TestTransactionManagementCommand(TestCase):
                     'enterprise_customer_user': 10,
                     'course_id': self.transaction.content_key,
 
-                    'created': enrollment_created_at,
                     'unenrolled_at': unenrolled_at,
                 },
                 'transaction_id': self.transaction.uuid,

@@ -152,7 +152,9 @@ def handle_lc_enrollment_revoked(**kwargs):
     )
 
     # Check if the OCM unenrollment is refundable
-    if not unenrollment_can_be_refunded(content_metadata, enterprise_course_enrollment.__dict__):
+    if not unenrollment_can_be_refunded(
+        content_metadata, enterprise_course_enrollment.__dict__, related_transaction,
+    ):
         logger.info(
             f"[REVOCATION NOT REFUNDABLE] Unenrollment from course: {enrollment_course_run_key} by user: "
             f"{enterprise_course_enrollment.enterprise_customer_user} is not refundable."

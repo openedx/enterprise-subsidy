@@ -54,6 +54,7 @@ def normalize_to_datetime(datetime_or_str):
 def unenrollment_can_be_refunded(
     content_metadata,
     enterprise_course_enrollment,
+    last_committed_transaction,
 ):
     """
     Helper method to determine if an unenrollment is refundable.
@@ -64,6 +65,9 @@ def unenrollment_can_be_refunded(
         Serialized ECE object. If the caller has an instance of
         openedx_events.enterprise.data.EnterpriseCourseEnrollment, coerce to
         data object first: `ece_record.__dict__`
+    last_committed_transaction (Transaction): The last committed, non-reversed transaction
+        associated with this enrollment. It is the responsiblity of the caller to ensure
+        that this Transaction is committed and not reversed.
 
     """
     # Retrieve the course start date from the content metadata
@@ -86,11 +90,11 @@ def unenrollment_can_be_refunded(
 
     # https://2u-internal.atlassian.net/browse/ENT-6825
     # OCM course refundability is defined as True IFF:
-    # ie MAX(enterprise enrollment created at, course start date) + 14 days > unenrolled_at date
-    enrollment_created_datetime = normalize_to_datetime(enterprise_course_enrollment.get("created"))
+    # ie MAX(committed transaction creation time, course start date) + 14 days > unenrolled_at date
+    transaction_creation_time = last_committed_transaction.created
     enrollment_unenrolled_at_datetime = normalize_to_datetime(enterprise_course_enrollment.get("unenrolled_at"))
     course_start_datetime = normalize_to_datetime(course_start_date)
-    refund_cutoff_date = max(course_start_datetime, enrollment_created_datetime) + timedelta(days=14)
+    refund_cutoff_date = max(course_start_datetime, transaction_creation_time) + timedelta(days=14)
     if refund_cutoff_date > enrollment_unenrolled_at_datetime:
         logger.info(
             f"Course run: {enrollment_course_run_key} is refundable for enterprise customer user: "
