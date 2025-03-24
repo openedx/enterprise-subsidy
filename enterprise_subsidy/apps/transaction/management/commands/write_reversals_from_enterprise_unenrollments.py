@@ -4,10 +4,8 @@ Transaction Reversals where appropriate.
 """
 import logging
 
-from django.conf import settings
 from django.contrib import auth
 from django.core.management.base import BaseCommand
-from getsmarter_api_clients.geag import GetSmarterEnterpriseApiClient
 from openedx_ledger.models import Transaction, TransactionStateChoices
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
@@ -31,12 +29,6 @@ class Command(BaseCommand):
         self.dry_run_prefix = ""
         self.dry_run = False
         self.fetched_content_metadata = {}
-        self.geag_client = GetSmarterEnterpriseApiClient(
-            client_id=settings.GET_SMARTER_OAUTH2_KEY,
-            client_secret=settings.GET_SMARTER_OAUTH2_SECRET,
-            provider_url=settings.GET_SMARTER_OAUTH2_PROVIDER_URL,
-            api_url=settings.GET_SMARTER_API_URL
-        )
 
     def add_arguments(self, parser):
         """
@@ -107,17 +99,20 @@ class Command(BaseCommand):
             content_metadata = self.fetched_content_metadata.get(enrollment_course_run_key)
 
         # Check if the OCM unenrollment is refundable
-        if not unenrollment_can_be_refunded(content_metadata, enterprise_course_enrollment):
+        if not unenrollment_can_be_refunded(
+            content_metadata, enterprise_course_enrollment, related_transaction,
+        ):
             logger.info(
                 f"{self.dry_run_prefix}Unenrollment from course: {enrollment_course_run_key} by user: "
-                f"{enterprise_course_enrollment.get('enterprise_customer_user')} is not refundable."
+                f"{enterprise_course_enrollment.get('enterprise_customer_user')} is not refundable. "
+                f"Related transaction {related_transaction.uuid}."
             )
             return 0
 
         logger.info(
             f"{self.dry_run_prefix}Course run: {enrollment_course_run_key} is refundable for enterprise "
             f"customer user: {enterprise_course_enrollment.get('enterprise_customer_user')}. Writing "
-            "Reversal record."
+            f"Reversal record for related transaction {related_transaction.uuid}."
         )
 
         if not self.dry_run:
