@@ -24,7 +24,7 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.5.1
+authlib==1.5.2
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -71,9 +71,9 @@ code-annotations==2.2.0
     #   edx-toggles
 colorama==0.4.6
     # via tox
-confluent-kafka[avro,schema-registry]==2.8.2
+confluent-kafka[avro,schema-registry]==2.9.0
     # via -r requirements/base.txt
-coverage[toml]==7.7.1
+coverage[toml]==7.8.0
     # via
     #   -r requirements/test.in
     #   pytest-cov
@@ -147,7 +147,7 @@ django-model-utils==5.0.0
     # via
     #   -r requirements/base.txt
     #   edx-rbac
-django-object-actions==4.3.0
+django-object-actions==5.0.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -168,7 +168,7 @@ djangoql==0.18.1
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-djangorestframework==3.15.2
+djangorestframework==3.16.0
     # via
     #   -r requirements/base.txt
     #   drf-jwt
@@ -207,7 +207,7 @@ edx-django-utils==7.2.0
     #   getsmarter-api-clients
     #   openedx-events
     #   openedx-ledger
-edx-drf-extensions==10.5.0
+edx-drf-extensions==10.6.0
     # via
     #   -r requirements/base.txt
     #   edx-rbac
@@ -233,7 +233,7 @@ edx-toggles==5.3.0
     #   edx-event-bus-kafka
 factory-boy==3.3.3
     # via -r requirements/test.in
-faker==37.0.2
+faker==37.1.0
     # via factory-boy
 fastavro==1.10.0
     # via
@@ -301,7 +301,7 @@ mysqlclient==2.2.7
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-newrelic==10.7.0
+newrelic==10.8.1
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -316,7 +316,7 @@ openedx-events==9.20.0
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.19
+openedx-ledger==1.5.20
     # via -r requirements/base.txt
 packaging==24.2
     # via
@@ -388,9 +388,9 @@ pytest==8.3.5
     # via
     #   pytest-cov
     #   pytest-django
-pytest-cov==6.0.0
+pytest-cov==6.1.1
     # via -r requirements/test.in
-pytest-django==4.10.0
+pytest-django==4.11.1
     # via -r requirements/test.in
 python-slugify==8.0.4
     # via
@@ -400,7 +400,7 @@ python3-openid==3.2.0
     # via
     #   -r requirements/base.txt
     #   social-auth-core
-pytz==2025.1
+pytz==2025.2
     # via
     #   -r requirements/base.txt
     #   drf-yasg
@@ -439,7 +439,7 @@ requests-oauthlib==2.0.0
     #   social-auth-core
 responses==0.25.7
     # via -r requirements/test.in
-rpds-py==0.23.1
+rpds-py==0.24.0
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -489,9 +489,9 @@ text-unidecode==1.3
     #   python-slugify
 tomlkit==0.13.2
     # via pylint
-tox==4.24.2
+tox==4.25.0
     # via -r requirements/test.in
-typing-extensions==4.12.2
+typing-extensions==4.13.1
     # via
     #   -r requirements/base.txt
     #   anyio
@@ -511,7 +511,7 @@ urllib3==2.2.3
     #   -r requirements/base.txt
     #   requests
     #   responses
-virtualenv==20.29.3
+virtualenv==20.30.0
     # via tox
 
 # The following packages are considered to be unsafe in a requirements file:
