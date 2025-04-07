@@ -20,7 +20,7 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.5.1
+authlib==1.5.2
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -56,7 +56,7 @@ code-annotations==2.2.0
     # via
     #   -r requirements/base.txt
     #   edx-toggles
-confluent-kafka[avro,schema-registry]==2.8.2
+confluent-kafka[avro,schema-registry]==2.9.0
     # via -r requirements/base.txt
 cryptography==44.0.2
     # via
@@ -119,7 +119,7 @@ django-model-utils==5.0.0
     # via
     #   -r requirements/base.txt
     #   edx-rbac
-django-object-actions==4.3.0
+django-object-actions==5.0.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -137,7 +137,7 @@ djangoql==0.18.1
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-djangorestframework==3.15.2
+djangorestframework==3.16.0
     # via
     #   -r requirements/base.txt
     #   drf-jwt
@@ -176,7 +176,7 @@ edx-django-utils==7.2.0
     #   getsmarter-api-clients
     #   openedx-events
     #   openedx-ledger
-edx-drf-extensions==10.5.0
+edx-drf-extensions==10.6.0
     # via
     #   -r requirements/base.txt
     #   edx-rbac
@@ -259,7 +259,7 @@ mysqlclient==2.2.7
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   openedx-ledger
-newrelic==10.7.0
+newrelic==10.8.1
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -274,7 +274,7 @@ openedx-events==9.20.0
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.19
+openedx-ledger==1.5.20
     # via -r requirements/base.txt
 packaging==24.2
     # via
@@ -325,7 +325,7 @@ python3-openid==3.2.0
     # via
     #   -r requirements/base.txt
     #   social-auth-core
-pytz==2025.1
+pytz==2025.2
     # via
     #   -r requirements/base.txt
     #   drf-yasg
@@ -361,7 +361,7 @@ requests-oauthlib==2.0.0
     #   -r requirements/base.txt
     #   getsmarter-api-clients
     #   social-auth-core
-rpds-py==0.23.1
+rpds-py==0.24.0
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -408,7 +408,7 @@ text-unidecode==1.3
     # via
     #   -r requirements/base.txt
     #   python-slugify
-typing-extensions==4.12.2
+typing-extensions==4.13.1
     # via
     #   -r requirements/base.txt
     #   anyio
