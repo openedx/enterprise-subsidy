@@ -39,7 +39,7 @@ click==8.1.8
     #   edx-django-utils
 code-annotations==2.3.0
     # via edx-toggles
-confluent-kafka[avro,schema-registry]==2.9.0
+confluent-kafka[avro,schema-registry]==2.10.0
     # via -r requirements/base.in
 cryptography==44.0.2
     # via
@@ -218,9 +218,9 @@ openedx-events==10.0.0
     #   -r requirements/base.in
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.20
+openedx-ledger==1.5.21
     # via -r requirements/base.in
-packaging==24.2
+packaging==25.0
     # via drf-yasg
 pbr==6.1.1
     # via stevedore
