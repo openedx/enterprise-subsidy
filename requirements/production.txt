@@ -56,7 +56,7 @@ code-annotations==2.3.0
     # via
     #   -r requirements/base.txt
     #   edx-toggles
-confluent-kafka[avro,schema-registry]==2.9.0
+confluent-kafka[avro,schema-registry]==2.10.0
     # via -r requirements/base.txt
 cryptography==44.0.2
     # via
@@ -205,9 +205,9 @@ fastavro==1.10.0
     #   openedx-events
 getsmarter-api-clients==0.6.1
     # via -r requirements/base.txt
-gevent==24.11.1
+gevent==25.4.1
     # via -r requirements/production.in
-greenlet==3.1.1
+greenlet==3.2.0
     # via gevent
 gunicorn==23.0.0
     # via -r requirements/production.in
@@ -274,9 +274,9 @@ openedx-events==10.0.0
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.20
+openedx-ledger==1.5.21
     # via -r requirements/base.txt
-packaging==24.2
+packaging==25.0
     # via
     #   -r requirements/base.txt
     #   drf-yasg
