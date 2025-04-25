@@ -27,6 +27,10 @@ DICT_UPDATE_KEYS = ('JWT_AUTH',)
 MEDIA_STORAGE_BACKEND = {}
 FILE_STORAGE_BACKEND = {}
 
+# Allow extra headers for your specicfic production environment.
+# Set this variable in the config yaml, and the values will be appended to CORS_ALLOW_HEADERS.
+CORS_ALLOW_HEADERS_EXTRA = ()
+
 if 'EDX_ENTERPRISE_SUBSIDY_CFG' in environ:
     CONFIG_FILE = get_env_setting('EDX_ENTERPRISE_SUBSIDY_CFG')
     with open(CONFIG_FILE, encoding='utf-8') as f:
@@ -59,6 +63,14 @@ DB_OVERRIDES = dict(
     HOST=environ.get('DB_MIGRATION_HOST', DATABASES['default']['HOST']),
     PORT=environ.get('DB_MIGRATION_PORT', DATABASES['default']['PORT']),
 )
+
+# BEGIN CORS
+# Inject extra allowed headers specific to a production environment.
+CORS_ALLOW_HEADERS = (
+    *CORS_ALLOW_HEADERS,
+    *CORS_ALLOW_HEADERS_EXTRA,
+)
+# END CORS
 
 for override, value in DB_OVERRIDES.items():
     DATABASES['default'][override] = value
