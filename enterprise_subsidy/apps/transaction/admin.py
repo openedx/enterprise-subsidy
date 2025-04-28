@@ -1,5 +1,6 @@
 """ Top level admin configuration for the subsidy service. """
 
+from django.conf import settings
 from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.urls import re_path, reverse
@@ -13,6 +14,10 @@ from enterprise_subsidy.apps.transaction import views
 
 admin.site.unregister(Transaction)
 admin.site.unregister(Ledger)
+
+
+def can_modify():
+    return getattr(settings, 'ALLOW_LEDGER_MODIFICATION', False)
 
 
 class SubsidyInline(admin.StackedInline):
@@ -71,9 +76,10 @@ class TransactionAdmin(DjangoQLSearchMixin, BaseTransactionAdmin):
         'ledger_uuid',
     ]
 
-    readonly_fields = list(BaseTransactionAdmin.readonly_fields) + [
-        'enterprise_customer_uuid',
-    ]
+    if can_modify():
+        readonly_fields = ['enterprise_customer_uuid']
+    else:
+        readonly_fields = list(BaseTransactionAdmin._all_fields) + ['enterprise_customer_uuid']
 
     def enterprise_customer_uuid(self, tx_obj):
         return tx_obj.ledger.subsidy.enterprise_customer_uuid
