@@ -42,7 +42,7 @@ cachetools==5.5.2
     #   -r requirements/validation.txt
     #   confluent-kafka
     #   tox
-certifi==2025.1.31
+certifi==2025.4.26
     # via
     #   -r requirements/validation.txt
     #   httpcore
@@ -223,7 +223,7 @@ edx-ccx-keys==2.0.2
     # via
     #   -r requirements/validation.txt
     #   openedx-events
-edx-django-release-util==1.4.0
+edx-django-release-util==1.5.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -243,11 +243,11 @@ edx-drf-extensions==10.6.0
     #   edx-rbac
 edx-event-bus-kafka==6.1.0
     # via -r requirements/validation.txt
-edx-i18n-tools==1.7.0
+edx-i18n-tools==1.8.0
     # via -r requirements/dev.in
 edx-lint==5.6.0
     # via -r requirements/validation.txt
-edx-opaque-keys[django]==2.12.0
+edx-opaque-keys[django]==3.0.0
     # via
     #   -r requirements/validation.txt
     #   edx-ccx-keys
@@ -281,11 +281,11 @@ filelock==3.18.0
     #   virtualenv
 getsmarter-api-clients==0.6.1
     # via -r requirements/validation.txt
-h11==0.14.0
+h11==0.16.0
     # via
     #   -r requirements/validation.txt
     #   httpcore
-httpcore==1.0.8
+httpcore==1.0.9
     # via
     #   -r requirements/validation.txt
     #   httpx
@@ -346,7 +346,7 @@ jsonschema==4.23.0
     # via
     #   -r requirements/validation.txt
     #   drf-spectacular
-jsonschema-specifications==2024.10.1
+jsonschema-specifications==2025.4.1
     # via
     #   -r requirements/validation.txt
     #   jsonschema
@@ -354,7 +354,7 @@ keyring==25.6.0
     # via
     #   -r requirements/validation.txt
     #   twine
-lxml[html-clean,html_clean]==5.3.2
+lxml[html-clean,html_clean]==5.4.0
     # via
     #   edx-i18n-tools
     #   lxml-html-clean
@@ -378,7 +378,7 @@ mdurl==0.1.2
     #   markdown-it-py
 mock==5.2.0
     # via -r requirements/validation.txt
-more-itertools==10.6.0
+more-itertools==10.7.0
     # via
     #   -r requirements/validation.txt
     #   jaraco-classes
@@ -387,7 +387,7 @@ mysqlclient==2.2.7
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-newrelic==10.9.0
+newrelic==10.10.0
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
@@ -622,7 +622,7 @@ social-auth-app-django==5.4.3
     # via
     #   -r requirements/validation.txt
     #   edx-auth-backends
-social-auth-core==4.5.6
+social-auth-core==4.6.0
     # via
     #   -r requirements/validation.txt
     #   edx-auth-backends
