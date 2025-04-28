@@ -45,7 +45,7 @@ cachetools==5.5.2
     #   -r requirements/test.txt
     #   confluent-kafka
     #   tox
-certifi==2025.1.31
+certifi==2025.4.26
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -259,7 +259,7 @@ edx-ccx-keys==2.0.2
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-events
-edx-django-release-util==1.4.0
+edx-django-release-util==1.5.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -288,7 +288,7 @@ edx-lint==5.6.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-edx-opaque-keys[django]==2.12.0
+edx-opaque-keys[django]==3.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -334,12 +334,12 @@ getsmarter-api-clients==0.6.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-h11==0.14.0
+h11==0.16.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   httpcore
-httpcore==1.0.8
+httpcore==1.0.9
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -408,7 +408,7 @@ jsonschema==4.23.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   drf-spectacular
-jsonschema-specifications==2024.10.1
+jsonschema-specifications==2025.4.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -439,7 +439,7 @@ mock==5.2.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-more-itertools==10.6.0
+more-itertools==10.7.0
     # via
     #   -r requirements/quality.txt
     #   jaraco-classes
@@ -449,7 +449,7 @@ mysqlclient==2.2.7
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-newrelic==10.9.0
+newrelic==10.10.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -711,7 +711,7 @@ social-auth-app-django==5.4.3
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   edx-auth-backends
-social-auth-core==4.5.6
+social-auth-core==4.6.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
