@@ -518,6 +518,8 @@ pytest-cov==6.1.1
     # via -r requirements/validation.txt
 pytest-django==4.11.1
     # via -r requirements/validation.txt
+python-dateutil==2.9.0.post0
+    # via -r requirements/validation.txt
 python-slugify==8.0.4
     # via
     #   -r requirements/validation.txt
