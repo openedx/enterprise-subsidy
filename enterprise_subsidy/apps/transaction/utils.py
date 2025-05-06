@@ -3,18 +3,22 @@ Utility functions used in the implementation of subsidy Transactions.
 """
 import logging
 from datetime import datetime, timedelta
+from uuid import UUID
 
 from django.db.models import Q
 
 logger = logging.getLogger(__name__)
 
 
-def generate_transaction_reversal_idempotency_key(fulfillment_uuid, enrollment_unenrolled_at):
+def generate_transaction_reversal_idempotency_key(
+    fulfillment_uuid: UUID,
+    enrollment_unenrolled_at: datetime,
+) -> str:
     """
     Generates a unique idempotency key for a transaction reversal using the fulfillment uuid and time at which the
     unenrollment occurred.
     """
-    return f'unenrollment-reversal-{fulfillment_uuid}-{enrollment_unenrolled_at}'
+    return f'unenrollment-reversal-{fulfillment_uuid}-{enrollment_unenrolled_at.isoformat()}'
 
 
 def batch_by_pk(ModelClass, extra_filter=Q(), batch_size=10000):
@@ -65,9 +69,9 @@ def unenrollment_can_be_refunded(
         Serialized ECE object. If the caller has an instance of
         openedx_events.enterprise.data.EnterpriseCourseEnrollment, coerce to
         data object first: `ece_record.__dict__`
-    last_committed_transaction (Transaction): The last committed, non-reversed transaction
-        associated with this enrollment. It is the responsiblity of the caller to ensure
-        that this Transaction is committed and not reversed.
+      last_committed_transaction (Transaction): The last committed, non-reversed transaction
+          associated with this enrollment. It is the responsiblity of the caller to ensure
+          that this Transaction is committed and not reversed.
 
     """
     # Retrieve the course start date from the content metadata

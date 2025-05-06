@@ -2,6 +2,8 @@
 Core business logic around transactions.
 """
 import logging
+from datetime import datetime
+from typing import Optional
 
 import requests
 from django.utils import timezone
@@ -51,18 +53,25 @@ def cancel_transaction_fulfillment(transaction):
         raise TransactionFulfillmentCancelationException(error_msg) from exc
 
 
-def cancel_transaction_external_fulfillment(transaction):
+def cancel_transaction_external_fulfillment(transaction) -> None:
     """
     Cancels all related external fulfillments for the given transaction.
 
     Note: All related external fulfillments that do NOT refer to a GEAG allocation _are skipped_, as only GEAG external
     fulfillments are currently supported. A warning will be logged.
 
+    Returns: None
+
     Raises:
-        TransactionFulfillmentCancelationException: The transaction is not committed, and no actions were taken.
+        TransactionFulfillmentCancelationException:
+            Either when:
+                1. The transaction is not committed.
+                2. The transaction was committed and there are external fulfillments, but
+                   none of the external fulfillment providers were understood.
         requests.exceptions.HTTPError:
             Calling the external platform API to cancel an external fulfillment failed for at least one external
             reference related to the given transaction.
+
     """
     if transaction.state != TransactionStateChoices.COMMITTED:
         logger.info(
@@ -75,7 +84,7 @@ def cancel_transaction_external_fulfillment(transaction):
 
     references = list(transaction.external_reference.all())
     if not references:
-        return True
+        return
 
     fulfillment_cancelation_successful = False
     for external_reference in references:
@@ -86,15 +95,18 @@ def cancel_transaction_external_fulfillment(transaction):
             fulfillment_cancelation_successful = True
         else:
             logger.warning(
-                '[fulfillment cancelation] dont know how to cancel transaction %s with provider %s',
+                "[cancel_transaction_external_fulfillment] Don't know how to cancel transaction %s with provider %s",
                 transaction.uuid,
                 provider_slug,
             )
 
-    return fulfillment_cancelation_successful
+    if not fulfillment_cancelation_successful:
+        raise TransactionFulfillmentCancelationException(
+            "External fulfillments exist, but none were successfully canceled."
+        )
 
 
-def reverse_transaction(transaction, unenroll_time=None):
+def reverse_transaction(transaction, unenroll_time: Optional[datetime] = None):
     """
     Creates a reversal for the provided transaction.
     """

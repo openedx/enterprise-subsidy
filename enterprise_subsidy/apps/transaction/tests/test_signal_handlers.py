@@ -28,6 +28,7 @@ from openedx_ledger.test_utils.factories import (
 
 from enterprise_subsidy.apps.api_client.enterprise import EnterpriseApiClient
 from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
+from enterprise_subsidy.apps.transaction.exceptions import TransactionFulfillmentCancelationException
 from enterprise_subsidy.apps.transaction.signals.handlers import handle_lc_enrollment_revoked
 from test_utils.utils import MockResponse
 
@@ -115,16 +116,19 @@ class TransactionSignalHandlerTestCase(TestCase):
             "transaction_state": None,
             "expected_log_regex": "No Subsidy Transaction found",
             "expected_reverse_transaction_called": False,
+            "expected_cancel_transaction_external_fulfillment_called": False,
         },
         {
             "transaction_state": TransactionStateChoices.PENDING,
             "expected_log_regex": "not in a committed state",
             "expected_reverse_transaction_called": False,
+            "expected_cancel_transaction_external_fulfillment_called": False,
         },
         {
             "reversal_exists": True,
             "expected_log_regex": "Found existing Reversal",
             "expected_reverse_transaction_called": False,
+            "expected_cancel_transaction_external_fulfillment_called": False,
         },
         {
             "refundable": False,
@@ -155,10 +159,14 @@ class TransactionSignalHandlerTestCase(TestCase):
         external_fulfillment_will_succeed=True,
         expected_log_regex=None,
         expected_reverse_transaction_called=True,
+        expected_cancel_transaction_external_fulfillment_called=True,
     ):
         mock_get_content_metadata.return_value = {"unused": "unused"}
         mock_unenrollment_can_be_refunded.return_value = refundable
-        mock_cancel_transaction_external_fulfillment.return_value = external_fulfillment_will_succeed
+        mock_cancel_transaction_external_fulfillment.side_effect = (
+            None if external_fulfillment_will_succeed
+            else TransactionFulfillmentCancelationException()
+        )
         ledger = LedgerFactory()
         transaction = None
         if transaction_state:
@@ -206,6 +214,8 @@ class TransactionSignalHandlerTestCase(TestCase):
             assert any(re.search(expected_log_regex, log) for log in logs.output)
         if expected_reverse_transaction_called:
             mock_reverse_transaction.assert_called_once_with(transaction, unenroll_time=enrollment_unenrolled_at)
+        if expected_cancel_transaction_external_fulfillment_called:
+            mock_cancel_transaction_external_fulfillment.assert_called_once_with(transaction)
         if mock_get_content_metadata.mock_calls:
             # Make sure what we're passing a str to ContentMetadataApi.get_content_metadata(), not a CourseLocator.
             assert isinstance(mock_get_content_metadata.mock_calls[0].args[0], str)

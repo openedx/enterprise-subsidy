@@ -131,7 +131,7 @@ class TestTransactionManagementCommand(TestCase):
                     'created': '2023-05-25T19:27:29Z',
                     'unenrolled_at': unenrolled_at,
                 },
-                'transaction_id': self.transaction.uuid,
+                'transaction_id': str(self.transaction.uuid),
                 'uuid': self.fulfillment_identifier,
             }],
             200
@@ -152,7 +152,7 @@ class TestTransactionManagementCommand(TestCase):
         'EnterpriseApiClient'
     )
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
+        'enterprise_subsidy.apps.transaction.signals.handlers.'
         'ContentMetadataApi'
     )
     @mock.patch(
@@ -182,7 +182,7 @@ class TestTransactionManagementCommand(TestCase):
                     'created': '2023-05-25T19:27:29.182347Z',
                     'unenrolled_at': '2023-06-01T19:27:29.12939Z',
                 },
-                'transaction_id': self.transaction.uuid,
+                'transaction_id': str(self.transaction.uuid),
                 'uuid': str(self.transaction.fulfillment_identifier),
             },
         ]
@@ -257,7 +257,7 @@ class TestTransactionManagementCommand(TestCase):
         'EnterpriseApiClient'
     )
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
+        'enterprise_subsidy.apps.transaction.signals.handlers.'
         'ContentMetadataApi'
     )
     @mock.patch(
@@ -292,7 +292,7 @@ class TestTransactionManagementCommand(TestCase):
                     'created': '2023-05-25T19:27:29Z',
                     'unenrolled_at': '2023-06-01T19:27:29Z',
                 },
-                'transaction_id': self.transaction.uuid,
+                'transaction_id': str(self.transaction.uuid),
                 'uuid': str(self.transaction.fulfillment_identifier),
             },
             {
@@ -302,7 +302,7 @@ class TestTransactionManagementCommand(TestCase):
                     'created': '2023-05-25T19:27:29Z',
                     'unenrolled_at': '2023-06-01T19:27:29Z',
                 },
-                'transaction_id': transaction_uuid_2,
+                'transaction_id': str(transaction_uuid_2),
                 'uuid': str(uuid.uuid4()),
             }
         ]
@@ -363,9 +363,14 @@ class TestTransactionManagementCommand(TestCase):
         }
 
         call_command('write_reversals_from_enterprise_unenrollments')
-        # Assert that we only make two calls with the oauth client, one to the enterprise service to fetch
-        # unenrollments and only one to the catalog service to fetch course metadata
-        assert mock_fetch_course_metadata_client.get_content_metadata.call_count == 1
+        # Assert that we only make one UNIQUE call to the catalog service to fetch course metadata.
+        # The actual number of calls to this get_content_metadat() is irrelevant because TieredCache should locally
+        # cache unique calls for the duration of this management command.
+        unique_call_args_get_content_metadata = {
+            call.args for call in mock_fetch_course_metadata_client.get_content_metadata.call_args_list
+        }
+        assert unique_call_args_get_content_metadata == {(self.transaction.content_key,)}
+        # Assert that we only make one call to the edx-enterprise service to fetch unenrollments.
         assert mock_fetch_recent_unenrollments_client.return_value.fetch_recent_unenrollments.call_count == 1
 
         self.assertEqual(2, Reversal.objects.count())
@@ -389,7 +394,7 @@ class TestTransactionManagementCommand(TestCase):
                     'created': '2023-05-25T19:27:29Z',
                     'unenrolled_at': '2023-06-01T19:27:29Z',
                 },
-                'transaction_id': uuid.uuid4(),
+                'transaction_id': str(uuid.uuid4()),
                 'uuid': self.fulfillment_identifier,
             }],
             200
@@ -417,7 +422,7 @@ class TestTransactionManagementCommand(TestCase):
                     'created': '2023-05-25T19:27:29Z',
                     'unenrolled_at': '2023-06-01T19:27:29Z',
                 },
-                'transaction_id': self.transaction.uuid,
+                'transaction_id': str(self.transaction.uuid),
                 'uuid': self.fulfillment_identifier,
             }],
             200
@@ -436,7 +441,7 @@ class TestTransactionManagementCommand(TestCase):
         'EnterpriseApiClient'
     )
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
+        'enterprise_subsidy.apps.transaction.signals.handlers.'
         'ContentMetadataApi'
     )
     @mock.patch(
@@ -477,7 +482,7 @@ class TestTransactionManagementCommand(TestCase):
 
                     'unenrolled_at': unenrolled_at,
                 },
-                'transaction_id': self.transaction.uuid,
+                'transaction_id': str(self.transaction.uuid),
                 'uuid': str(self.transaction.fulfillment_identifier),
             }
         ]
@@ -550,7 +555,7 @@ class TestTransactionManagementCommand(TestCase):
         'EnterpriseApiClient'
     )
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
+        'enterprise_subsidy.apps.transaction.signals.handlers.'
         'ContentMetadataApi'
     )
     @mock.patch(
@@ -580,7 +585,7 @@ class TestTransactionManagementCommand(TestCase):
                     'created': '2023-05-25T19:27:29Z',
                     'unenrolled_at': '2023-06-01T19:27:29Z',
                 },
-                'transaction_id': self.transaction.uuid,
+                'transaction_id': str(self.transaction.uuid),
                 'uuid': str(self.transaction.fulfillment_identifier),
             }
         ]
@@ -650,7 +655,7 @@ class TestTransactionManagementCommand(TestCase):
             reversal = Reversal.objects.first()
             assert reversal.transaction == self.transaction
             assert reversal.idempotency_key == (
-                f'unenrollment-reversal-{self.transaction.fulfillment_identifier}-2023-06-01T19:27:29Z'
+                f'unenrollment-reversal-{self.transaction.fulfillment_identifier}-2023-06-01T19:27:29+00:00'
             )
             mock_send_event_bus_reversed.assert_called_once_with(self.transaction)
         else:
@@ -666,7 +671,7 @@ class TestTransactionManagementCommand(TestCase):
         'EnterpriseApiClient'
     )
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
+        'enterprise_subsidy.apps.transaction.signals.handlers.'
         'ContentMetadataApi'
     )
     @mock.patch(
@@ -698,7 +703,7 @@ class TestTransactionManagementCommand(TestCase):
                     'created': '2023-05-25T19:27:29Z',
                     'unenrolled_at': '2023-06-01T19:27:29Z',
                 },
-                'transaction_id': self.geag_transaction.uuid,
+                'transaction_id': str(self.geag_transaction.uuid),
                 'uuid': str(self.geag_transaction.fulfillment_identifier),
             }
         ]
@@ -773,7 +778,7 @@ class TestTransactionManagementCommand(TestCase):
         'EnterpriseApiClient'
     )
     @mock.patch(
-        'enterprise_subsidy.apps.transaction.management.commands.write_reversals_from_enterprise_unenrollments.'
+        'enterprise_subsidy.apps.transaction.signals.handlers.'
         'ContentMetadataApi'
     )
     @mock.patch(
@@ -803,7 +808,7 @@ class TestTransactionManagementCommand(TestCase):
                     'created': '2023-05-25T19:27:29Z',
                     'unenrolled_at': '2023-06-01T19:27:29Z',
                 },
-                'transaction_id': self.unknown_transaction.uuid,
+                'transaction_id': str(self.unknown_transaction.uuid),
                 'uuid': str(self.unknown_transaction.fulfillment_identifier),
             }
         ]
