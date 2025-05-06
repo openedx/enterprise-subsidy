@@ -244,7 +244,7 @@ filelock==3.18.0
     # via
     #   tox
     #   virtualenv
-getsmarter-api-clients==0.6.2
+getsmarter-api-clients==0.6.3
     # via -r requirements/base.txt
 h11==0.16.0
     # via
