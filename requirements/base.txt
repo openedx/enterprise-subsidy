@@ -33,7 +33,7 @@ cffi==1.17.1
     #   pynacl
 charset-normalizer==3.4.2
     # via requests
-click==8.1.8
+click==8.2.0
     # via
     #   code-annotations
     #   edx-django-utils
@@ -50,7 +50,7 @@ defusedxml==0.7.1
     # via
     #   python3-openid
     #   social-auth-core
-django==4.2.20
+django==4.2.21
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
@@ -161,7 +161,7 @@ edx-opaque-keys[django]==3.0.0
     #   edx-ccx-keys
     #   edx-drf-extensions
     #   openedx-events
-edx-rbac==1.10.0
+edx-rbac==2.1.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
@@ -213,7 +213,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==10.1.0
+openedx-events==10.2.0
     # via
     #   -r requirements/base.in
     #   edx-event-bus-kafka
