@@ -206,7 +206,7 @@ mysqlclient==2.2.7
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-newrelic==10.11.0
+newrelic==10.12.0
     # via edx-django-utils
 oauthlib==3.2.2
     # via
