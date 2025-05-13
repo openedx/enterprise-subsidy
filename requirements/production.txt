@@ -47,7 +47,7 @@ charset-normalizer==3.4.2
     # via
     #   -r requirements/base.txt
     #   requests
-click==8.1.8
+click==8.2.0
     # via
     #   -r requirements/base.txt
     #   code-annotations
@@ -69,7 +69,7 @@ defusedxml==0.7.1
     #   -r requirements/base.txt
     #   python3-openid
     #   social-auth-core
-django==4.2.20
+django==4.2.21
     # via
     #   -r requirements/base.txt
     #   django-clearcache
@@ -188,7 +188,7 @@ edx-opaque-keys[django]==3.0.0
     #   edx-ccx-keys
     #   edx-drf-extensions
     #   openedx-events
-edx-rbac==1.10.0
+edx-rbac==2.1.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -207,7 +207,7 @@ getsmarter-api-clients==0.6.3
     # via -r requirements/base.txt
 gevent==25.4.2
     # via -r requirements/production.in
-greenlet==3.2.1
+greenlet==3.2.2
     # via gevent
 gunicorn==23.0.0
     # via -r requirements/production.in
@@ -269,7 +269,7 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==10.1.0
+openedx-events==10.2.0
     # via
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
