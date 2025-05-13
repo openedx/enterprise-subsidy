@@ -25,6 +25,7 @@ mysqlclient
 openedx-events
 openedx-ledger
 pymemcache
+python-dateutil
 pytz
 rules
 getsmarter-api-clients

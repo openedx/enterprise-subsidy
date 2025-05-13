@@ -33,7 +33,10 @@ infinite loops are terminated.
   ↳ Updates any assignments as needed.
 """
 import logging
+from uuid import UUID
 
+import dateutil.parser
+import requests
 from django.conf import settings
 from django.dispatch import receiver
 from openedx_events.enterprise.signals import LEARNER_CREDIT_COURSE_ENROLLMENT_REVOKED
@@ -84,18 +87,6 @@ def listen_for_transaction_reversal(sender, **kwargs):
 def handle_lc_enrollment_revoked(**kwargs):
     """
     openedx event handler to respond to LearnerCreditEnterpriseCourseEnrollment revocations.
-
-    The critical bits of this handler's business logic can be summarized as follows:
-
-    * Receive LC fulfillment revocation event and run this handler.
-    * BASE CASE: If this fulfillment's transaction has already been reversed, quit.
-    * BASE CASE: If the refund deadline has passed, quit.
-    * Cancel/unenroll any external fulfillments related to the transaction.
-    * Reverse the transaction.
-
-    Args:
-        learner_credit_course_enrollment (dict-like):
-            An openedx-events serialized representation of LearnerCreditEnterpriseCourseEnrollment.
     """
     if not settings.ENABLE_HANDLE_LC_ENROLLMENT_REVOKED:
         logger.info(
@@ -104,21 +95,57 @@ def handle_lc_enrollment_revoked(**kwargs):
         )
         return
     revoked_enrollment_data = kwargs.get('learner_credit_course_enrollment')
-    fulfillment_uuid = revoked_enrollment_data.uuid
-    enterprise_course_enrollment = revoked_enrollment_data.enterprise_course_enrollment
-    # Convert CourseLocator object to a course run key string.
-    enrollment_course_run_key = str(enterprise_course_enrollment.course_id)
-    enrollment_unenrolled_at = enterprise_course_enrollment.unenrolled_at
+    shared_handle_lc_enrollment_revoked(
+        fulfillment_uuid=revoked_enrollment_data.uuid,
+        transaction_uuid=revoked_enrollment_data.transaction_id,
+        enterprise_course_enrollment=revoked_enrollment_data.enterprise_course_enrollment.__dict__,
+    )
+
+
+def shared_handle_lc_enrollment_revoked(
+    fulfillment_uuid: UUID,
+    transaction_uuid: UUID,
+    enterprise_course_enrollment: dict,
+    dry_run: bool = False
+) -> bool:
+    """
+    Actually handle LearnerCreditEnterpriseCourseEnrollment revocations.
+
+    The critical bits of this handler's business logic can be summarized as follows:
+
+    1. Receive LC fulfillment revocation event and run this handler.
+    2. BASE CASE: If this fulfillment's transaction has already been reversed, quit.
+    3. Cancel/unenroll any external fulfillments related to the transaction.
+    4. BASE CASE: If the refund deadline has passed, quit.
+    5. Reverse the transaction.
+
+
+    Note: This function is reusable by either event handlers being fed attrs-like
+    openedx_events.enterprise.data.EnterpriseCourseEnrollment objects, OR management commands being
+    fed data from the /enterprise/api/v1/operator/enterprise-subsidy-fulfillment/unenrolled/ API
+    endpoint.
+
+    Args:
+        learner_credit_course_enrollment (dict):
+            Dict-serialized representation of LearnerCreditEnterpriseCourseEnrollment. Callers with
+            an attrs object must first call .__dict__ before passing to this function.
+
+    Returns: True if a reversal was written.
+    """
+    # Normalize to str in case we receive a CourseLocator.
+    enrollment_course_run_key = str(enterprise_course_enrollment.get("course_id"))
+    enrollment_unenrolled_at = enterprise_course_enrollment.get("unenrolled_at")
+    # Normalize to datetime in case we receive a str.
+    if isinstance(enrollment_unenrolled_at, str):
+        enrollment_unenrolled_at = dateutil.parser.parse(enrollment_unenrolled_at)
 
     # Look for a transaction related to the unenrollment
-    related_transaction = Transaction.objects.filter(
-        uuid=revoked_enrollment_data.transaction_id
-    ).first()
+    related_transaction = Transaction.objects.filter(uuid=transaction_uuid).first()
     if not related_transaction:
         logger.info(
             f"No Subsidy Transaction found for enterprise fulfillment: {fulfillment_uuid}"
         )
-        return
+        return False
     # Fail early if the transaction is not committed, even though reverse_full_transaction()
     # would throw an exception later anyway.
     if related_transaction.state != TransactionStateChoices.COMMITTED:
@@ -126,7 +153,7 @@ def handle_lc_enrollment_revoked(**kwargs):
             f"Transaction: {related_transaction} is not in a committed state. "
             f"Skipping Reversal creation."
         )
-        return
+        return False
 
     # Look for a Reversal related to the unenrollment
     existing_reversal = related_transaction.get_reversal()
@@ -135,13 +162,37 @@ def handle_lc_enrollment_revoked(**kwargs):
             f"Found existing Reversal: {existing_reversal} for enterprise fulfillment: "
             f"{fulfillment_uuid}. Skipping Reversal creation for Transaction: {related_transaction}."
         )
-        return
+        return False
 
     # Continue on if no reversal found
     logger.info(
         f"No existing Reversal found for enterprise fulfillment: {fulfillment_uuid}. "
-        f"Writing Reversal for Transaction: {related_transaction}."
+        f"Proceeding to attempt to write Reversal for Transaction: {related_transaction}."
     )
+
+    if not dry_run:
+        # Opportunitstically cancel any external fulfillments. [ENT-10284] Do this BEFORE checking
+        # refundability in order to prioritize complete unenrollment and system integrity even in
+        # non-refundable situations.
+        try:
+            cancel_transaction_external_fulfillment(related_transaction)
+        except (TransactionFulfillmentCancelationException, requests.exceptions.HTTPError) as exc:
+            # If any external fulfillments were not canceled, we should not write a reversal because
+            # content would continue to be accessible without payment.
+            logger.error(
+                (
+                    '[shared_handle_lc_enrollment_revoked] Failed attempting to cancel external fulfillment(s) '
+                    'for transaction %s, so no reversal written. Swallowed exception: %s'
+                ),
+                related_transaction.uuid,
+                exc,
+            )
+            return False
+    else:
+        logger.info(
+            f"[DRY_RUN] Would have attempted cancelling external fulfillments for enterprise fulfillment: "
+            f"{fulfillment_uuid}. Transaction: {related_transaction}."
+        )
 
     # NOTE: get_content_metadata() is backed by TieredCache, so this would be performant if a bunch learners unenroll
     # from the same course at the same time. However, normally no two learners in the same course would unenroll within
@@ -153,26 +204,25 @@ def handle_lc_enrollment_revoked(**kwargs):
 
     # Check if the OCM unenrollment is refundable
     if not unenrollment_can_be_refunded(
-        content_metadata, enterprise_course_enrollment.__dict__, related_transaction,
+        content_metadata, enterprise_course_enrollment, related_transaction,
     ):
         logger.info(
-            f"[REVOCATION NOT REFUNDABLE] Unenrollment from course: {enrollment_course_run_key} by user: "
-            f"{enterprise_course_enrollment.enterprise_customer_user} is not refundable."
+            f"[REVOCATION_NOT_REFUNDABLE] Unenrollment from course: {enrollment_course_run_key} by user: "
+            f"{enterprise_course_enrollment.get('enterprise_customer_user')} is not refundable. "
             f"Transaction uuid: {related_transaction.uuid}"
         )
-        return
+        return False
 
-    successfully_canceled = cancel_transaction_external_fulfillment(related_transaction)
-    if not successfully_canceled:
-        logger.warning(
-            'Could not cancel external fulfillment for transaction %s, no reversal written',
-            related_transaction.uuid,
+    if not dry_run:
+        reverse_transaction(related_transaction, unenroll_time=enrollment_unenrolled_at)
+        logger.info(
+            f"[REVOCATION_SUCCESSFULLY_REVERSED] Course run: {enrollment_course_run_key} is refundable for enterprise "
+            f"customer user: {enterprise_course_enrollment.get('enterprise_customer_user')}. "
+            f"Reversal record for transaction uuid {related_transaction.uuid} has been created."
         )
-        return
-
-    reverse_transaction(related_transaction, unenroll_time=enrollment_unenrolled_at)
-    logger.info(
-        f"[REVOCATION SUCCESSFULLY REVERSED] Course run: {enrollment_course_run_key} is refundable for enterprise "
-        f"customer user: {enterprise_course_enrollment.enterprise_customer_user}. "
-        f"Reversal record for transaction uuid {related_transaction.uuid} has been created."
-    )
+    else:
+        logger.info(
+            f"[DRY_RUN] Would have written Reversal record for enterprise fulfillment: "
+            f"{fulfillment_uuid}. Transaction: {related_transaction}."
+        )
+    return True
