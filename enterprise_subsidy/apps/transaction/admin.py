@@ -77,7 +77,7 @@ class TransactionAdmin(DjangoQLSearchMixin, BaseTransactionAdmin):
     ]
 
     if can_modify():
-        readonly_fields = ['enterprise_customer_uuid']
+        readonly_fields = ['enterprise_customer_uuid', 'created', 'modified']
     else:
         readonly_fields = list(BaseTransactionAdmin._all_fields) + ['enterprise_customer_uuid']
 
