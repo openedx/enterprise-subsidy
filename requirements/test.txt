@@ -77,7 +77,7 @@ coverage[toml]==7.8.0
     # via
     #   -r requirements/test.in
     #   pytest-cov
-cryptography==44.0.3
+cryptography==45.0.2
     # via
     #   -r requirements/base.txt
     #   authlib
@@ -233,9 +233,9 @@ edx-toggles==5.3.0
     #   edx-event-bus-kafka
 factory-boy==3.3.3
     # via -r requirements/test.in
-faker==37.1.0
+faker==37.3.0
     # via factory-boy
-fastavro==1.10.0
+fastavro==1.11.1
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -301,7 +301,7 @@ mysqlclient==2.2.7
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-newrelic==10.11.0
+newrelic==10.12.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -311,12 +311,12 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==10.2.0
+openedx-events==10.2.1
     # via
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.21
+openedx-ledger==1.5.23
     # via -r requirements/base.txt
 packaging==25.0
     # via
@@ -334,7 +334,7 @@ platformdirs==4.3.8
     #   pylint
     #   tox
     #   virtualenv
-pluggy==1.5.0
+pluggy==1.6.0
     # via
     #   pytest
     #   tox
@@ -374,7 +374,7 @@ pylint-plugin-utils==0.8.2
     #   pylint-django
 pymemcache==4.0.0
     # via -r requirements/base.txt
-pymongo==4.12.1
+pymongo==4.13.0
     # via
     #   -r requirements/base.txt
     #   edx-opaque-keys
@@ -382,7 +382,7 @@ pynacl==1.5.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
-pyproject-api==1.9.0
+pyproject-api==1.9.1
     # via tox
 pytest==8.3.5
     # via
@@ -416,7 +416,7 @@ pyyaml==6.0.2
     #   drf-yasg
     #   edx-django-release-util
     #   responses
-redis==6.0.0
+redis==6.1.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -441,7 +441,7 @@ requests-oauthlib==2.0.0
     #   social-auth-core
 responses==0.25.7
     # via -r requirements/test.in
-rpds-py==0.24.0
+rpds-py==0.25.0
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -462,6 +462,7 @@ six==1.17.0
     #   edx-django-release-util
     #   edx-lint
     #   edx-rbac
+    #   python-dateutil
 sniffio==1.3.1
     # via
     #   -r requirements/base.txt
@@ -491,7 +492,7 @@ text-unidecode==1.3
     #   python-slugify
 tomlkit==0.13.2
     # via pylint
-tox==4.25.0
+tox==4.26.0
     # via -r requirements/test.in
 typing-extensions==4.13.2
     # via

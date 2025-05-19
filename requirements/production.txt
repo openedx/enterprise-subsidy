@@ -58,7 +58,7 @@ code-annotations==2.3.0
     #   edx-toggles
 confluent-kafka[avro,schema-registry]==2.10.0
     # via -r requirements/base.txt
-cryptography==44.0.3
+cryptography==45.0.2
     # via
     #   -r requirements/base.txt
     #   authlib
@@ -198,14 +198,14 @@ edx-toggles==5.3.0
     # via
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
-fastavro==1.10.0
+fastavro==1.11.1
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
     #   openedx-events
 getsmarter-api-clients==0.6.3
     # via -r requirements/base.txt
-gevent==25.4.2
+gevent==25.5.1
     # via -r requirements/production.in
 greenlet==3.2.2
     # via gevent
@@ -259,7 +259,7 @@ mysqlclient==2.2.7
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   openedx-ledger
-newrelic==10.11.0
+newrelic==10.12.0
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -269,12 +269,12 @@ oauthlib==3.2.2
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==10.2.0
+openedx-events==10.2.1
     # via
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.21
+openedx-ledger==1.5.23
     # via -r requirements/base.txt
 packaging==25.0
     # via
@@ -307,7 +307,7 @@ pyjwt[crypto]==2.10.1
     #   social-auth-core
 pymemcache==4.0.0
     # via -r requirements/base.txt
-pymongo==4.12.1
+pymongo==4.13.0
     # via
     #   -r requirements/base.txt
     #   edx-opaque-keys
@@ -341,7 +341,7 @@ pyyaml==6.0.2
     #   drf-spectacular
     #   drf-yasg
     #   edx-django-release-util
-redis==6.0.0
+redis==6.1.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -363,7 +363,7 @@ requests-oauthlib==2.0.0
     #   -r requirements/base.txt
     #   getsmarter-api-clients
     #   social-auth-core
-rpds-py==0.24.0
+rpds-py==0.25.0
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -383,6 +383,7 @@ six==1.17.0
     #   edx-ccx-keys
     #   edx-django-release-util
     #   edx-rbac
+    #   python-dateutil
 sniffio==1.3.1
     # via
     #   -r requirements/base.txt
