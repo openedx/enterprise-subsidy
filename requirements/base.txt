@@ -16,11 +16,11 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.5.2
+authlib==1.6.0
     # via confluent-kafka
 avro==1.12.0
     # via confluent-kafka
-cachetools==5.5.2
+cachetools==6.0.0
     # via confluent-kafka
 certifi==2025.4.26
     # via
@@ -33,7 +33,7 @@ cffi==1.17.1
     #   pynacl
 charset-normalizer==3.4.2
     # via requests
-click==8.2.0
+click==8.2.1
     # via
     #   code-annotations
     #   edx-django-utils
@@ -41,7 +41,7 @@ code-annotations==2.3.0
     # via edx-toggles
 confluent-kafka[avro,schema-registry]==2.10.0
     # via -r requirements/base.in
-cryptography==45.0.2
+cryptography==45.0.3
     # via
     #   authlib
     #   pyjwt
@@ -140,7 +140,7 @@ edx-django-release-util==1.5.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-edx-django-utils==7.4.0
+edx-django-utils==8.0.0
     # via
     #   -r requirements/base.in
     #   edx-drf-extensions
@@ -206,8 +206,6 @@ mysqlclient==2.2.7
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-newrelic==10.12.0
-    # via edx-django-utils
 oauthlib==3.2.2
     # via
     #   getsmarter-api-clients
@@ -218,7 +216,7 @@ openedx-events==10.2.1
     #   -r requirements/base.in
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.23
+openedx-ledger==1.5.24
     # via -r requirements/base.in
 packaging==25.0
     # via drf-yasg
@@ -278,7 +276,7 @@ requests-oauthlib==2.0.0
     # via
     #   getsmarter-api-clients
     #   social-auth-core
-rpds-py==0.25.0
+rpds-py==0.25.1
     # via
     #   jsonschema
     #   referencing
