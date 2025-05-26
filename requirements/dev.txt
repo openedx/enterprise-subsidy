@@ -25,7 +25,7 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.5.2
+authlib==1.6.0
     # via
     #   -r requirements/validation.txt
     #   confluent-kafka
@@ -37,7 +37,7 @@ build==1.2.2.post1
     # via
     #   -r requirements/pip-tools.txt
     #   pip-tools
-cachetools==5.5.2
+cachetools==6.0.0
     # via
     #   -r requirements/validation.txt
     #   confluent-kafka
@@ -62,7 +62,7 @@ charset-normalizer==3.4.2
     # via
     #   -r requirements/validation.txt
     #   requests
-click==8.2.0
+click==8.2.1
     # via
     #   -r requirements/pip-tools.txt
     #   -r requirements/validation.txt
@@ -86,11 +86,11 @@ colorama==0.4.6
     #   tox
 confluent-kafka[avro,schema-registry]==2.10.0
     # via -r requirements/validation.txt
-coverage[toml]==7.8.0
+coverage[toml]==7.8.2
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
-cryptography==45.0.2
+cryptography==45.0.3
     # via
     #   -r requirements/validation.txt
     #   authlib
@@ -106,7 +106,7 @@ defusedxml==0.7.1
     #   -r requirements/validation.txt
     #   python3-openid
     #   social-auth-core
-diff-cover==9.2.4
+diff-cover==9.3.1
     # via -r requirements/dev.in
 dill==0.4.0
     # via
@@ -227,7 +227,7 @@ edx-django-release-util==1.5.0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-edx-django-utils==7.4.0
+edx-django-utils==8.0.0
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
@@ -387,10 +387,6 @@ mysqlclient==2.2.7
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-newrelic==10.12.0
-    # via
-    #   -r requirements/validation.txt
-    #   edx-django-utils
 nh3==0.2.21
     # via
     #   -r requirements/validation.txt
@@ -406,7 +402,7 @@ openedx-events==10.2.1
     #   -r requirements/validation.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.23
+openedx-ledger==1.5.24
     # via -r requirements/validation.txt
 packaging==25.0
     # via
@@ -587,7 +583,7 @@ rich==14.0.0
     # via
     #   -r requirements/validation.txt
     #   twine
-rpds-py==0.25.0
+rpds-py==0.25.1
     # via
     #   -r requirements/validation.txt
     #   jsonschema

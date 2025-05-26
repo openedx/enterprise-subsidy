@@ -29,7 +29,7 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.5.2
+authlib==1.6.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -39,7 +39,7 @@ avro==1.12.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   confluent-kafka
-cachetools==5.5.2
+cachetools==6.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -68,7 +68,7 @@ charset-normalizer==3.4.2
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   requests
-click==8.2.0
+click==8.2.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -96,12 +96,12 @@ confluent-kafka[avro,schema-registry]==2.10.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-coverage[toml]==7.8.0
+coverage[toml]==7.8.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pytest-cov
-cryptography==45.0.2
+cryptography==45.0.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -264,7 +264,7 @@ edx-django-release-util==1.5.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-edx-django-utils==7.4.0
+edx-django-utils==8.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -449,11 +449,6 @@ mysqlclient==2.2.7
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-newrelic==10.12.0
-    # via
-    #   -r requirements/quality.txt
-    #   -r requirements/test.txt
-    #   edx-django-utils
 nh3==0.2.21
     # via
     #   -r requirements/quality.txt
@@ -471,7 +466,7 @@ openedx-events==10.2.1
     #   -r requirements/test.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.23
+openedx-ledger==1.5.24
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -672,7 +667,7 @@ rich==14.0.0
     # via
     #   -r requirements/quality.txt
     #   twine
-rpds-py==0.25.0
+rpds-py==0.25.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
