@@ -5,13 +5,17 @@ from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.urls import re_path, reverse
 from djangoql.admin import DjangoQLSearchMixin
+from openedx_ledger.admin import AdjustmentAdmin as BaseAdjustmentAdmin
+from openedx_ledger.admin import DepositAdmin as BaseDepositAdmin
 from openedx_ledger.admin import LedgerAdmin as BaseLedgerAdmin
 from openedx_ledger.admin import TransactionAdmin as BaseTransactionAdmin
-from openedx_ledger.models import Ledger, Transaction
+from openedx_ledger.models import Adjustment, Deposit, Ledger, Transaction
 
 from enterprise_subsidy.apps.subsidy.models import Subsidy
 from enterprise_subsidy.apps.transaction import views
 
+admin.site.unregister(Adjustment)
+admin.site.unregister(Deposit)
 admin.site.unregister(Transaction)
 admin.site.unregister(Ledger)
 
@@ -129,3 +133,39 @@ class TransactionAdmin(DjangoQLSearchMixin, BaseTransactionAdmin):
             ),
         ]
         return custom_urls + super().get_urls()
+
+
+@admin.register(Adjustment)
+class AdjustmentAdmin(DjangoQLSearchMixin, BaseAdjustmentAdmin):
+    """
+    Override of the base adjustment admin that supports better search
+    and filter features.
+    """
+    search_fields = BaseAdjustmentAdmin.search_fields + (
+        'uuid',
+        'ledger__uuid',
+        'ledger__subsidy__uuid',
+        'ledger__subsidy__enterprise_customer_uuid',
+        'ledger__subsidy__reference_id',
+    )
+    djangoql_completion_enabled_by_default = False
+
+
+@admin.register(Deposit)
+class DepositAdmin(DjangoQLSearchMixin, BaseDepositAdmin):
+    """
+    Override of the base deposit admin that supports better search
+    and filter features.
+    """
+    search_fields = BaseDepositAdmin.search_fields + (
+        'sales_contract_reference_id',
+        'uuid',
+        'ledger__uuid',
+        'ledger__subsidy__uuid',
+        'ledger__subsidy__enterprise_customer_uuid',
+        'ledger__subsidy__reference_id',
+    )
+    djangoql_completion_enabled_by_default = False
+    list_filter = [
+        'created',
+    ]
