@@ -20,7 +20,7 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.5.2
+authlib==1.6.0
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -28,7 +28,7 @@ avro==1.12.0
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
-cachetools==5.5.2
+cachetools==6.0.0
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -47,7 +47,7 @@ charset-normalizer==3.4.2
     # via
     #   -r requirements/base.txt
     #   requests
-click==8.2.0
+click==8.2.1
     # via
     #   -r requirements/base.txt
     #   code-annotations
@@ -58,7 +58,7 @@ code-annotations==2.3.0
     #   edx-toggles
 confluent-kafka[avro,schema-registry]==2.10.0
     # via -r requirements/base.txt
-cryptography==45.0.2
+cryptography==45.0.3
     # via
     #   -r requirements/base.txt
     #   authlib
@@ -69,7 +69,7 @@ defusedxml==0.7.1
     #   -r requirements/base.txt
     #   python3-openid
     #   social-auth-core
-django==4.2.21
+django==4.2.22
     # via
     #   -r requirements/base.txt
     #   django-clearcache
@@ -166,7 +166,7 @@ edx-django-release-util==1.5.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-edx-django-utils==7.4.0
+edx-django-utils==8.0.0
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
@@ -207,7 +207,7 @@ getsmarter-api-clients==0.6.3
     # via -r requirements/base.txt
 gevent==25.5.1
     # via -r requirements/production.in
-greenlet==3.2.2
+greenlet==3.2.3
     # via gevent
 gunicorn==23.0.0
     # via -r requirements/production.in
@@ -242,7 +242,7 @@ jsonfield2==4.0.0.post0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-jsonschema==4.23.0
+jsonschema==4.24.0
     # via
     #   -r requirements/base.txt
     #   drf-spectacular
@@ -259,10 +259,6 @@ mysqlclient==2.2.7
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   openedx-ledger
-newrelic==10.12.0
-    # via
-    #   -r requirements/base.txt
-    #   edx-django-utils
 oauthlib==3.2.2
     # via
     #   -r requirements/base.txt
@@ -274,7 +270,7 @@ openedx-events==10.2.1
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.5.23
+openedx-ledger==1.6.0
     # via -r requirements/base.txt
 packaging==25.0
     # via
@@ -341,7 +337,7 @@ pyyaml==6.0.2
     #   drf-spectacular
     #   drf-yasg
     #   edx-django-release-util
-redis==6.1.0
+redis==6.2.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -363,7 +359,7 @@ requests-oauthlib==2.0.0
     #   -r requirements/base.txt
     #   getsmarter-api-clients
     #   social-auth-core
-rpds-py==0.25.0
+rpds-py==0.25.1
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -411,13 +407,13 @@ text-unidecode==1.3
     # via
     #   -r requirements/base.txt
     #   python-slugify
-typing-extensions==4.13.2
+typing-extensions==4.14.0
     # via
     #   -r requirements/base.txt
     #   anyio
     #   edx-opaque-keys
     #   referencing
-uritemplate==4.1.1
+uritemplate==4.2.0
     # via
     #   -r requirements/base.txt
     #   drf-spectacular
