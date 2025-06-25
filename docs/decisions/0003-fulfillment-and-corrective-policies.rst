@@ -21,7 +21,7 @@ A successful fulfillment roundtrip between enterprise-subsidy and edx-enterprise
 - When edx-enterprise responds to this request, it should result in an identifier associated with the entitlement
   or enrollment being written as a ``reference identifier`` on the subsidy transaction record, thus
   "committing" the transaction (not to be confused with a relational database commit).
-  
+
 Consider the following cases:
 
 - What happens when the Subsidy API requests an entitlement/enrollment creation during fulfillment,

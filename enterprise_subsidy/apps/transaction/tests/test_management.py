@@ -5,6 +5,7 @@ Test the Enterprise Subsidy service management commands and related functions.
 import uuid
 from datetime import datetime
 from unittest import mock
+from zoneinfo import ZoneInfo
 
 import ddt
 from django.core.management import call_command
@@ -18,7 +19,6 @@ from openedx_ledger.test_utils.factories import (
     TransactionFactory
 )
 from pytest import mark
-from pytz import UTC
 
 from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
@@ -448,8 +448,8 @@ class TestTransactionManagementCommand(TestCase):
         'enterprise_subsidy.apps.transaction.api.EnterpriseApiClient'
     )
     @ddt.data(
-        ('2023-05-25T19:27:29Z', datetime(2023, 6, 1, 19, 7, 29, tzinfo=UTC)),
-        ('2023-06-01T19:27:29Z', datetime(2023, 5, 25, 19, 27, 29, tzinfo=UTC))
+        ('2023-05-25T19:27:29Z', datetime(2023, 6, 1, 19, 7, 29, tzinfo=ZoneInfo("UTC"))),
+        ('2023-06-01T19:27:29Z', datetime(2023, 5, 25, 19, 27, 29, tzinfo=ZoneInfo("UTC")))
     )
     @ddt.unpack
     def test_write_reversals_from_enterprise_unenrollment_refund_period_ended(
