@@ -16,12 +16,12 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         python-version: ['3.12']
-        toxenv: ["django42", "quality", "pii_check"]
+        toxenv: ["django42", "django52", "quality", "pii_check"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: setup python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
