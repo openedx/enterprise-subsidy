@@ -45,7 +45,7 @@ beautifulsoup4==4.13.4
     # via pydata-sphinx-theme
 build==1.2.2.post1
     # via -r requirements/doc.in
-cachetools==6.0.0
+cachetools==6.1.0
     # via
     #   -r requirements/test.txt
     #   confluent-kafka
@@ -219,7 +219,7 @@ drf-spectacular==0.28.0
     # via -r requirements/test.txt
 drf-yasg==1.21.10
     # via -r requirements/test.txt
-edx-auth-backends==4.5.0
+edx-auth-backends==4.6.0
     # via -r requirements/test.txt
 edx-ccx-keys==2.0.2
     # via
@@ -232,6 +232,7 @@ edx-django-release-util==1.5.0
 edx-django-utils==8.0.0
     # via
     #   -r requirements/test.txt
+    #   edx-auth-backends
     #   edx-drf-extensions
     #   edx-event-bus-kafka
     #   edx-rest-api-client
@@ -262,6 +263,7 @@ edx-rest-api-client==6.2.0
 edx-toggles==5.3.0
     # via
     #   -r requirements/test.txt
+    #   edx-auth-backends
     #   edx-event-bus-kafka
 factory-boy==3.3.3
     # via -r requirements/test.txt
@@ -320,7 +322,7 @@ jaraco-classes==3.4.0
     # via keyring
 jaraco-context==6.0.1
     # via keyring
-jaraco-functools==4.1.0
+jaraco-functools==4.2.1
     # via keyring
 jeepney==0.9.0
     # via
@@ -369,7 +371,7 @@ mysqlclient==2.2.7
     #   openedx-ledger
 nh3==0.2.21
     # via readme-renderer
-oauthlib==3.2.2
+oauthlib==3.3.1
     # via
     #   -r requirements/test.txt
     #   getsmarter-api-clients
@@ -423,7 +425,7 @@ pycparser==2.22
     #   cffi
 pydata-sphinx-theme==0.15.4
     # via sphinx-book-theme
-pygments==2.19.1
+pygments==2.19.2
     # via
     #   -r requirements/test.txt
     #   accessible-pygments
@@ -456,14 +458,14 @@ pylint-django==2.6.1
     # via
     #   -r requirements/test.txt
     #   edx-lint
-pylint-plugin-utils==0.8.2
+pylint-plugin-utils==0.9.0
     # via
     #   -r requirements/test.txt
     #   pylint-celery
     #   pylint-django
 pymemcache==4.0.0
     # via -r requirements/test.txt
-pymongo==4.13.1
+pymongo==4.13.2
     # via
     #   -r requirements/test.txt
     #   edx-opaque-keys
@@ -477,7 +479,7 @@ pyproject-api==1.9.1
     #   tox
 pyproject-hooks==1.2.0
     # via build
-pytest==8.4.0
+pytest==8.4.1
     # via
     #   -r requirements/test.txt
     #   pytest-cov
@@ -585,7 +587,7 @@ social-auth-app-django==5.4.3
     # via
     #   -r requirements/test.txt
     #   edx-auth-backends
-social-auth-core==4.6.1
+social-auth-core==4.7.0
     # via
     #   -r requirements/test.txt
     #   edx-auth-backends
@@ -630,7 +632,7 @@ tomlkit==0.13.3
     # via
     #   -r requirements/test.txt
     #   pylint
-tox==4.26.0
+tox==4.27.0
     # via -r requirements/test.txt
 twine==6.1.0
     # via -r requirements/doc.in
