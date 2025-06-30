@@ -28,7 +28,7 @@ avro==1.12.0
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
-cachetools==6.0.0
+cachetools==6.1.0
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -156,7 +156,7 @@ drf-spectacular==0.28.0
     # via -r requirements/base.txt
 drf-yasg==1.21.10
     # via -r requirements/base.txt
-edx-auth-backends==4.5.0
+edx-auth-backends==4.6.0
     # via -r requirements/base.txt
 edx-ccx-keys==2.0.2
     # via
@@ -169,6 +169,7 @@ edx-django-release-util==1.5.0
 edx-django-utils==8.0.0
     # via
     #   -r requirements/base.txt
+    #   edx-auth-backends
     #   edx-drf-extensions
     #   edx-event-bus-kafka
     #   edx-rest-api-client
@@ -197,6 +198,7 @@ edx-rest-api-client==6.2.0
 edx-toggles==5.3.0
     # via
     #   -r requirements/base.txt
+    #   edx-auth-backends
     #   edx-event-bus-kafka
 fastavro==1.11.1
     # via
@@ -259,7 +261,7 @@ mysqlclient==2.2.7
     #   -r requirements/base.txt
     #   -r requirements/production.in
     #   openedx-ledger
-oauthlib==3.2.2
+oauthlib==3.3.1
     # via
     #   -r requirements/base.txt
     #   getsmarter-api-clients
@@ -303,7 +305,7 @@ pyjwt[crypto]==2.10.1
     #   social-auth-core
 pymemcache==4.0.0
     # via -r requirements/base.txt
-pymongo==4.13.1
+pymongo==4.13.2
     # via
     #   -r requirements/base.txt
     #   edx-opaque-keys
@@ -388,7 +390,7 @@ social-auth-app-django==5.4.3
     # via
     #   -r requirements/base.txt
     #   edx-auth-backends
-social-auth-core==4.6.1
+social-auth-core==4.7.0
     # via
     #   -r requirements/base.txt
     #   edx-auth-backends
@@ -422,7 +424,7 @@ urllib3==2.2.3
     # via
     #   -r requirements/base.txt
     #   requests
-zope-event==5.0
+zope-event==5.1
     # via gevent
 zope-interface==7.2
     # via gevent
