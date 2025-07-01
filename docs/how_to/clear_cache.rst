@@ -1,7 +1,7 @@
-Manually clear Django cache 
+Manually clear Django cache
 ===========================
 
-At times, it is helpful to clear the cache for the application to enable more efficient QA in local/stage/production environments 
+At times, it is helpful to clear the cache for the application to enable more efficient QA in local/stage/production environments
 when working with APIs that cache data from external sources. For instance, enterprise-subsidy makes an API request to enterprise-catalog to
 retrieve metadata about the enterprise catalog and caches it for 30 minutes.
 
