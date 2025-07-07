@@ -8,7 +8,7 @@ anyio==4.9.0
     # via
     #   -r requirements/base.txt
     #   httpx
-asgiref==3.8.1
+asgiref==3.9.0
     # via
     #   -r requirements/base.txt
     #   django
@@ -56,9 +56,9 @@ code-annotations==2.3.0
     # via
     #   -r requirements/base.txt
     #   edx-toggles
-confluent-kafka[avro,schema-registry]==2.10.1
+confluent-kafka[avro,schema-registry]==2.11.0
     # via -r requirements/base.txt
-cryptography==45.0.4
+cryptography==45.0.5
     # via
     #   -r requirements/base.txt
     #   authlib
@@ -267,12 +267,12 @@ oauthlib==3.3.1
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==10.2.1
+openedx-events==10.3.0
     # via
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.6.0
+openedx-ledger==1.6.1
     # via -r requirements/base.txt
 packaging==25.0
     # via
@@ -361,7 +361,7 @@ requests-oauthlib==2.0.0
     #   -r requirements/base.txt
     #   getsmarter-api-clients
     #   social-auth-core
-rpds-py==0.25.1
+rpds-py==0.26.0
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -409,7 +409,7 @@ text-unidecode==1.3
     # via
     #   -r requirements/base.txt
     #   python-slugify
-typing-extensions==4.14.0
+typing-extensions==4.14.1
     # via
     #   -r requirements/base.txt
     #   anyio
