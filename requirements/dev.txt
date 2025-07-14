@@ -8,12 +8,12 @@ anyio==4.9.0
     # via
     #   -r requirements/validation.txt
     #   httpx
-asgiref==3.8.1
+asgiref==3.9.1
     # via
     #   -r requirements/validation.txt
     #   django
     #   django-cors-headers
-astroid==3.3.10
+astroid==3.3.11
     # via
     #   -r requirements/validation.txt
     #   pylint
@@ -42,7 +42,7 @@ cachetools==6.1.0
     #   -r requirements/validation.txt
     #   confluent-kafka
     #   tox
-certifi==2025.6.15
+certifi==2025.7.9
     # via
     #   -r requirements/validation.txt
     #   httpcore
@@ -84,13 +84,13 @@ colorama==0.4.6
     # via
     #   -r requirements/validation.txt
     #   tox
-confluent-kafka[avro,schema-registry]==2.10.1
+confluent-kafka[avro,schema-registry]==2.11.0
     # via -r requirements/validation.txt
-coverage[toml]==7.9.1
+coverage[toml]==7.9.2
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
-cryptography==45.0.4
+cryptography==45.0.5
     # via
     #   -r requirements/validation.txt
     #   authlib
@@ -106,7 +106,7 @@ defusedxml==0.7.1
     #   -r requirements/validation.txt
     #   python3-openid
     #   social-auth-core
-diff-cover==9.4.1
+diff-cover==9.5.0
     # via -r requirements/dev.in
 dill==0.4.0
     # via
@@ -399,12 +399,12 @@ oauthlib==3.3.1
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==10.2.1
+openedx-events==10.3.0
     # via
     #   -r requirements/validation.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.6.0
+openedx-ledger==1.6.1
     # via -r requirements/validation.txt
 packaging==25.0
     # via
@@ -587,7 +587,7 @@ rich==14.0.0
     # via
     #   -r requirements/validation.txt
     #   twine
-rpds-py==0.25.1
+rpds-py==0.26.0
     # via
     #   -r requirements/validation.txt
     #   jsonschema
@@ -653,7 +653,7 @@ tox==4.27.0
     # via -r requirements/validation.txt
 twine==6.1.0
     # via -r requirements/validation.txt
-typing-extensions==4.14.0
+typing-extensions==4.14.1
     # via
     #   -r requirements/validation.txt
     #   anyio
