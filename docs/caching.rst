@@ -25,7 +25,7 @@ key in the Django-memcached server in whatever environment the setting is define
 itself isn't particularly important, something like a datetime string will work fine.
 
 .. code-block::
-   
+
    # In your environment's Django settings file.
    CACHE_KEY_VERSION_STAMP = '20230607123455'
 
@@ -43,7 +43,7 @@ with the settings variable ``CONTENT_METADATA_CACHE_TIMEOUT`` in your environmen
 The value should be an integer representing the Django-memcached timeout in seconds.
 
 .. code-block::
-   
+
    # In your environment's Django settings file.
    CONTENT_METADATA_CACHE_TIMEOUT = 60 * 45  # Make the cache timeout 45 minutes
 
@@ -57,6 +57,6 @@ This timeout can be configured via your environment's settings using the variabl
 the Django-memcached timeout in seconds.
 
 .. code-block::
-   
+
    # In your environment's Django settings file.
    CONTENT_METADATA_VIEW_CACHE_TIMEOUT_SECONDS = 60 * 13  # Make the cache timeout 13 minutes

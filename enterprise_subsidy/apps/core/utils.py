@@ -3,10 +3,10 @@ Core utility function.
 """
 import hashlib
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from django.conf import settings
 from edx_django_utils.cache import RequestCache
-from pytz import UTC
 
 from enterprise_subsidy import __version__ as code_version
 
@@ -30,7 +30,7 @@ def versioned_cache_key(*args):
 
 def localized_utcnow():
     """Helper function to return localized utcnow()."""
-    return UTC.localize(datetime.utcnow())  # pylint: disable=no-value-for-parameter
+    return datetime.now(ZoneInfo("UTC"))
 
 
 def request_cache(namespace=DEFAULT_NAMESPACE):

@@ -95,7 +95,6 @@ cryptography==45.0.5
     #   -r requirements/validation.txt
     #   authlib
     #   pyjwt
-    #   secretstorage
     #   social-auth-core
 ddt==1.7.2
     # via
@@ -330,11 +329,6 @@ jaraco-functools==4.2.1
     # via
     #   -r requirements/validation.txt
     #   keyring
-jeepney==0.9.0
-    # via
-    #   -r requirements/validation.txt
-    #   keyring
-    #   secretstorage
 jinja2==3.1.6
     # via
     #   -r requirements/validation.txt
@@ -596,10 +590,6 @@ rules==3.5
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-secretstorage==3.3.3
-    # via
-    #   -r requirements/validation.txt
-    #   keyring
 semantic-version==2.10.0
     # via
     #   -r requirements/validation.txt
