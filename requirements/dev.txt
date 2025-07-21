@@ -25,7 +25,7 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.6.0
+authlib==1.6.1
     # via
     #   -r requirements/validation.txt
     #   confluent-kafka
@@ -42,7 +42,7 @@ cachetools==6.1.0
     #   -r requirements/validation.txt
     #   confluent-kafka
     #   tox
-certifi==2025.7.9
+certifi==2025.7.14
     # via
     #   -r requirements/validation.txt
     #   httpcore
@@ -106,13 +106,13 @@ defusedxml==0.7.1
     #   -r requirements/validation.txt
     #   python3-openid
     #   social-auth-core
-diff-cover==9.5.0
+diff-cover==9.6.0
     # via -r requirements/dev.in
 dill==0.4.0
     # via
     #   -r requirements/validation.txt
     #   pylint
-distlib==0.3.9
+distlib==0.4.0
     # via
     #   -r requirements/validation.txt
     #   virtualenv
@@ -267,7 +267,7 @@ edx-toggles==5.3.0
     #   edx-event-bus-kafka
 factory-boy==3.3.3
     # via -r requirements/validation.txt
-faker==37.4.0
+faker==37.4.2
     # via
     #   -r requirements/validation.txt
     #   factory-boy
@@ -344,7 +344,7 @@ jsonfield2==4.0.0.post0
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-jsonschema==4.24.0
+jsonschema==4.25.0
     # via
     #   -r requirements/validation.txt
     #   drf-spectacular
@@ -389,7 +389,7 @@ mysqlclient==2.2.7
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-nh3==0.2.21
+nh3==0.3.0
     # via
     #   -r requirements/validation.txt
     #   readme-renderer
@@ -404,7 +404,7 @@ openedx-events==10.3.0
     #   -r requirements/validation.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.6.1
+openedx-ledger==1.6.2
     # via -r requirements/validation.txt
 packaging==25.0
     # via
@@ -649,7 +649,7 @@ tomlkit==0.13.3
     # via
     #   -r requirements/validation.txt
     #   pylint
-tox==4.27.0
+tox==4.28.0
     # via -r requirements/validation.txt
 twine==6.1.0
     # via -r requirements/validation.txt
