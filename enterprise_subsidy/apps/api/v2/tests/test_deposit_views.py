@@ -2,8 +2,10 @@
 Tests for the v2 deposit views.
 """
 import uuid
+from datetime import timedelta
 
 import ddt
+from django.utils import timezone
 from openedx_ledger.models import Deposit, SalesContractReferenceProvider
 from rest_framework import status
 from rest_framework.reverse import reverse
@@ -39,6 +41,18 @@ class DepositCreateViewTests(APITestMixin):
             "expected_response_status": status.HTTP_201_CREATED,
         },
         {
+            "subsidy_active": False,
+            "subsidy_expired": False,
+            # Subsidy isn't active yet, but is unexpired and will be active in the future.
+            "creation_request_data": {
+                "desired_deposit_quantity": 100,
+                "sales_contract_reference_id": str(uuid.uuid4()),
+                "sales_contract_reference_provider": DEFAULT_SALES_CONTRACT_REFERENCE_PROVIDER_SLUG,
+                "metadata": {"foo": "bar"},
+            },
+            "expected_response_status": status.HTTP_201_CREATED,
+        },
+        {
             "subsidy_active": True,
             # Only the minimal set of required request fields included.
             "creation_request_data": {
@@ -64,13 +78,14 @@ class DepositCreateViewTests(APITestMixin):
         # Sad paths:
         ###
         {
-            "subsidy_active": False,  # Inactive subsidy invalidates request.
+            "subsidy_active": False,
             "creation_request_data": {
                 "desired_deposit_quantity": 100,
                 "sales_contract_reference_id": str(uuid.uuid4()),
                 "sales_contract_reference_provider": DEFAULT_SALES_CONTRACT_REFERENCE_PROVIDER_SLUG,
             },
             "expected_response_status": status.HTTP_422_UNPROCESSABLE_ENTITY,
+            "subsidy_expired": True,  # An expired subsidy invalidates request.
         },
         {
             "subsidy_active": True,
@@ -106,6 +121,7 @@ class DepositCreateViewTests(APITestMixin):
         subsidy_active,
         creation_request_data,
         expected_response_status,
+        subsidy_expired=False,
     ):
         """
         Test that the DepositCreationRequestSerializer correctly creates a deposit idempotently OR fails with the
@@ -113,10 +129,22 @@ class DepositCreateViewTests(APITestMixin):
         """
         self.set_up_operator()
 
-        subsidy = SubsidyFactory(enterprise_customer_uuid=STATIC_ENTERPRISE_UUID)
-        if not subsidy_active:
-            subsidy.expiration_datetime = subsidy.active_datetime
-            subsidy.save()
+        if subsidy_active:
+            active_datetime = timezone.now() - timedelta(days=1)
+            expiration_datetime = timezone.now() + timedelta(days=1)
+        else:
+            if subsidy_expired:
+                active_datetime = timezone.now() - timedelta(days=2)
+                expiration_datetime = timezone.now() - timedelta(days=1)
+            else:
+                active_datetime = timezone.now() + timedelta(days=1)
+                expiration_datetime = timezone.now() + timedelta(days=2)
+
+        subsidy = SubsidyFactory(
+            enterprise_customer_uuid=STATIC_ENTERPRISE_UUID,
+            active_datetime=active_datetime,
+            expiration_datetime=expiration_datetime,
+        )
 
         url = reverse("api:v2:deposit-admin-create", args=[subsidy.uuid])
 

@@ -17,6 +17,7 @@ class ErrorCodes:
     LEDGER_LOCK_ERROR = 'ledger_lock_error'
     INACTIVE_SUBSIDY_CREATION_ERROR = 'inactive_subsidy_creation_error'
     FULFILLMENT_ERROR = 'fulfillment_error'
+    DEPOSIT_ON_EXPIRED_SUBSIDY_ERROR = 'deposit_on_expired_subsidy'
 
 
 class SubsidyAPIException(APIException):
