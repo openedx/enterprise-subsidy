@@ -3,6 +3,7 @@ Views for the enterprise-subsidy service relating to the Deposit model
 """
 import logging
 
+from django.utils import timezone
 from django.utils.functional import cached_property
 from drf_spectacular.utils import extend_schema
 from edx_rbac.decorators import permission_required
@@ -80,25 +81,12 @@ class DepositAdminCreate(generics.CreateAPIView):
     def create(self, request, subsidy_uuid):
         """
         A create view that is accessible only to operators of the system.
-
-        It creates (or just gets, if a matching Transaction is found with same ledger and idempotency_key) a
-        transaction via the `Subsidy.redeem()` method.  Normally, the logic of this view
-        is responsible for determining the price of the requested content key, with which
-        the redeemed transaction's quantity will be valued.
-
-        Note that, under some circumstances (for example, assigned learner content), it is
-        appropriate and allowable for the *caller* of this view to request a specific price
-        at which a redeemed transaction should occur.  In these circumstances, this service
-        still does some validation of the requested price to ensure that it falls within
-        a reasonable interval around the *true* price of the related content key. See:
-
-        https://github.com/openedx/enterprise-access/blob/main/docs/decisions/0012-assignment-based-policies.rst
-        https://github.com/openedx/enterprise-access/blob/main/docs/decisions/0014-assignment-price-validation.rst
+        It creates a new Deposit record.
         """
-        if not self.subsidy.is_active:
+        if self.subsidy.expiration_datetime < timezone.now():
             raise DepositCreationAPIException(
-                detail='Cannot create a deposit in an inactive subsidy',
-                code=ErrorCodes.INACTIVE_SUBSIDY_CREATION_ERROR,
+                detail='Cannot create a deposit in an expired subsidy',
+                code=ErrorCodes.DEPOSIT_ON_EXPIRED_SUBSIDY_ERROR,
             )
         try:
             response = super().create(request, subsidy_uuid)
