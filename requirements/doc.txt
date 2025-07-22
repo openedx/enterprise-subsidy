@@ -29,7 +29,7 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.6.0
+authlib==1.6.1
     # via
     #   -r requirements/test.txt
     #   confluent-kafka
@@ -50,7 +50,7 @@ cachetools==6.1.0
     #   -r requirements/test.txt
     #   confluent-kafka
     #   tox
-certifi==2025.7.9
+certifi==2025.7.14
     # via
     #   -r requirements/test.txt
     #   httpcore
@@ -113,7 +113,7 @@ dill==0.4.0
     # via
     #   -r requirements/test.txt
     #   pylint
-distlib==0.3.9
+distlib==0.4.0
     # via
     #   -r requirements/test.txt
     #   virtualenv
@@ -267,7 +267,7 @@ edx-toggles==5.3.0
     #   edx-event-bus-kafka
 factory-boy==3.3.3
     # via -r requirements/test.txt
-faker==37.4.0
+faker==37.4.2
     # via
     #   -r requirements/test.txt
     #   factory-boy
@@ -337,7 +337,7 @@ jsonfield2==4.0.0.post0
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-jsonschema==4.24.0
+jsonschema==4.25.0
     # via
     #   -r requirements/test.txt
     #   drf-spectacular
@@ -369,7 +369,7 @@ mysqlclient==2.2.7
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-nh3==0.2.21
+nh3==0.3.0
     # via readme-renderer
 oauthlib==3.3.1
     # via
@@ -382,7 +382,7 @@ openedx-events==10.3.0
     #   -r requirements/test.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.6.1
+openedx-ledger==1.6.3
     # via -r requirements/test.txt
 packaging==25.0
     # via
@@ -632,7 +632,7 @@ tomlkit==0.13.3
     # via
     #   -r requirements/test.txt
     #   pylint
-tox==4.27.0
+tox==4.28.0
     # via -r requirements/test.txt
 twine==6.1.0
     # via -r requirements/doc.in
@@ -661,7 +661,7 @@ urllib3==2.2.3
     #   requests
     #   responses
     #   twine
-virtualenv==20.31.2
+virtualenv==20.32.0
     # via
     #   -r requirements/test.txt
     #   tox
