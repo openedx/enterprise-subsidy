@@ -20,7 +20,7 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.6.0
+authlib==1.6.1
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -32,7 +32,7 @@ cachetools==6.1.0
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
-certifi==2025.7.9
+certifi==2025.7.14
     # via
     #   -r requirements/base.txt
     #   httpcore
@@ -244,7 +244,7 @@ jsonfield2==4.0.0.post0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-jsonschema==4.24.0
+jsonschema==4.25.0
     # via
     #   -r requirements/base.txt
     #   drf-spectacular
@@ -272,7 +272,7 @@ openedx-events==10.3.0
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.6.1
+openedx-ledger==1.6.3
     # via -r requirements/base.txt
 packaging==25.0
     # via
@@ -424,7 +424,7 @@ urllib3==2.2.3
     # via
     #   -r requirements/base.txt
     #   requests
-zope-event==5.1
+zope-event==5.1.1
     # via gevent
 zope-interface==7.2
     # via gevent

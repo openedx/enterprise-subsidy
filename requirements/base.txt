@@ -16,13 +16,13 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.6.0
+authlib==1.6.1
     # via confluent-kafka
 avro==1.12.0
     # via confluent-kafka
 cachetools==6.1.0
     # via confluent-kafka
-certifi==2025.7.9
+certifi==2025.7.14
     # via
     #   httpcore
     #   httpx
@@ -199,7 +199,7 @@ jsonfield2==4.0.0.post0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-jsonschema==4.24.0
+jsonschema==4.25.0
     # via drf-spectacular
 jsonschema-specifications==2025.4.1
     # via jsonschema
@@ -219,7 +219,7 @@ openedx-events==10.3.0
     #   -r requirements/base.in
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.6.1
+openedx-ledger==1.6.3
     # via -r requirements/base.in
 packaging==25.0
     # via drf-yasg
