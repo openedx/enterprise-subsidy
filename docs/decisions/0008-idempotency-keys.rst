@@ -94,7 +94,7 @@ integrity.  We may decide in the future to draw inspiration from Stripe's
 approach by combining idempotency keys with more server-side integrity
 constraints.
 
-Consequences    
+Consequences
 ************
 
 Scope covers data integrity

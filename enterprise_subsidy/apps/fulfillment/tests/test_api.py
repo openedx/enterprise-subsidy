@@ -4,10 +4,10 @@ Tests for functions defined in the ``api.py`` module.
 from datetime import datetime
 from unittest import mock
 from uuid import uuid4
+from zoneinfo import ZoneInfo
 
 import ddt
 import pytest
-import pytz
 import responses
 from django.conf import settings
 from django.test import TestCase
@@ -34,7 +34,7 @@ def mock_access_token(token='my-access-token'):
         {
             'access_token': token,
             'expires_in': 300,
-            'expires_at': datetime.now(pytz.utc).timestamp() + 300
+            'expires_at': datetime.now(ZoneInfo("UTC")).timestamp() + 300
         },
     )
 
