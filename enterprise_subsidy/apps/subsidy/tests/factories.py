@@ -4,9 +4,9 @@ Test factories for subsidy models.
 import random
 from datetime import timedelta
 from uuid import uuid4
+from zoneinfo import ZoneInfo
 
 import factory
-import pytz
 from factory.fuzzy import FuzzyText
 from faker import Faker
 from openedx_ledger.models import UnitChoices
@@ -29,8 +29,8 @@ def fake_datetime(is_future=False):
     """ Helper to get past or future localized datetime with microseconds. """
     delta = timedelta(microseconds=random.randint(0, 999999))
     if is_future:
-        return FAKER.future_datetime(tzinfo=pytz.UTC) + delta
-    return FAKER.past_datetime(tzinfo=pytz.UTC) + delta
+        return FAKER.future_datetime(tzinfo=ZoneInfo("UTC")) + delta
+    return FAKER.past_datetime(tzinfo=ZoneInfo("UTC")) + delta
 
 
 class SubsidyFactory(factory.django.DjangoModelFactory):

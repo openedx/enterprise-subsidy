@@ -267,7 +267,7 @@ oauthlib==3.3.1
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==10.3.0
+openedx-events==10.4.0
     # via
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
