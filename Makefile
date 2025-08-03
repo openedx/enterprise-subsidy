@@ -114,8 +114,6 @@ $(COMMON_CONSTRAINTS_TXT):
 
 upgrade: export CUSTOM_COMPILE_COMMAND=make upgrade
 upgrade: $(COMMON_CONSTRAINTS_TXT) ## update the requirements/*.txt files with the latest packages satisfying requirements/*.in
-	sed 's/Django<4.0//g' requirements/common_constraints.txt > tmp_con; cat tmp_con > requirements/common_constraints.txt; rm tmp_con
-	sed 's/django-simple-history==//g' requirements/common_constraints.txt > tmp_con; cat tmp_con > requirements/common_constraints.txt; rm tmp_con
 	pip install -qr requirements/pip-tools.txt
 	# Make sure to compile files after any other files they include!
 	$(PIP_COMPILE) --allow-unsafe -o requirements/pip.txt requirements/pip.in
@@ -130,6 +128,9 @@ upgrade: $(COMMON_CONSTRAINTS_TXT) ## update the requirements/*.txt files with t
 	$(PIP_COMPILE) -o requirements/ci.txt requirements/ci.in
 	$(PIP_COMPILE) -o requirements/dev.txt requirements/dev.in
 	$(PIP_COMPILE) -o requirements/production.txt requirements/production.in
+	# Let tox control the Django version for tests
+	sed '/^[dD]jango==/d' requirements/test.txt > requirements/test.tmp
+	mv requirements/test.tmp requirements/test.txt
 
 extract_translations: ## extract strings to be translated, outputting .mo files
 	python manage.py makemessages -l en -v1 -d django

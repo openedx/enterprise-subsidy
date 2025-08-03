@@ -2,12 +2,12 @@
 Tests for Transaction utils.
 """
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 import ddt
 from django.test import TestCase
 from opaque_keys.edx.locator import CourseLocator
 from openedx_ledger.test_utils.factories import LedgerFactory, TransactionFactory
-from pytz import UTC
 
 from enterprise_subsidy.apps.transaction.utils import unenrollment_can_be_refunded
 
@@ -21,30 +21,30 @@ class TransactionUtilsTestCase(TestCase):
     @ddt.data(
         # ALMOST non-refundable due to transaction_created_at.
         {
-            "transaction_created_at": datetime(2020, 1, 10, tzinfo=UTC),
-            "course_start_date": datetime(2020, 1, 1, tzinfo=UTC),
-            "unenrolled_at": datetime(2020, 1, 23, tzinfo=UTC),
+            "transaction_created_at": datetime(2020, 1, 10, tzinfo=ZoneInfo("UTC")),
+            "course_start_date": datetime(2020, 1, 1, tzinfo=ZoneInfo("UTC")),
+            "unenrolled_at": datetime(2020, 1, 23, tzinfo=ZoneInfo("UTC")),
             "expected_refundable": True,
         },
         # Non-refundable due to transaction_created_at.
         {
-            "transaction_created_at": datetime(2020, 1, 10, tzinfo=UTC),
-            "course_start_date": datetime(2020, 1, 1, tzinfo=UTC),
-            "unenrolled_at": datetime(2020, 1, 24, tzinfo=UTC),
+            "transaction_created_at": datetime(2020, 1, 10, tzinfo=ZoneInfo("UTC")),
+            "course_start_date": datetime(2020, 1, 1, tzinfo=ZoneInfo("UTC")),
+            "unenrolled_at": datetime(2020, 1, 24, tzinfo=ZoneInfo("UTC")),
             "expected_refundable": False,
         },
         # ALMOST non-refundable due to course_start_date.
         {
-            "transaction_created_at": datetime(2020, 1, 1, tzinfo=UTC),
-            "course_start_date": datetime(2020, 1, 10, tzinfo=UTC),
-            "unenrolled_at": datetime(2020, 1, 23, tzinfo=UTC),
+            "transaction_created_at": datetime(2020, 1, 1, tzinfo=ZoneInfo("UTC")),
+            "course_start_date": datetime(2020, 1, 10, tzinfo=ZoneInfo("UTC")),
+            "unenrolled_at": datetime(2020, 1, 23, tzinfo=ZoneInfo("UTC")),
             "expected_refundable": True,
         },
         # Non-refundable due to course_start_date.
         {
-            "transaction_created_at": datetime(2020, 1, 1, tzinfo=UTC),
-            "course_start_date": datetime(2020, 1, 10, tzinfo=UTC),
-            "unenrolled_at": datetime(2020, 1, 24, tzinfo=UTC),
+            "transaction_created_at": datetime(2020, 1, 1, tzinfo=ZoneInfo("UTC")),
+            "course_start_date": datetime(2020, 1, 10, tzinfo=ZoneInfo("UTC")),
+            "unenrolled_at": datetime(2020, 1, 24, tzinfo=ZoneInfo("UTC")),
             "expected_refundable": False,
         },
     )
@@ -57,7 +57,7 @@ class TransactionUtilsTestCase(TestCase):
         expected_refundable,
     ):
         """
-        Make sure the following forumla is respected:
+        Make sure the following formula is respected:
 
         MAX(transaction_created_at, course_start_date) + 14 days > unenrolled_at
         """
@@ -81,30 +81,30 @@ class TransactionUtilsTestCase(TestCase):
     @ddt.data(
         # ALMOST non-refundable due to transaction_created_at.
         {
-            "transaction_created_at": datetime(2020, 1, 10, tzinfo=UTC),
-            "course_start_date": datetime(2020, 1, 1, tzinfo=UTC),
-            "unenrolled_at": datetime(2020, 1, 23, tzinfo=UTC),
+            "transaction_created_at": datetime(2020, 1, 10, tzinfo=ZoneInfo("UTC")),
+            "course_start_date": datetime(2020, 1, 1, tzinfo=ZoneInfo("UTC")),
+            "unenrolled_at": datetime(2020, 1, 23, tzinfo=ZoneInfo("UTC")),
             "expected_refundable": True,
         },
         # Non-refundable due to transaction_created_at.
         {
-            "transaction_created_at": datetime(2020, 1, 10, tzinfo=UTC),
-            "course_start_date": datetime(2020, 1, 1, tzinfo=UTC),
-            "unenrolled_at": datetime(2020, 1, 24, tzinfo=UTC),
+            "transaction_created_at": datetime(2020, 1, 10, tzinfo=ZoneInfo("UTC")),
+            "course_start_date": datetime(2020, 1, 1, tzinfo=ZoneInfo("UTC")),
+            "unenrolled_at": datetime(2020, 1, 24, tzinfo=ZoneInfo("UTC")),
             "expected_refundable": False,
         },
         # ALMOST non-refundable due to course_start_date.
         {
-            "transaction_created_at": datetime(2020, 1, 1, tzinfo=UTC),
-            "course_start_date": datetime(2020, 1, 10, tzinfo=UTC),
-            "unenrolled_at": datetime(2020, 1, 23, tzinfo=UTC),
+            "transaction_created_at": datetime(2020, 1, 1, tzinfo=ZoneInfo("UTC")),
+            "course_start_date": datetime(2020, 1, 10, tzinfo=ZoneInfo("UTC")),
+            "unenrolled_at": datetime(2020, 1, 23, tzinfo=ZoneInfo("UTC")),
             "expected_refundable": True,
         },
         # Non-refundable due to course_start_date.
         {
-            "transaction_created_at": datetime(2020, 1, 1, tzinfo=UTC),
-            "course_start_date": datetime(2020, 1, 10, tzinfo=UTC),
-            "unenrolled_at": datetime(2020, 1, 24, tzinfo=UTC),
+            "transaction_created_at": datetime(2020, 1, 1, tzinfo=ZoneInfo("UTC")),
+            "course_start_date": datetime(2020, 1, 10, tzinfo=ZoneInfo("UTC")),
+            "unenrolled_at": datetime(2020, 1, 24, tzinfo=ZoneInfo("UTC")),
             "expected_refundable": False,
         },
     )
@@ -117,7 +117,7 @@ class TransactionUtilsTestCase(TestCase):
         expected_refundable,
     ):
         """
-        Make sure the following forumla is respected:
+        Make sure the following formula is respected:
 
         MAX(transaction_created_at, course_start_date) + 14 days > unenrolled_at
         """
