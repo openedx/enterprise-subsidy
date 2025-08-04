@@ -45,7 +45,7 @@ cachetools==6.1.0
     #   -r requirements/test.txt
     #   confluent-kafka
     #   tox
-certifi==2025.7.14
+certifi==2025.8.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -96,7 +96,7 @@ confluent-kafka[avro,schema-registry]==2.11.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-coverage[toml]==7.10.1
+coverage[toml]==7.10.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -233,7 +233,7 @@ dnspython==2.7.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pymongo
-docutils==0.21.2
+docutils==0.22
     # via
     #   -r requirements/quality.txt
     #   readme-renderer
@@ -305,7 +305,7 @@ edx-rest-api-client==6.2.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-edx-toggles==5.3.0
+edx-toggles==5.4.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -315,12 +315,12 @@ factory-boy==3.3.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-faker==37.4.2
+faker==37.5.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   factory-boy
-fastavro==1.11.1
+fastavro==1.12.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -744,7 +744,7 @@ tomlkit==0.13.3
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pylint
-tox==4.28.3
+tox==4.28.4
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -769,14 +769,14 @@ uritemplate==4.2.0
     #   -r requirements/test.txt
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.2.3
+urllib3==2.5.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   requests
     #   responses
     #   twine
-virtualenv==20.32.0
+virtualenv==20.33.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
