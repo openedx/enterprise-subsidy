@@ -73,7 +73,7 @@ colorama==0.4.6
     # via tox
 confluent-kafka[avro,schema-registry]==2.11.0
     # via -r requirements/base.txt
-coverage[toml]==7.10.1
+coverage[toml]==7.10.2
     # via
     #   -r requirements/test.in
     #   pytest-cov
