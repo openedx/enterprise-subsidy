@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-anyio==4.9.0
+anyio==4.10.0
     # via httpx
 asgiref==3.9.1
     # via
@@ -31,7 +31,7 @@ cffi==1.17.1
     # via
     #   cryptography
     #   pynacl
-charset-normalizer==3.4.2
+charset-normalizer==3.4.3
     # via requests
 click==8.2.1
     # via
@@ -41,7 +41,7 @@ code-annotations==2.3.0
     # via edx-toggles
 confluent-kafka[avro,schema-registry]==2.11.0
     # via -r requirements/base.in
-cryptography==45.0.5
+cryptography==45.0.6
     # via
     #   authlib
     #   pyjwt
@@ -117,7 +117,7 @@ djangoql==0.18.1
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-djangorestframework==3.16.0
+djangorestframework==3.16.1
     # via
     #   -r requirements/base.in
     #   drf-jwt
@@ -240,7 +240,7 @@ pyjwt[crypto]==2.10.1
     #   social-auth-core
 pymemcache==4.0.0
     # via -r requirements/base.in
-pymongo==4.13.2
+pymongo==4.14.0
     # via edx-opaque-keys
 pynacl==1.5.0
     # via edx-django-utils
@@ -261,7 +261,7 @@ pyyaml==6.0.2
     #   drf-spectacular
     #   drf-yasg
     #   edx-django-release-util
-redis==6.2.0
+redis==6.4.0
     # via openedx-ledger
 referencing==0.36.2
     # via
@@ -278,7 +278,7 @@ requests-oauthlib==2.0.0
     # via
     #   getsmarter-api-clients
     #   social-auth-core
-rpds-py==0.26.0
+rpds-py==0.27.0
     # via
     #   jsonschema
     #   referencing

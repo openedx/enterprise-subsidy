@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-anyio==4.9.0
+anyio==4.10.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -63,7 +63,7 @@ chardet==5.2.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   tox
-charset-normalizer==3.4.2
+charset-normalizer==3.4.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -96,17 +96,18 @@ confluent-kafka[avro,schema-registry]==2.11.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-coverage[toml]==7.10.2
+coverage[toml]==7.10.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pytest-cov
-cryptography==45.0.5
+cryptography==45.0.6
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   authlib
     #   pyjwt
+    #   secretstorage
     #   social-auth-core
 ddt==1.7.2
     # via
@@ -219,7 +220,7 @@ djangoql==0.18.1
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-djangorestframework==3.16.0
+djangorestframework==3.16.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -389,6 +390,11 @@ jaraco-functools==4.2.1
     # via
     #   -r requirements/quality.txt
     #   keyring
+jeepney==0.9.0
+    # via
+    #   -r requirements/quality.txt
+    #   keyring
+    #   secretstorage
 jinja2==3.1.6
     # via
     #   -r requirements/quality.txt
@@ -529,7 +535,7 @@ pyjwt[crypto]==2.10.1
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.3.7
+pylint==3.3.8
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -557,7 +563,7 @@ pymemcache==4.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-pymongo==4.13.2
+pymongo==4.14.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -620,7 +626,7 @@ readme-renderer==44.0
     # via
     #   -r requirements/quality.txt
     #   twine
-redis==6.2.0
+redis==6.4.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -654,7 +660,7 @@ requests-toolbelt==1.0.0
     # via
     #   -r requirements/quality.txt
     #   twine
-responses==0.25.7
+responses==0.25.8
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -666,7 +672,7 @@ rich==14.1.0
     # via
     #   -r requirements/quality.txt
     #   twine
-rpds-py==0.26.0
+rpds-py==0.27.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -677,6 +683,10 @@ rules==3.5
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
+secretstorage==3.3.3
+    # via
+    #   -r requirements/quality.txt
+    #   keyring
 semantic-version==2.10.0
     # via
     #   -r requirements/quality.txt
@@ -766,7 +776,7 @@ urllib3==2.5.0
     #   requests
     #   responses
     #   twine
-virtualenv==20.33.0
+virtualenv==20.33.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
