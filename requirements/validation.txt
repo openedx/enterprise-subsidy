@@ -96,7 +96,7 @@ confluent-kafka[avro,schema-registry]==2.11.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-coverage[toml]==7.10.3
+coverage[toml]==7.10.4
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -326,7 +326,7 @@ fastavro==1.12.0
     #   -r requirements/test.txt
     #   confluent-kafka
     #   openedx-events
-filelock==3.18.0
+filelock==3.19.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -419,7 +419,7 @@ keyring==25.6.0
     # via
     #   -r requirements/quality.txt
     #   twine
-markdown-it-py==3.0.0
+markdown-it-py==4.0.0
     # via
     #   -r requirements/quality.txt
     #   rich
@@ -481,7 +481,7 @@ packaging==25.0
     #   pytest
     #   tox
     #   twine
-pbr==6.1.1
+pbr==7.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -776,7 +776,7 @@ urllib3==2.5.0
     #   requests
     #   responses
     #   twine
-virtualenv==20.33.1
+virtualenv==20.34.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
