@@ -144,6 +144,7 @@ class TransactionSerializer(serializers.ModelSerializer):
             "content_key",
             "parent_content_key",
             "content_title",
+            "course_run_start_date",
             "quantity",
             "unit",  # Manually fetch from parent ledger via get_unit().
             "fulfillment_identifier",

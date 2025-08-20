@@ -38,6 +38,8 @@ def serialize_transaction(transaction_record):
         content_key=transaction_record.content_key,
         parent_content_key=transaction_record.parent_content_key,
         fulfillment_identifier=transaction_record.fulfillment_identifier,
+        # Note: course_run_start_date would need to be added to the LedgerTransaction data structure
+        # in openedx_events.enterprise.data for complete event bus support
         reversal=reversal_data,
     )
     return data
