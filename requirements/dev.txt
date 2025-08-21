@@ -86,7 +86,7 @@ colorama==0.4.6
     #   tox
 confluent-kafka[avro,schema-registry]==2.11.0
     # via -r requirements/validation.txt
-coverage[toml]==7.10.3
+coverage[toml]==7.10.4
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
@@ -276,7 +276,7 @@ fastavro==1.12.0
     #   -r requirements/validation.txt
     #   confluent-kafka
     #   openedx-events
-filelock==3.18.0
+filelock==3.19.1
     # via
     #   -r requirements/validation.txt
     #   tox
@@ -362,7 +362,7 @@ lxml[html-clean]==6.0.0
     #   lxml-html-clean
 lxml-html-clean==0.4.2
     # via lxml
-markdown-it-py==3.0.0
+markdown-it-py==4.0.0
     # via
     #   -r requirements/validation.txt
     #   rich
@@ -418,7 +418,7 @@ packaging==25.0
     #   twine
 path==16.16.0
     # via edx-i18n-tools
-pbr==6.1.1
+pbr==7.0.0
     # via
     #   -r requirements/validation.txt
     #   stevedore
@@ -675,7 +675,7 @@ urllib3==2.5.0
     #   requests
     #   responses
     #   twine
-virtualenv==20.33.1
+virtualenv==20.34.0
     # via
     #   -r requirements/validation.txt
     #   tox

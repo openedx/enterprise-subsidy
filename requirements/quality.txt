@@ -79,7 +79,7 @@ colorama==0.4.6
     #   tox
 confluent-kafka[avro,schema-registry]==2.11.0
     # via -r requirements/test.txt
-coverage[toml]==7.10.3
+coverage[toml]==7.10.4
     # via
     #   -r requirements/test.txt
     #   pytest-cov
@@ -259,7 +259,7 @@ fastavro==1.12.0
     #   -r requirements/test.txt
     #   confluent-kafka
     #   openedx-events
-filelock==3.18.0
+filelock==3.19.1
     # via
     #   -r requirements/test.txt
     #   tox
@@ -328,7 +328,7 @@ jsonschema-specifications==2025.4.1
     #   jsonschema
 keyring==25.6.0
     # via twine
-markdown-it-py==3.0.0
+markdown-it-py==4.0.0
     # via rich
 markupsafe==3.0.2
     # via
@@ -373,7 +373,7 @@ packaging==25.0
     #   pytest
     #   tox
     #   twine
-pbr==6.1.1
+pbr==7.0.0
     # via
     #   -r requirements/test.txt
     #   stevedore
@@ -605,7 +605,7 @@ urllib3==2.5.0
     #   requests
     #   responses
     #   twine
-virtualenv==20.33.1
+virtualenv==20.34.0
     # via
     #   -r requirements/test.txt
     #   tox
