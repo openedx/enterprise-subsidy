@@ -180,6 +180,7 @@ class ContentMetadataApi:
             'content_key': content_data.get('key'),
             'course_run_uuid': course_run_content.get('uuid'),
             'course_run_key': course_run_content.get('key'),
+            'course_run_start_date': course_run_content.get('start'),
             'source': self.product_source_for_content(content_data),
             'mode': content_mode,
             'content_price': self.price_for_content(content_data, course_run_content),
