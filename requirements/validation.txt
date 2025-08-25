@@ -29,7 +29,7 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.6.1
+authlib==1.6.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -92,11 +92,11 @@ colorama==0.4.6
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   tox
-confluent-kafka[avro,schema-registry]==2.11.0
+confluent-kafka[avro,schema-registry]==2.11.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-coverage[toml]==7.10.4
+coverage[toml]==7.10.5
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -386,7 +386,7 @@ jaraco-context==6.0.1
     # via
     #   -r requirements/quality.txt
     #   keyring
-jaraco-functools==4.2.1
+jaraco-functools==4.3.0
     # via
     #   -r requirements/quality.txt
     #   keyring
@@ -405,7 +405,7 @@ jsonfield2==4.0.0.post0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-jsonschema==4.25.0
+jsonschema==4.25.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -462,16 +462,21 @@ oauthlib==3.3.1
     #   getsmarter-api-clients
     #   requests-oauthlib
     #   social-auth-core
-openedx-events==10.4.0
+openedx-events==10.5.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.6.3
+openedx-ledger==1.6.6
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
+orjson==3.11.2
+    # via
+    #   -r requirements/quality.txt
+    #   -r requirements/test.txt
+    #   confluent-kafka
 packaging==25.0
     # via
     #   -r requirements/quality.txt
@@ -481,7 +486,7 @@ packaging==25.0
     #   pytest
     #   tox
     #   twine
-pbr==7.0.0
+pbr==7.0.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -563,7 +568,7 @@ pymemcache==4.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-pymongo==4.14.0
+pymongo==4.14.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -637,7 +642,7 @@ referencing==0.36.2
     #   -r requirements/test.txt
     #   jsonschema
     #   jsonschema-specifications
-requests==2.32.4
+requests==2.32.5
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
