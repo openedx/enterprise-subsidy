@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 import ddt
 from django.core.management import call_command
 from django.test import TestCase
-from openedx_ledger.models import Reversal, TransactionStateChoices
+from openedx_ledger.models import Reversal, TransactionStateChoices, Transaction
 from openedx_ledger.test_utils.factories import (
     ExternalFulfillmentProviderFactory,
     ExternalTransactionReferenceFactory,
@@ -989,6 +989,86 @@ class TestTransactionManagementCommand(TestCase):
         assert self.transaction_to_backpopulate.parent_content_key == expected_parent_content_key
         assert self.internal_transaction_to_backpopulate.parent_content_key == expected_parent_content_key
         assert self.transaction_not_to_backpopulate.parent_content_key is None
+
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_metadata_for_customer")
+    def test_backpopulate_transaction_course_run_start_date_all_nulls(
+        self,
+        mock_get_content_metadata_for_customer,
+    ):
+        """
+        Test that the backpopulate_transaction_course_run_start_date command
+        updates all transactions with null course_run_start_date.
+        """
+        expected_date = "2025-08-01T00:00:00Z"
+        # Return a realistic content metadata payload; summary will derive start from here
+        mock_get_content_metadata_for_customer.return_value = {
+            'content_type': 'course',
+            'key': self.course_key,
+            'uuid': str(self.course_uuid),
+            'title': 'Demonstration Course',
+            'course_runs': [{
+                'key': self.transaction_to_backpopulate.content_key,
+                'uuid': 'run-uuid-1',
+                'start': expected_date,
+                'seats': [],
+            }],
+            'entitlements': [],
+        }
+        self.transaction_to_backpopulate.course_run_start_date = None
+        self.transaction_to_backpopulate.save()
+        call_command('backpopulate_transaction_course_run_start_date')
+        self.transaction_to_backpopulate.refresh_from_db()
+        assert mock_get_content_metadata_for_customer.called
+        assert self.transaction_to_backpopulate.course_run_start_date is not None
+        assert str(self.transaction_to_backpopulate.course_run_start_date.date()) == "2025-08-01"
+
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_metadata_for_customer")
+    def test_backpopulate_transaction_course_run_start_date_since(
+        self,
+        mock_get_content_metadata_for_customer,
+    ):
+        """
+        Test that the backpopulate_transaction_course_run_start_date command
+        only updates transactions updated since the given date.
+        """
+        expected_date = "2025-08-01T00:00:00Z"
+        mock_get_content_metadata_for_customer.return_value = {
+            'content_type': 'course',
+            'key': self.course_key,
+            'uuid': str(self.course_uuid),
+            'title': 'Demonstration Course',
+            'course_runs': [{
+                'key': None,  # will be set below appropriately for each transaction
+                'uuid': 'run-uuid-2',
+                'start': expected_date,
+                'seats': [],
+            }],
+            'entitlements': [],
+        }
+        # Use existing transaction setup from setUp method for the new transaction
+        self.transaction_to_backpopulate.course_run_start_date = None
+        self.transaction_to_backpopulate.modified = datetime(2025, 8, 15, 0, 0, 0)
+        self.transaction_to_backpopulate.save()
+
+        # Ensure payload matches the content_key for transaction_to_backpopulate
+        payload = mock_get_content_metadata_for_customer.return_value
+        payload['course_runs'][0]['key'] = self.transaction_to_backpopulate.content_key
+
+        # Create another transaction that should not be updated (older than since date)
+        old_transaction = TransactionFactory(
+            ledger=self.ledger,
+            course_run_start_date=None,
+            content_key="course-v1:edX+DemoX+Demo_Course",
+        )
+        # Use queryset update to avoid auto_now overwriting the value
+        Transaction.objects.filter(pk=old_transaction.pk).update(modified=datetime(2025, 7, 1, 0, 0, 0))
+
+        call_command('backpopulate_transaction_course_run_start_date', since="2025-08-01")
+        self.transaction_to_backpopulate.refresh_from_db()
+        old_transaction.refresh_from_db()
+        assert self.transaction_to_backpopulate.course_run_start_date is not None
+        assert str(self.transaction_to_backpopulate.course_run_start_date.date()) == "2025-08-01"
+        assert old_transaction.course_run_start_date is None
 
 
 @mark.django_db
