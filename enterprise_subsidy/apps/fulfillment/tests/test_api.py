@@ -17,10 +17,12 @@ from openedx_ledger.test_utils.factories import TransactionFactory
 from rest_framework import status
 
 from enterprise_subsidy.apps.fulfillment.api import (
+    GEAG_DUPLICATE_ORDER_ERROR_CODE,
     FulfillmentException,
     GEAGFulfillmentHandler,
     InvalidFulfillmentMetadataException
 )
+from enterprise_subsidy.apps.fulfillment.constants import FALLBACK_EXTERNAL_REFERENCE_ID_KEY
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
 
 
@@ -44,6 +46,8 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
     """
     Test GEAGFulfillmentHandler
     """
+    geag_fulfillment_order_uuid = uuid4()
+
     def setUp(self):
         self.geag_fulfillment_handler = GEAGFulfillmentHandler()
         self.enterprise_customer_uuid = uuid4()
@@ -259,8 +263,57 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
 
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
     @mock.patch("enterprise_subsidy.apps.api_client.enterprise.EnterpriseApiClient.get_enterprise_customer_data")
+    @ddt.data(
+        # Simulate the normal happy path.
+        {},
+        # Simulate a better future where the geag "duplicate order" error response at least tells us the orderUuid.
+        {
+            'mock_geag_response_payload': {
+                'orderUuid': str(geag_fulfillment_order_uuid),
+                'errors': [{'code': GEAG_DUPLICATE_ORDER_ERROR_CODE, 'reasons': 'blah blah duplicate order'}],
+            },
+            'mock_geag_response_status': status.HTTP_400_BAD_REQUEST,
+        },
+        # Simulate a forced enrollment with a fallback orderUuid specified, but we unexpectedly don't encounter a
+        # "duplicate order" error. The outcome should be to ignore the fallback orderUuid.
+        {
+            'extra_transaction_metadata': {
+                FALLBACK_EXTERNAL_REFERENCE_ID_KEY: str(uuid4()),  # Hopefully dropped in favor of the GEAG response.
+            },
+        },
+        # Simulate a forced enrollment with a fallback orderUuid specified and "duplicate order" error encountered.
+        {
+            'extra_transaction_metadata': {
+                FALLBACK_EXTERNAL_REFERENCE_ID_KEY: str(geag_fulfillment_order_uuid),
+            },
+            'mock_geag_response_payload': {
+                'errors': [{'code': GEAG_DUPLICATE_ORDER_ERROR_CODE, 'reasons': 'blah blah duplicate order'}],
+            },
+            'mock_geag_response_status': status.HTTP_400_BAD_REQUEST,
+        },
+        # Gracefully handle when two orderUuids are discoverable (GEAG response prioritized over force fallback).
+        {
+            'extra_transaction_metadata': {
+                FALLBACK_EXTERNAL_REFERENCE_ID_KEY: str(uuid4()),  # Some other value that gets ignored.
+            },
+            'mock_geag_response_payload': {
+                'orderUuid': str(geag_fulfillment_order_uuid),
+                'errors': [{'code': GEAG_DUPLICATE_ORDER_ERROR_CODE, 'reasons': 'blah blah duplicate order'}],
+            },
+            'mock_geag_response_status': status.HTTP_400_BAD_REQUEST,
+        },
+    )
+    @ddt.unpack
     @responses.activate
-    def test_fulfill(self, mock_get_enterprise_customer_data, mock_get_content_summary):
+    def test_fulfill(
+        self,
+        mock_get_enterprise_customer_data,
+        mock_get_content_summary,
+        # Happy path defaults below.
+        extra_transaction_metadata=None,
+        mock_geag_response_status=status.HTTP_200_OK,
+        mock_geag_response_payload=None,
+    ):
         """
         Ensure basic happy path of `fulfill`
         """
@@ -268,15 +321,18 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
         mock_get_enterprise_customer_data.return_value = {
             'auth_org_id': 'asde23eas',
         }
-        geag_response = {
-            'orderUuid': str(uuid4()),
+        if extra_transaction_metadata:
+            self.mock_transaction.metadata.update(extra_transaction_metadata)
+            self.mock_transaction.save()
+        mock_geag_response_payload = mock_geag_response_payload or {
+            'orderUuid': str(self.geag_fulfillment_order_uuid),
         }
         mock_access_token()
         responses.add(
             responses.POST,
             settings.GET_SMARTER_API_URL + '/enterprise_allocations',
-            json=geag_response,
-            status=status.HTTP_200_OK,
+            json=mock_geag_response_payload,
+            status=mock_geag_response_status,
         )
 
         external_transaction_reference = self.geag_fulfillment_handler.fulfill(self.mock_transaction)
@@ -285,23 +341,34 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
         assert external_transaction_reference.transaction == self.mock_transaction
         this_slug = external_transaction_reference.external_fulfillment_provider.slug
         assert this_slug == self.geag_fulfillment_handler.EXTERNAL_FULFILLMENT_PROVIDER_SLUG
-        assert external_transaction_reference.external_reference_id == geag_response.get('orderUuid')
+        assert external_transaction_reference.external_reference_id == str(self.geag_fulfillment_order_uuid)
 
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
     @mock.patch("enterprise_subsidy.apps.api_client.enterprise.EnterpriseApiClient.get_enterprise_customer_data")
     @ddt.data(
+        # Unknown error responses are fatal (some KNOWN errors are not fatal, see below).
         {
             'mock_geag_response_payload': {
-                'errors': [{'status': 'busted', 'reasons': 'I have my reasons'}],
+                'errors': [{'code': 'busted', 'reasons': 'I have my reasons'}],
             },
             'mock_geag_response_status': status.HTTP_400_BAD_REQUEST,
             'expected_exception_regexp': 'I have my reasons',
         },
+        # Simulate a missing orderUuid on the success payload, which would be really weird.
         {
             'mock_geag_response_payload': {
                 'some': 'other identifier',
             },
             'mock_geag_response_status': status.HTTP_200_OK,
+            'expected_exception_regexp': 'missing orderUuid',
+        },
+        # Simulate a "duplicate order" KNOWN error which is non-fatal, but without an orderUuid specified in either the
+        # response payload OR transaction metadata it should still throw an error.
+        {
+            'mock_geag_response_payload': {
+                'errors': [{'code': GEAG_DUPLICATE_ORDER_ERROR_CODE, 'reasons': 'blah blah duplicate order'}],
+            },
+            'mock_geag_response_status': status.HTTP_400_BAD_REQUEST,
             'expected_exception_regexp': 'missing orderUuid',
         },
     )

@@ -15,9 +15,10 @@ from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
 from enterprise_subsidy.apps.core.utils import request_cache, versioned_cache_key
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 
-from .constants import EXEC_ED_2U_COURSE_TYPES, OPEN_COURSES_COURSE_TYPES
+from .constants import EXEC_ED_2U_COURSE_TYPES, FALLBACK_EXTERNAL_REFERENCE_ID_KEY, OPEN_COURSES_COURSE_TYPES
 from .exceptions import FulfillmentException, InvalidFulfillmentMetadataException
 
+GEAG_DUPLICATE_ORDER_ERROR_CODE = 10174
 REQUEST_CACHE_NAMESPACE = 'enterprise_data'
 logger = logging.getLogger(__name__)
 
@@ -182,7 +183,7 @@ class GEAGFulfillmentHandler():
         )
         return geag_response
 
-    def fulfill(self, transaction):
+    def fulfill(self, transaction) -> ExternalTransactionReference:
         """
         Attempt to fulfill a ledger transaction with the GEAG fulfillment system
 
@@ -196,17 +197,36 @@ class GEAGFulfillmentHandler():
 
         try:
             geag_response.raise_for_status()
-            external_reference_id = response_payload.get('orderUuid')
-            if not external_reference_id:
-                raise FulfillmentException('missing orderUuid / external_reference_id from geag')
-            logger.info(
-                '[transaction fulfillment] Fulfilled transaction %s with external reference id %s',
-                transaction.uuid,
-                external_reference_id,
-            )
-            return self._save_fulfillment_reference(transaction, external_reference_id)
         except HTTPError as exc:
-            raise FulfillmentException(response_payload.get('errors') or geag_response.text) from exc
+            errors = response_payload.get('errors')
+            if errors and errors[0].get('code') == GEAG_DUPLICATE_ORDER_ERROR_CODE:
+                logger.info(
+                    '[transaction fulfillment] Discovered an already existing GEAG fulfillment. Full response payload: '
+                    f'{geag_response.text}'
+                )
+            else:
+                raise FulfillmentException(errors or geag_response.text) from exc
+
+        # Find the orderUuid by looking in multiple places.
+        external_reference_id = (
+            # First, prioritize looking inside the response payload. This is the most
+            # direct and authoritative source. However, if the request failed on
+            # "duplicate order", we can't rely on this key being available, but support
+            # the case where it is made available in the future.
+            response_payload.get('orderUuid')
+            # Second, look in the transaction metadata where it's possible the
+            # ForcedPolicyRedemption flow has set a fallback value.
+            or transaction.metadata.get(FALLBACK_EXTERNAL_REFERENCE_ID_KEY)
+        )
+        if not external_reference_id:
+            raise FulfillmentException('missing orderUuid / external_reference_id from geag')
+        logger.info(
+            '[transaction fulfillment] Fulfilled transaction %s with external reference id %s',
+            transaction.uuid,
+            external_reference_id,
+        )
+
+        return self._save_fulfillment_reference(transaction, external_reference_id)
 
     def cancel_fulfillment(self, external_transaction_reference):
         """
