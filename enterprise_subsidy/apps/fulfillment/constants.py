@@ -24,3 +24,6 @@ EXEC_ED_2U_COURSE_TYPES = {
 EXEC_ED_2U_FULFILLMENT_REQUEST_KWARGS = [
     'order_id',
 ]
+
+# Transaction metadata key used by the forced redemption tool to provide a fallback external fulfillment reference ID.
+FALLBACK_EXTERNAL_REFERENCE_ID_KEY = 'fallback_external_fulfillment_reference_id'
