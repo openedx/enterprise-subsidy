@@ -48,7 +48,7 @@ certifi==2025.8.3
     #   httpcore
     #   httpx
     #   requests
-cffi==1.17.1
+cffi==2.0.0
     # via
     #   -r requirements/validation.txt
     #   cryptography
@@ -90,7 +90,7 @@ coverage[toml]==7.10.6
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
-cryptography==45.0.6
+cryptography==45.0.7
     # via
     #   -r requirements/validation.txt
     #   authlib
@@ -116,7 +116,7 @@ distlib==0.4.0
     # via
     #   -r requirements/validation.txt
     #   virtualenv
-django==4.2.23
+django==4.2.24
     # via
     #   -r requirements/validation.txt
     #   django-clearcache
@@ -146,7 +146,7 @@ django==4.2.23
     #   social-auth-app-django
 django-clearcache==1.2.1
     # via -r requirements/validation.txt
-django-cors-headers==4.7.0
+django-cors-headers==4.8.0
     # via -r requirements/validation.txt
 django-crum==0.7.9
     # via
@@ -201,7 +201,7 @@ djangorestframework==3.16.1
     #   drf-spectacular
     #   drf-yasg
     #   edx-drf-extensions
-dnspython==2.7.0
+dnspython==2.8.0
     # via
     #   -r requirements/validation.txt
     #   pymongo
@@ -348,7 +348,7 @@ jsonschema==4.25.1
     # via
     #   -r requirements/validation.txt
     #   drf-spectacular
-jsonschema-specifications==2025.4.1
+jsonschema-specifications==2025.9.1
     # via
     #   -r requirements/validation.txt
     #   jsonschema
@@ -380,7 +380,7 @@ mdurl==0.1.2
     #   markdown-it-py
 mock==5.2.0
     # via -r requirements/validation.txt
-more-itertools==10.7.0
+more-itertools==10.8.0
     # via
     #   -r requirements/validation.txt
     #   jaraco-classes
@@ -404,7 +404,7 @@ openedx-events==10.5.0
     #   -r requirements/validation.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.6.7
+openedx-ledger==1.6.8
     # via -r requirements/validation.txt
 orjson==3.11.3
     # via
@@ -509,12 +509,12 @@ pyproject-hooks==1.2.0
     #   -r requirements/pip-tools.txt
     #   build
     #   pip-tools
-pytest==8.4.1
+pytest==8.4.2
     # via
     #   -r requirements/validation.txt
     #   pytest-cov
     #   pytest-django
-pytest-cov==6.2.1
+pytest-cov==6.3.0
     # via -r requirements/validation.txt
 pytest-django==4.11.1
     # via -r requirements/validation.txt
@@ -649,9 +649,9 @@ tomlkit==0.13.3
     # via
     #   -r requirements/validation.txt
     #   pylint
-tox==4.29.0
+tox==4.30.2
     # via -r requirements/validation.txt
-twine==6.1.0
+twine==6.2.0
     # via -r requirements/validation.txt
 typing-extensions==4.15.0
     # via
