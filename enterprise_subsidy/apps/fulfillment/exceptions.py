@@ -9,3 +9,7 @@ class FulfillmentException(Exception):
 
 class InvalidFulfillmentMetadataException(FulfillmentException):
     pass
+
+
+class IncompleteContentMetadataException(FulfillmentException):
+    pass

@@ -16,7 +16,7 @@ from enterprise_subsidy.apps.core.utils import request_cache, versioned_cache_ke
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 
 from .constants import EXEC_ED_2U_COURSE_TYPES, FALLBACK_EXTERNAL_REFERENCE_ID_KEY, OPEN_COURSES_COURSE_TYPES
-from .exceptions import FulfillmentException, InvalidFulfillmentMetadataException
+from .exceptions import FulfillmentException, IncompleteContentMetadataException, InvalidFulfillmentMetadataException
 
 GEAG_DUPLICATE_ORDER_ERROR_CODE = 10174
 REQUEST_CACHE_NAMESPACE = 'enterprise_data'
@@ -85,8 +85,12 @@ class GEAGFulfillmentHandler():
         return transaction.ledger.subsidy.enterprise_customer_uuid
 
     def _get_geag_variant_id(self, transaction):
+        """
+        Get the geag_variant_id from the metadata API, or raise a fatal exception if not found.
+        """
         ent_uuid = self._get_enterprise_customer_uuid(transaction)
-        return ContentMetadataApi().get_geag_variant_id(ent_uuid, transaction.content_key)
+        geag_variant_id = ContentMetadataApi().get_geag_variant_id(ent_uuid, transaction.content_key)
+        return geag_variant_id
 
     def _get_enterprise_customer_data(self, transaction):
         """
@@ -114,9 +118,21 @@ class GEAGFulfillmentHandler():
         return self._get_enterprise_customer_data(transaction).get('auth_org_id')
 
     def _create_allocation_payload(self, transaction, currency='USD'):
+        """
+        Construct a payload sent to GEAG to create an enterprise allocation.
+
+        Raises:
+          - IncompleteContentMetadataException:
+                If the requested content is not Exec Ed, or content metadata has missing data for some reason.
+        """
         # TODO: come back an un-hack this once GEAG validation is
         # more fully understood.
         transaction_price = self._get_geag_transaction_price(transaction)
+        variant_id = self._get_geag_variant_id(transaction)
+        if not variant_id:
+            raise IncompleteContentMetadataException(
+                f'Missing variant_id needed to construct an allocation payload for transaction {transaction}'
+            )
         return {
             'payment_reference': str(transaction.uuid),
             'enterprise_customer_uuid': str(self._get_enterprise_customer_uuid(transaction)),
@@ -124,7 +140,7 @@ class GEAGFulfillmentHandler():
             'order_items': [
                 {
                     # productId will be the variant id from product details
-                    'productId': self._get_geag_variant_id(transaction),
+                    'productId': variant_id,
                     'quantity': 1,
                     'normalPrice': transaction_price,
                     'discount': 0.0,
