@@ -374,6 +374,7 @@ class Subsidy(TimeStampedModel):
         content_key=None,
         parent_content_key=None,
         content_title=None,
+        course_run_start_date=None,
         subsidy_access_policy_uuid=None,
         **transaction_metadata
     ):
@@ -395,6 +396,7 @@ class Subsidy(TimeStampedModel):
             content_key=content_key,
             parent_content_key=parent_content_key,
             content_title=content_title,
+            course_run_start_date=course_run_start_date,
             subsidy_access_policy_uuid=subsidy_access_policy_uuid,
             **transaction_metadata,
         )
@@ -518,6 +520,7 @@ class Subsidy(TimeStampedModel):
             content_metadata_summary = self.metadata_summary_for_content(content_key)
             content_title = content_metadata_summary.get('content_title')
             parent_content_key = content_metadata_summary.get('content_key')
+            course_run_start_date = content_metadata_summary.get('course_run_start_date')
 
             transaction = self._create_redemption(
                 lms_user_id,
@@ -527,6 +530,7 @@ class Subsidy(TimeStampedModel):
                 subsidy_access_policy_uuid,
                 lms_user_email=lms_user_email,
                 content_title=content_title,
+                course_run_start_date=course_run_start_date,
                 idempotency_key=idempotency_key,
                 metadata=metadata,
             )
@@ -558,6 +562,7 @@ class Subsidy(TimeStampedModel):
             subsidy_access_policy_uuid,
             content_title=None,
             lms_user_email=None,
+            course_run_start_date=None,
             idempotency_key=None,
             metadata=None
     ):
@@ -611,6 +616,7 @@ class Subsidy(TimeStampedModel):
             content_key=content_key,
             parent_content_key=parent_content_key,
             content_title=content_title,
+            course_run_start_date=course_run_start_date,
             lms_user_id=lms_user_id,
             lms_user_email=lms_user_email,
             subsidy_access_policy_uuid=subsidy_access_policy_uuid,

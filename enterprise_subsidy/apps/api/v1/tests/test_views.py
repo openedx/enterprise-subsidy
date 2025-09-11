@@ -440,13 +440,17 @@ class SubsidyViewSetTests(APITestBase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+        created = self.subsidy_1_transaction_1.created.strftime(SERIALIZED_DATE_PATTERN)
+        modified = self.subsidy_1_transaction_1.modified.strftime(SERIALIZED_DATE_PATTERN)
+        course_run_start_date = self.subsidy_1_transaction_1.course_run_start_date.strftime(SERIALIZED_DATE_PATTERN)
+
         expected_existing_transactions = []
         if has_existing_transaction:
             expected_existing_transactions.append({
-                'created': self.subsidy_1_transaction_1.created.strftime(SERIALIZED_DATE_PATTERN),
+                'created': created,
                 'idempotency_key': str(self.subsidy_1_transaction_1.idempotency_key),
                 'metadata': None,
-                'modified': self.subsidy_1_transaction_1.modified.strftime(SERIALIZED_DATE_PATTERN),
+                'modified': modified,
                 'uuid': str(self.subsidy_1_transaction_1_uuid),
                 'fulfillment_identifier': None,
                 'reversal': None,
@@ -459,6 +463,7 @@ class SubsidyViewSetTests(APITestBase):
                 'content_key': self.content_key_1,
                 'parent_content_key': self.parent_content_key_1,
                 'content_title': self.content_title_1,
+                'course_run_start_date': course_run_start_date,
                 'external_reference': [],
                 'transaction_status_api_url': f"{self.transaction_status_api_url}/{self.subsidy_1_transaction_1_uuid}/",
                 'courseware_url': f"http://localhost:2000/course/{self.content_key_1}/home",
@@ -1707,6 +1712,7 @@ class ContentMetadataViewSetTests(APITestBase):
                         "upgrade_deadline": None,
                     },
                 ],
+                "start": "2024-01-01T00:00:00Z",
             }
         ],
         "advertised_course_run_uuid": course_run_uuid,
@@ -1742,6 +1748,7 @@ class ContentMetadataViewSetTests(APITestBase):
                 "uuid": course_run_uuid,
                 "variant_id": "79a95406-a9ac-49b3-a27c-44f3fd06092e",
                 "enrollment_end": "2024-01-01T00:00:00Z",
+                "start": "2024-01-01T00:00:00Z",
             }
         ],
         "advertised_course_run_uuid": course_run_uuid,
@@ -1767,6 +1774,7 @@ class ContentMetadataViewSetTests(APITestBase):
             'expected_mode': 'verified',
             'expected_geag_variant_id': None,
             'expected_enroll_by_date': '2025-01-01T00:00:00Z',
+            'expected_course_run_start_date': '2024-01-01T00:00:00Z',
         },
         {
             'expected_content_title': content_title,
@@ -1781,6 +1789,7 @@ class ContentMetadataViewSetTests(APITestBase):
             # generated randomly using a fair die
             'expected_geag_variant_id': '79a95406-a9ac-49b3-a27c-44f3fd06092e',
             'expected_enroll_by_date': '2024-01-01T00:00:00Z',
+            'expected_course_run_start_date': '2024-01-01T00:00:00Z',
         },
     )
     @ddt.unpack
@@ -1797,6 +1806,7 @@ class ContentMetadataViewSetTests(APITestBase):
         expected_mode,
         expected_geag_variant_id,
         expected_enroll_by_date,
+        expected_course_run_start_date
     ):
         with mock.patch(
             'enterprise_subsidy.apps.api_client.base_oauth.OAuthAPIClient',
@@ -1823,6 +1833,7 @@ class ContentMetadataViewSetTests(APITestBase):
                 'mode': expected_mode,
                 'geag_variant_id': expected_geag_variant_id,
                 'enroll_by_date': expected_enroll_by_date,
+                'course_run_start_date': expected_course_run_start_date,
             }
 
             # Now make a second call to validate that the view-level cache is utilized.
@@ -1845,6 +1856,7 @@ class ContentMetadataViewSetTests(APITestBase):
                 'mode': expected_mode,
                 'geag_variant_id': expected_geag_variant_id,
                 'enroll_by_date': expected_enroll_by_date,
+                'course_run_start_date': expected_course_run_start_date,
             }
             # Validate that, in the first, non-cached request, we call
             # the enterprise catalog endpoint via the client, and that

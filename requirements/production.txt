@@ -272,7 +272,7 @@ openedx-events==10.5.0
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.6.8
+openedx-ledger==1.6.9
     # via -r requirements/base.txt
 orjson==3.11.3
     # via
