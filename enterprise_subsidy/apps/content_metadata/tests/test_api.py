@@ -317,19 +317,19 @@ class ContentMetadataApiTests(TestCase):
             'requested_content_key': courserun_key_2,
             'expected_variant_id': None,
         },
-        # We can remove all the following test cases once we stop using the
+        # We can remove all the following test cases once we stop populating the
         # deprecated ``additional_metadata``.
         {
             'remove_variant_id_from_runs': False,
             'remove_variant_id_from_additional_metadata': False,
             'requested_content_key': course_key,
-            'expected_variant_id': variant_id_2,
+            'expected_variant_id': variant_id_2,  # The variant from the advertised run should be selected.
         },
         {
             'remove_variant_id_from_runs': True,
             'remove_variant_id_from_additional_metadata': False,
             'requested_content_key': course_key,
-            'expected_variant_id': variant_id_2,
+            'expected_variant_id': None,
         },
         {
             'remove_variant_id_from_runs': False,
@@ -341,7 +341,7 @@ class ContentMetadataApiTests(TestCase):
             'remove_variant_id_from_runs': True,
             'remove_variant_id_from_additional_metadata': False,
             'requested_content_key': courserun_key_1,
-            'expected_variant_id': variant_id_2,
+            'expected_variant_id': None,
         },
         {
             'remove_variant_id_from_runs': False,
@@ -353,7 +353,7 @@ class ContentMetadataApiTests(TestCase):
             'remove_variant_id_from_runs': True,
             'remove_variant_id_from_additional_metadata': False,
             'requested_content_key': courserun_key_2,
-            'expected_variant_id': variant_id_2,
+            'expected_variant_id': None,
         },
     )
     @ddt.unpack

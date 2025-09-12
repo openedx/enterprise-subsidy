@@ -132,10 +132,14 @@ class ContentMetadataApi:
         """
         course_run_content = self.get_course_run(content_identifier, content_data)
         variant_id = course_run_content.get('variant_id')
-        # If no variant_id is found, and this is indeed an Exec Ed course, check the deprecated `additional_metadata`.
-        if not variant_id:
-            if additional_metadata := content_data.get('additional_metadata'):
-                variant_id = additional_metadata.get('variant_id')
+        if variant_id:
+            logger.info(f'Found variant_id "{variant_id}" for the requested content "{content_identifier}".')
+        else:
+            # In the past, we pulled the variant_id from additional_metadata, but that
+            # dict has been long deprecated. In fact, we kept that fallback logic for too
+            # long and it bit us really bad. It's much better and safer to just terminally
+            # error if we encounter this scenario again.
+            logger.warning(f'Could NOT find a variant_id for the requested content "{content_identifier}".')
         return variant_id
 
     def enroll_by_date_for_content(self, course_run_data, content_mode):

@@ -1,6 +1,7 @@
 """
 Tests for functions defined in the ``api.py`` module.
 """
+from contextlib import nullcontext
 from datetime import datetime
 from unittest import mock
 from uuid import uuid4
@@ -23,6 +24,7 @@ from enterprise_subsidy.apps.fulfillment.api import (
     InvalidFulfillmentMetadataException
 )
 from enterprise_subsidy.apps.fulfillment.constants import FALLBACK_EXTERNAL_REFERENCE_ID_KEY
+from enterprise_subsidy.apps.fulfillment.exceptions import IncompleteContentMetadataException
 from enterprise_subsidy.apps.subsidy.tests.factories import SubsidyFactory
 
 
@@ -157,7 +159,27 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
 
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
     @mock.patch("enterprise_subsidy.apps.api_client.enterprise.EnterpriseApiClient.get_enterprise_customer_data")
-    def test_create_allocation_payload(self, mock_get_enterprise_customer_data, mock_get_content_summary):
+    @ddt.data(
+        # [normal] Content summary created from metadata payload at steady-state.
+        {
+            'mock_geag_variant_id': str(uuid4()),
+            'expected_raises': None,
+        },
+        # [corner-case] Content summary created from metadata payload fetched while
+        # update_full_content_metadata task hasn't run yet---the geag_variant_id would be missing.
+        {
+            'mock_geag_variant_id': None,
+            'expected_raises': IncompleteContentMetadataException,
+        },
+    )
+    @ddt.unpack
+    def test_create_allocation_payload(
+        self,
+        mock_get_enterprise_customer_data,
+        mock_get_content_summary,
+        mock_geag_variant_id,
+        expected_raises,
+    ):
         """
         Ensure basic happy path of `_create_allocation_payload`
         """
@@ -167,7 +189,7 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
             'source': 'edX',
             'mode': 'verified',
             'content_price': 10000,
-            'geag_variant_id': str(uuid4()),
+            'geag_variant_id': mock_geag_variant_id,
         }
         mock_get_content_summary.return_value = content_summary
         expected_enterprise_customer_data = {
@@ -190,17 +212,20 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
             content_key=self.content_key,
             metadata=tx_metadata,
         )
-        # pylint: disable=protected-access
-        geag_payload = self.geag_fulfillment_handler._create_allocation_payload(transaction)
-        assert geag_payload.get('payment_reference') == str(transaction.uuid)
-        assert geag_payload.get('order_items')[0].get('productId') == content_summary.get('geag_variant_id')
-        assert geag_payload.get('org_id') == expected_enterprise_customer_data.get('auth_org_id')
-        for payload_field in self.geag_fulfillment_handler.REQUIRED_METADATA_FIELDS:
-            geag_field = payload_field[len('geag_'):]
-            if payload_field == 'geag_data_share_consent':
-                assert geag_payload.get(geag_field) == 'true'
-            else:
-                assert geag_payload.get(geag_field) == tx_metadata.get(payload_field)
+        with self.assertRaises(expected_raises) if expected_raises else nullcontext():
+            # pylint: disable=protected-access
+            geag_payload = self.geag_fulfillment_handler._create_allocation_payload(transaction)
+
+        if not expected_raises:
+            assert geag_payload.get('payment_reference') == str(transaction.uuid)
+            assert geag_payload.get('order_items')[0].get('productId') == content_summary.get('geag_variant_id')
+            assert geag_payload.get('org_id') == expected_enterprise_customer_data.get('auth_org_id')
+            for payload_field in self.geag_fulfillment_handler.REQUIRED_METADATA_FIELDS:
+                geag_field = payload_field[len('geag_'):]
+                if payload_field == 'geag_data_share_consent':
+                    assert geag_payload.get(geag_field) == 'true'
+                else:
+                    assert geag_payload.get(geag_field) == tx_metadata.get(payload_field)
 
     @mock.patch("enterprise_subsidy.apps.api_client.enterprise.EnterpriseApiClient.get_enterprise_customer_data")
     def test_validate_pass(self, mock_get_enterprise_customer_data):
