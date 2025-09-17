@@ -17,11 +17,13 @@ from openedx_ledger.models import TransactionStateChoices
 from openedx_ledger.test_utils.factories import TransactionFactory
 from rest_framework import status
 
+from enterprise_subsidy.apps.content_metadata.constants import ProductSources
 from enterprise_subsidy.apps.fulfillment.api import (
     GEAG_DUPLICATE_ORDER_ERROR_CODE,
     FulfillmentException,
     GEAGFulfillmentHandler,
-    InvalidFulfillmentMetadataException
+    InvalidFulfillmentMetadataException,
+    is_geag_fulfillment
 )
 from enterprise_subsidy.apps.fulfillment.constants import FALLBACK_EXTERNAL_REFERENCE_ID_KEY
 from enterprise_subsidy.apps.fulfillment.exceptions import IncompleteContentMetadataException
@@ -90,6 +92,16 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
         super().setUp()
 
         self.addCleanup(self.mock_transaction.delete)
+
+    @ddt.data(
+        {'source_value': ProductSources.TWOU, 'expected_result': True},
+        {'source_value': ProductSources.EDX, 'expected_result': False},
+    )
+    @ddt.unpack
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_product_source")
+    def test_is_geag_fulfillment(self, mock_get_product_source, source_value, expected_result):
+        mock_get_product_source.return_value = source_value
+        self.assertEqual(expected_result, is_geag_fulfillment(self.mock_transaction))
 
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
     def test_can_fulfill_ocm(self, mock_get_content_summary):

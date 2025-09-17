@@ -32,7 +32,8 @@ from enterprise_subsidy.apps.api_client.lms_user import LmsUserApiClient
 from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
 from enterprise_subsidy.apps.core import event_bus
 from enterprise_subsidy.apps.core.utils import localized_utcnow
-from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler
+from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler, is_geag_fulfillment
+from enterprise_subsidy.apps.fulfillment.exceptions import IncompleteContentMetadataException
 
 MOCK_CATALOG_CLIENT = mock.MagicMock()
 MOCK_ENROLLMENT_CLIENT = mock.MagicMock()
@@ -628,15 +629,21 @@ class Subsidy(TimeStampedModel):
         ledger_transaction.save()
 
         external_transaction_reference = None
-        try:
-            if self.geag_fulfillment_handler().can_fulfill(ledger_transaction):
+        if is_geag_fulfillment(ledger_transaction):
+            try:
+                if not self.geag_fulfillment_handler().can_fulfill(ledger_transaction):
+                    raise IncompleteContentMetadataException(
+                        f'Missing variant_id needed for GEAG transaction {ledger_transaction}, '
+                        'not attempting fulfillment'
+                    )
+
                 external_transaction_reference = self.geag_fulfillment_handler().fulfill(ledger_transaction)
-        except Exception as exc:
-            logger.exception(
-                f'Failed to fulfill transaction {ledger_transaction.uuid} with the GEAG handler.'
-            )
-            self.rollback_transaction(ledger_transaction)
-            raise exc
+            except Exception as exc:
+                logger.exception(
+                    f'Failed to fulfill transaction {ledger_transaction.uuid} with the GEAG handler.'
+                )
+                self.rollback_transaction(ledger_transaction)
+                raise exc
 
         try:
             enterprise_fulfillment_uuid = self.enterprise_client.enroll(lms_user_id, content_key, ledger_transaction)
