@@ -359,6 +359,11 @@ ALLOW_LEDGER_MODIFICATION = False
 # We can disable caching on this view by setting the value below to 0.
 CONTENT_METADATA_VIEW_CACHE_TIMEOUT_SECONDS = 60 * 15
 
+# We want to keep the variant_id for a given course run
+# hot in the cache for longer, to help avoid situations
+# where the content metadata record has become incomplete upstream.
+VARIANT_ID_CACHE_TIMEOUT = 60 * 60 * 24
+
 # disable indexing on history_date
 SIMPLE_HISTORY_DATE_INDEX = False
 

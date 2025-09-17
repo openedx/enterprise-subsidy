@@ -44,6 +44,14 @@ def content_metadata_cache_key(content_key):
     return versioned_cache_key(CACHE_NAMESPACE, content_key)
 
 
+def variant_id_cache_key(enterprise_customer_uuid, content_key):
+    """
+    Returns a versioned cache key that includes the customer uuid and content_key, namespaced
+    with "variant_id".
+    """
+    return versioned_cache_key(CACHE_NAMESPACE, 'variant_id', enterprise_customer_uuid, content_key)
+
+
 class ContentMetadataApi:
     """
     An API for interacting with enterprise catalog content metadata.
@@ -271,9 +279,24 @@ class ContentMetadataApi:
 
     def get_geag_variant_id(self, enterprise_customer_uuid, content_identifier):
         """
-        Returns the GetSmarter product variant id or None
+        Returns the GetSmarter product variant id or None. Cache this separately
+        from the total content metadata record, in case the course run metadata
+        that should contain the variant id temporarily becomes incomplete later.
         """
-        return self.get_content_summary(enterprise_customer_uuid, content_identifier).get('geag_variant_id')
+        cache_key = variant_id_cache_key(enterprise_customer_uuid, content_identifier)
+        cached_response = TieredCache.get_cached_response(cache_key)
+        if cached_response.is_found:
+            logger.info(
+                f'Found content {content_identifier} variant id from cache: {cached_response.value}'
+            )
+            return cached_response.value
+
+        variant_id = self.get_content_summary(enterprise_customer_uuid, content_identifier).get('geag_variant_id')
+        if variant_id:
+            TieredCache.set_all_tiers(
+                cache_key, variant_id, django_cache_timeout=settings.VARIANT_ID_CACHE_TIMEOUT,
+            )
+        return variant_id
 
     @staticmethod
     def get_content_metadata(content_identifier, **kwargs):
