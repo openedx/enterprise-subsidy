@@ -1184,6 +1184,7 @@ class TransactionViewSetTests(APITestBase):
 
     # Uncomment this later once we have segment events firing.
     # @mock.patch('enterprise_subsidy.apps.api.v1.event_utils.track_event')
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=False)
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
@@ -1194,6 +1195,7 @@ class TransactionViewSetTests(APITestBase):
         mock_get_content_summary,
         mock_price_for_content,
         mock_enterprise_client,
+        mock_is_geag_fulfillment,  # pylint: disable=unused-argument
     ):
         """
         Test create Transaction, happy case.
@@ -1267,6 +1269,7 @@ class TransactionViewSetTests(APITestBase):
 
     # Uncomment this later once we have segment events firing.
     # @mock.patch('enterprise_subsidy.apps.api.v1.event_utils.track_event')
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=False)
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
@@ -1276,7 +1279,8 @@ class TransactionViewSetTests(APITestBase):
         mock_lms_user_client,
         mock_get_content_summary,
         mock_price_for_content,
-        mock_enterprise_client
+        mock_enterprise_client,
+        mock_is_geag_fulfillment,  # pylint: disable=unused-argument
     ):
         """
         Test create Transaction, happy case.
@@ -1331,6 +1335,7 @@ class TransactionViewSetTests(APITestBase):
         assert retrieve_response_data["uuid"] == create_response_data["uuid"]
         assert retrieve_response_data["idempotency_key"] == create_response_data["idempotency_key"]
 
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=False)
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
@@ -1341,6 +1346,7 @@ class TransactionViewSetTests(APITestBase):
         mock_get_content_summary,
         mock_price_for_content,
         mock_enterprise_client,
+        mock_is_geag_fulfillment,  # pylint: disable=unused-argument
     ):
         """
         Test create Transaction, 429 response due to the ledger being locked.
@@ -1433,6 +1439,7 @@ class TransactionViewSetTests(APITestBase):
         assert response.status_code == status.HTTP_422_UNPROCESSABLE_ENTITY
         assert response.json() == {"Error": "The given content_key is not in any catalog for this customer."}
 
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=False)
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.content_metadata_api")
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
@@ -1443,6 +1450,7 @@ class TransactionViewSetTests(APITestBase):
         mock_get_content_summary,
         mock_subsidy_content_metadata_api,
         mock_enterprise_client,
+        mock_is_geag_variant,  # pylint: disable=unused-argument
     ):
         """
         Test create Transaction, 5xx response due to the external enrollment failing. Check that a transaction is

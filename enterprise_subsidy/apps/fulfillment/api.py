@@ -9,13 +9,12 @@ from getsmarter_api_clients.geag import GetSmarterEnterpriseApiClient
 from openedx_ledger.models import ExternalFulfillmentProvider, ExternalTransactionReference
 from requests.exceptions import HTTPError
 
-# pylint: disable=unused-import
-from enterprise_subsidy.apps.content_metadata import api as content_metadata_api
 from enterprise_subsidy.apps.content_metadata.api import ContentMetadataApi
+from enterprise_subsidy.apps.content_metadata.constants import ProductSources
 from enterprise_subsidy.apps.core.utils import request_cache, versioned_cache_key
 from enterprise_subsidy.apps.subsidy.constants import CENTS_PER_DOLLAR
 
-from .constants import EXEC_ED_2U_COURSE_TYPES, FALLBACK_EXTERNAL_REFERENCE_ID_KEY, OPEN_COURSES_COURSE_TYPES
+from .constants import FALLBACK_EXTERNAL_REFERENCE_ID_KEY
 from .exceptions import FulfillmentException, IncompleteContentMetadataException, InvalidFulfillmentMetadataException
 
 GEAG_DUPLICATE_ORDER_ERROR_CODE = 10174
@@ -30,23 +29,14 @@ def create_fulfillment(subsidy_uuid, lms_user_id, content_key, **metadata):
     raise NotImplementedError
 
 
-def determine_fulfillment_client(subsidy_uuid, content_key):
-    """
-    Function stub.
-    Determines which API client can fulfill a redemption for the given content_key.
-    The implementation will likely want to follow a pattern like this:
+def get_customer_uuid(transaction):
+    return transaction.ledger.subsidy.enterprise_customer_uuid
 
-    metadata = content_metadata_api.get_content_metadata(content_key)
-    course_type = metadata.get('course_type')
-    if course_type in EXEC_ED_2U_COURSE_TYPES:
-        # really we need to return an exec-ed-capable client
-        return None
-    if course_type in OPEN_COURSES_COURSE_TYPES:
-        # return an edx-enterprise client
-        return None
-    return None
-    """
-    raise NotImplementedError
+
+def is_geag_fulfillment(transaction):
+    ent_uuid = get_customer_uuid(transaction)
+    product_source = ContentMetadataApi().get_product_source(ent_uuid, transaction.content_key)
+    return product_source == ProductSources.TWOU
 
 
 class GEAGFulfillmentHandler():
@@ -81,14 +71,11 @@ class GEAGFulfillmentHandler():
         """
         return -1.0 * (float(transaction.quantity) / CENTS_PER_DOLLAR)
 
-    def _get_enterprise_customer_uuid(self, transaction):
-        return transaction.ledger.subsidy.enterprise_customer_uuid
-
     def _get_geag_variant_id(self, transaction):
         """
         Get the geag_variant_id from the metadata API, or raise a fatal exception if not found.
         """
-        ent_uuid = self._get_enterprise_customer_uuid(transaction)
+        ent_uuid = get_customer_uuid(transaction)
         geag_variant_id = ContentMetadataApi().get_geag_variant_id(ent_uuid, transaction.content_key)
         return geag_variant_id
 
@@ -98,7 +85,7 @@ class GEAGFulfillmentHandler():
         """
         cache_key = versioned_cache_key(
             'get_enterprise_customer_data',
-            self._get_enterprise_customer_uuid(transaction),
+            get_customer_uuid(transaction),
             transaction.uuid,
         )
         # Check if data is already cached
@@ -106,7 +93,7 @@ class GEAGFulfillmentHandler():
         if cached_response.is_found:
             return cached_response.value
         # If data is not cached, fetch and cache it
-        enterprise_customer_uuid = str(self._get_enterprise_customer_uuid(transaction))
+        enterprise_customer_uuid = str(get_customer_uuid(transaction))
         ent_client = self.get_enterprise_client(transaction)
         enterprise_data = ent_client.get_enterprise_customer_data(enterprise_customer_uuid)
 
@@ -135,7 +122,7 @@ class GEAGFulfillmentHandler():
             )
         return {
             'payment_reference': str(transaction.uuid),
-            'enterprise_customer_uuid': str(self._get_enterprise_customer_uuid(transaction)),
+            'enterprise_customer_uuid': str(get_customer_uuid(transaction)),
             'currency': currency,
             'order_items': [
                 {

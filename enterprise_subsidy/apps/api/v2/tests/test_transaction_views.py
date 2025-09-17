@@ -908,6 +908,7 @@ class TransactionAdminCreateViewTests(APITestBase):
         assert response_data["reversal"] is None
         assert response_data["state"] == TransactionStateChoices.COMMITTED
 
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=False)
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client")
     @mock.patch("enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content")
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
@@ -919,7 +920,8 @@ class TransactionAdminCreateViewTests(APITestBase):
         mock_lms_user_client,
         mock_get_content_summary,
         mock_price_for_content,
-        mock_enterprise_client
+        mock_enterprise_client,
+        mock_is_geag_fulfillment,
     ):
         """
         Tests that the admin transaction creation endpoint responds with a 201

@@ -19,7 +19,9 @@ from openedx_ledger.test_utils.factories import (
 from requests.exceptions import HTTPError
 from rest_framework import status
 
+from enterprise_subsidy.apps.content_metadata.constants import ProductSources
 from enterprise_subsidy.apps.fulfillment.api import InvalidFulfillmentMetadataException
+from enterprise_subsidy.apps.fulfillment.exceptions import IncompleteContentMetadataException
 from test_utils.utils import MockResponse
 
 from ..models import ContentNotFoundForCustomerException, PriceValidationError, Subsidy
@@ -316,10 +318,14 @@ class SubsidyModelRedemptionTestCase(TestCase):
             provider
         )
 
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=False)
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
-    def test_redeem_not_existing(self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content):
+    def test_redeem_not_existing(
+        self, mock_get_content_summary, mock_enterprise_client,
+        mock_price_for_content, mock_is_geag_fulfillment,  # pylint: disable=unused-argument
+    ):
         """
         Test Subsidy.redeem() happy path (i.e. the redemption/transaction does not already exist, and calling redeem()
         creates one).
@@ -348,11 +354,13 @@ class SubsidyModelRedemptionTestCase(TestCase):
         assert new_transaction.state == TransactionStateChoices.COMMITTED
         assert new_transaction.quantity == -mock_content_price
 
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=False)
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
     def test_redeem_with_requested_price(
-        self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content
+        self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content,
+        mock_is_geag_fulfillment,  # pylint: disable=unused-argument
     ):
         """
         Test Subsidy.redeem() happy path with an acceptable requested price.
@@ -382,11 +390,13 @@ class SubsidyModelRedemptionTestCase(TestCase):
         assert new_transaction.state == TransactionStateChoices.COMMITTED
         assert new_transaction.quantity == -990
 
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=False)
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
     def test_redeem_with_requested_price_validation_error(
-        self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content
+        self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content,
+        mock_is_geag_fulfillment,  # pylint: disable=unused-argument
     ):
         """
         Test Subsidy.redeem() with an unacceptable requested price.
@@ -420,10 +430,14 @@ class SubsidyModelRedemptionTestCase(TestCase):
 
         self.assertEqual(num_txs_before, Transaction.objects.all().count())
 
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=False)
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
-    def test_redeem_with_metadata(self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content):
+    def test_redeem_with_metadata(
+        self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content,
+        mock_is_geag_fulfillment,  # pylint: disable=unused-argument
+    ):
         """
         Test Subsidy.redeem() happy path with additional metadata
         """
@@ -458,10 +472,14 @@ class SubsidyModelRedemptionTestCase(TestCase):
         assert new_transaction.quantity == -mock_content_price
         assert new_transaction.metadata == tx_metadata
 
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=True)
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
-    def test_redeem_with_geag_exception(self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content):
+    def test_redeem_with_geag_exception(
+        self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content,
+        mock_is_geag_fulfillment,  # pylint: disable=unused-argument
+    ):
         """
         Test Subsidy.redeem() rollback upon geag validation exception
         """
@@ -473,7 +491,7 @@ class SubsidyModelRedemptionTestCase(TestCase):
         mock_get_content_summary.return_value = {
             'content_uuid': 'course-v1:edX+test+course',
             'content_key': 'course-v1:edX+test+course',
-            'source': 'edX',
+            'source': ProductSources.TWOU,
             'mode': 'verified',
             'content_price': 10000,
             # When this key value is non-None, it triggers an attempt to create an external fulfillment. This attempt
@@ -501,12 +519,52 @@ class SubsidyModelRedemptionTestCase(TestCase):
         created_transaction = Transaction.objects.latest('created')
         assert created_transaction.state == TransactionStateChoices.FAILED
 
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=True)
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_redeem_with_geag_no_variant_id(
+        self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content,
+        mock_is_geag_fulfillment,  # pylint: disable=unused-argument
+    ):
+        """
+        Test Subsidy.redeem() rollback upon geag validation exception, and enterprise_client not called
+        """
+        lms_user_id = 1
+        content_key = "course-v1:edX+test+course"
+        subsidy_access_policy_uuid = str(uuid4())
+        mock_content_price = 1000
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'course-v1:edX+test+course',
+            'content_key': 'course-v1:edX+test+course',
+            'source': ProductSources.TWOU,
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
+        mock_price_for_content.return_value = mock_content_price
+        tx_metadata = {
+            'geag_first_name': 'Donny',
+            'geag_last_name': 'Kerabatsos',
+        }
+        with pytest.raises(IncompleteContentMetadataException):
+            self.subsidy.redeem(
+                lms_user_id,
+                content_key,
+                subsidy_access_policy_uuid,
+                metadata=tx_metadata
+            )
+        created_transaction = Transaction.objects.latest('created')
+        assert created_transaction.state == TransactionStateChoices.FAILED
+        self.assertFalse(mock_enterprise_client.enroll.called)
+
     @ddt.data(
         {"cancel_external_fulfillment_side_effect": None},
         {"cancel_external_fulfillment_side_effect": HTTPError()},
         {"cancel_external_fulfillment_side_effect": Exception()},
     )
     @ddt.unpack
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=True)
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
@@ -521,6 +579,7 @@ class SubsidyModelRedemptionTestCase(TestCase):
         mock_get_content_summary,
         mock_enterprise_client,
         mock_price_for_content,
+        mock_is_geag_fulfillment,  # pylint: disable=unused-argument
         cancel_external_fulfillment_side_effect,
     ):
         """
@@ -534,7 +593,7 @@ class SubsidyModelRedemptionTestCase(TestCase):
         mock_get_content_summary.return_value = {
             'content_uuid': 'course-v1:edX+test+course',
             'content_key': 'course-v1:edX+test+course',
-            'source': 'edX',
+            'source': ProductSources.TWOU,
             'mode': 'verified',
             'content_price': 10000,
             'geag_variant_id': str(uuid4()),
