@@ -650,6 +650,7 @@ class Subsidy(TimeStampedModel):
             self.commit_transaction(
                 ledger_transaction,
                 fulfillment_identifier=enterprise_fulfillment_uuid,
+                external_reference=external_transaction_reference,
             )
         except Exception as exc:
             logger.exception(
