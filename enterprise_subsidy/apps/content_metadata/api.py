@@ -114,7 +114,9 @@ class ContentMetadataApi:
         Helps get the product source string, given a dict of ``content_data``.
         """
         if product_source := content_data.get('product_source'):
-            source_name = product_source.get('slug')
+            # AED 2025-09-18: we're defensive about this because we've seen cases in the wild
+            # where slug is not populated, but these are generally expected to have the same value.
+            source_name = product_source.get('slug') or product_source.get('name')
             if source_name in CONTENT_MODES_BY_PRODUCT_SOURCE:
                 return source_name
         return ProductSources.EDX.value
@@ -265,7 +267,7 @@ class ContentMetadataApi:
                 Note: the content needs to be owned by a catalog associated with the provided customer else this
                 method will throw an HTTPError.
         Returns:
-            Either `2U` or `edX` based on the content's product source content metadata field
+            Either `2u` or `edX` based on the content's product source content metadata field
         Raises:
             requests.exceptions.HTTPError: if service is down/unavailable or status code comes back >= 300,
             the method will log and throw an HTTPError exception. A 404 exception will be thrown if the content
@@ -275,7 +277,12 @@ class ContentMetadataApi:
             enterprise_customer_uuid,
             content_identifier
         )
-        return self.product_source_for_content(course_details)
+        value = self.product_source_for_content(course_details)
+        logger.info(
+            'Product source %s found for customer %s, content id %s',
+            value, enterprise_customer_uuid, content_identifier,
+        )
+        return value
 
     def get_geag_variant_id(self, enterprise_customer_uuid, content_identifier):
         """

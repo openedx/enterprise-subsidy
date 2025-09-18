@@ -34,9 +34,15 @@ def get_customer_uuid(transaction):
 
 
 def is_geag_fulfillment(transaction):
+    """
+    Returns whether the given transaction's content metadata is of the 2u/GEAG type (which is
+    to say - executive education).
+    """
     ent_uuid = get_customer_uuid(transaction)
     product_source = ContentMetadataApi().get_product_source(ent_uuid, transaction.content_key)
-    return product_source == ProductSources.TWOU
+    result = product_source == ProductSources.TWOU
+    logger.info('Transaction %s is_geag_fulfillment=%s', transaction.uuid, result)
+    return result
 
 
 class GEAGFulfillmentHandler():
@@ -194,9 +200,11 @@ class GEAGFulfillmentHandler():
             ExternalTransactionReference: A new ExternalTransactionReference representing the new external fulfillment.
         """
         self._validate(transaction)
+        logger.info('Beginning external fulfillment for transaction %s', transaction.uuid)
         allocation_payload = self._create_allocation_payload(transaction)
         geag_response = self._fulfill_in_geag(allocation_payload)
         response_payload = geag_response.json()
+        logger.info('Transaction %s has GEAG response payload: %s', transaction.uuid, response_payload)
 
         try:
             geag_response.raise_for_status()
