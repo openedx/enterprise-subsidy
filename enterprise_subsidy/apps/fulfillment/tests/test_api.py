@@ -17,7 +17,6 @@ from openedx_ledger.models import TransactionStateChoices
 from openedx_ledger.test_utils.factories import TransactionFactory
 from rest_framework import status
 
-from enterprise_subsidy.apps.content_metadata.constants import ProductSources
 from enterprise_subsidy.apps.fulfillment.api import (
     GEAG_DUPLICATE_ORDER_ERROR_CODE,
     FulfillmentException,
@@ -94,8 +93,8 @@ class GEAGFulfillmentHandlerTestCase(TestCase):
         self.addCleanup(self.mock_transaction.delete)
 
     @ddt.data(
-        {'source_value': ProductSources.TWOU, 'expected_result': True},
-        {'source_value': ProductSources.EDX, 'expected_result': False},
+        {'source_value': '2u', 'expected_result': True},
+        {'source_value': 'edX', 'expected_result': False},
     )
     @ddt.unpack
     @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_product_source")
