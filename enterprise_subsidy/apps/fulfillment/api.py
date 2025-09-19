@@ -40,7 +40,7 @@ def is_geag_fulfillment(transaction):
     """
     ent_uuid = get_customer_uuid(transaction)
     product_source = ContentMetadataApi().get_product_source(ent_uuid, transaction.content_key)
-    result = product_source == ProductSources.TWOU
+    result = product_source == ProductSources.TWOU.value
     logger.info('Transaction %s is_geag_fulfillment=%s', transaction.uuid, result)
     return result
 
