@@ -29,7 +29,7 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.6.3
+authlib==1.6.4
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -68,7 +68,7 @@ charset-normalizer==3.4.3
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   requests
-click==8.2.1
+click==8.3.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -96,12 +96,12 @@ confluent-kafka[avro,schema-registry]==2.11.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-coverage[toml]==7.10.6
+coverage[toml]==7.10.7
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pytest-cov
-cryptography==45.0.7
+cryptography==46.0.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -160,7 +160,7 @@ django-clearcache==1.2.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-django-cors-headers==4.8.0
+django-cors-headers==4.9.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -233,7 +233,7 @@ dnspython==2.8.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pymongo
-docutils==0.22
+docutils==0.22.2
     # via
     #   -r requirements/quality.txt
     #   readme-renderer
@@ -315,7 +315,7 @@ factory-boy==3.3.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-faker==37.6.0
+faker==37.8.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -505,7 +505,7 @@ ply==3.11
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   djangoql
-psutil==7.0.0
+psutil==7.1.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -563,7 +563,7 @@ pymemcache==4.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-pymongo==4.15.0
+pymongo==4.15.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
