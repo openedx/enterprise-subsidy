@@ -25,7 +25,7 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.6.3
+authlib==1.6.4
     # via
     #   -r requirements/test.txt
     #   confluent-kafka
@@ -57,7 +57,7 @@ charset-normalizer==3.4.3
     # via
     #   -r requirements/test.txt
     #   requests
-click==8.2.1
+click==8.3.0
     # via
     #   -r requirements/test.txt
     #   click-log
@@ -79,11 +79,11 @@ colorama==0.4.6
     #   tox
 confluent-kafka[avro,schema-registry]==2.11.1
     # via -r requirements/test.txt
-coverage[toml]==7.10.6
+coverage[toml]==7.10.7
     # via
     #   -r requirements/test.txt
     #   pytest-cov
-cryptography==45.0.7
+cryptography==46.0.1
     # via
     #   -r requirements/test.txt
     #   authlib
@@ -134,7 +134,7 @@ django==4.2.24
     #   social-auth-app-django
 django-clearcache==1.2.1
     # via -r requirements/test.txt
-django-cors-headers==4.8.0
+django-cors-headers==4.9.0
     # via -r requirements/test.txt
 django-crum==0.7.9
     # via
@@ -190,7 +190,7 @@ dnspython==2.8.0
     # via
     #   -r requirements/test.txt
     #   pymongo
-docutils==0.22
+docutils==0.22.2
     # via readme-renderer
 drf-jwt==1.19.2
     # via
@@ -250,7 +250,7 @@ edx-toggles==5.4.1
     #   edx-event-bus-kafka
 factory-boy==3.3.3
     # via -r requirements/test.txt
-faker==37.6.0
+faker==37.8.0
     # via
     #   -r requirements/test.txt
     #   factory-boy
@@ -393,7 +393,7 @@ ply==3.11
     # via
     #   -r requirements/test.txt
     #   djangoql
-psutil==7.0.0
+psutil==7.1.0
     # via
     #   -r requirements/test.txt
     #   edx-django-utils
@@ -441,7 +441,7 @@ pylint-plugin-utils==0.9.0
     #   pylint-django
 pymemcache==4.0.0
     # via -r requirements/test.txt
-pymongo==4.15.0
+pymongo==4.15.1
     # via
     #   -r requirements/test.txt
     #   edx-opaque-keys
