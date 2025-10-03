@@ -4,12 +4,12 @@
 #
 #    make upgrade
 #
-anyio==4.10.0
+anyio==4.11.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   httpx
-asgiref==3.9.1
+asgiref==3.9.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -246,7 +246,7 @@ drf-spectacular==0.28.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-drf-yasg==1.21.10
+drf-yasg==1.21.11
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -423,7 +423,7 @@ markdown-it-py==4.0.0
     # via
     #   -r requirements/quality.txt
     #   rich
-markupsafe==3.0.2
+markupsafe==3.0.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -613,7 +613,7 @@ pytz==2025.2
     #   drf-yasg
     #   getsmarter-api-clients
     #   openedx-ledger
-pyyaml==6.0.2
+pyyaml==6.0.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
