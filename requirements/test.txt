@@ -8,7 +8,7 @@ anyio==4.11.0
     # via
     #   -r requirements/base.txt
     #   httpx
-asgiref==3.9.2
+asgiref==3.10.0
     # via
     #   -r requirements/base.txt
     #   django
@@ -24,7 +24,7 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.6.4
+authlib==1.6.5
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -37,7 +37,7 @@ cachetools==6.2.0
     #   -r requirements/base.txt
     #   confluent-kafka
     #   tox
-certifi==2025.8.3
+certifi==2025.10.5
     # via
     #   -r requirements/base.txt
     #   httpcore
@@ -77,7 +77,7 @@ coverage[toml]==7.10.7
     # via
     #   -r requirements/test.in
     #   pytest-cov
-cryptography==46.0.1
+cryptography==46.0.2
     # via
     #   -r requirements/base.txt
     #   authlib
@@ -186,7 +186,7 @@ drf-spectacular==0.28.0
     # via -r requirements/base.txt
 drf-yasg==1.21.11
     # via -r requirements/base.txt
-edx-auth-backends==4.6.0
+edx-auth-backends==4.6.1
     # via -r requirements/base.txt
 edx-ccx-keys==2.0.2
     # via
@@ -196,7 +196,7 @@ edx-django-release-util==1.5.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-edx-django-utils==8.0.0
+edx-django-utils==8.0.1
     # via
     #   -r requirements/base.txt
     #   edx-auth-backends
@@ -272,7 +272,7 @@ inflection==0.5.1
     #   drf-yasg
 iniconfig==2.1.0
     # via pytest
-isort==6.0.1
+isort==6.1.0
     # via pylint
 jinja2==3.1.6
     # via
@@ -358,7 +358,7 @@ pyjwt[crypto]==2.10.1
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.3.8
+pylint==3.3.9
     # via
     #   edx-lint
     #   pylint-celery
@@ -374,7 +374,7 @@ pylint-plugin-utils==0.9.0
     #   pylint-django
 pymemcache==4.0.0
     # via -r requirements/base.txt
-pymongo==4.15.1
+pymongo==4.15.2
     # via
     #   -r requirements/base.txt
     #   edx-opaque-keys
@@ -492,7 +492,7 @@ text-unidecode==1.3
     #   python-slugify
 tomlkit==0.13.3
     # via pylint
-tox==4.30.2
+tox==4.30.3
     # via -r requirements/test.in
 typing-extensions==4.15.0
     # via

@@ -6,7 +6,7 @@
 #
 anyio==4.11.0
     # via httpx
-asgiref==3.9.2
+asgiref==3.10.0
     # via
     #   django
     #   django-cors-headers
@@ -16,13 +16,13 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.6.4
+authlib==1.6.5
     # via confluent-kafka
 avro==1.12.0
     # via confluent-kafka
 cachetools==6.2.0
     # via confluent-kafka
-certifi==2025.8.3
+certifi==2025.10.5
     # via
     #   httpcore
     #   httpx
@@ -41,7 +41,7 @@ code-annotations==2.3.0
     # via edx-toggles
 confluent-kafka[avro,schema-registry]==2.11.1
     # via -r requirements/base.in
-cryptography==46.0.1
+cryptography==46.0.2
     # via
     #   authlib
     #   pyjwt
@@ -50,7 +50,7 @@ defusedxml==0.7.1
     # via
     #   python3-openid
     #   social-auth-core
-django==4.2.24
+django==4.2.25
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
@@ -132,7 +132,7 @@ drf-spectacular==0.28.0
     # via -r requirements/base.in
 drf-yasg==1.21.11
     # via -r requirements/base.in
-edx-auth-backends==4.6.0
+edx-auth-backends==4.6.1
     # via -r requirements/base.in
 edx-ccx-keys==2.0.2
     # via openedx-events
@@ -140,7 +140,7 @@ edx-django-release-util==1.5.0
     # via
     #   -r requirements/base.in
     #   openedx-ledger
-edx-django-utils==8.0.0
+edx-django-utils==8.0.1
     # via
     #   -r requirements/base.in
     #   edx-auth-backends
@@ -240,7 +240,7 @@ pyjwt[crypto]==2.10.1
     #   social-auth-core
 pymemcache==4.0.0
     # via -r requirements/base.in
-pymongo==4.15.1
+pymongo==4.15.2
     # via edx-opaque-keys
 pynacl==1.6.0
     # via edx-django-utils

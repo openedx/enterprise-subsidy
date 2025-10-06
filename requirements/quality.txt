@@ -8,7 +8,7 @@ anyio==4.11.0
     # via
     #   -r requirements/test.txt
     #   httpx
-asgiref==3.9.2
+asgiref==3.10.0
     # via
     #   -r requirements/test.txt
     #   django
@@ -25,7 +25,7 @@ attrs==25.3.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.6.4
+authlib==1.6.5
     # via
     #   -r requirements/test.txt
     #   confluent-kafka
@@ -38,7 +38,7 @@ cachetools==6.2.0
     #   -r requirements/test.txt
     #   confluent-kafka
     #   tox
-certifi==2025.8.3
+certifi==2025.10.5
     # via
     #   -r requirements/test.txt
     #   httpcore
@@ -83,7 +83,7 @@ coverage[toml]==7.10.7
     # via
     #   -r requirements/test.txt
     #   pytest-cov
-cryptography==46.0.1
+cryptography==46.0.2
     # via
     #   -r requirements/test.txt
     #   authlib
@@ -105,7 +105,7 @@ distlib==0.4.0
     # via
     #   -r requirements/test.txt
     #   virtualenv
-django==4.2.24
+django==4.2.25
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/test.txt
@@ -200,7 +200,7 @@ drf-spectacular==0.28.0
     # via -r requirements/test.txt
 drf-yasg==1.21.11
     # via -r requirements/test.txt
-edx-auth-backends==4.6.0
+edx-auth-backends==4.6.1
     # via -r requirements/test.txt
 edx-ccx-keys==2.0.2
     # via
@@ -210,7 +210,7 @@ edx-django-release-util==1.5.0
     # via
     #   -r requirements/test.txt
     #   openedx-ledger
-edx-django-utils==8.0.0
+edx-django-utils==8.0.1
     # via
     #   -r requirements/test.txt
     #   edx-auth-backends
@@ -295,7 +295,7 @@ iniconfig==2.1.0
     # via
     #   -r requirements/test.txt
     #   pytest
-isort==6.0.1
+isort==6.1.0
     # via
     #   -r requirements/quality.in
     #   -r requirements/test.txt
@@ -419,7 +419,7 @@ pyjwt[crypto]==2.10.1
     #   edx-drf-extensions
     #   edx-rest-api-client
     #   social-auth-core
-pylint==3.3.8
+pylint==3.3.9
     # via
     #   -r requirements/test.txt
     #   edx-lint
@@ -441,7 +441,7 @@ pylint-plugin-utils==0.9.0
     #   pylint-django
 pymemcache==4.0.0
     # via -r requirements/test.txt
-pymongo==4.15.1
+pymongo==4.15.2
     # via
     #   -r requirements/test.txt
     #   edx-opaque-keys
@@ -579,7 +579,7 @@ tomlkit==0.13.3
     # via
     #   -r requirements/test.txt
     #   pylint
-tox==4.30.2
+tox==4.30.3
     # via -r requirements/test.txt
 twine==6.2.0
     # via -r requirements/quality.in
