@@ -34,7 +34,7 @@ authlib==1.6.5
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   confluent-kafka
-avro==1.12.0
+avro==1.12.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -64,7 +64,7 @@ chardet==5.2.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   tox
-charset-normalizer==3.4.3
+charset-normalizer==3.4.4
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -97,12 +97,12 @@ confluent-kafka[avro,schema-registry]==2.12.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-coverage[toml]==7.10.7
+coverage[toml]==7.11.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pytest-cov
-cryptography==46.0.2
+cryptography==46.0.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -368,7 +368,7 @@ inflection==0.5.1
     #   -r requirements/test.txt
     #   drf-spectacular
     #   drf-yasg
-iniconfig==2.1.0
+iniconfig==2.3.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -500,7 +500,7 @@ ply==3.11
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   djangoql
-psutil==7.1.0
+psutil==7.1.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -626,7 +626,7 @@ redis==6.4.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-referencing==0.36.2
+referencing==0.37.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
