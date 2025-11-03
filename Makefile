@@ -38,7 +38,7 @@ requirements: dev_requirements ## sync to default requirements
 ci_requirements: validation_requirements ## sync to requirements needed for CI checks
 
 pip_requirements:  ## install pip-sync
-	pip install -r requirements/pip-tools.txt
+	pip install -r requirements/pip-tools.txt -c requirements/constraints.txt
 
 dev_requirements: pip_requirements ## sync to requirements for local development
 	pip-sync -q requirements/dev.txt requirements/private.* requirements/test.txt
@@ -114,7 +114,7 @@ $(COMMON_CONSTRAINTS_TXT):
 
 upgrade: export CUSTOM_COMPILE_COMMAND=make upgrade
 upgrade: $(COMMON_CONSTRAINTS_TXT) ## update the requirements/*.txt files with the latest packages satisfying requirements/*.in
-	pip install -qr requirements/pip-tools.txt
+	pip install -qr requirements/pip-tools.txt -c requirements/constraints.txt
 	# Make sure to compile files after any other files they include!
 	$(PIP_COMPILE) --allow-unsafe -o requirements/pip.txt requirements/pip.in
 	$(PIP_COMPILE) -o requirements/pip-tools.txt requirements/pip-tools.in
