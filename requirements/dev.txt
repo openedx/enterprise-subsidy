@@ -85,7 +85,7 @@ colorama==0.4.6
     # via
     #   -r requirements/validation.txt
     #   tox
-confluent-kafka[avro,schema-registry]==2.12.0
+confluent-kafka[avro,schema-registry]==2.12.1
     # via -r requirements/validation.txt
 coverage[toml]==7.11.0
     # via
@@ -116,7 +116,7 @@ distlib==0.4.0
     # via
     #   -r requirements/validation.txt
     #   virtualenv
-django==4.2.25
+django==5.2.7
     # via
     #   -r requirements/validation.txt
     #   django-clearcache
@@ -154,7 +154,7 @@ django-crum==0.7.9
     #   edx-django-utils
     #   edx-rbac
     #   edx-toggles
-django-debug-toolbar==6.0.0
+django-debug-toolbar==6.1.0
     # via -r requirements/dev.in
 django-dynamic-fixture==4.0.1
     # via -r requirements/validation.txt
@@ -163,7 +163,7 @@ django-extensions==4.1
     #   -r requirements/dev.in
     #   -r requirements/validation.txt
     #   openedx-ledger
-django-filter==25.1
+django-filter==25.2
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -213,11 +213,11 @@ drf-jwt==1.19.2
     # via
     #   -r requirements/validation.txt
     #   edx-drf-extensions
-drf-spectacular==0.28.0
+drf-spectacular==0.29.0
     # via -r requirements/validation.txt
 drf-yasg==1.21.11
     # via -r requirements/validation.txt
-edx-auth-backends==4.6.1
+edx-auth-backends==4.6.2
     # via -r requirements/validation.txt
 edx-ccx-keys==2.0.2
     # via
@@ -267,7 +267,7 @@ edx-toggles==5.4.1
     #   edx-event-bus-kafka
 factory-boy==3.3.3
     # via -r requirements/validation.txt
-faker==37.11.0
+faker==37.12.0
     # via
     #   -r requirements/validation.txt
     #   factory-boy
@@ -389,7 +389,7 @@ mysqlclient==2.2.7
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
-nh3==0.3.1
+nh3==0.3.2
     # via
     #   -r requirements/validation.txt
     #   readme-renderer
@@ -404,7 +404,7 @@ openedx-events==10.5.0
     #   -r requirements/validation.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.6.9
+openedx-ledger==1.6.15
     # via -r requirements/validation.txt
 packaging==25.0
     # via
@@ -439,7 +439,7 @@ ply==3.11
     #   djangoql
 polib==1.2.0
     # via edx-i18n-tools
-psutil==7.1.1
+psutil==7.1.3
     # via
     #   -r requirements/validation.txt
     #   edx-django-utils
@@ -543,7 +543,7 @@ readme-renderer==44.0
     # via
     #   -r requirements/validation.txt
     #   twine
-redis==6.4.0
+redis==7.0.1
     # via
     #   -r requirements/validation.txt
     #   openedx-ledger
@@ -583,7 +583,7 @@ rich==14.2.0
     # via
     #   -r requirements/validation.txt
     #   twine
-rpds-py==0.27.1
+rpds-py==0.28.0
     # via
     #   -r requirements/validation.txt
     #   jsonschema
@@ -617,7 +617,7 @@ snowballstemmer==3.0.1
     # via
     #   -r requirements/validation.txt
     #   pydocstyle
-social-auth-app-django==5.4.3
+social-auth-app-django==5.6.0
     # via
     #   -r requirements/validation.txt
     #   edx-auth-backends
@@ -641,15 +641,11 @@ text-unidecode==1.3
     # via
     #   -r requirements/validation.txt
     #   python-slugify
-tomli==2.3.0
-    # via
-    #   -r requirements/validation.txt
-    #   confluent-kafka
 tomlkit==0.13.3
     # via
     #   -r requirements/validation.txt
     #   pylint
-tox==4.31.0
+tox==4.32.0
     # via -r requirements/validation.txt
 twine==6.2.0
     # via -r requirements/validation.txt
@@ -675,7 +671,7 @@ urllib3==2.5.0
     #   requests
     #   responses
     #   twine
-virtualenv==20.35.3
+virtualenv==20.35.4
     # via
     #   -r requirements/validation.txt
     #   tox

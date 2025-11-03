@@ -72,7 +72,7 @@ code-annotations==2.3.0
     #   edx-toggles
 colorama==0.4.6
     # via tox
-confluent-kafka[avro,schema-registry]==2.12.0
+confluent-kafka[avro,schema-registry]==2.12.1
     # via -r requirements/base.txt
 coverage[toml]==7.11.0
     # via
@@ -136,7 +136,7 @@ django-extensions==4.1
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
-django-filter==25.1
+django-filter==25.2
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -182,11 +182,11 @@ drf-jwt==1.19.2
     # via
     #   -r requirements/base.txt
     #   edx-drf-extensions
-drf-spectacular==0.28.0
+drf-spectacular==0.29.0
     # via -r requirements/base.txt
 drf-yasg==1.21.11
     # via -r requirements/base.txt
-edx-auth-backends==4.6.1
+edx-auth-backends==4.6.2
     # via -r requirements/base.txt
 edx-ccx-keys==2.0.2
     # via
@@ -234,7 +234,7 @@ edx-toggles==5.4.1
     #   edx-event-bus-kafka
 factory-boy==3.3.3
     # via -r requirements/test.in
-faker==37.11.0
+faker==37.12.0
     # via factory-boy
 fastavro==1.12.1
     # via
@@ -313,7 +313,7 @@ openedx-events==10.5.0
     #   -r requirements/base.txt
     #   edx-event-bus-kafka
     #   openedx-ledger
-openedx-ledger==1.6.9
+openedx-ledger==1.6.15
     # via -r requirements/base.txt
 packaging==25.0
     # via
@@ -336,7 +336,7 @@ ply==3.11
     # via
     #   -r requirements/base.txt
     #   djangoql
-psutil==7.1.1
+psutil==7.1.3
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
@@ -412,7 +412,7 @@ pyyaml==6.0.3
     #   drf-yasg
     #   edx-django-release-util
     #   responses
-redis==6.4.0
+redis==7.0.1
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -437,7 +437,7 @@ requests-oauthlib==2.0.0
     #   social-auth-core
 responses==0.25.8
     # via -r requirements/test.in
-rpds-py==0.27.1
+rpds-py==0.28.0
     # via
     #   -r requirements/base.txt
     #   jsonschema
@@ -463,7 +463,7 @@ sniffio==1.3.1
     # via
     #   -r requirements/base.txt
     #   anyio
-social-auth-app-django==5.4.3
+social-auth-app-django==5.6.0
     # via
     #   -r requirements/base.txt
     #   edx-auth-backends
@@ -486,13 +486,9 @@ text-unidecode==1.3
     # via
     #   -r requirements/base.txt
     #   python-slugify
-tomli==2.3.0
-    # via
-    #   -r requirements/base.txt
-    #   confluent-kafka
 tomlkit==0.13.3
     # via pylint
-tox==4.31.0
+tox==4.32.0
     # via -r requirements/test.in
 typing-extensions==4.15.0
     # via
@@ -513,7 +509,7 @@ urllib3==2.5.0
     #   -r requirements/base.txt
     #   requests
     #   responses
-virtualenv==20.35.3
+virtualenv==20.35.4
     # via tox
 
 # The following packages are considered to be unsafe in a requirements file:
