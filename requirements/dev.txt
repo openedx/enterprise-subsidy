@@ -116,7 +116,7 @@ distlib==0.4.0
     # via
     #   -r requirements/validation.txt
     #   virtualenv
-django==5.2.7
+django==5.2.8
     # via
     #   -r requirements/validation.txt
     #   django-clearcache
@@ -205,7 +205,7 @@ dnspython==2.8.0
     # via
     #   -r requirements/validation.txt
     #   pymongo
-docutils==0.22.2
+docutils==0.22.3
     # via
     #   -r requirements/validation.txt
     #   readme-renderer

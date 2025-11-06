@@ -50,7 +50,7 @@ defusedxml==0.7.1
     # via
     #   python3-openid
     #   social-auth-core
-django==5.2.7
+django==5.2.8
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
