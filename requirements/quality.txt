@@ -78,9 +78,9 @@ colorama==0.4.6
     # via
     #   -r requirements/test.txt
     #   tox
-confluent-kafka[avro,schema-registry]==2.12.1
+confluent-kafka[avro,schema-registry]==2.12.2
     # via -r requirements/test.txt
-coverage[toml]==7.11.0
+coverage[toml]==7.11.3
     # via
     #   -r requirements/test.txt
     #   pytest-cov
@@ -105,7 +105,7 @@ distlib==0.4.0
     # via
     #   -r requirements/test.txt
     #   virtualenv
-django==5.2.7
+django==5.2.8
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/test.txt
@@ -190,7 +190,7 @@ dnspython==2.8.0
     # via
     #   -r requirements/test.txt
     #   pymongo
-docutils==0.22.2
+docutils==0.22.3
     # via readme-renderer
 drf-jwt==1.19.2
     # via
@@ -449,7 +449,7 @@ pyproject-api==1.10.0
     # via
     #   -r requirements/test.txt
     #   tox
-pytest==8.4.2
+pytest==9.0.0
     # via
     #   -r requirements/test.txt
     #   pytest-cov

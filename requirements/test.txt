@@ -72,9 +72,9 @@ code-annotations==2.3.0
     #   edx-toggles
 colorama==0.4.6
     # via tox
-confluent-kafka[avro,schema-registry]==2.12.1
+confluent-kafka[avro,schema-registry]==2.12.2
     # via -r requirements/base.txt
-coverage[toml]==7.11.0
+coverage[toml]==7.11.3
     # via
     #   -r requirements/test.in
     #   pytest-cov
@@ -380,7 +380,7 @@ pynacl==1.6.0
     #   edx-django-utils
 pyproject-api==1.10.0
     # via tox
-pytest==8.4.2
+pytest==9.0.0
     # via
     #   pytest-cov
     #   pytest-django

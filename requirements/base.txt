@@ -40,7 +40,7 @@ click==8.3.0
     #   edx-django-utils
 code-annotations==2.3.0
     # via edx-toggles
-confluent-kafka[avro,schema-registry]==2.12.1
+confluent-kafka[avro,schema-registry]==2.12.2
     # via -r requirements/base.in
 cryptography==46.0.3
     # via
@@ -50,7 +50,7 @@ defusedxml==0.7.1
     # via
     #   python3-openid
     #   social-auth-core
-django==5.2.7
+django==5.2.8
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
