@@ -8,7 +8,7 @@ anyio==4.11.0
     # via
     #   -r requirements/base.txt
     #   httpx
-asgiref==3.10.0
+asgiref==3.11.0
     # via
     #   -r requirements/base.txt
     #   django
@@ -74,7 +74,7 @@ colorama==0.4.6
     # via tox
 confluent-kafka[avro,schema-registry]==2.12.2
     # via -r requirements/base.txt
-coverage[toml]==7.11.3
+coverage[toml]==7.12.0
     # via
     #   -r requirements/test.in
     #   pytest-cov
@@ -234,7 +234,7 @@ edx-toggles==5.4.1
     #   edx-event-bus-kafka
 factory-boy==3.3.3
     # via -r requirements/test.in
-faker==38.0.0
+faker==38.2.0
     # via factory-boy
 fastavro==1.12.1
     # via
@@ -412,7 +412,7 @@ pyyaml==6.0.3
     #   drf-yasg
     #   edx-django-release-util
     #   responses
-redis==7.0.1
+redis==7.1.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -476,7 +476,7 @@ sqlparse==0.5.3
     # via
     #   -r requirements/base.txt
     #   django
-stevedore==5.5.0
+stevedore==5.6.0
     # via
     #   -r requirements/base.txt
     #   code-annotations

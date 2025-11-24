@@ -8,7 +8,7 @@ anyio==4.11.0
     # via
     #   -r requirements/base.txt
     #   httpx
-asgiref==3.10.0
+asgiref==3.11.0
     # via
     #   -r requirements/base.txt
     #   django
@@ -335,7 +335,7 @@ pyyaml==6.0.3
     #   drf-spectacular
     #   drf-yasg
     #   edx-django-release-util
-redis==7.0.1
+redis==7.1.0
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -395,7 +395,7 @@ sqlparse==0.5.3
     # via
     #   -r requirements/base.txt
     #   django
-stevedore==5.5.0
+stevedore==5.6.0
     # via
     #   -r requirements/base.txt
     #   code-annotations
