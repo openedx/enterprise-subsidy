@@ -4,12 +4,12 @@
 #
 #    make upgrade
 #
-anyio==4.11.0
+anyio==4.12.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   httpx
-asgiref==3.10.0
+asgiref==3.11.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -97,7 +97,7 @@ confluent-kafka[avro,schema-registry]==2.12.2
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-coverage[toml]==7.11.3
+coverage[toml]==7.12.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -315,7 +315,7 @@ factory-boy==3.3.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-faker==38.0.0
+faker==38.2.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -621,7 +621,7 @@ readme-renderer==44.0
     # via
     #   -r requirements/quality.txt
     #   twine
-redis==7.0.1
+redis==7.1.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -667,7 +667,7 @@ rich==14.2.0
     # via
     #   -r requirements/quality.txt
     #   twine
-rpds-py==0.29.0
+rpds-py==0.30.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -678,7 +678,7 @@ rules==3.5
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-secretstorage==3.4.1
+secretstorage==3.5.0
     # via
     #   -r requirements/quality.txt
     #   keyring
@@ -697,11 +697,6 @@ six==1.17.0
     #   edx-lint
     #   edx-rbac
     #   python-dateutil
-sniffio==1.3.1
-    # via
-    #   -r requirements/quality.txt
-    #   -r requirements/test.txt
-    #   anyio
 snowballstemmer==3.0.1
     # via
     #   -r requirements/quality.txt
@@ -717,12 +712,12 @@ social-auth-core==4.8.1
     #   -r requirements/test.txt
     #   edx-auth-backends
     #   social-auth-app-django
-sqlparse==0.5.3
+sqlparse==0.5.4
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   django
-stevedore==5.5.0
+stevedore==5.6.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
