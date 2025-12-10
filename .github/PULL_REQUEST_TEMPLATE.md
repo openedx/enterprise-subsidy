@@ -1,12 +1,8 @@
-### Description
-Describe in a couple of sentences what this PR adds
+⚠️ **DEPRECATION NOTICE**
+-------------------------
 
-### Testing instructions
+This repository is **deprecated** and no longer actively developed.
 
-Add some, if applicable
-
-### Merge checklist
-- [ ] All reviewers approved
-- [ ] CI build is green
-- [ ] Documentation updated (not only docstrings)
-- [ ] Commits are squashed
+- 2U maintains a fork located at [edx/enterprise-subsidy](https://github.com/edx/enterprise-subsidy).
+- If you or your organization wants to adopt maintenance of openedx/enterprise-subsidy,
+  please reach out to OpenEdx via [Slack](https://openedx.org/slack).
