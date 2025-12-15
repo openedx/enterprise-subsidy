@@ -24,7 +24,7 @@ attrs==25.4.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.6.5
+authlib==1.6.6
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -32,7 +32,7 @@ avro==1.12.1
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
-cachetools==6.2.2
+cachetools==6.2.3
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -74,7 +74,7 @@ colorama==0.4.6
     # via tox
 confluent-kafka[avro,schema-registry]==2.12.2
     # via -r requirements/base.txt
-coverage[toml]==7.12.0
+coverage[toml]==7.13.0
     # via
     #   -r requirements/test.in
     #   pytest-cov
@@ -322,7 +322,7 @@ packaging==25.0
     #   pyproject-api
     #   pytest
     #   tox
-platformdirs==4.5.0
+platformdirs==4.5.1
     # via
     #   pylint
     #   tox
@@ -370,7 +370,7 @@ pylint-plugin-utils==0.9.0
     #   pylint-django
 pymemcache==4.0.0
     # via -r requirements/base.txt
-pymongo==4.15.4
+pymongo==4.15.5
     # via
     #   -r requirements/base.txt
     #   edx-opaque-keys
@@ -380,7 +380,7 @@ pynacl==1.6.1
     #   edx-django-utils
 pyproject-api==1.10.0
     # via tox
-pytest==9.0.1
+pytest==9.0.2
     # via
     #   pytest-cov
     #   pytest-django
@@ -493,14 +493,14 @@ typing-extensions==4.15.0
     #   django-test-migrations
     #   edx-opaque-keys
     #   referencing
-tzdata==2025.2
+tzdata==2025.3
     # via faker
 uritemplate==4.2.0
     # via
     #   -r requirements/base.txt
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.5.0
+urllib3==2.6.2
     # via
     #   -r requirements/base.txt
     #   requests
