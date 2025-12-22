@@ -16,11 +16,11 @@ attrs==25.4.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.6.5
+authlib==1.6.6
     # via confluent-kafka
 avro==1.12.1
     # via confluent-kafka
-cachetools==6.2.2
+cachetools==6.2.4
     # via confluent-kafka
 certifi==2025.11.12
     # via
@@ -50,7 +50,7 @@ defusedxml==0.7.1
     # via
     #   python3-openid
     #   social-auth-core
-django==5.2.8
+django==5.2.9
     # via
     #   -c requirements/common_constraints.txt
     #   -r requirements/base.in
@@ -238,7 +238,7 @@ pyjwt[crypto]==2.10.1
     #   social-auth-core
 pymemcache==4.0.0
     # via -r requirements/base.in
-pymongo==4.15.4
+pymongo==4.15.5
     # via edx-opaque-keys
 pynacl==1.6.1
     # via edx-django-utils
@@ -293,13 +293,13 @@ six==1.17.0
     #   edx-django-release-util
     #   edx-rbac
     #   python-dateutil
-social-auth-app-django==5.6.0
+social-auth-app-django==5.7.0
     # via edx-auth-backends
-social-auth-core==4.8.1
+social-auth-core==4.8.3
     # via
     #   edx-auth-backends
     #   social-auth-app-django
-sqlparse==0.5.4
+sqlparse==0.5.5
     # via django
 stevedore==5.6.0
     # via
@@ -317,7 +317,7 @@ uritemplate==4.2.0
     # via
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.5.0
+urllib3==2.6.2
     # via requests
 
 # The following packages are considered to be unsafe in a requirements file:

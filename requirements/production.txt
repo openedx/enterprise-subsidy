@@ -20,7 +20,7 @@ attrs==25.4.0
     #   jsonschema
     #   openedx-events
     #   referencing
-authlib==1.6.5
+authlib==1.6.6
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -28,7 +28,7 @@ avro==1.12.1
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
-cachetools==6.2.2
+cachetools==6.2.4
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -69,7 +69,7 @@ defusedxml==0.7.1
     #   -r requirements/base.txt
     #   python3-openid
     #   social-auth-core
-django==5.2.8
+django==5.2.9
     # via
     #   -r requirements/base.txt
     #   django-clearcache
@@ -209,7 +209,7 @@ getsmarter-api-clients==0.6.3
     # via -r requirements/base.txt
 gevent==25.9.1
     # via -r requirements/production.in
-greenlet==3.2.4
+greenlet==3.3.0
     # via gevent
 gunicorn==23.0.0
     # via -r requirements/production.in
@@ -301,7 +301,7 @@ pyjwt[crypto]==2.10.1
     #   social-auth-core
 pymemcache==4.0.0
     # via -r requirements/base.txt
-pymongo==4.15.4
+pymongo==4.15.5
     # via
     #   -r requirements/base.txt
     #   edx-opaque-keys
@@ -378,16 +378,16 @@ six==1.17.0
     #   edx-django-release-util
     #   edx-rbac
     #   python-dateutil
-social-auth-app-django==5.6.0
+social-auth-app-django==5.7.0
     # via
     #   -r requirements/base.txt
     #   edx-auth-backends
-social-auth-core==4.8.1
+social-auth-core==4.8.3
     # via
     #   -r requirements/base.txt
     #   edx-auth-backends
     #   social-auth-app-django
-sqlparse==0.5.4
+sqlparse==0.5.5
     # via
     #   -r requirements/base.txt
     #   django
@@ -412,7 +412,7 @@ uritemplate==4.2.0
     #   -r requirements/base.txt
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.5.0
+urllib3==2.6.2
     # via
     #   -r requirements/base.txt
     #   requests
