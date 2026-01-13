@@ -4,7 +4,7 @@
 #
 #    make upgrade
 #
-anyio==4.12.0
+anyio==4.12.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -93,7 +93,7 @@ colorama==0.4.6
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   tox
-confluent-kafka[avro,schema-registry]==2.12.2
+confluent-kafka[avro,schema-registry]==2.13.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -129,7 +129,7 @@ distlib==0.4.0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   virtualenv
-django==5.2.9
+django==5.2.10
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -326,7 +326,7 @@ fastavro==1.12.1
     #   -r requirements/test.txt
     #   confluent-kafka
     #   openedx-events
-filelock==3.20.2
+filelock==3.20.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -405,7 +405,7 @@ jsonfield2==4.0.0.post0
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   openedx-ledger
-jsonschema==4.25.1
+jsonschema==4.26.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -558,7 +558,7 @@ pymemcache==4.0.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
-pymongo==4.15.5
+pymongo==4.16.0
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -734,7 +734,7 @@ tomlkit==0.13.3
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   pylint
-tox==4.33.0
+tox==4.34.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
@@ -759,14 +759,14 @@ uritemplate==4.2.0
     #   -r requirements/test.txt
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.6.2
+urllib3==2.6.3
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
     #   requests
     #   responses
     #   twine
-virtualenv==20.35.4
+virtualenv==20.36.1
     # via
     #   -r requirements/quality.txt
     #   -r requirements/test.txt
