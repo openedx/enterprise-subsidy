@@ -9,7 +9,7 @@ Purpose
 Captures and balances enterprise-subsidized transactions.
 
 **NOTICE**
-==========
+----------
 
 2U maintains a fork located at `edx/enterprise-subsidy <https://github.com/edx/enterprise-subsidy>`_.
 
