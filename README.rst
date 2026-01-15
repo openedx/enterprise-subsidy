@@ -1,3 +1,15 @@
+⚠️ **DEPRECATION NOTICE**
+#########################
+
+This repository is **deprecated** and no longer actively developed.
+
+- 2U maintains a fork located at `edx/enterprise-subsidy <https://github.com/edx/enterprise-subsidy>`_
+- If you or your organization wants to adop maintenance of openedx/enterprise-subsidy,
+  please reach out to OpenEdx via `Slack <https://openedx.org/slack>`_.
+
+Original README
+################
+
 enterprise_subsidy
 ##################
 
@@ -7,11 +19,6 @@ Purpose
 *******
 
 Captures and balances enterprise-subsidized transactions.
-
-**NOTICE**
-----------
-
-2U maintains a fork located at `edx/enterprise-subsidy <https://github.com/edx/enterprise-subsidy>`_.
 
 Getting Started
 ***************
