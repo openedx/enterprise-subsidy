@@ -77,7 +77,7 @@ JWT_AUTH.update({
 })
 
 LMS_URL = 'http://edx.devstack.lms:18000'
-ENTERPRISE_CATALOG_URL = 'http://enterprise.catalog.app:18160'
+ENTERPRISE_CATALOG_URL = 'http://edx.devstack.enterprise-catalog:18160'
 ENTERPRISE_SUBSIDY_URL = 'http://localhost:18280'
 FRONTEND_APP_LEARNING_URL = 'http://localhost:2000'
 
