@@ -28,7 +28,7 @@ avro==1.12.1
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
-cachetools==6.2.4
+cachetools==6.2.5
     # via
     #   -r requirements/base.txt
     #   confluent-kafka
@@ -133,7 +133,7 @@ django-waffle==5.0.0
     #   edx-django-utils
     #   edx-drf-extensions
     #   edx-toggles
-djangoql==0.18.1
+djangoql==0.18.2
     # via
     #   -r requirements/base.txt
     #   openedx-ledger
@@ -154,7 +154,7 @@ drf-jwt==1.19.2
     #   edx-drf-extensions
 drf-spectacular==0.29.0
     # via -r requirements/base.txt
-drf-yasg==1.21.11
+drf-yasg==1.21.14
     # via -r requirements/base.txt
 edx-auth-backends==4.6.2
     # via -r requirements/base.txt
@@ -209,9 +209,9 @@ getsmarter-api-clients==0.6.3
     # via -r requirements/base.txt
 gevent==25.9.1
     # via -r requirements/production.in
-greenlet==3.3.0
+greenlet==3.3.1
     # via gevent
-gunicorn==23.0.0
+gunicorn==24.1.1
     # via -r requirements/production.in
 h11==0.16.0
     # via
@@ -274,7 +274,7 @@ openedx-events==10.5.0
     #   openedx-ledger
 openedx-ledger==1.6.15
     # via -r requirements/base.txt
-packaging==25.0
+packaging==26.0
     # via
     #   -r requirements/base.txt
     #   drf-yasg
@@ -287,7 +287,7 @@ psutil==7.2.1
     # via
     #   -r requirements/base.txt
     #   edx-django-utils
-pycparser==2.23
+pycparser==3.0
     # via
     #   -r requirements/base.txt
     #   cffi
