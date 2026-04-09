@@ -1,0 +1,30 @@
+.gitignore
+  e95e46a5445665ab 109-112
+docs/developing-with-ai.md
+  e95e46a5445665ab 1-40
+.claude/settings.json
+  e95e46a5445665ab 1-20
+CLAUDE.md
+  e95e46a5445665ab 5,7,9-10,12-25,27,29-31,35-54,59-75,78-87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "4644ba389f9b0694b599f56ece9bad8800f5a357",
+  "prompts": {
+    "e95e46a5445665ab": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "baaaee21-33e3-4be5-8e3d-141b80adb2ac",
+        "model": "claude-opus-4-5-20251101"
+      },
+      "human_author": "Alexander Dusenbery",
+      "messages": [],
+      "total_additions": 138,
+      "total_deletions": 80,
+      "accepted_lines": 138,
+      "overriden_lines": 0,
+      "messages_url": "https://usegitai.com/cas/10b2d67f5a357a06b022cc095ffc402e3a38e5f187fe74361b4d0c4964602df7"
+    }
+  }
+}
