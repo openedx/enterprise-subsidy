@@ -107,3 +107,6 @@ docs/modules.rst
 
 # devstack backups etc.
 .dev/
+
+# Claude Code local settings
+.claude/settings.local.json

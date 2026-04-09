@@ -2,91 +2,86 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Development Environment Setup
+Enterprise Subsidy is a Django-based microservice within the Open edX ecosystem that manages financial subsidies for enterprise customers. It captures and balances enterprise-subsidized transactions, tracking learner credit (monetary value in USD cents) that can be redeemed for educational content.
 
-### Docker-based Development
-This project uses Docker for local development. Key commands:
+## Test and Quality Instructions
 
-- `make dev.up.build-no-cache`: Initial setup - builds containers from scratch and starts services
-- `make dev.up.build`: Regular development startup with build
-- `make dev.up`: Start existing containers
-- `make app-shell`: Enter the application container shell
-- `./provision-enterprise-subsidy.sh`: Initial provisioning script (run after first build)
+- To run unit tests or generate coverage reports, invoke the `unit-tests` skill.
+- To run quality checks (linting, style), invoke the `quality-tests` skill.
 
-### Services and Ports
-- Main application: http://localhost:18280/admin/
-- MySQL 8.0 database (container: enterprise-subsidy.mysql80)
-- Memcache for caching
-- Event consumer service for learner credit course enrollment lifecycle events
+## Code Navigation
 
-### Event Bus (Kafka) Development
-For working with openedx-events and Kafka:
-- `make dev.up.with-events`: Start with local Kafka (includes Confluent Control Center at http://localhost:9021/clusters)
-- Event consumption: `./manage.py consume_enterprise_ping_events`
-- Event production: `./manage.py produce_enterprise_ping_event`
+- Prefer using the LSP tool over grep/glob when navigating Python code (definitions, references, type info)
 
-## Development Commands
+## Key Principles
 
-### Requirements and Dependencies
-- `make requirements`: Install/update dev requirements
-- `make dev_requirements`: Sync to dev requirements
-- `make validation_requirements`: Sync to requirements for testing & code quality
+- Search the codebase before assuming something isn't implemented
+- Write comprehensive tests with clear documentation
+- Follow Test-Driven Development when refactoring or modifying existing functionality
+- Always write tests for new functionality you implement
+- Make a note of when tests for some functionality have been completed. If you cannot run the tests, ask me to run them manually, then confirm whether they succeeded or failed.
+- Keep changes focused and minimal
+- Follow existing code patterns
+- Prefer the `ddt` package for parameterized tests to reduce code duplication
 
-### Testing and Quality
-- `make test`: Run tests with coverage (uses pytest)
-- `make validate`: Run all tests, quality checks, PII checks, and keyword checks
-- `pytest ./path/to/new/tests`: Run specific tests
-- `make quality`: Run tox quality checks
-- `make lint` / `make pylint`: Python linting with pylint
-- `make style`: Python style checking with pycodestyle
-- `make isort`: Sort imports, `make isort_check`: Check import sorting
-- `make pii_check`: Check for PII annotations on Django models
-- `make check_keywords`: Scan for restricted field names in Django models
+## Documentation & Institutional Memory
 
-### Database Operations
-- `make migrate` / `make dev.migrate`: Apply database migrations
-- `make db-shell-8`: MySQL 8 shell access
-- `make dev.backup` / `make dev.restore`: Database backup/restore
-
-### Static Files and Assets
-- `make static` / `make dev.static`: Collect static files
+- Document new functionality in `docs/decisions/` for architectural decisions or `docs/how_to/` for operational guides
+- When you learn something important about how this codebase works (gotchas, non-obvious patterns, integration quirks), capture it in the relevant documentation or suggest creating a new doc file
+- These docs are institutional memory - future sessions (yours or others) will benefit from what you record here
 
 ## Architecture Overview
 
-### Core Django Apps
-- **subsidy**: Core subsidy models and business logic, including Subsidy model with ledger integration
-- **transaction**: Transaction management, including ledger transactions and reversals
-- **content_metadata**: Content metadata API integration and caching
-- **fulfillment**: Handles fulfillment of subsidies, including GEAG (Get Enrolled & Get Assigned) fulfillment
-- **api_client**: Client integrations with Enterprise API, Enterprise Catalog, and LMS User API
-- **core**: Shared utilities, context processors, and base functionality
+This is a Django service for managing enterprise subsidies and tracking subsidized transactions. The `docs/architecture_overview.rst` provides comprehensive documentation on the service architecture, domain models, and data flows.
 
-### Key Domain Concepts
-- **Subsidies**: Store value (learner credit in USD or subscription seats) that can be redeemed for content
-- **Ledger**: Tracks transactions (value movement in/out of subsidies) using openedx-ledger package
-- **Redemption**: The act of redeeming stored value for content
-- **Revenue Categories**: Control revenue recognition (bulk-enrollment-prepay, partner-no-rev-prepay)
+### Core Applications
+
+- **api** - REST API endpoints with DRF, including v1 and v2 versioned views
+- **subsidy** - Core subsidy domain models and business logic, including Subsidy model with ledger integration
+- **transaction** - Transaction management and ledger operations for tracking credit usage
+- **content_metadata** - Content metadata API integration, caching, and price validation
+- **fulfillment** - Handles fulfillment of subsidies (converting redemptions into actual enrollments)
+- **api_client** - External service integrations (Enterprise API, Enterprise Catalog, LMS User API)
+- **core** - Shared utilities, context processors, and base functionality
+
+### Key Concepts
+
+- **Subsidy**: Store of value (learner credit in USD cents or subscription seats) that can be redeemed for content
+- **Ledger**: Tracks all financial transactions (debits/credits) using the openedx-ledger package
+- **Transaction**: Individual debit/credit entry representing value movement
+- **Redemption**: The act of redeeming stored value from a subsidy for educational content
+- **Fulfillment**: The process of converting a redemption into an actual enrollment
+- **Revenue Categories**: Business classifications controlling revenue recognition (bulk-enrollment-prepay, partner-no-rev-prepay)
 - **Reference Types**: Links subsidies to originating objects (e.g., Salesforce OpportunityLineItem)
 
 ### External Service Integration
-- **Enterprise Catalog Service**: Content metadata and pricing (http://localhost:18160)
-- **LMS**: User data and enrollment operations
-- **Event Bus**: openedx-events integration for cross-service communication
-- **Course Discovery**: Source of truth for content pricing and metadata
 
-### Data Models Architecture
-- Subsidies use django-simple-history for change tracking
+- **Enterprise Catalog**: Content metadata and pricing information (http://localhost:18160)
+- **Enterprise Access**: Determines access policies and approval workflows
+- **LMS (edxapp)**: User management and course enrollment operations
+- **Discovery Service**: Source of truth for content pricing and metadata
+- **Event Bus (Kafka)**: Enables event-driven communication between services
+
+### Local Development
+
+- This service may be included in the [edx/devstack](https://github.com/openedx/devstack) repository for integration testing alongside the rest of the Open edX ecosystem
+- Server runs on `localhost:18280`
+- Uses Docker with MySQL 8.0, Memcache for caching
+- Event consumer service for learner credit course enrollment lifecycle events
+- Kafka event bus available via `make dev.up.with-events` (Confluent Control Center at http://localhost:9021/clusters)
+
+### Key Design Patterns
+
+- Uses django-simple-history for change tracking on subsidy models
 - Soft deletion pattern with `is_soft_deleted` field
 - Integration with edx-rbac for role-based access control
-- Uses openedx-ledger for transaction tracking and balance management
+- Ledger-based transaction tracking with openedx-ledger package
+- Versioned cache keys for key-based cache invalidation
+- TieredCache combining RequestCache with memcached
 
-### API Design
-- RESTful API with DRF (Django REST Framework)
-- API versioning (v1, v2 endpoints)
-- Integration with content metadata for price validation
-- Redeemability queries return boolean + current content price
+## Testing Notes
 
-## Settings Configuration
-- Base settings in `enterprise_subsidy/settings/base.py`
-- Environment-specific configs: `devstack.py`, `local.py`, `production.py`, `test.py`
-- Uses environment variables for service URLs and configuration
+- Uses pytest with Django integration
+- Coverage reporting enabled by default
+- PII annotation checks required for Django models (via `make pii_check`)
+- Restricted keyword checks for Django model fields (via `make check_keywords`)
