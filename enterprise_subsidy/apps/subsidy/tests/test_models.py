@@ -506,6 +506,87 @@ class SubsidyModelRedemptionTestCase(TestCase):
 
         mock_enterprise_client.enroll.assert_not_called()
 
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_redeem_late_enrollment_requires_exact_course_run(
+        self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content
+    ):
+        """
+        Late enrollment should reject a parent course key even when metadata advertises a concrete run.
+        """
+        lms_user_id = 1
+        content_key = "edX+test"
+        course_run_key = "course-v1:edX+test+2026"
+        subsidy_access_policy_uuid = str(uuid4())
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'edX+test',
+            'content_key': 'edX+test',
+            'course_run_key': course_run_key,
+            'content_title': 'edx: Test Course',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
+        mock_price_for_content.return_value = 1000
+
+        with self.assertRaisesRegex(ContentNotFoundForCustomerException, 'exact course run key'):
+            self.subsidy.redeem(
+                lms_user_id,
+                content_key,
+                subsidy_access_policy_uuid,
+                metadata={ALLOW_LATE_ENROLLMENT_KEY: True},
+            )
+
+        mock_enterprise_client.enroll.assert_not_called()
+
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=False)
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_redeem_late_enrollment_accepts_exact_course_run(
+        self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content,
+        mock_is_geag_fulfillment,  # pylint: disable=unused-argument
+    ):
+        """
+        Late enrollment succeeds when the caller uses the concrete course run key.
+        """
+        lms_user_id = 1
+        parent_content_key = "edX+test"
+        course_run_key = "course-v1:edX+test+2026"
+        subsidy_access_policy_uuid = str(uuid4())
+        mock_enterprise_fulfillment_uuid = str(uuid4())
+        mock_content_price = 1000
+        mock_get_content_summary.return_value = {
+            'content_uuid': course_run_key,
+            'content_key': parent_content_key,
+            'course_run_key': course_run_key,
+            'content_title': 'edx: Test Course',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
+        mock_price_for_content.return_value = mock_content_price
+        mock_enterprise_client.enroll.return_value = mock_enterprise_fulfillment_uuid
+
+        new_transaction, transaction_created = self.subsidy.redeem(
+            lms_user_id,
+            course_run_key,
+            subsidy_access_policy_uuid,
+            metadata={ALLOW_LATE_ENROLLMENT_KEY: True},
+        )
+
+        assert transaction_created
+        assert new_transaction.state == TransactionStateChoices.COMMITTED
+        assert new_transaction.quantity == -mock_content_price
+        mock_enterprise_client.enroll.assert_called_once_with(
+            lms_user_id,
+            course_run_key,
+            new_transaction,
+        )
+
     @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=True)
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
