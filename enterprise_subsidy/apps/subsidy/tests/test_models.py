@@ -22,6 +22,7 @@ from rest_framework import status
 from enterprise_subsidy.apps.content_metadata.constants import ProductSources
 from enterprise_subsidy.apps.fulfillment.api import InvalidFulfillmentMetadataException
 from enterprise_subsidy.apps.fulfillment.exceptions import IncompleteContentMetadataException
+from enterprise_subsidy.apps.subsidy.constants import ALLOW_LATE_ENROLLMENT_KEY
 from test_utils.utils import MockResponse
 
 from ..models import ContentNotFoundForCustomerException, PriceValidationError, Subsidy
@@ -471,6 +472,39 @@ class SubsidyModelRedemptionTestCase(TestCase):
         assert new_transaction.state == TransactionStateChoices.COMMITTED
         assert new_transaction.quantity == -mock_content_price
         assert new_transaction.metadata == tx_metadata
+
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')
+    @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.enterprise_client')
+    @mock.patch("enterprise_subsidy.apps.content_metadata.api.ContentMetadataApi.get_content_summary")
+    def test_redeem_late_enrollment_requires_resolved_course_run(
+        self, mock_get_content_summary, mock_enterprise_client, mock_price_for_content
+    ):
+        """
+        Late enrollment should not attempt LMS enrollment when catalog metadata has no concrete run.
+        """
+        lms_user_id = 1
+        content_key = "edX+test"
+        subsidy_access_policy_uuid = str(uuid4())
+        mock_get_content_summary.return_value = {
+            'content_uuid': 'edX+test',
+            'content_key': 'edX+test',
+            'content_title': 'edx: Test Course',
+            'source': 'edX',
+            'mode': 'verified',
+            'content_price': 10000,
+            'geag_variant_id': None,
+        }
+        mock_price_for_content.return_value = 1000
+
+        with self.assertRaisesRegex(ContentNotFoundForCustomerException, 'exact course run key'):
+            self.subsidy.redeem(
+                lms_user_id,
+                content_key,
+                subsidy_access_policy_uuid,
+                metadata={ALLOW_LATE_ENROLLMENT_KEY: True},
+            )
+
+        mock_enterprise_client.enroll.assert_not_called()
 
     @mock.patch('enterprise_subsidy.apps.subsidy.models.is_geag_fulfillment', return_value=True)
     @mock.patch('enterprise_subsidy.apps.subsidy.models.Subsidy.price_for_content')

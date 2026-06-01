@@ -10,6 +10,7 @@ from django.conf import settings
 
 from enterprise_subsidy.apps.api_client.base_oauth import BaseOAuthClient
 from enterprise_subsidy.apps.core.utils import localized_utcnow
+from enterprise_subsidy.apps.subsidy.constants import ALLOW_LATE_ENROLLMENT_KEY
 
 logger = logging.getLogger(__name__)
 
@@ -109,7 +110,7 @@ class EnterpriseApiClient(BaseOAuthClient):
         }
         # If late enrollment has been enabled for this transaction, inform the enterprise bulk enroll endpoint to bypass
         # any enrollment deadline validation.
-        if ledger_transaction.metadata and ledger_transaction.metadata.get('allow_late_enrollment', False):
+        if ledger_transaction.metadata and ledger_transaction.metadata.get(ALLOW_LATE_ENROLLMENT_KEY, False):
             enrollment_info['force_enrollment'] = True
         customer_uuid = ledger_transaction.ledger.subsidy.enterprise_customer_uuid
         response = self.bulk_enroll_enterprise_learners(customer_uuid, [enrollment_info])

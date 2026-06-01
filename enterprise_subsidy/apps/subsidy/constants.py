@@ -5,6 +5,9 @@ Constants for the subsidy app.
 # Numeric constants
 CENTS_PER_DOLLAR = 100
 
+# Transaction metadata keys
+ALLOW_LATE_ENROLLMENT_KEY = 'allow_late_enrollment'
+
 # System-wide roles defined by edx-enterprise, used across the entire openedx instance, and can be found in JWT tokens.
 SYSTEM_ENTERPRISE_LEARNER_ROLE = 'enterprise_learner'
 SYSTEM_ENTERPRISE_ADMIN_ROLE = 'enterprise_admin'
