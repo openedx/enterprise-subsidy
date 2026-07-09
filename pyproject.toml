@@ -3,8 +3,106 @@ name = "enterprise-subsidy"
 version = "0.1.0"
 requires-python = ">=3.12"
 
+[dependency-groups]
+base = [
+    "confluent-kafka[avro,schema-registry]",
+    "Django",
+    "djangoql",
+    "django-cors-headers",
+    "django-extensions",
+    "django-filter",
+    "django-object-actions",
+    "django-simple-history",
+    "django-waffle",
+    "djangorestframework",
+    "drf-spectacular",
+    "drf_yasg",
+    "edx-auth-backends",
+    "edx-django-utils",
+    "edx-django-release-util",
+    "edx-event-bus-kafka",
+    "edx-drf-extensions",
+    "edx-rbac",
+    "edx-rest-api-client",
+    "jsonfield2",
+    "mysqlclient",
+    "openedx-events",
+    "openedx-ledger",
+    "pymemcache",
+    "python-dateutil",
+    "rules",
+    "getsmarter-api-clients",
+    "django-log-request-id",
+    "django-clearcache",
+]
+test = [
+    {include-group = "base"},
+    "code-annotations",
+    "coverage",
+    "ddt",
+    "django-dynamic-fixture",
+    "django-test-migrations",
+    "edx-lint",
+    "factory-boy",
+    "mock",
+    "pytest-cov",
+    "pytest-django",
+    "responses",
+    "tox",
+]
+quality = [
+    {include-group = "test"},
+    "isort",
+    "pycodestyle",
+    "pydocstyle",
+    "twine",
+]
+doc = [
+    {include-group = "test"},
+    "doc8",
+    "sphinx-book-theme",
+    "twine",
+    "build",
+    "Sphinx",
+]
+production = [
+    {include-group = "base"},
+    "gevent",
+    "gunicorn",
+    "python-memcached",
+    "PyYAML>=5.1",
+]
+ci = [
+    "tox",
+    "tox-uv",
+]
+dev = [
+    {include-group = "test"},
+    {include-group = "quality"},
+    {include-group = "ci"},
+    "diff-cover",
+    "edx-i18n-tools",
+    "django-debug-toolbar",
+]
+
 [tool.uv]
 package = false
+#  DO NOT EDIT constraint-dependencies DIRECTLY.
+#  This list is managed by `edx_lint write_uv_constraints`
+#  and will be overwritten the next time `make upgrade` is run.
+#  - GLOBAL constraints: edit edx_lint/files/common_constraints.txt
+#  - REPO-SPECIFIC constraints: edit [tool.edx_lint].uv_constraints in this file
+constraint-dependencies = [
+    "Django<6.0",
+    "elasticsearch<7.14.0",
+    "django-simple-history>=3.4.0,<3.5.0",
+]
+
+[tool.edx_lint]
+uv_constraints = [
+    # django-simple-history>3.4.0 for this repo... we were not concerned about migration issues
+    "django-simple-history>=3.4.0,<3.5.0",
+]
 
 [tool.isort]
 indent = '    '

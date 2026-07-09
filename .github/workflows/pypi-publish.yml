@@ -17,9 +17,6 @@ jobs:
         with:
           python-version: 3.12
 
-      - name: Install pip
-        run: pip install -r requirements/pip.txt
-
       - name: Build package
         run: python setup.py sdist bdist_wheel
 
