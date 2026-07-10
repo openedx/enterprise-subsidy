@@ -44,7 +44,7 @@ dev_requirements: ## sync to requirements for local development
 	uv sync --group dev
 
 validation_requirements: ## sync to requirements for testing & code quality checking
-	uv sync --group test
+	uv sync --group quality
 
 doc_requirements:
 	uv sync --group doc
