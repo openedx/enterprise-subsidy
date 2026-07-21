@@ -5,11 +5,14 @@
 # Required
 version: 2
 
-# Build documentation in the docs/ directory with Sphinx
-sphinx:
-  configuration: docs/conf.py
-
-python:
-  version: 3.8
-  install:
-    - requirements: requirements/doc.txt
+# uv isn't natively supported by Read the Docs, so drive the whole build
+# ourselves via a custom command (RTD's documented escape hatch for tools
+# it doesn't integrate with directly).
+build:
+  os: ubuntu-24.04
+  tools:
+    python: "3.12"
+  commands:
+    - pip install uv
+    - uv sync --group doc
+    - uv run sphinx-build -b html docs/ $READTHEDOCS_OUTPUT/html
