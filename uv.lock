@@ -1,6 +1,19 @@
 version = 1
 revision = 3
 requires-python = ">=3.12"
+conflicts = [[
+    { package = "enterprise-subsidy", group = "django42" },
+    { package = "enterprise-subsidy", group = "test" },
+], [
+    { package = "enterprise-subsidy", group = "django42" },
+    { package = "enterprise-subsidy", group = "quality" },
+], [
+    { package = "enterprise-subsidy", group = "django42" },
+    { package = "enterprise-subsidy", group = "doc" },
+], [
+    { package = "enterprise-subsidy", group = "dev" },
+    { package = "enterprise-subsidy", group = "django42" },
+]]
 
 [manifest]
 constraints = [
@@ -36,7 +49,7 @@ version = "4.14.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "idna" },
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/3b/72/5562aabb8dd7181e8e860622a38bea08d17842b99ecd4c91f84ac95251b0/anyio-4.14.1.tar.gz", hash = "sha256:8d648a3544c1a700e3ff78615cd679e4c5c3f149904287e73687b2596963629e", size = 254831, upload-time = "2026-06-24T20:56:06.017Z" }
 wheels = [
@@ -151,7 +164,7 @@ name = "cffi"
 version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pycparser", marker = "implementation_name != 'PyPy'" },
+    { name = "pycparser", marker = "implementation_name != 'PyPy' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/57/5f/ff100cae70ebe9d8df1c01a00e510e45d9adb5c1fdda84791b199141de97/cffi-2.1.0.tar.gz", hash = "sha256:efc1cdd798b1aaf39b4610bba7aad28c9bea9b910f25c784ccf9ec1fa719d1f9", size = 531036, upload-time = "2026-07-06T21:34:30.382Z" }
 wheels = [
@@ -328,7 +341,7 @@ name = "click"
 version = "8.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/76/d4/81420972a676e8ffea40450d8c8c92943e7218a78fe9b64359836cc9876b/click-8.4.2.tar.gz", hash = "sha256:9a6cea6e60b17ebe0a44c5cc636d94f09bd66142c1cd7d8b4cd731c4917a15f6", size = 338000, upload-time = "2026-06-24T17:45:15.148Z" }
 wheels = [
@@ -488,7 +501,7 @@ name = "cryptography"
 version = "49.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "platform_python_implementation != 'PyPy'" },
+    { name = "cffi", marker = "platform_python_implementation != 'PyPy' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/1f/99/d1c90d6041656cc6ee229dc99cd67fd0cd5aec3c5f7d72fffc27cc750054/cryptography-49.0.0.tar.gz", hash = "sha256:f89660a348f4f78a92366240a61404e337586ef7f5909a2fef59ca88ef505493", size = 854345, upload-time = "2026-06-12T20:02:30.512Z" }
 wheels = [
@@ -586,12 +599,26 @@ wheels = [
 
 [[package]]
 name = "django"
+version = "4.2.30"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "asgiref", marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "sqlparse", marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "tzdata", marker = "(sys_platform == 'win32' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/11/b5/f1a53dc68da6429d6e0345bb848161e2381a2e9f02700148911e8582c2b3/django-4.2.30.tar.gz", hash = "sha256:4ebc7a434e3819db6cf4b399fb5b3f536310a30e8486f08b66886840be84b37c", size = 10468707, upload-time = "2026-04-07T14:05:45.57Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/39/b7/a7c96f239cf91313a6589233fed55111c7063b26683b226802732c455dbc/django-4.2.30-py3-none-any.whl", hash = "sha256:4d07aaf1c62f9984842b67c2874ebbf7056a17be253860299b93ae1881faad65", size = 7997231, upload-time = "2026-04-07T14:05:38.241Z" },
+]
+
+[[package]]
+name = "django"
 version = "5.2.16"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "asgiref" },
-    { name = "sqlparse" },
-    { name = "tzdata", marker = "sys_platform == 'win32'" },
+    { name = "asgiref", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "sqlparse", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "tzdata", marker = "(sys_platform == 'win32' and extra == 'group-18-enterprise-subsidy-dev') or (sys_platform == 'win32' and extra != 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a9/26/889449d521ae508b26de715954faecd8bcf3f740affb81b2d146a83b42a5/django-5.2.16.tar.gz", hash = "sha256:59ea02020c3136fce14bef0bbece21a10a4febef5eed1c51c22ae468efa22200", size = 10890894, upload-time = "2026-07-07T13:52:17.005Z" }
 wheels = [
@@ -603,7 +630,8 @@ name = "django-clearcache"
 version = "1.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/32/77/6539a7e83461568c262dbf87a921883fcac4b03fdd4c6d2d2f37d43b9229/django-clearcache-1.2.1.tar.gz", hash = "sha256:76ac5d7aebbc79e4f7064c591be1ca3fbb3d00c6b30c873f24f8330d9a7b5026", size = 5750, upload-time = "2021-04-15T11:55:55.904Z" }
 wheels = [
@@ -616,7 +644,8 @@ version = "4.9.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/21/39/55822b15b7ec87410f34cd16ce04065ff390e50f9e29f31d6d116fc80456/django_cors_headers-4.9.0.tar.gz", hash = "sha256:fe5d7cb59fdc2c8c646ce84b727ac2bca8912a247e6e68e1fb507372178e59e8", size = 21458, upload-time = "2025-09-18T10:40:52.326Z" }
 wheels = [
@@ -628,7 +657,8 @@ name = "django-crum"
 version = "0.7.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/34/1d/c56588f67130aeef8828e47535e8551337d2ae02f91f1414da61bc5e49fb/django-crum-0.7.9.tar.gz", hash = "sha256:65e9bc0f070a663fafc4d9e357f45fd4e6f01838b20a9e2fb7670f5706754288", size = 5168, upload-time = "2020-11-10T17:15:35.124Z" }
 wheels = [
@@ -640,7 +670,7 @@ name = "django-debug-toolbar"
 version = "7.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" } },
     { name = "sqlparse" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/1e/ac/3ac674f99c64bfbcd9ae3d7f5f3577f23ea52884e5ac36842e1f024dce03/django_debug_toolbar-7.0.0.tar.gz", hash = "sha256:ef7494c5b459c149e87cc2da88d86e944064945e86bd7b2d879093586b5fefbf", size = 359560, upload-time = "2026-06-19T00:21:23.346Z" }
@@ -662,7 +692,8 @@ name = "django-extensions"
 version = "4.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/6d/b3/ed0f54ed706ec0b54fd251cc0364a249c6cd6c6ec97f04dc34be5e929eac/django_extensions-4.1.tar.gz", hash = "sha256:7b70a4d28e9b840f44694e3f7feb54f55d495f8b3fa6c5c0e5e12bcb2aa3cdeb", size = 283078, upload-time = "2025-04-11T01:15:39.617Z" }
 wheels = [
@@ -671,10 +702,22 @@ wheels = [
 
 [[package]]
 name = "django-filter"
+version = "25.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/b5/40/c702a6fe8cccac9bf426b55724ebdf57d10a132bae80a17691d0cf0b9bac/django_filter-25.1.tar.gz", hash = "sha256:1ec9eef48fa8da1c0ac9b411744b16c3f4c31176c867886e4c48da369c407153", size = 143021, upload-time = "2025-02-14T16:30:53.238Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/07/a6/70dcd68537c434ba7cb9277d403c5c829caf04f35baf5eb9458be251e382/django_filter-25.1-py3-none-any.whl", hash = "sha256:4fa48677cf5857b9b1347fed23e355ea792464e0fe07244d1fdfb8a806215b80", size = 94114, upload-time = "2025-02-14T16:30:50.435Z" },
+]
+
+[[package]]
+name = "django-filter"
 version = "25.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/2c/e4/465d2699cd388c0005fb8d6ae6709f239917c6d8790ac35719676fffdcf3/django_filter-25.2.tar.gz", hash = "sha256:760e984a931f4468d096f5541787efb8998c61217b73006163bf2f9523fe8f23", size = 143818, upload-time = "2025-10-05T09:51:31.521Z" }
 wheels = [
@@ -686,7 +729,8 @@ name = "django-log-request-id"
 version = "2.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/6f/cc/ebc6f910e61b6c0614575aa14fa801d92ccc2c583be6706c8dbd82f599ba/django_log_request_id-2.1.2.tar.gz", hash = "sha256:4fe8e0702b09e8b08676f237d94063e0d54fc4d8867570bea6719ceba0a32486", size = 6795, upload-time = "2026-03-12T11:31:35.002Z" }
 wheels = [
@@ -698,7 +742,8 @@ name = "django-model-utils"
 version = "5.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/81/60/5e232c32a2c977cc1af8c70a38ef436598bc649ad89c2c4568454edde2c9/django_model_utils-5.0.0.tar.gz", hash = "sha256:041cdd6230d2fbf6cd943e1969318bce762272077f4ecd333ab2263924b4e5eb", size = 80559, upload-time = "2024-09-04T11:35:22.858Z" }
 wheels = [
@@ -740,7 +785,8 @@ name = "django-waffle"
 version = "5.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/22/e1/6f533da0d4ac89f427dfd9410e39bfc14ae3a23335ecd549d76be4b2a834/django_waffle-5.0.0.tar.gz", hash = "sha256:62f9d00eedf68dafb82657beab56e601bddedc1ea1ccfef91d83df8658708509", size = 37761, upload-time = "2025-06-12T07:38:54.895Z" }
 wheels = [
@@ -764,7 +810,8 @@ name = "djangorestframework"
 version = "3.17.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ca/d7/c016e69fac19ff8afdc89db9d31d9ae43ae031e4d1993b20aca179b8301a/djangorestframework-3.17.1.tar.gz", hash = "sha256:a6def5f447fe78ff853bff1d47a3c59bf38f5434b031780b351b0c73a62db1a5", size = 905742, upload-time = "2026-03-24T16:58:33.705Z" }
 wheels = [
@@ -809,7 +856,8 @@ name = "drf-jwt"
 version = "1.19.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "djangorestframework" },
     { name = "pyjwt", extra = ["crypto"] },
 ]
@@ -823,7 +871,8 @@ name = "drf-spectacular"
 version = "0.30.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "djangorestframework" },
     { name = "inflection" },
     { name = "jsonschema" },
@@ -840,7 +889,8 @@ name = "drf-yasg"
 version = "1.21.15"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "djangorestframework" },
     { name = "inflection" },
     { name = "packaging" },
@@ -858,13 +908,16 @@ name = "edx-auth-backends"
 version = "5.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "edx-django-utils" },
     { name = "edx-toggles" },
     { name = "pyjwt", extra = ["crypto"] },
     { name = "six" },
-    { name = "social-auth-app-django" },
-    { name = "social-auth-core" },
+    { name = "social-auth-app-django", version = "5.4.3", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "social-auth-app-django", version = "6.0.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "social-auth-core", version = "4.9.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "social-auth-core", version = "5.0.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/5e/30/b0f9927849c9e3f7f2fa0f43631b8006856bdbaba737d0a59e809a0ef057/edx_auth_backends-5.0.0.tar.gz", hash = "sha256:29b7108bd13285ad8482f7e7c5945f7f08dec5ccaa73d2e73d0252a6e0afc2aa", size = 34334, upload-time = "2026-03-11T16:54:47.12Z" }
 wheels = [
@@ -889,7 +942,8 @@ name = "edx-django-release-util"
 version = "1.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "pyyaml" },
     { name = "six" },
 ]
@@ -904,7 +958,8 @@ version = "8.0.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "django-crum" },
     { name = "django-waffle" },
     { name = "psutil" },
@@ -921,7 +976,8 @@ name = "edx-drf-extensions"
 version = "10.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "django-waffle" },
     { name = "djangorestframework" },
     { name = "drf-jwt" },
@@ -941,7 +997,8 @@ name = "edx-event-bus-kafka"
 version = "6.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "edx-django-utils" },
     { name = "edx-toggles" },
     { name = "openedx-events" },
@@ -956,8 +1013,8 @@ name = "edx-i18n-tools"
 version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
-    { name = "lxml", extra = ["html-clean"] },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" } },
+    { name = "lxml", extra = ["html-clean"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "path" },
     { name = "polib" },
     { name = "pyyaml" },
@@ -1005,7 +1062,8 @@ name = "edx-rbac"
 version = "3.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "django-crum" },
     { name = "django-model-utils" },
     { name = "edx-drf-extensions" },
@@ -1037,7 +1095,8 @@ version = "6.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "code-annotations" },
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "django-crum" },
     { name = "django-waffle" },
     { name = "edx-django-utils" },
@@ -1055,11 +1114,13 @@ source = { virtual = "." }
 [package.dev-dependencies]
 base = [
     { name = "confluent-kafka", extra = ["avro", "schema-registry"] },
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "django-clearcache" },
     { name = "django-cors-headers" },
     { name = "django-extensions" },
-    { name = "django-filter" },
+    { name = "django-filter", version = "25.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "django-log-request-id" },
     { name = "django-object-actions" },
     { name = "django-simple-history" },
@@ -1090,17 +1151,17 @@ ci = [
 ]
 dev = [
     { name = "code-annotations" },
-    { name = "confluent-kafka", extra = ["avro", "schema-registry"] },
+    { name = "confluent-kafka", extra = ["avro", "schema-registry"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "coverage" },
     { name = "ddt" },
     { name = "diff-cover" },
-    { name = "django" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" } },
     { name = "django-clearcache" },
     { name = "django-cors-headers" },
     { name = "django-debug-toolbar" },
     { name = "django-dynamic-fixture" },
     { name = "django-extensions" },
-    { name = "django-filter" },
+    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" } },
     { name = "django-log-request-id" },
     { name = "django-object-actions" },
     { name = "django-simple-history" },
@@ -1137,20 +1198,62 @@ dev = [
     { name = "rules" },
     { name = "tox" },
     { name = "tox-uv" },
-    { name = "twine" },
 ]
-doc = [
-    { name = "build" },
+django42 = [
     { name = "code-annotations" },
-    { name = "confluent-kafka", extra = ["avro", "schema-registry"] },
+    { name = "confluent-kafka", extra = ["avro", "schema-registry"], marker = "extra == 'group-18-enterprise-subsidy-django42'" },
     { name = "coverage" },
     { name = "ddt" },
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" } },
     { name = "django-clearcache" },
     { name = "django-cors-headers" },
     { name = "django-dynamic-fixture" },
     { name = "django-extensions" },
-    { name = "django-filter" },
+    { name = "django-filter", version = "25.1", source = { registry = "https://pypi.org/simple" } },
+    { name = "django-log-request-id" },
+    { name = "django-object-actions" },
+    { name = "django-simple-history" },
+    { name = "django-test-migrations" },
+    { name = "django-waffle" },
+    { name = "djangoql" },
+    { name = "djangorestframework" },
+    { name = "drf-spectacular" },
+    { name = "drf-yasg" },
+    { name = "edx-auth-backends" },
+    { name = "edx-django-release-util" },
+    { name = "edx-django-utils" },
+    { name = "edx-drf-extensions" },
+    { name = "edx-event-bus-kafka" },
+    { name = "edx-lint" },
+    { name = "edx-rbac" },
+    { name = "edx-rest-api-client" },
+    { name = "factory-boy" },
+    { name = "getsmarter-api-clients" },
+    { name = "jsonfield2" },
+    { name = "mock" },
+    { name = "mysqlclient" },
+    { name = "openedx-events" },
+    { name = "openedx-ledger" },
+    { name = "pymemcache" },
+    { name = "pytest-cov" },
+    { name = "pytest-django" },
+    { name = "python-dateutil" },
+    { name = "responses" },
+    { name = "rules" },
+    { name = "tox" },
+]
+doc = [
+    { name = "build" },
+    { name = "code-annotations" },
+    { name = "confluent-kafka", extra = ["avro", "schema-registry"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "coverage" },
+    { name = "ddt" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" } },
+    { name = "django-clearcache" },
+    { name = "django-cors-headers" },
+    { name = "django-dynamic-fixture" },
+    { name = "django-extensions" },
+    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" } },
     { name = "django-log-request-id" },
     { name = "django-object-actions" },
     { name = "django-simple-history" },
@@ -1185,15 +1288,16 @@ doc = [
     { name = "sphinx" },
     { name = "sphinx-book-theme" },
     { name = "tox" },
-    { name = "twine" },
 ]
 production = [
     { name = "confluent-kafka", extra = ["avro", "schema-registry"] },
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "django-clearcache" },
     { name = "django-cors-headers" },
     { name = "django-extensions" },
-    { name = "django-filter" },
+    { name = "django-filter", version = "25.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "django-log-request-id" },
     { name = "django-object-actions" },
     { name = "django-simple-history" },
@@ -1224,15 +1328,15 @@ production = [
 ]
 quality = [
     { name = "code-annotations" },
-    { name = "confluent-kafka", extra = ["avro", "schema-registry"] },
+    { name = "confluent-kafka", extra = ["avro", "schema-registry"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "coverage" },
     { name = "ddt" },
-    { name = "django" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" } },
     { name = "django-clearcache" },
     { name = "django-cors-headers" },
     { name = "django-dynamic-fixture" },
     { name = "django-extensions" },
-    { name = "django-filter" },
+    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" } },
     { name = "django-log-request-id" },
     { name = "django-object-actions" },
     { name = "django-simple-history" },
@@ -1267,19 +1371,63 @@ quality = [
     { name = "responses" },
     { name = "rules" },
     { name = "tox" },
-    { name = "twine" },
 ]
 test = [
     { name = "code-annotations" },
-    { name = "confluent-kafka", extra = ["avro", "schema-registry"] },
+    { name = "confluent-kafka", extra = ["avro", "schema-registry"], marker = "(extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra != 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test') or (extra != 'group-18-enterprise-subsidy-doc' and extra != 'group-18-enterprise-subsidy-quality' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "coverage" },
     { name = "ddt" },
-    { name = "django" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" } },
     { name = "django-clearcache" },
     { name = "django-cors-headers" },
     { name = "django-dynamic-fixture" },
     { name = "django-extensions" },
-    { name = "django-filter" },
+    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" } },
+    { name = "django-log-request-id" },
+    { name = "django-object-actions" },
+    { name = "django-simple-history" },
+    { name = "django-test-migrations" },
+    { name = "django-waffle" },
+    { name = "djangoql" },
+    { name = "djangorestframework" },
+    { name = "drf-spectacular" },
+    { name = "drf-yasg" },
+    { name = "edx-auth-backends" },
+    { name = "edx-django-release-util" },
+    { name = "edx-django-utils" },
+    { name = "edx-drf-extensions" },
+    { name = "edx-event-bus-kafka" },
+    { name = "edx-lint" },
+    { name = "edx-rbac" },
+    { name = "edx-rest-api-client" },
+    { name = "factory-boy" },
+    { name = "getsmarter-api-clients" },
+    { name = "jsonfield2" },
+    { name = "mock" },
+    { name = "mysqlclient" },
+    { name = "openedx-events" },
+    { name = "openedx-ledger" },
+    { name = "pymemcache" },
+    { name = "pytest-cov" },
+    { name = "pytest-django" },
+    { name = "python-dateutil" },
+    { name = "responses" },
+    { name = "rules" },
+    { name = "tox" },
+]
+test-base = [
+    { name = "code-annotations" },
+    { name = "confluent-kafka", extra = ["avro", "schema-registry"] },
+    { name = "coverage" },
+    { name = "ddt" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django-clearcache" },
+    { name = "django-cors-headers" },
+    { name = "django-dynamic-fixture" },
+    { name = "django-extensions" },
+    { name = "django-filter", version = "25.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "django-log-request-id" },
     { name = "django-object-actions" },
     { name = "django-simple-history" },
@@ -1358,6 +1506,7 @@ dev = [
     { name = "ddt" },
     { name = "diff-cover" },
     { name = "django" },
+    { name = "django", specifier = ">=5.2,<6.0" },
     { name = "django-clearcache" },
     { name = "django-cors-headers" },
     { name = "django-debug-toolbar" },
@@ -1400,7 +1549,50 @@ dev = [
     { name = "rules" },
     { name = "tox" },
     { name = "tox-uv" },
-    { name = "twine" },
+]
+django42 = [
+    { name = "code-annotations" },
+    { name = "confluent-kafka", extras = ["avro", "schema-registry"] },
+    { name = "coverage" },
+    { name = "ddt" },
+    { name = "django" },
+    { name = "django", specifier = ">=4.2,<4.3" },
+    { name = "django-clearcache" },
+    { name = "django-cors-headers" },
+    { name = "django-dynamic-fixture" },
+    { name = "django-extensions" },
+    { name = "django-filter" },
+    { name = "django-log-request-id" },
+    { name = "django-object-actions" },
+    { name = "django-simple-history" },
+    { name = "django-test-migrations" },
+    { name = "django-waffle" },
+    { name = "djangoql" },
+    { name = "djangorestframework" },
+    { name = "drf-spectacular" },
+    { name = "drf-yasg" },
+    { name = "edx-auth-backends" },
+    { name = "edx-django-release-util" },
+    { name = "edx-django-utils" },
+    { name = "edx-drf-extensions" },
+    { name = "edx-event-bus-kafka" },
+    { name = "edx-lint" },
+    { name = "edx-rbac" },
+    { name = "edx-rest-api-client" },
+    { name = "factory-boy" },
+    { name = "getsmarter-api-clients" },
+    { name = "jsonfield2" },
+    { name = "mock" },
+    { name = "mysqlclient" },
+    { name = "openedx-events" },
+    { name = "openedx-ledger" },
+    { name = "pymemcache" },
+    { name = "pytest-cov" },
+    { name = "pytest-django" },
+    { name = "python-dateutil" },
+    { name = "responses" },
+    { name = "rules" },
+    { name = "tox" },
 ]
 doc = [
     { name = "build" },
@@ -1409,6 +1601,7 @@ doc = [
     { name = "coverage" },
     { name = "ddt" },
     { name = "django" },
+    { name = "django", specifier = ">=5.2,<6.0" },
     { name = "django-clearcache" },
     { name = "django-cors-headers" },
     { name = "django-dynamic-fixture" },
@@ -1448,7 +1641,6 @@ doc = [
     { name = "sphinx" },
     { name = "sphinx-book-theme" },
     { name = "tox" },
-    { name = "twine" },
 ]
 production = [
     { name = "confluent-kafka", extras = ["avro", "schema-registry"] },
@@ -1491,6 +1683,7 @@ quality = [
     { name = "coverage" },
     { name = "ddt" },
     { name = "django" },
+    { name = "django", specifier = ">=5.2,<6.0" },
     { name = "django-clearcache" },
     { name = "django-cors-headers" },
     { name = "django-dynamic-fixture" },
@@ -1530,9 +1723,52 @@ quality = [
     { name = "responses" },
     { name = "rules" },
     { name = "tox" },
-    { name = "twine" },
 ]
 test = [
+    { name = "code-annotations" },
+    { name = "confluent-kafka", extras = ["avro", "schema-registry"] },
+    { name = "coverage" },
+    { name = "ddt" },
+    { name = "django" },
+    { name = "django", specifier = ">=5.2,<6.0" },
+    { name = "django-clearcache" },
+    { name = "django-cors-headers" },
+    { name = "django-dynamic-fixture" },
+    { name = "django-extensions" },
+    { name = "django-filter" },
+    { name = "django-log-request-id" },
+    { name = "django-object-actions" },
+    { name = "django-simple-history" },
+    { name = "django-test-migrations" },
+    { name = "django-waffle" },
+    { name = "djangoql" },
+    { name = "djangorestframework" },
+    { name = "drf-spectacular" },
+    { name = "drf-yasg" },
+    { name = "edx-auth-backends" },
+    { name = "edx-django-release-util" },
+    { name = "edx-django-utils" },
+    { name = "edx-drf-extensions" },
+    { name = "edx-event-bus-kafka" },
+    { name = "edx-lint" },
+    { name = "edx-rbac" },
+    { name = "edx-rest-api-client" },
+    { name = "factory-boy" },
+    { name = "getsmarter-api-clients" },
+    { name = "jsonfield2" },
+    { name = "mock" },
+    { name = "mysqlclient" },
+    { name = "openedx-events" },
+    { name = "openedx-ledger" },
+    { name = "pymemcache" },
+    { name = "pytest-cov" },
+    { name = "pytest-django" },
+    { name = "python-dateutil" },
+    { name = "responses" },
+    { name = "rules" },
+    { name = "tox" },
+]
+test-base = [
     { name = "code-annotations" },
     { name = "confluent-kafka", extras = ["avro", "schema-registry"] },
     { name = "coverage" },
@@ -1593,7 +1829,7 @@ name = "faker"
 version = "40.28.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "tzdata", marker = "sys_platform == 'win32'" },
+    { name = "tzdata", marker = "sys_platform == 'win32' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/cc/2d/3ead106cef42eab305e15f9c089dcc68a40387d5ce04af18585af4ebbb44/faker-40.28.1.tar.gz", hash = "sha256:2a63fb51abab8790636d4030a094cf942404cbccc9c288d1cad70e2e3e9ecd58", size = 2022717, upload-time = "2026-07-01T22:23:43.763Z" }
 wheels = [
@@ -1668,8 +1904,8 @@ name = "gevent"
 version = "26.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "platform_python_implementation == 'CPython' and sys_platform == 'win32'" },
-    { name = "greenlet", marker = "platform_python_implementation == 'CPython'" },
+    { name = "cffi", marker = "(platform_python_implementation == 'CPython' and sys_platform == 'win32') or (platform_python_implementation != 'CPython' and extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (platform_python_implementation != 'CPython' and extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (platform_python_implementation != 'CPython' and extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (platform_python_implementation != 'CPython' and extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test') or (sys_platform != 'win32' and extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (sys_platform != 'win32' and extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (sys_platform != 'win32' and extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (sys_platform != 'win32' and extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "greenlet", marker = "platform_python_implementation == 'CPython' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "zope-event" },
     { name = "zope-interface" },
 ]
@@ -1830,18 +2066,6 @@ wheels = [
 ]
 
 [[package]]
-name = "id"
-version = "1.6.1"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "urllib3" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/6d/04/c2156091427636080787aac190019dc64096e56a23b7364d3c1764ee3a06/id-1.6.1.tar.gz", hash = "sha256:d0732d624fb46fd4e7bc4e5152f00214450953b9e772c182c1c22964def1a069", size = 18088, upload-time = "2026-02-04T16:19:41.26Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/42/77/de194443bf38daed9452139e960c632b0ef9f9a5dd9ce605fdf18ca9f1b1/id-1.6.1-py3-none-any.whl", hash = "sha256:f5ec41ed2629a508f5d0988eda142e190c9c6da971100612c4de9ad9f9b237ca", size = 14689, upload-time = "2026-02-04T16:19:40.051Z" },
-]
-
-[[package]]
 name = "idna"
 version = "3.18"
 source = { registry = "https://pypi.org/simple" }
@@ -1887,48 +2111,6 @@ wheels = [
 ]
 
 [[package]]
-name = "jaraco-classes"
-version = "3.4.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "more-itertools" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/06/c0/ed4a27bc5571b99e3cff68f8a9fa5b56ff7df1c2251cc715a652ddd26402/jaraco.classes-3.4.0.tar.gz", hash = "sha256:47a024b51d0239c0dd8c8540c6c7f484be3b8fcf0b2d85c13825780d3b3f3acd", size = 11780, upload-time = "2024-03-31T07:27:36.643Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/7f/66/b15ce62552d84bbfcec9a4873ab79d993a1dd4edb922cbfccae192bd5b5f/jaraco.classes-3.4.0-py3-none-any.whl", hash = "sha256:f662826b6bed8cace05e7ff873ce0f9283b5c924470fe664fff1c2f00f581790", size = 6777, upload-time = "2024-03-31T07:27:34.792Z" },
-]
-
-[[package]]
-name = "jaraco-context"
-version = "6.1.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/af/50/4763cd07e722bb6285316d390a164bc7e479db9d90daa769f22578f698b4/jaraco_context-6.1.2.tar.gz", hash = "sha256:f1a6c9d391e661cc5b8d39861ff077a7dc24dc23833ccee564b234b81c82dfe3", size = 16801, upload-time = "2026-03-20T22:13:33.922Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/f2/58/bc8954bda5fcda97bd7c19be11b85f91973d67a706ed4a3aec33e7de22db/jaraco_context-6.1.2-py3-none-any.whl", hash = "sha256:bf8150b79a2d5d91ae48629d8b427a8f7ba0e1097dd6202a9059f29a36379535", size = 7871, upload-time = "2026-03-20T22:13:32.808Z" },
-]
-
-[[package]]
-name = "jaraco-functools"
-version = "4.5.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "more-itertools" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/36/cf/ea4ef2920830dea3f5ab2ea4da6fb67724e6dca80ee2553788c3607243d0/jaraco_functools-4.5.0.tar.gz", hash = "sha256:3bb5665ea4a020cf78a7040e89154c77edadb3ca74f366479669c5999aa70b03", size = 20272, upload-time = "2026-05-15T21:34:10.025Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/96/9a/982e48afcffcd727a9144506720ffd4224b6b7e355c98641866f38b7c043/jaraco_functools-4.5.0-py3-none-any.whl", hash = "sha256:79ce39246eddbde4b3a03b77ea5f0f7878dc669b166a66cf3fa8e266aa3fa2f4", size = 10594, upload-time = "2026-05-15T21:34:08.595Z" },
-]
-
-[[package]]
-name = "jeepney"
-version = "0.9.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/7b/6f/357efd7602486741aa73ffc0617fb310a29b588ed0fd69c2399acbb85b0c/jeepney-0.9.0.tar.gz", hash = "sha256:cf0e9e845622b81e4a28df94c40345400256ec608d0e55bb8a3feaa9163f5732", size = 106758, upload-time = "2025-02-27T18:51:01.684Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b2/a3/e137168c9c44d18eff0376253da9f1e9234d0239e0ee230d2fee6cea8e55/jeepney-0.9.0-py3-none-any.whl", hash = "sha256:97e5714520c16fc0a45695e5365a2e11b81ea79bba796e26f9f1d178cb182683", size = 49010, upload-time = "2025-02-27T18:51:00.104Z" },
-]
-
-[[package]]
 name = "jinja2"
 version = "3.1.6"
 source = { registry = "https://pypi.org/simple" }
@@ -1957,7 +2139,8 @@ name = "jsonfield2"
 version = "4.0.0.post0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ea/7e/9b093453c62a9599eef02274e12eb9d327519812288cad283494c4035ec1/jsonfield2-4.0.0.post0.tar.gz", hash = "sha256:cbce2d7c52563550cd2048fcf3a57631019d3547f5ed142f42141d1d2dc53283", size = 12632, upload-time = "2020-03-02T10:48:01.822Z" }
 wheels = [
@@ -1989,23 +2172,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/19/74/a633ee74eb36c44aa6d1095e7cc5569bebf04342ee146178e2d36600708b/jsonschema_specifications-2025.9.1.tar.gz", hash = "sha256:b540987f239e745613c7a9176f3edb72b832a4ac465cf02712288397832b5e8d", size = 32855, upload-time = "2025-09-08T01:34:59.186Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/41/45/1a4ed80516f02155c51f51e8cedb3c1902296743db0bbc66608a0db2814f/jsonschema_specifications-2025.9.1-py3-none-any.whl", hash = "sha256:98802fee3a11ee76ecaca44429fda8a41bff98b00a0f2838151b113f210cc6fe", size = 18437, upload-time = "2025-09-08T01:34:57.871Z" },
-]
-
-[[package]]
-name = "keyring"
-version = "25.7.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "jaraco-classes" },
-    { name = "jaraco-context" },
-    { name = "jaraco-functools" },
-    { name = "jeepney", marker = "sys_platform == 'linux'" },
-    { name = "pywin32-ctypes", marker = "sys_platform == 'win32'" },
-    { name = "secretstorage", marker = "sys_platform == 'linux'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/43/4b/674af6ef2f97d56f0ab5153bf0bfa28ccb6c3ed4d1babf4305449668807b/keyring-25.7.0.tar.gz", hash = "sha256:fe01bd85eb3f8fb3dd0405defdeac9a5b4f6f0439edbb3149577f244a2e8245b", size = 63516, upload-time = "2025-11-16T16:26:09.482Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/81/db/e655086b7f3a705df045bf0933bdd9c2f79bb3c97bfef1384598bb79a217/keyring-25.7.0-py3-none-any.whl", hash = "sha256:be4a0b195f149690c166e850609a477c532ddbfbaed96a404d4e43f8d5e2689f", size = 39160, upload-time = "2025-11-16T16:26:08.402Z" },
 ]
 
 [[package]]
@@ -2106,18 +2272,6 @@ wheels = [
 ]
 
 [[package]]
-name = "markdown-it-py"
-version = "4.2.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "mdurl" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/06/ff/7841249c247aa650a76b9ee4bbaeae59370dc8bfd2f6c01f3630c35eb134/markdown_it_py-4.2.0.tar.gz", hash = "sha256:04a21681d6fbb623de53f6f364d352309d4094dd4194040a10fd51833e418d49", size = 82454, upload-time = "2026-05-07T12:08:28.36Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b3/81/4da04ced5a082363ecfa159c010d200ecbd959ae410c10c0264a38cac0f5/markdown_it_py-4.2.0-py3-none-any.whl", hash = "sha256:9f7ebbcd14fe59494226453aed97c1070d83f8d24b6fc3a3bcf9a38092641c4a", size = 91687, upload-time = "2026-05-07T12:08:27.182Z" },
-]
-
-[[package]]
 name = "markupsafe"
 version = "3.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -2190,30 +2344,12 @@ wheels = [
 ]
 
 [[package]]
-name = "mdurl"
-version = "0.1.2"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec958cb99bd3efefba235e65cdeb9c84d24a8293ba1d90/mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba", size = 8729, upload-time = "2022-08-14T12:40:10.846Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b3/38/89ba8ad64ae25be8de66a6d463314cf1eb366222074cfda9ee839c56a4b4/mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8", size = 9979, upload-time = "2022-08-14T12:40:09.779Z" },
-]
-
-[[package]]
 name = "mock"
 version = "5.2.0"
 source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/07/8c/14c2ae915e5f9dca5a22edd68b35be94400719ccfa068a03e0fb63d0f6f6/mock-5.2.0.tar.gz", hash = "sha256:4e460e818629b4b173f32d08bf30d3af8123afbb8e04bb5707a1fd4799e503f0", size = 92796, upload-time = "2025-03-03T12:31:42.911Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/bd/d9/617e6af809bf3a1d468e0d58c3997b1dc219a9a9202e650d30c2fc85d481/mock-5.2.0-py3-none-any.whl", hash = "sha256:7ba87f72ca0e915175596069dbbcc7c75af7b5e9b9bc107ad6349ede0819982f", size = 31617, upload-time = "2025-03-03T12:31:41.518Z" },
-]
-
-[[package]]
-name = "more-itertools"
-version = "11.1.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/de/1d/f4da6f02cdffe04d6362210b807146a26044c88d839208aec273bb0d9184/more_itertools-11.1.0.tar.gz", hash = "sha256:48e8f4d9e7e5878571ecf6f2b4e57634f93cd474cc8cfbd2376f2d11b396e30d", size = 145772, upload-time = "2026-05-22T14:14:29.909Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/e8/3d/1087453384dbde46a8c7f9356eead2c58be8a7bf156bca40243377c85715/more_itertools-11.1.0-py3-none-any.whl", hash = "sha256:4b65538ae22f6fed0ce4874efd317463a7489796a0939fa66824dd542125a192", size = 72226, upload-time = "2026-05-22T14:14:28.824Z" },
 ]
 
 [[package]]
@@ -2226,40 +2362,6 @@ wheels = [
     { url = "https://files.pythonhosted.org/packages/e6/d5/76e369b0fdccd2eb9ed7d890e4e3e23aa1344fea62f0180d7f1574285e54/mysqlclient-2.2.8-cp313-cp313-win_amd64.whl", hash = "sha256:a81f5e12f8d05439709cb02fba97f9f76d1a6c528164f2260d8798fec969e300", size = 207158, upload-time = "2026-02-10T10:58:38.663Z" },
     { url = "https://files.pythonhosted.org/packages/42/44/6ae21b4e8490eb5167d04fa7452c462ffd72a502b96bf531477ef044a380/mysqlclient-2.2.8-cp314-cp314-win_amd64.whl", hash = "sha256:9bed7c8d3b629bdc09e17fb628d5b3b0a5fd1f12b09432b464b9126c727bedc0", size = 211644, upload-time = "2026-02-10T10:58:45.022Z" },
     { url = "https://files.pythonhosted.org/packages/66/e5/037d55623be9f681236e04abe12e1290847c06bd48270c3f19ac33493cbf/mysqlclient-2.2.8-cp314-cp314t-win_amd64.whl", hash = "sha256:260cce0e81446c83bf0a389e0fae38d68547d9f8fc0833bc733014e10ce28a99", size = 213067, upload-time = "2026-02-10T10:58:43.389Z" },
-]
-
-[[package]]
-name = "nh3"
-version = "0.3.6"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/5e/1b/ef84624f14954d270f74060a19fc550dd4f06656399447569afb584d8c06/nh3-0.3.6.tar.gz", hash = "sha256:f3736c9dd3d1856f80cd031715b84ca75cda2bbb1ac802c3da26bfce590838d7", size = 24684, upload-time = "2026-06-22T00:47:02.008Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/99/3e/6506aa4f23dc7b7993a2d0a45dca3ce864ec48380adfe15a173e643c63e8/nh3-0.3.6-cp314-cp314t-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:2411e8c3cee81a1ddd62c2a5d50585c28aa5566d373ad1db92536b95ddb24ef2", size = 1421679, upload-time = "2026-06-22T00:46:20.248Z" },
-    { url = "https://files.pythonhosted.org/packages/e3/e1/e96e7864a7a53bd6b6fab7e9632467382a2a2c1f3fed951918ad131542fb/nh3-0.3.6-cp314-cp314t-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:e196fa70c2ff2eb4de7d3df3108f8f358c1d69dff20d45b11f20a5aa227ffb6d", size = 792570, upload-time = "2026-06-22T00:46:22.179Z" },
-    { url = "https://files.pythonhosted.org/packages/59/62/5b6108bedaef2b2637fed04c87bdbcb5967b9961758b41f0e466ef22a022/nh3-0.3.6-cp314-cp314t-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:34d2b0d934156b87ee114f599a3ba9b8b9e17b5d79652ba3a13fa50903de965e", size = 842243, upload-time = "2026-06-22T00:46:23.801Z" },
-    { url = "https://files.pythonhosted.org/packages/4b/4a/526f199626bfcb496bc01a268051b44737962005553b158e985ed7e64865/nh3-0.3.6-cp314-cp314t-musllinux_1_2_aarch64.whl", hash = "sha256:f2f14b7ae1fca99c4a66c981aac3974e7fbc1ca30a12673d223ae1df76680917", size = 1001468, upload-time = "2026-06-22T00:46:25.481Z" },
-    { url = "https://files.pythonhosted.org/packages/49/09/0d8e3101636d9ad88cdefb2914e764cb8e876ebdbb4286bfc251277d9c67/nh3-0.3.6-cp314-cp314t-musllinux_1_2_armv7l.whl", hash = "sha256:889932a97fb4abb6f95fef1914c0d269ebfb60011e67121c1163059b9449dbb4", size = 1082933, upload-time = "2026-06-22T00:46:27.15Z" },
-    { url = "https://files.pythonhosted.org/packages/09/a1/ea83abe738a3fbaa203dfdb836ca7cbab0e7e9609faaee4fe1d4652599c0/nh3-0.3.6-cp314-cp314t-musllinux_1_2_i686.whl", hash = "sha256:edb2b4a1a27523e6cc7c417f8d21ce3d005243548b93e56b762b66b0c7f589f9", size = 1043120, upload-time = "2026-06-22T00:46:28.89Z" },
-    { url = "https://files.pythonhosted.org/packages/66/69/0654482b8635012fbae67826bd6c381abb05d841ac7388b9b4666300fdad/nh3-0.3.6-cp314-cp314t-musllinux_1_2_x86_64.whl", hash = "sha256:43bc1ed3fa0716295fabee29ba42b2667e4a51d140b0a68e092170a765474fa6", size = 1023824, upload-time = "2026-06-22T00:46:30.453Z" },
-    { url = "https://files.pythonhosted.org/packages/ed/a6/1f7285ffadc8307c4dbeb08d21b920536d5117785056d1079e998c4dfa44/nh3-0.3.6-cp314-cp314t-win32.whl", hash = "sha256:597a8e843bea00b2eb5520658dc24a9bb032e7fc9e7c2c0c4cd29420220c9796", size = 599253, upload-time = "2026-06-22T00:46:32.072Z" },
-    { url = "https://files.pythonhosted.org/packages/36/ea/5542f3c45da4c00290d9d67a65e996702e23e613c4b627de3e09cb9fe357/nh3-0.3.6-cp314-cp314t-win_amd64.whl", hash = "sha256:4713502748f564fee0633b37b3403783ce0a3af3a3d148ad91025a5bdadb7bc6", size = 612553, upload-time = "2026-06-22T00:46:33.53Z" },
-    { url = "https://files.pythonhosted.org/packages/66/35/26bd47e6af5915a628281dccdac354ddf4e32f7397047894270acd8c9870/nh3-0.3.6-cp314-cp314t-win_arm64.whl", hash = "sha256:69bbb92865a693d909db3a700d3c01537533844d0948c1e9323561ce06ecda41", size = 595151, upload-time = "2026-06-22T00:46:34.878Z" },
-    { url = "https://files.pythonhosted.org/packages/f3/ab/a7653bce9a3b204be6a6931767a9e23595807bb84790ce6685e4d7e5bd08/nh3-0.3.6-cp38-abi3-macosx_10_12_x86_64.macosx_11_0_arm64.macosx_10_12_universal2.whl", hash = "sha256:a43ebd7543555c3ac1bc353023d0794e75cb76f6f18f19c32e95441496c0cc25", size = 1443564, upload-time = "2026-06-22T00:46:36.66Z" },
-    { url = "https://files.pythonhosted.org/packages/41/21/e1084ab18eb589506335c7c7576f2d4643e9a0c0e33983ef0e549a256b96/nh3-0.3.6-cp38-abi3-manylinux_2_17_aarch64.manylinux2014_aarch64.whl", hash = "sha256:e1b160831c9cdb06a6c79c2f9cdb11386602938f9af260d1c457a85add4f6f69", size = 838002, upload-time = "2026-06-22T00:46:38.101Z" },
-    { url = "https://files.pythonhosted.org/packages/b0/94/f48d08e6f72a406300fa11d8acd929fea1a80d4bf750fa292cb10785f126/nh3-0.3.6-cp38-abi3-manylinux_2_17_armv7l.manylinux2014_armv7l.whl", hash = "sha256:d14bf7982e7a77c0c775634c29c07ce08b38a046df73e1c1f139b3e82f18a38e", size = 823045, upload-time = "2026-06-22T00:46:39.495Z" },
-    { url = "https://files.pythonhosted.org/packages/25/bb/431615ba1d1d3eb63cde0f974f2114edf863a8a3f6049a12fed23fc241d3/nh3-0.3.6-cp38-abi3-manylinux_2_17_ppc64.manylinux2014_ppc64.whl", hash = "sha256:44673b27010051ab5a5e438a86ec31bbda61d4a77d7e900af6b7be3037c1abae", size = 1093171, upload-time = "2026-06-22T00:46:41.21Z" },
-    { url = "https://files.pythonhosted.org/packages/0e/24/a0d80182a18919665fefd19c1c06f1d1df1c9a6455d0252de40c034a0bc3/nh3-0.3.6-cp38-abi3-manylinux_2_17_ppc64le.manylinux2014_ppc64le.whl", hash = "sha256:e6b7beece07525dc6e6b0fc2f104442de2ba328360ad00e50cbe2e1fd620447d", size = 1049217, upload-time = "2026-06-22T00:46:42.804Z" },
-    { url = "https://files.pythonhosted.org/packages/0a/13/6f1e302ca674ac74362e150848ad56a1be5145391204f74facdb8e94df12/nh3-0.3.6-cp38-abi3-manylinux_2_17_s390x.manylinux2014_s390x.whl", hash = "sha256:455469a29951edc92bc48b47ac2281c3f2609e6c4f6a047056449f8c2c23facf", size = 917372, upload-time = "2026-06-22T00:46:44.495Z" },
-    { url = "https://files.pythonhosted.org/packages/5b/67/314f6151bad77a93d751978a344033e1fc890822f05f0416079338e34231/nh3-0.3.6-cp38-abi3-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:905f877dc66dd7aea4a76e54bcb26acb5ff8216f720c0017ccf63e0e6035698e", size = 806699, upload-time = "2026-06-22T00:46:45.99Z" },
-    { url = "https://files.pythonhosted.org/packages/3c/a6/bfaa00046e58603507dcfc266c4778e3ab7adf68a5dedd73b6274b8d9314/nh3-0.3.6-cp38-abi3-manylinux_2_31_riscv64.whl", hash = "sha256:25c733bee928530556b1db0ea46c52cf5aa686146e38e60a6fc7cb801ef91cec", size = 835165, upload-time = "2026-06-22T00:46:47.617Z" },
-    { url = "https://files.pythonhosted.org/packages/30/a8/fb2c38845efb703a9173bffdfc745fc64d2b0e55cfc73a3647d2f028250c/nh3-0.3.6-cp38-abi3-manylinux_2_5_i686.manylinux1_i686.whl", hash = "sha256:2f90d9a0cfdbee218994fdaaeeb5a0fde62d08f35e4eef0378ec1e2200172fd0", size = 858282, upload-time = "2026-06-22T00:46:49.276Z" },
-    { url = "https://files.pythonhosted.org/packages/68/17/06e72a18ee9b572914447338237ca7eb164c0df901f141bc10d1282247a2/nh3-0.3.6-cp38-abi3-musllinux_1_2_aarch64.whl", hash = "sha256:82ca5bf427ad1b216b65ede1a2e2d87dc49bec417ceba0f297213107d3cd9d78", size = 1014328, upload-time = "2026-06-22T00:46:51.026Z" },
-    { url = "https://files.pythonhosted.org/packages/11/f9/3966c61455668c08853bf5e33b4bed93c421f3194ce4de896dc248d6f6ce/nh3-0.3.6-cp38-abi3-musllinux_1_2_armv7l.whl", hash = "sha256:f5ed5fe84aee7f39db95c214a7421bf0499fbf500fec6d86a4e29bfc37971438", size = 1098207, upload-time = "2026-06-22T00:46:52.674Z" },
-    { url = "https://files.pythonhosted.org/packages/19/d3/479cb4ae440424825735d60525b53e3c77fd60fd6e6afc0e984f00eb0178/nh3-0.3.6-cp38-abi3-musllinux_1_2_i686.whl", hash = "sha256:082675ff87b9385ec430ffe6d5847ba7456cc39b73720cd4add472f9f4cffd56", size = 1056961, upload-time = "2026-06-22T00:46:54.335Z" },
-    { url = "https://files.pythonhosted.org/packages/17/0c/6cdb5ee1e127be50dc8391e54bddc1f64e87bf4bfad0c55633320e2e02db/nh3-0.3.6-cp38-abi3-musllinux_1_2_x86_64.whl", hash = "sha256:36d06341bd501240d320f5942481ed5e6846136b666e1ba4faf802b78ebc875f", size = 1033829, upload-time = "2026-06-22T00:46:56.258Z" },
-    { url = "https://files.pythonhosted.org/packages/e9/55/9de666ad975d6ccd77d799ea0add55ee2347aa81286ce21b2a97c070746b/nh3-0.3.6-cp38-abi3-win32.whl", hash = "sha256:5276ef17bdba9ad8040575c74072008b13aae429436e9d0429e718bb5f90f4da", size = 609081, upload-time = "2026-06-22T00:46:57.665Z" },
-    { url = "https://files.pythonhosted.org/packages/82/fa/2b5d684e3edf1e81bfd02d298c78c3e3da77ca1d8a2be3183a79544a7548/nh3-0.3.6-cp38-abi3-win_amd64.whl", hash = "sha256:f338ac7d594c067679f1e99b4f5ec3906842979560f9d8f15d6bdfa39a353b10", size = 624461, upload-time = "2026-06-22T00:46:59.163Z" },
-    { url = "https://files.pythonhosted.org/packages/7b/e5/7cafee2f0413ca4cb0ef3bd111e94d408a48810008b283ad8aee00dd1809/nh3-0.3.6-cp38-abi3-win_arm64.whl", hash = "sha256:69f365963f63a1e9bff53bdbb3c542c7c2efed3e163c9d5d83a772a2ac468c21", size = 603060, upload-time = "2026-06-22T00:47:00.596Z" },
 ]
 
 [[package]]
@@ -2277,7 +2379,8 @@ version = "11.2.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "edx-ccx-keys" },
     { name = "edx-django-utils" },
     { name = "edx-opaque-keys" },
@@ -2294,9 +2397,11 @@ name = "openedx-ledger"
 version = "1.8.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django" },
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "django-extensions" },
-    { name = "django-filter" },
+    { name = "django-filter", version = "25.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "django-object-actions" },
     { name = "django-simple-history" },
     { name = "djangoql" },
@@ -2474,7 +2579,7 @@ version = "4.0.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astroid" },
-    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "dill" },
     { name = "isort" },
     { name = "mccabe" },
@@ -2586,7 +2691,7 @@ name = "pynacl"
 version = "1.6.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "platform_python_implementation != 'PyPy'" },
+    { name = "cffi", marker = "platform_python_implementation != 'PyPy' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d9/9a/4019b524b03a13438637b11538c82781a5eda427394380381af8f04f467a/pynacl-1.6.2.tar.gz", hash = "sha256:018494d6d696ae03c7e656e5e74cdfd8ea1326962cc401bcf018f1ed8436811c", size = 3511692, upload-time = "2026-01-01T17:48:10.851Z" }
 wheels = [
@@ -2642,7 +2747,7 @@ name = "pytest"
 version = "9.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "iniconfig" },
     { name = "packaging" },
     { name = "pluggy" },
@@ -2747,15 +2852,6 @@ wheels = [
 ]
 
 [[package]]
-name = "pywin32-ctypes"
-version = "0.2.3"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/85/9f/01a1a99704853cb63f253eea009390c88e7131c67e66a0a02099a8c917cb/pywin32-ctypes-0.2.3.tar.gz", hash = "sha256:d162dc04946d704503b2edc4d55f3dba5c1d539ead017afa00142c38b9885755", size = 29471, upload-time = "2024-08-14T10:15:34.626Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/de/3d/8161f7711c017e01ac9f008dfddd9410dff3674334c233bde66e7ba65bbf/pywin32_ctypes-0.2.3-py3-none-any.whl", hash = "sha256:8a1513379d709975552d202d942d9837758905c8d01eb82b8bcc30918929e7b8", size = 30756, upload-time = "2024-08-14T10:15:33.187Z" },
-]
-
-[[package]]
 name = "pyyaml"
 version = "6.0.3"
 source = { registry = "https://pypi.org/simple" }
@@ -2802,20 +2898,6 @@ wheels = [
 ]
 
 [[package]]
-name = "readme-renderer"
-version = "45.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "docutils" },
-    { name = "nh3" },
-    { name = "pygments" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/02/51/d3a6ea424652c60f05600d8c2e01a55c913755e7cdad64afabbd1aa16f44/readme_renderer-45.0.tar.gz", hash = "sha256:030a8fac74904f8fba11ad1bb6964e3f76e896dc7e5e71f16af190c9056696d1", size = 36172, upload-time = "2026-06-09T21:05:17.37Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/97/1b/295bf2fa3e740131778065e5ffa2c481f0e7210182d408e9a2c244ff5b0c/readme_renderer-45.0-py3-none-any.whl", hash = "sha256:3385ed220117104a2bceb4a9dac8c5fdf6d1f96890d7ea2a9c7174fd5c84091f", size = 14134, upload-time = "2026-06-09T21:05:15.85Z" },
-]
-
-[[package]]
 name = "redis"
 version = "8.0.1"
 source = { registry = "https://pypi.org/simple" }
@@ -2831,7 +2913,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
     { name = "rpds-py" },
-    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/22/f5/df4e9027acead3ecc63e50fe1e36aca1523e1719559c499951bb4b53188f/referencing-0.37.0.tar.gz", hash = "sha256:44aefc3142c5b842538163acb373e24cce6632bd54bdb01b21ad5863489f50d8", size = 78036, upload-time = "2025-10-13T15:30:48.871Z" }
 wheels = [
@@ -2867,18 +2949,6 @@ wheels = [
 ]
 
 [[package]]
-name = "requests-toolbelt"
-version = "1.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/f3/61/d7545dafb7ac2230c70d38d31cbfe4cc64f7144dc41f6e4e4b78ecd9f5bb/requests-toolbelt-1.0.0.tar.gz", hash = "sha256:7681a0a3d047012b5bdc0ee37d7f8f07ebe76ab08caeccfc3921ce23c88d5bc6", size = 206888, upload-time = "2023-05-01T04:11:33.229Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3f/51/d4db610ef29373b879047326cbf6fa98b6c1969d6f6dc423279de2b1be2c/requests_toolbelt-1.0.0-py2.py3-none-any.whl", hash = "sha256:cccfdd665f0a24fcf4726e690f65639d272bb0637b9b92dfd91a5568ccf6bd06", size = 54481, upload-time = "2023-05-01T04:11:28.427Z" },
-]
-
-[[package]]
 name = "responses"
 version = "0.26.2"
 source = { registry = "https://pypi.org/simple" }
@@ -2902,28 +2972,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/ca/e6/eefcad2228f4124f17e01064428fbcd0ade06a274f3063ce3a126a569d6b/restructuredtext_lint-2.0.2.tar.gz", hash = "sha256:dd25209b9e0b726929d8306339faf723734a3137db382bcf27294fa18a6bc52b", size = 17494, upload-time = "2025-11-23T08:05:18.585Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/af/63/ac52b32b33ae62f2076ed5c4f6b00e065e3ccbb2063e9a2e813b2bfc95bf/restructuredtext_lint-2.0.2-py3-none-any.whl", hash = "sha256:374c0d3e7e0867b2335146a145343ac619400623716b211b9a010c94426bbed7", size = 14198, upload-time = "2025-11-23T08:05:23.267Z" },
-]
-
-[[package]]
-name = "rfc3986"
-version = "2.0.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/85/40/1520d68bfa07ab5a6f065a186815fb6610c86fe957bc065754e47f7b0840/rfc3986-2.0.0.tar.gz", hash = "sha256:97aacf9dbd4bfd829baad6e6309fa6573aaf1be3f6fa735c8ab05e46cecb261c", size = 49026, upload-time = "2022-01-10T00:52:30.832Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/ff/9a/9afaade874b2fa6c752c36f1548f718b5b83af81ed9b76628329dab81c1b/rfc3986-2.0.0-py2.py3-none-any.whl", hash = "sha256:50b1502b60e289cb37883f3dfd34532b8873c7de9f49bb546641ce9cbd256ebd", size = 31326, upload-time = "2022-01-10T00:52:29.594Z" },
-]
-
-[[package]]
-name = "rich"
-version = "15.0.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "markdown-it-py" },
-    { name = "pygments" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/c0/8f/0722ca900cc807c13a6a0c696dacf35430f72e0ec571c4275d2371fca3e9/rich-15.0.0.tar.gz", hash = "sha256:edd07a4824c6b40189fb7ac9bc4c52536e9780fbbfbddf6f1e2502c31b068c36", size = 230680, upload-time = "2026-04-12T08:24:00.75Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/82/3b/64d4899d73f91ba49a8c18a8ff3f0ea8f1c1d75481760df8c68ef5235bf5/rich-15.0.0-py3-none-any.whl", hash = "sha256:33bd4ef74232fb73fe9279a257718407f169c09b78a87ad3d296f548e27de0bb", size = 310654, upload-time = "2026-04-12T08:24:02.83Z" },
 ]
 
 [[package]]
@@ -3041,19 +3089,6 @@ wheels = [
 ]
 
 [[package]]
-name = "secretstorage"
-version = "3.5.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "cryptography" },
-    { name = "jeepney" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/1c/03/e834bcd866f2f8a49a85eaff47340affa3bfa391ee9912a952a1faa68c7b/secretstorage-3.5.0.tar.gz", hash = "sha256:f04b8e4689cbce351744d5537bf6b1329c6fc68f91fa666f60a380edddcd11be", size = 19884, upload-time = "2025-11-23T19:02:53.191Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/b7/46/f5af3402b579fd5e11573ce652019a67074317e18c1935cc0b4ba9b35552/secretstorage-3.5.0-py3-none-any.whl", hash = "sha256:0ce65888c0725fcb2c5bc0fdb8e5438eece02c523557ea40ce0703c266248137", size = 15554, upload-time = "2025-11-23T19:02:51.545Z" },
-]
-
-[[package]]
 name = "semantic-version"
 version = "2.10.0"
 source = { registry = "https://pypi.org/simple" }
@@ -3091,12 +3126,25 @@ wheels = [
 
 [[package]]
 name = "social-auth-app-django"
+version = "5.4.3"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "social-auth-core", version = "4.9.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/2a/07/bb2465e4116d4761b028bd07b99087009caa81c1511c886d74c4ccece3a2/social_auth_app_django-5.4.3.tar.gz", hash = "sha256:d1f4286d5ca1e512c9b2f686e7ecb2a0128148f1a33d853b69dc07b58508362e", size = 24860, upload-time = "2025-02-13T13:07:34.557Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/e0/cd/43a25dabdf7689109b01ac866848c984594769ec3cbc5ce4c261b4895237/social_auth_app_django-5.4.3-py3-none-any.whl", hash = "sha256:db70b972faeb10ee1ec83d0dc7dbd0558d5f5830417bba317b712b10ff58d031", size = 26241, upload-time = "2025-02-13T13:07:32.787Z" },
+]
+
+[[package]]
+name = "social-auth-app-django"
 version = "6.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "asgiref" },
-    { name = "django" },
-    { name = "social-auth-core" },
+    { name = "asgiref", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "social-auth-core", version = "5.0.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e0/8e/60593750bf1e2734e9b2b3ff85b685038fcc35446c5541e08fa4cdec17b9/social_auth_app_django-6.0.0.tar.gz", hash = "sha256:421916bf136c77a8683cac7505a3b2ecf7d5c8ec18455ffa883f2cb5161847b1", size = 31297, upload-time = "2026-06-23T15:35:44.429Z" }
 wheels = [
@@ -3105,16 +3153,34 @@ wheels = [
 
 [[package]]
 name = "social-auth-core"
+version = "4.9.1"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "cryptography", marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "defusedxml", marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "oauthlib", marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "pyjwt", extra = ["crypto"], marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "python3-openid", marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "requests", marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+    { name = "requests-oauthlib", marker = "extra == 'group-18-enterprise-subsidy-django42'" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/32/2e/15fd3e5bfd7eba91b04e3ebf2dac8a2d1237ba69e63752567b0dc2586a4a/social_auth_core-4.9.1.tar.gz", hash = "sha256:34ee16bddc10b8bf5d6a90c3a033f6e5bb1300197984ad66a4d363783f23bcd8", size = 252961, upload-time = "2026-04-30T07:16:18.62Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ff/f2/0cb91ff294282800cc5ec7cefdfa3d87068c805d30920e3842fc859853ac/social_auth_core-4.9.1-py3-none-any.whl", hash = "sha256:2eca8a6ae678bae7e24e5aa3c72f99c77983012a09b8916ce9791dcfccade725", size = 457143, upload-time = "2026-04-30T07:16:17.235Z" },
+]
+
+[[package]]
+name = "social-auth-core"
 version = "5.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cryptography" },
-    { name = "defusedxml" },
-    { name = "oauthlib" },
-    { name = "pyjwt", extra = ["crypto"] },
-    { name = "python3-openid" },
-    { name = "requests" },
-    { name = "requests-oauthlib" },
+    { name = "cryptography", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "defusedxml", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "oauthlib", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "pyjwt", extra = ["crypto"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "python3-openid", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "requests", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "requests-oauthlib", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a9/b7/f2878b7ce6a5195aa2f14eef8337f2734940b11d68e14a36308770b633d7/social_auth_core-5.0.2.tar.gz", hash = "sha256:f53930c9b2a86ee0fc8e8fb0eac79221cfc2f017d9efb578691e5a3e2cf36784", size = 260859, upload-time = "2026-06-26T07:25:19.522Z" }
 wheels = [
@@ -3314,26 +3380,6 @@ dependencies = [
 sdist = { url = "https://files.pythonhosted.org/packages/0a/cb/168dc1ccf24e4065a9a0a33df55709ed2b5eb73bd2b13ddd53187e5dffb8/tox_uv_bare-1.35.2.tar.gz", hash = "sha256:49e28a804c97f23ea17e25859960c0fa78f35bccb7e14344cfd840e89a9aade9", size = 32333, upload-time = "2026-05-05T01:34:18.916Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/5f/53/4a33dc81da39db7b31e5622333df361e8fe055b7ec636bd5fea762c9182d/tox_uv_bare-1.35.2-py3-none-any.whl", hash = "sha256:c0d590a41d1054a1ad0874e9e5943ff52402786e3d4599d8f8d37a65b566ef53", size = 22307, upload-time = "2026-05-05T01:34:17.681Z" },
-]
-
-[[package]]
-name = "twine"
-version = "6.2.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "id" },
-    { name = "keyring", marker = "platform_machine != 'ppc64le' and platform_machine != 's390x'" },
-    { name = "packaging" },
-    { name = "readme-renderer" },
-    { name = "requests" },
-    { name = "requests-toolbelt" },
-    { name = "rfc3986" },
-    { name = "rich" },
-    { name = "urllib3" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/e0/a8/949edebe3a82774c1ec34f637f5dd82d1cf22c25e963b7d63771083bbee5/twine-6.2.0.tar.gz", hash = "sha256:e5ed0d2fd70c9959770dce51c8f39c8945c574e18173a7b81802dab51b4b75cf", size = 172262, upload-time = "2025-09-04T15:43:17.255Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/3a/7a/882d99539b19b1490cac5d77c67338d126e4122c8276bf640e411650c830/twine-6.2.0-py3-none-any.whl", hash = "sha256:418ebf08ccda9a8caaebe414433b0ba5e25eb5e4a927667122fbe8f829f985d8", size = 42727, upload-time = "2025-09-04T15:43:15.994Z" },
 ]
 
 [[package]]

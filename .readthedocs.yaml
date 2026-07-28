@@ -9,7 +9,7 @@ version: 2
 # ourselves via a custom command (RTD's documented escape hatch for tools
 # it doesn't integrate with directly).
 build:
-  os: ubuntu-24.04
+  os: ubuntu-26.04
   tools:
     python: "3.12"
   commands:
