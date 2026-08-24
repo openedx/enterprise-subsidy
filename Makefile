@@ -81,7 +81,12 @@ lint: ## run Python code linting
 pylint: lint
 
 quality:
-	uv run tox -e quality
+	uv sync --group quality
+	uv run pylint enterprise_subsidy test_utils manage.py
+	uv run pycodestyle enterprise_subsidy manage.py
+	uv run pydocstyle enterprise_subsidy manage.py
+	uv run isort --check-only --diff test_utils enterprise_subsidy manage.py
+	$(MAKE) selfcheck
 
 pii_check: ## check for PII annotations on all Django models
 	DJANGO_SETTINGS_MODULE=enterprise_subsidy.settings.test \
