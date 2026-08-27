@@ -34,6 +34,7 @@ from enterprise_subsidy.apps.core import event_bus
 from enterprise_subsidy.apps.core.utils import localized_utcnow
 from enterprise_subsidy.apps.fulfillment.api import GEAGFulfillmentHandler, is_geag_fulfillment
 from enterprise_subsidy.apps.fulfillment.exceptions import IncompleteContentMetadataException
+from enterprise_subsidy.apps.subsidy.constants import ALLOW_LATE_ENROLLMENT_KEY
 
 MOCK_CATALOG_CLIENT = mock.MagicMock()
 MOCK_ENROLLMENT_CLIENT = mock.MagicMock()
@@ -519,6 +520,13 @@ class Subsidy(TimeStampedModel):
 
             # Fetch one or more metadata keys from catalog service, with overall metadata request locally cached.
             content_metadata_summary = self.metadata_summary_for_content(content_key)
+            is_late_enrollment = bool(metadata and metadata.get(ALLOW_LATE_ENROLLMENT_KEY))
+            resolved_course_run_key = content_metadata_summary.get('course_run_key')
+            if is_late_enrollment and content_key != resolved_course_run_key:
+                raise ContentNotFoundForCustomerException(
+                    f'Late enrollment for {content_key} must use the exact course run key. '
+                    f'Resolved course run: {resolved_course_run_key or "none"}.'
+                )
             content_title = content_metadata_summary.get('content_title')
             parent_content_key = content_metadata_summary.get('content_key')
             course_run_start_date = content_metadata_summary.get('course_run_start_date')
