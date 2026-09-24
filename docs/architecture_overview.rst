@@ -40,7 +40,7 @@ The enterprise-subsidy service operates within a microservices ecosystem. Here's
     │   Contracts)    │    │                 │    │                 │
     └─────────────────┘    └─────────────────┘    └─────────────────┘
               │                       │                       │
-        (manual link)                 ▼-----------------------                      
+        (manual link)                 ▼-----------------------
     ┌─────────────────┐    ┌─────────────────┐    ┌─────────────────┐
     │  Enterprise     │    │  Enterprise     │    │      LMS        │
     │   Subsidy       │◄──►│   Access        │◄──►│  (edxapp and    │
@@ -65,9 +65,9 @@ Key Service Interactions
 4. **Discovery Service**: Source of truth for content pricing and metadata
 5. **Event Bus (Kafka)**: Enables event-driven communication between services
 
-**********************
+************************
 Application Architecture
-**********************
+************************
 
 Django Application Structure
 =============================
@@ -202,7 +202,7 @@ Here's a simplified look at how learner credit redemption flows through the syst
            │                   │                   │ │ • Create Ledger    │
            │                   │                   │ │   Transaction      │
            │                   │                   │ │ • Fulfill Enrollment
-           │                   │                   │ │ • Emit Events      
+           │                   │                   │ │ • Emit Events
            │                   │                   │ └─────────────────┬─-
            │                   │                   │                   │
            │                   │ 10. Transaction   │                   │
@@ -223,7 +223,7 @@ The service implements a comprehensive REST API using Django REST Framework (DRF
 .. code-block:: text
 
     API Layer Architecture:
-    
+
     ┌─────────────────────────────────────────────────────────────────┐
     │                     HTTP Request Layer                          │
     │  ┌─────────────────┐  ┌─────────────────┐  ┌─────────────────┐ │
@@ -308,7 +308,7 @@ Serializer Architecture
 .. code-block:: python
 
     current_balance = serializers.SerializerMethodField()
-    
+
     @extend_schema_field(serializers.IntegerField)
     def get_current_balance(self, obj) -> int:
         return obj.current_balance()
@@ -448,7 +448,7 @@ The service participates in an event-driven ecosystem using Kafka:
 .. code-block:: text
 
     Event Flow:
-    
+
     ┌─────────────────┐                    ┌─────────────────┐
     │  Enterprise     │   Enrollment       │     Event       │
     │   Subsidy       │   Lifecycle        │      Bus        │
@@ -560,13 +560,13 @@ Uses ``edx-rbac`` for fine-grained permissions:
 .. code-block:: text
 
     Role Hierarchy:
-    
+
     System Roles (Cross-Enterprise):
     ├── SYSTEM_ENTERPRISE_ADMIN_ROLE
     ├── SYSTEM_ENTERPRISE_CATALOG_ADMIN_ROLE
     ├── SYSTEM_ENTERPRISE_LEARNER_ROLE
     └── SYSTEM_ENTERPRISE_OPERATOR_ROLE
-    
+
     Enterprise-Specific Roles:
     ├── ENTERPRISE_SUBSIDY_ADMIN_ROLE
     ├── ENTERPRISE_SUBSIDY_LEARNER_ROLE
