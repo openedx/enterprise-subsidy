@@ -1150,6 +1150,7 @@ ci = [
     { name = "tox-uv" },
 ]
 dev = [
+    { name = "build" },
     { name = "code-annotations" },
     { name = "confluent-kafka", extra = ["avro", "schema-registry"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
     { name = "coverage" },
@@ -1169,6 +1170,7 @@ dev = [
     { name = "django-waffle" },
     { name = "djangoql" },
     { name = "djangorestframework" },
+    { name = "doc8" },
     { name = "drf-spectacular" },
     { name = "drf-yasg" },
     { name = "edx-auth-backends" },
@@ -1196,6 +1198,8 @@ dev = [
     { name = "python-dateutil" },
     { name = "responses" },
     { name = "rules" },
+    { name = "sphinx" },
+    { name = "sphinx-book-theme" },
     { name = "tox" },
     { name = "tox-uv" },
 ]
@@ -1500,6 +1504,7 @@ ci = [
     { name = "tox-uv" },
 ]
 dev = [
+    { name = "build" },
     { name = "code-annotations" },
     { name = "confluent-kafka", extras = ["avro", "schema-registry"] },
     { name = "coverage" },
@@ -1520,6 +1525,7 @@ dev = [
     { name = "django-waffle" },
     { name = "djangoql" },
     { name = "djangorestframework" },
+    { name = "doc8" },
     { name = "drf-spectacular" },
     { name = "drf-yasg" },
     { name = "edx-auth-backends" },
@@ -1547,6 +1553,8 @@ dev = [
     { name = "python-dateutil" },
     { name = "responses" },
     { name = "rules" },
+    { name = "sphinx" },
+    { name = "sphinx-book-theme" },
     { name = "tox" },
     { name = "tox-uv" },
 ]

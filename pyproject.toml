@@ -89,6 +89,7 @@ ci = [
 dev = [
     {include-group = "test"},
     {include-group = "quality"},
+    {include-group = "doc"},
     {include-group = "ci"},
     "diff-cover",
     "edx-i18n-tools",
