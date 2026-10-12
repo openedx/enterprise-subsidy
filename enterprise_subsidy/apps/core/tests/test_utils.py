@@ -5,9 +5,7 @@ import hashlib
 
 from django.test import TestCase
 
-from enterprise_subsidy import __version__ as code_version
-
-from ..utils import versioned_cache_key
+from ..utils import code_version, versioned_cache_key
 
 
 class TestUtils(TestCase):
