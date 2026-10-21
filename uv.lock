@@ -1,5 +1,5 @@
 version = 1
-revision = 3
+revision = 5
 requires-python = ">=3.12"
 conflicts = [[
     { package = "enterprise-subsidy", group = "django42" },
@@ -49,7 +49,7 @@ version = "4.14.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "idna" },
-    { name = "typing-extensions", marker = "python_full_version < '3.13' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/3b/72/5562aabb8dd7181e8e860622a38bea08d17842b99ecd4c91f84ac95251b0/anyio-4.14.1.tar.gz", hash = "sha256:8d648a3544c1a700e3ff78615cd679e4c5c3f149904287e73687b2596963629e", size = 254831, upload-time = "2026-06-24T20:56:06.017Z" }
 wheels = [
@@ -152,11 +152,11 @@ wheels = [
 
 [[package]]
 name = "certifi"
-version = "2026.6.17"
+version = "2026.10.19"
 source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/c9/c7/424b75da314c1045981bd9777432fad05a9e0c69daa4ed7e308bbaffe405/certifi-2026.6.17.tar.gz", hash = "sha256:024c88eeec92ca068db80f02b8b07c9cef7b9fe261d1d535abfd5abd6f6af432", size = 134594, upload-time = "2026-06-17T10:31:07.894Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/a6/bd/1436c50cc46699de0230fbaacc1d1de7bfec413176099949e9d5112e88f2/certifi-2026.10.19.tar.gz", hash = "sha256:035c1e85572b141bf1c3a3eff0e33a8eb74917522f2559075ff8d2fea780a1ae", size = 137598, upload-time = "2026-10-20T02:24:16.604Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ef/2f/c5464532e965badff2f4c4c1a3a83f5697f0d7c407ed0cda44aaa99bb451/certifi-2026.6.17-py3-none-any.whl", hash = "sha256:2227dcbaafe0d2f59279d1762ddddc37783ed4354594f194ffc31d20f41fc3db", size = 133289, upload-time = "2026-06-17T10:31:06.348Z" },
+    { url = "https://files.pythonhosted.org/packages/c4/51/29046e48f693c54e5b7412216d447a1d8362c9653148d98c02cdf65fa733/certifi-2026.10.19-py3-none-any.whl", hash = "sha256:42d35340cc5b9ba78e818ddbff0c5b1c2b779de448a340fd1b989f5fa8670e1b", size = 136464, upload-time = "2026-10-20T02:24:15.072Z" },
 ]
 
 [[package]]
@@ -164,7 +164,7 @@ name = "cffi"
 version = "2.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pycparser", marker = "implementation_name != 'PyPy' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "pycparser", marker = "implementation_name != 'PyPy'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/57/5f/ff100cae70ebe9d8df1c01a00e510e45d9adb5c1fdda84791b199141de97/cffi-2.1.0.tar.gz", hash = "sha256:efc1cdd798b1aaf39b4610bba7aad28c9bea9b910f25c784ccf9ec1fa719d1f9", size = 531036, upload-time = "2026-07-06T21:34:30.382Z" }
 wheels = [
@@ -341,7 +341,7 @@ name = "click"
 version = "8.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/76/d4/81420972a676e8ffea40450d8c8c92943e7218a78fe9b64359836cc9876b/click-8.4.2.tar.gz", hash = "sha256:9a6cea6e60b17ebe0a44c5cc636d94f09bd66142c1cd7d8b4cd731c4917a15f6", size = 338000, upload-time = "2026-06-24T17:45:15.148Z" }
 wheels = [
@@ -501,7 +501,7 @@ name = "cryptography"
 version = "49.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "platform_python_implementation != 'PyPy' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "cffi", marker = "platform_python_implementation != 'PyPy'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/1f/99/d1c90d6041656cc6ee229dc99cd67fd0cd5aec3c5f7d72fffc27cc750054/cryptography-49.0.0.tar.gz", hash = "sha256:f89660a348f4f78a92366240a61404e337586ef7f5909a2fef59ca88ef505493", size = 854345, upload-time = "2026-06-12T20:02:30.512Z" }
 wheels = [
@@ -616,9 +616,9 @@ name = "django"
 version = "5.2.16"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "asgiref", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
-    { name = "sqlparse", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
-    { name = "tzdata", marker = "(sys_platform == 'win32' and extra == 'group-18-enterprise-subsidy-dev') or (sys_platform == 'win32' and extra != 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "asgiref", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
+    { name = "sqlparse", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
+    { name = "tzdata", marker = "(sys_platform == 'win32' and extra != 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a9/26/889449d521ae508b26de715954faecd8bcf3f740affb81b2d146a83b42a5/django-5.2.16.tar.gz", hash = "sha256:59ea02020c3136fce14bef0bbece21a10a4febef5eed1c51c22ae468efa22200", size = 10890894, upload-time = "2026-07-07T13:52:17.005Z" }
 wheels = [
@@ -631,7 +631,7 @@ version = "1.2.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/32/77/6539a7e83461568c262dbf87a921883fcac4b03fdd4c6d2d2f37d43b9229/django-clearcache-1.2.1.tar.gz", hash = "sha256:76ac5d7aebbc79e4f7064c591be1ca3fbb3d00c6b30c873f24f8330d9a7b5026", size = 5750, upload-time = "2021-04-15T11:55:55.904Z" }
 wheels = [
@@ -645,7 +645,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "asgiref" },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/21/39/55822b15b7ec87410f34cd16ce04065ff390e50f9e29f31d6d116fc80456/django_cors_headers-4.9.0.tar.gz", hash = "sha256:fe5d7cb59fdc2c8c646ce84b727ac2bca8912a247e6e68e1fb507372178e59e8", size = 21458, upload-time = "2025-09-18T10:40:52.326Z" }
 wheels = [
@@ -658,7 +658,7 @@ version = "0.7.9"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/34/1d/c56588f67130aeef8828e47535e8551337d2ae02f91f1414da61bc5e49fb/django-crum-0.7.9.tar.gz", hash = "sha256:65e9bc0f070a663fafc4d9e357f45fd4e6f01838b20a9e2fb7670f5706754288", size = 5168, upload-time = "2020-11-10T17:15:35.124Z" }
 wheels = [
@@ -693,7 +693,7 @@ version = "4.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/6d/b3/ed0f54ed706ec0b54fd251cc0364a249c6cd6c6ec97f04dc34be5e929eac/django_extensions-4.1.tar.gz", hash = "sha256:7b70a4d28e9b840f44694e3f7feb54f55d495f8b3fa6c5c0e5e12bcb2aa3cdeb", size = 283078, upload-time = "2025-04-11T01:15:39.617Z" }
 wheels = [
@@ -717,7 +717,7 @@ name = "django-filter"
 version = "25.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/2c/e4/465d2699cd388c0005fb8d6ae6709f239917c6d8790ac35719676fffdcf3/django_filter-25.2.tar.gz", hash = "sha256:760e984a931f4468d096f5541787efb8998c61217b73006163bf2f9523fe8f23", size = 143818, upload-time = "2025-10-05T09:51:31.521Z" }
 wheels = [
@@ -730,7 +730,7 @@ version = "2.1.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/6f/cc/ebc6f910e61b6c0614575aa14fa801d92ccc2c583be6706c8dbd82f599ba/django_log_request_id-2.1.2.tar.gz", hash = "sha256:4fe8e0702b09e8b08676f237d94063e0d54fc4d8867570bea6719ceba0a32486", size = 6795, upload-time = "2026-03-12T11:31:35.002Z" }
 wheels = [
@@ -743,7 +743,7 @@ version = "5.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/81/60/5e232c32a2c977cc1af8c70a38ef436598bc649ad89c2c4568454edde2c9/django_model_utils-5.0.0.tar.gz", hash = "sha256:041cdd6230d2fbf6cd943e1969318bce762272077f4ecd333ab2263924b4e5eb", size = 80559, upload-time = "2024-09-04T11:35:22.858Z" }
 wheels = [
@@ -786,7 +786,7 @@ version = "5.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/22/e1/6f533da0d4ac89f427dfd9410e39bfc14ae3a23335ecd549d76be4b2a834/django_waffle-5.0.0.tar.gz", hash = "sha256:62f9d00eedf68dafb82657beab56e601bddedc1ea1ccfef91d83df8658708509", size = 37761, upload-time = "2025-06-12T07:38:54.895Z" }
 wheels = [
@@ -811,7 +811,7 @@ version = "3.17.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ca/d7/c016e69fac19ff8afdc89db9d31d9ae43ae031e4d1993b20aca179b8301a/djangorestframework-3.17.1.tar.gz", hash = "sha256:a6def5f447fe78ff853bff1d47a3c59bf38f5434b031780b351b0c73a62db1a5", size = 905742, upload-time = "2026-03-24T16:58:33.705Z" }
 wheels = [
@@ -857,7 +857,7 @@ version = "1.19.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "djangorestframework" },
     { name = "pyjwt", extra = ["crypto"] },
 ]
@@ -872,7 +872,7 @@ version = "0.30.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "djangorestframework" },
     { name = "inflection" },
     { name = "jsonschema" },
@@ -890,7 +890,7 @@ version = "1.21.15"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "djangorestframework" },
     { name = "inflection" },
     { name = "packaging" },
@@ -909,15 +909,15 @@ version = "5.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "edx-django-utils" },
     { name = "edx-toggles" },
     { name = "pyjwt", extra = ["crypto"] },
     { name = "six" },
     { name = "social-auth-app-django", version = "5.4.3", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "social-auth-app-django", version = "6.0.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "social-auth-app-django", version = "6.0.0", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "social-auth-core", version = "4.9.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "social-auth-core", version = "5.0.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "social-auth-core", version = "5.0.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/5e/30/b0f9927849c9e3f7f2fa0f43631b8006856bdbaba737d0a59e809a0ef057/edx_auth_backends-5.0.0.tar.gz", hash = "sha256:29b7108bd13285ad8482f7e7c5945f7f08dec5ccaa73d2e73d0252a6e0afc2aa", size = 34334, upload-time = "2026-03-11T16:54:47.12Z" }
 wheels = [
@@ -943,7 +943,7 @@ version = "1.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "pyyaml" },
     { name = "six" },
 ]
@@ -959,7 +959,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "click" },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "django-crum" },
     { name = "django-waffle" },
     { name = "psutil" },
@@ -977,7 +977,7 @@ version = "10.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "django-waffle" },
     { name = "djangorestframework" },
     { name = "drf-jwt" },
@@ -998,7 +998,7 @@ version = "6.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "edx-django-utils" },
     { name = "edx-toggles" },
     { name = "openedx-events" },
@@ -1014,7 +1014,7 @@ version = "2.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" } },
-    { name = "lxml", extra = ["html-clean"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "lxml", extra = ["html-clean"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "path" },
     { name = "polib" },
     { name = "pyyaml" },
@@ -1063,7 +1063,7 @@ version = "3.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "django-crum" },
     { name = "django-model-utils" },
     { name = "edx-drf-extensions" },
@@ -1096,7 +1096,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "code-annotations" },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "django-crum" },
     { name = "django-waffle" },
     { name = "edx-django-utils" },
@@ -1110,17 +1110,18 @@ wheels = [
 name = "enterprise-subsidy"
 version = "1.0.1"
 source = { virtual = "." }
+default-groups = []
 
 [package.dev-dependencies]
 base = [
     { name = "confluent-kafka", extra = ["avro", "schema-registry"] },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "django-clearcache" },
     { name = "django-cors-headers" },
     { name = "django-extensions" },
     { name = "django-filter", version = "25.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "django-log-request-id" },
     { name = "django-object-actions" },
     { name = "django-simple-history" },
@@ -1152,7 +1153,7 @@ ci = [
 dev = [
     { name = "build" },
     { name = "code-annotations" },
-    { name = "confluent-kafka", extra = ["avro", "schema-registry"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "confluent-kafka", extra = ["avro", "schema-registry"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "coverage" },
     { name = "ddt" },
     { name = "diff-cover" },
@@ -1249,7 +1250,7 @@ django42 = [
 doc = [
     { name = "build" },
     { name = "code-annotations" },
-    { name = "confluent-kafka", extra = ["avro", "schema-registry"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "confluent-kafka", extra = ["avro", "schema-registry"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "coverage" },
     { name = "ddt" },
     { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" } },
@@ -1296,12 +1297,12 @@ doc = [
 production = [
     { name = "confluent-kafka", extra = ["avro", "schema-registry"] },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "django-clearcache" },
     { name = "django-cors-headers" },
     { name = "django-extensions" },
     { name = "django-filter", version = "25.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "django-log-request-id" },
     { name = "django-object-actions" },
     { name = "django-simple-history" },
@@ -1332,7 +1333,7 @@ production = [
 ]
 quality = [
     { name = "code-annotations" },
-    { name = "confluent-kafka", extra = ["avro", "schema-registry"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "confluent-kafka", extra = ["avro", "schema-registry"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "coverage" },
     { name = "ddt" },
     { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" } },
@@ -1378,7 +1379,7 @@ quality = [
 ]
 test = [
     { name = "code-annotations" },
-    { name = "confluent-kafka", extra = ["avro", "schema-registry"], marker = "(extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra != 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test') or (extra != 'group-18-enterprise-subsidy-doc' and extra != 'group-18-enterprise-subsidy-quality' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "confluent-kafka", extra = ["avro", "schema-registry"], marker = "extra == 'group-18-enterprise-subsidy-test' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality')" },
     { name = "coverage" },
     { name = "ddt" },
     { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" } },
@@ -1425,13 +1426,13 @@ test-base = [
     { name = "coverage" },
     { name = "ddt" },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "django-clearcache" },
     { name = "django-cors-headers" },
     { name = "django-dynamic-fixture" },
     { name = "django-extensions" },
     { name = "django-filter", version = "25.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "django-log-request-id" },
     { name = "django-object-actions" },
     { name = "django-simple-history" },
@@ -1837,7 +1838,7 @@ name = "faker"
 version = "40.28.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "tzdata", marker = "sys_platform == 'win32' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "tzdata", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/cc/2d/3ead106cef42eab305e15f9c089dcc68a40387d5ce04af18585af4ebbb44/faker-40.28.1.tar.gz", hash = "sha256:2a63fb51abab8790636d4030a094cf942404cbccc9c288d1cad70e2e3e9ecd58", size = 2022717, upload-time = "2026-07-01T22:23:43.763Z" }
 wheels = [
@@ -1912,8 +1913,8 @@ name = "gevent"
 version = "26.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "(platform_python_implementation == 'CPython' and sys_platform == 'win32') or (platform_python_implementation != 'CPython' and extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (platform_python_implementation != 'CPython' and extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (platform_python_implementation != 'CPython' and extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (platform_python_implementation != 'CPython' and extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test') or (sys_platform != 'win32' and extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (sys_platform != 'win32' and extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (sys_platform != 'win32' and extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (sys_platform != 'win32' and extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
-    { name = "greenlet", marker = "platform_python_implementation == 'CPython' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "cffi", marker = "platform_python_implementation == 'CPython' and sys_platform == 'win32'" },
+    { name = "greenlet", marker = "platform_python_implementation == 'CPython'" },
     { name = "zope-event" },
     { name = "zope-interface" },
 ]
@@ -2148,7 +2149,7 @@ version = "4.0.0.post0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ea/7e/9b093453c62a9599eef02274e12eb9d327519812288cad283494c4035ec1/jsonfield2-4.0.0.post0.tar.gz", hash = "sha256:cbce2d7c52563550cd2048fcf3a57631019d3547f5ed142f42141d1d2dc53283", size = 12632, upload-time = "2020-03-02T10:48:01.822Z" }
 wheels = [
@@ -2388,7 +2389,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "edx-ccx-keys" },
     { name = "edx-django-utils" },
     { name = "edx-opaque-keys" },
@@ -2406,10 +2407,10 @@ version = "1.8.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "django", version = "4.2.30", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "django-extensions" },
     { name = "django-filter", version = "25.1", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-django42'" },
-    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "django-filter", version = "25.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
     { name = "django-object-actions" },
     { name = "django-simple-history" },
     { name = "djangoql" },
@@ -2587,7 +2588,7 @@ version = "4.0.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "astroid" },
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
     { name = "dill" },
     { name = "isort" },
     { name = "mccabe" },
@@ -2699,7 +2700,7 @@ name = "pynacl"
 version = "1.6.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cffi", marker = "platform_python_implementation != 'PyPy' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "cffi", marker = "platform_python_implementation != 'PyPy'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d9/9a/4019b524b03a13438637b11538c82781a5eda427394380381af8f04f467a/pynacl-1.6.2.tar.gz", hash = "sha256:018494d6d696ae03c7e656e5e74cdfd8ea1326962cc401bcf018f1ed8436811c", size = 3511692, upload-time = "2026-01-01T17:48:10.851Z" }
 wheels = [
@@ -2755,7 +2756,7 @@ name = "pytest"
 version = "9.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
     { name = "iniconfig" },
     { name = "packaging" },
     { name = "pluggy" },
@@ -2921,7 +2922,7 @@ source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "attrs" },
     { name = "rpds-py" },
-    { name = "typing-extensions", marker = "python_full_version < '3.13' or (extra == 'group-18-enterprise-subsidy-dev' and extra == 'group-18-enterprise-subsidy-django42') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "typing-extensions", marker = "python_full_version < '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/22/f5/df4e9027acead3ecc63e50fe1e36aca1523e1719559c499951bb4b53188f/referencing-0.37.0.tar.gz", hash = "sha256:44aefc3142c5b842538163acb373e24cce6632bd54bdb01b21ad5863489f50d8", size = 78036, upload-time = "2025-10-13T15:30:48.871Z" }
 wheels = [
@@ -3150,9 +3151,9 @@ name = "social-auth-app-django"
 version = "6.0.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "asgiref", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
-    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
-    { name = "social-auth-core", version = "5.0.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "asgiref", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
+    { name = "django", version = "5.2.16", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
+    { name = "social-auth-core", version = "5.0.2", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e0/8e/60593750bf1e2734e9b2b3ff85b685038fcc35446c5541e08fa4cdec17b9/social_auth_app_django-6.0.0.tar.gz", hash = "sha256:421916bf136c77a8683cac7505a3b2ecf7d5c8ec18455ffa883f2cb5161847b1", size = 31297, upload-time = "2026-06-23T15:35:44.429Z" }
 wheels = [
@@ -3182,13 +3183,13 @@ name = "social-auth-core"
 version = "5.0.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "cryptography", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
-    { name = "defusedxml", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
-    { name = "oauthlib", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
-    { name = "pyjwt", extra = ["crypto"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
-    { name = "python3-openid", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
-    { name = "requests", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
-    { name = "requests-oauthlib", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-doc') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-quality') or (extra == 'group-18-enterprise-subsidy-django42' and extra == 'group-18-enterprise-subsidy-test')" },
+    { name = "cryptography", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
+    { name = "defusedxml", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
+    { name = "oauthlib", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
+    { name = "pyjwt", extra = ["crypto"], marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
+    { name = "python3-openid", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
+    { name = "requests", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
+    { name = "requests-oauthlib", marker = "extra == 'group-18-enterprise-subsidy-dev' or extra != 'group-18-enterprise-subsidy-django42' or extra == 'group-18-enterprise-subsidy-doc' or extra == 'group-18-enterprise-subsidy-quality' or extra == 'group-18-enterprise-subsidy-test'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a9/b7/f2878b7ce6a5195aa2f14eef8337f2734940b11d68e14a36308770b633d7/social_auth_core-5.0.2.tar.gz", hash = "sha256:f53930c9b2a86ee0fc8e8fb0eac79221cfc2f017d9efb578691e5a3e2cf36784", size = 260859, upload-time = "2026-06-26T07:25:19.522Z" }
 wheels = [
